@@ -1,15 +1,38 @@
 = RISC-V "P" Extension Proposal
-Version 0.5-draft-20190426
-:doctype: article
+Version 0.5.4-draft-20200302
+:doctype: book
 :encoding: utf-8
 :lang: en
 :toc: left
 :toclevels: 4
 :numbered:
 :stem: latexmath
+:xrefstyle: short
 :le: &#8804;
 :rarr: &#8658;
 
+[preface]
+== Revision History
+
+[cols="^.^10,^.^15,^.^15,<.^60", options="header"]
+|===
+|Rev.|Revision Date|Author|Revised Content
+| v0.5.4 | 2020/03/02 | Chuanhua Chang
+| Added P subset extensions (<<pext_subset>>)
+| v0.5.3 | 2019/11/8 | Chuanhua Chang
+| Adjusted BPICK encoding along with the following 20 instructions:
+STAS16, RSTAS16, KSTAS16, URSTAS16, UKSTAS16, STSA16, RSTSA16, KSTSA16,
+URSTSA16, UKSTSA16, STAS32, RSTAS32, KSTAS32, URSTAS32, UKSTAS32, STSA32,
+RSTSA32, KSTSA32, URSTSA32, UKSTSA32. (<<pext_encode>>)
+| v0.5.2 | 2019/10/17 | Chuanhua Chang
+| Fixed SRAIW.u operation typo. (<<sraiw_u>>)
+| v0.5.1 | 2019/10/8 | Chuanhua Chang
+| Fixed SLLI32 encoding. (<<slli32>>)
+| v0.5.0 | 2019/4/26 | Chuanhua Chang
+| Initial Release.
+|===
+
+<<<
 == Introduction
 
 Digital Signal Processing (DSP), has emerged as an important technology for modern
@@ -2404,6 +2427,33 @@ There are four 32-bit packing instructions here.
 |4 |PKTT32 rt, ra, rb |Pack two 32-bit data from Tops |rt = CONCAT(ra.W[_1_], rb.W[_1_]);
 |===
 
+[#pext_subset]
+== P Extension Subsets
+
+The P extension instructions will be divided into several Z-extension subsets to
+facilitate the trade-off between implementation complexity and application performance.
+
+=== Zp64 (for RV32 Only)
+
+The instructions in Zp64 extension will read or write 64-bit operands using register-pairs
+in RV32. For RV64, the Zp64 instructions will be included in the baseline P extension.
+
+The instructions in Zp64 are listed in the following table.
+
+[cols="^.^1,^.^3",options="header",]
+|===
+|No. |Instruction
+|1 |SMAL |2 |ADD64 |3 |RADD64 |4 |URADD64 |5 |KADD64 |6 |UKADD64
+|7 |SUB64 |8 |RSUB64 |9 |URSUB64 |10 |KSUB64 |11 |UKSUB64
+|12 |SMAR64 |13 |SMSR64 |14 |UMAR64 |15 |UMSR64 |16 |KMAR64 |17 |KMSR64
+|18 |UKMAR64 |19 |UKMSR64 |20 |SMALBB |21 |SMALBT |22 |SMALTT
+|23 |SMALDA |24 |SMALXDA |25 |SMALDS |26 |SMALDRS |27 |SMALXDS
+|28 |SMSLDA |29 |SMSLXDA
+|===
+
+
+
+
 == Detailed Instruction Descriptions (both RV32 & RV64)
 
 The sections in this chapter describe the detailed operations of the P extension
@@ -2709,9 +2759,9 @@ operation, the result is written to Rd.
 
 [cols="7*^.^"]
 |===
-l|31    30 l|29    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |BPICK +
-11 |Rc |Rs2 |Rs1 |010 |Rd
+Rc |00 |Rs2 |Rs1 |011 |Rd
 |GE80B +
 1111111
 |===
@@ -6783,7 +6833,7 @@ The left-shifted result is saturated to the 32-bit signed integer range of [-2^3
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTAS16 +
-0001010 |Rs2 |Rs1 |011 |Rd
+1100010 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -6840,7 +6890,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTSA16 +
-0001011 |Rs2 |Rs1 |011 |Rd
+1100011 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -8049,7 +8099,7 @@ l|31    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSTAS16 +
-0000010 |Rs2 |Rs1 |011 |Rd
+1011010 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -8095,7 +8145,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSTSA16 +
-0000011 |Rs2 |Rs1 |011 |Rd
+1011011 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -11333,7 +11383,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STAS16 +
-0100010 |Rs2 |Rs1 |011 |Rd
+1111010 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -11382,7 +11432,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STSA16 +
-0100011 |Rs2 |Rs1 |011 |Rd
+1111011 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -12616,7 +12666,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTAS16 +
-0011010 |Rs2 |Rs1 |011 |Rd
+1110010 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -12672,7 +12722,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTSA16 +
-0011011 |Rs2 |Rs1 |011 |Rd
+1110011 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -13826,7 +13876,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSTAS16 +
-0010010 |Rs2 |Rs1 |011 |Rd
+1101010 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -13872,7 +13922,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSTSA16 +
-0010011 |Rs2 |Rs1 |011 |Rd
+1101011 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -15599,7 +15649,7 @@ The left-shifted results are saturated to the 32-bit signed integer range of [-2
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTAS32 +
-0001000 |Rs2 |Rs1 |011 |Rd
+1100000 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -15649,7 +15699,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTSA32 +
-0001001 |Rs2 |Rs1 |011 |Rd
+1100001 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -15965,7 +16015,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RCRAS32 +
-0000000 |Rs2 |Rs1 |011 |Rd
+1011000 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -16005,7 +16055,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSTSA32 +
-0000001 |Rs2 |Rs1 |011 |Rd
+1011001 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -16120,19 +16170,21 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  uint32x2_t __nds__v_sll32(uint32x2_t a, unsigned int b);
 
 <<<
+[#slli32]
 === SLLI32 (SIMD 32-bit Shift Left Logical Immediate)
 
 *Type:* SIMD (RV64 Only)
 
+[#slli32-format]
 *Format:*
 
 [cols="6*^.^"]
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|SMSLXDA +
-1011110 |Imm5u[4:0] |Rs1 |010 |Rd
 |SLLI32 +
-0111010
+0111010 |Imm5u[4:0] |Rs1 |010 |Rd
+|GE80B +
+1111111
 |===
 
 *Syntax:*
@@ -16583,6 +16635,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  int32x2_t __nds__v_sra32_u(int32x2_t a, unsigned int b);
 
 <<<
+[#sraiw_u]
 === SRAIW.u (Rounding Shift Right Arithmetic Immediate Word)
 
 *Type:* DSP (RV64 only)
@@ -16602,18 +16655,24 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  SRAIW.u Rd, Rs1, imm5u
 
-*Purpose:* Perform a 32-bit arithmetic right shift operation with rounding. The shift amount is an immediate value.
+*Purpose:* Perform a 32-bit arithmetic right shift operation with rounding. The
+shift amount is an immediate value.
 
-*Description:* This instruction right-shifts the lower 32-bit content of Rs1 arithmetically. The shifted out bits are filled with the sign-bit Rs1(31) and the shift amount is specified by the imm5u constant. For the rounding operation, a value of 1 is added to the most significant discarded bit of the data to calculate the final result. And the result is sign-extended and written to Rd.
+*Description:* This instruction right-shifts the lower 32-bit content of Rs1
+arithmetically. The shifted out bits are filled with the sign-bit Rs1[31] and
+the shift amount is specified by the imm5u constant. For the rounding operation,
+a value of 1 is added to the most significant discarded bit of the data to
+calculate the final result. And the result is sign-extended on bit 31 to 64 bits
+and written to Rd.
 
 *Operations:*
 
  sa = imm5u;
  if (sa != 0) {
    res[31:-1] = SE33(Rs1[31:(sa-1)]) + 1;
-   Rd = SE32(res[31:0]);
+   Rd = SE64(res[31:0]);
  } else {
-   Rd = SE32(Rs1.W[0]);
+   Rd = SE64(Rs1.W[0]);
  }
 
 *Exceptions:* None
@@ -16787,7 +16846,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STAS32 +
-0100000 |Rs2 |Rs1 |011 |Rd
+1111000 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -16828,7 +16887,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STSA32 +
-0100001 |Rs2 |Rs1 |011 |Rd
+1111001 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -17056,7 +17115,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTAS32 +
-0011000 |Rs2 |Rs1 |011 |Rd
+1110000 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -17106,7 +17165,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTSA32 +
-0011001 |Rs2 |Rs1 |011 |Rd
+1110001 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -17404,7 +17463,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URCRAS32 +
-0010000 |Rs2 |Rs1 |011 |Rd
+1101000 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -17444,7 +17503,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSTSA32 +
-0010001 |Rs2 |Rs1 |011 |Rd
+1101001 |Rs2 |Rs1 |010 |Rd
 |GE80B +
 1111111
 |===
@@ -17563,6 +17622,7 @@ l|XLEN-1                     1 |0
 |Reserved |[XLEN-1:1] |Reserved |RAZWI |0
 |===
 
+[#pext_encode]
 == Instruction Encoding Table
 
 .P Extension Instruction Encoding for funct3[14:12]==0b000.
@@ -17741,15 +17801,15 @@ l|XLEN-1                     1 |0
 
 |*1010* |umin32 |umax32 | | | | | |
 
-|*1011* | | | | | | | |
+|*1011* |rstas32 |rstsa32 |rstas16 |rstsa16 | | | |
 
-|*1100* 8.4+|bpick
+|*1100* |kstas32 |kstsa32 |kstas16 |kstsa16 | | | |
 
-|*1101*
+|*1101* |urstas32 |urstsa32 |urstas16 |urstsa16 | | | |
 
-|*1110*
+|*1110* |ukstas32 |ukstsa32 |ukstas16 |ukstsa16 | | | |
 
-|*1111*
+|*1111* |stas32 |stsa32 |stas16 |stsa16 | | | |
 |===
 
 .P Extension Instruction Encoding for funct3[14:12]==0b011.
@@ -17761,37 +17821,37 @@ l|XLEN-1                     1 |0
 |*[6:3]* |*000* |*001* |*010* |*011* |*100* |*101*
 |*110* |*111*
 
-|*0000* |rstas32 |rstsa32 |rstas16 |rstsa16 | | | |
+|*0000* .16+|bpick | | | .16+|bpick | | |
 
-|*0001* |kstas32 |kstsa32 |kstas16 |kstsa16 | | | |
+|*0001* | | | | | |
 
-|*0010* |urstas32 |urstsa32 |urstas16 |urstsa16 | | | |
+|*0010* | | | | | |
 
-|*0011* |ukstas32 |ukstsa32 |ukstas16 |ukstsa16 | | | |
+|*0011* | | | | | |
 
-|*0100* |stas32 |stsa32 |stas16 |stsa16 | | | |
+|*0100* | | | | | |
 
-|*0101* | | | | | | | |
+|*0101* | | | | | |
 
-|*0110* | | | | | | | |
+|*0110* | | | | | |
 
-|*0111* | | | | | | | |
+|*0111* | | | | | |
 
-|*1000* | | | | | | | |
+|*1000* | | | | | |
 
-|*1001* | | | | | | | |
+|*1001* | | | | | |
 
-|*1010* | | | | | | | |
+|*1010* | | | | | |
 
-|*1011* | | | | | | | |
+|*1011* | | | | | |
 
-|*1100* | | | | | | | |
+|*1100* | | | | | |
 
-|*1101* | | | | | | | |
+|*1101* | | | | | |
 
-|*1110* | | | | | | | |
+|*1110* | | | | | |
 
-|*1111* | | | | | | | |
+|*1111* | | | | | |
 |===
 
 <<<
