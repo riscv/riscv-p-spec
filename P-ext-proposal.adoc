@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.5.4-draft-20200302
+Version 0.6-draft-20200601
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -17,6 +17,10 @@ Version 0.5.4-draft-20200302
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.6   | 2020/06/01 | Chuanhua Chang
+a|
+* Fixed descriptions/pseudo code for all unsigned halving operations to reduce confusion.
+* Added intXLEN_t and uintXLEN_t as data types for intrinsic functions.
 | v0.5.4 | 2020/03/02 | Chuanhua Chang
 | Added P subset extensions (<<pext_subset>>)
 | v0.5.3 | 2019/11/8 | Chuanhua Chang
@@ -101,7 +105,7 @@ rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) s>> 1;
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
 |3 |URADD16 rt, ra, rb |16-bit Unsigned Halving Addition a|
-rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) u>> 1;
+rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
@@ -126,7 +130,7 @@ rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) s>> 1;
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
 |8 |URSUB16 rt, ra, rb |16-bit Unsigned Halving Subtraction a|
-rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) u>> 1;
+rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
@@ -153,8 +157,8 @@ rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x_]) s>> 1;
 (RV32: __x__=1, RV64: __x__=1,3)
 
 |13 |URCRAS16 rt, ra, rb |16-bit Unsigned Halving Cross Add & Sub a|
-rt.H[_x_] = (ra.H[_x_] + rb.H[_x-1_]) u>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x_]) u>> 1;
+rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x-1_])) >> 1; +
+rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) – CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
@@ -183,8 +187,8 @@ rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x_]) s>> 1;
 (RV32: __x__=1, RV64: __x__=1,3)
 
 |18 |URCRSA16 rt, ra, rb |16-bit Unsigned Halving Cross Sub & Add a|
-rt.H[_x_] = (ra.H[_x_] - rb.H[_x-1_]) u>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x_]) u>> 1;
+rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x-1_])) >> 1; +
+rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) + CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
@@ -213,8 +217,8 @@ rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x-1_]) s>> 1;
 (RV32: __x__=1, RV64: __x__=1,3)
 
 |23 |URSTAS16 rt, ra, rb |16-bit Unsigned Halving Straight Add & Sub a|
-rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) u>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x-1_]) u>> 1;
+rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x_])) >> 1; +
+rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) – CONCAT(1'b0,rb.H[_x-1_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
@@ -243,8 +247,8 @@ rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x-1_]) s>> 1;
 (RV32: __x__=1, RV64: __x__=1,3)
 
 |28 |URSTSA16 rt, ra, rb |16-bit Unsigned Halving Straight Sub & Add a|
-rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) u>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x-1_]) u>> 1;
+rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x_])) >> 1; +
+rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) + CONCAT(1'b0,rb.H[_x-1_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
@@ -286,7 +290,7 @@ rt.B[_x_] = (ra.B[_x_] + rb.B[_x_]) s>> 1;
 (RV32: __x__=3..0, RV64: __x__=7..0)
 
 |3 |URADD8 rt, ra, rb |8-bit Unsigned Halving Addition a|
-rt.B[_x_] = (ra.B[_x_] + rb.B[_x_]) u>> 1;
+rt.B[_x_] = (CONCAT(1'b0,ra.B[_x_]) + CONCAT(1'b0,rb.B[_x_])) >> 1;
 
 (RV32: __x__=3..0, RV64: __x__=7..0)
 
@@ -311,7 +315,7 @@ rt.B[_x_] = (ra.B[_x_] - rb.B[_x_]) s>> 1;
 (RV32: __x__=3..0, RV64: __x__=7..0)
 
 |8 |URSUB8 rt, ra, rb |8-bit Unsigned Halving Subtraction a|
-rt.B[_x_] = (ra.B[_x_] - rb.B[_x_]) u>> 1;
+rt.B[_x_] = (CONCAT(1'b0,ra.B[_x_]) - CONCAT(1'b0,rb.B[_x_])) >> 1;
 
 (RV32: __x__=3..0, RV64: __x__=7..0)
 
@@ -1502,7 +1506,7 @@ t64 = (a64 + b64) s>>1; +
 r[tU].r[tL] = t64;
 |3 |URADD64 rt, ra, rb |64-bit Unsigned Halving Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
  +
-t64 = (a64 + b64) u>>1; +
+t64 = (CONCAT(1'b0,a64) + CONCAT(1'b0,b64)) >>1; +
  +
 r[tU].r[tL] = t64;
 |4 |KADD64 rt, ra, rb |64-bit Signed Saturating Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
@@ -1527,7 +1531,7 @@ t64 = (a64 - b64) s>>1; +
 r[tU].r[tL] = t64;
 |8 |URSUB64 rt, ra, rb |64-bit Unsigned Halving Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
  +
-t64 = (a64 - b64) u>>1; +
+t64 = (CONCAT(1'b0,a64) - CONCAT(1'b0,b64)) >>1; +
  +
 r[tU].r[tL] = t64;
 |9 |KSUB64 rt, ra, rb |64-bit Signed Saturating Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
@@ -1762,7 +1766,7 @@ res = (ra.W[0] + rb.W[0]) s>> 1;
 rt = SE(res);
 
 |2 |URADDW rt, ra, rb |32-bit Unsigned Halving Addition a|
-res = (ra.W[0] + rb.W[0]) u>> 1;
+res = (CONCAT(1'b0,ra.W[0]) + CONCAT(1'b0,rb.W[0])) >> 1;
 
 rt = SE(res);
 
@@ -1772,7 +1776,7 @@ res = (ra.W[0] - rb.W[0]) s>> 1;
 rt = SE(res);
 
 |4 |URSUBW rt, ra, rb |32-bit Unsigned Halving Subtraction a|
-res = (ra.W[0] - rb.W[0]) u>> 1;
+res = (CONCAT(1'b0,ra.W[0]) - CONCAT(1'b0,rb.W[0])) >> 1;
 
 rt = SE(res);
 
@@ -1962,7 +1966,7 @@ rt.W[_x_] = (ra.W[_x_] + rb.W[_x_]) s>> 1;
 (RV64: __x__=1..0)
 
 |3 |URADD32 rt, ra, rb |SIMD 32-bit Unsigned Halving Addition a|
-rt.W[_x_] = (ra.W[_x_] + rb.W[_x_]) u>> 1;
+rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) + CONCAT(1'b0,rb.W[_x_])) >> 1;
 
 (RV64: __x__=1..0)
 
@@ -1987,7 +1991,7 @@ rt.W[_x_] = (ra.W[_x_] - rb.W[_x_]) s>> 1;
 (RV64: __x__=1..0)
 
 |8 |URSUB32 rt, ra, rb |SIMD 32-bit Unsigned Halving Subtraction a|
-rt.W[_x_] = (ra.W[_x_] - rb.W[_x_]) u>> 1;
+rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) - CONCAT(1'b0,rb.W[_x_])) >> 1;
 
 (RV64: __x__=1..0)
 
@@ -2014,8 +2018,8 @@ rt.W[_x-1_] = (ra.W[_x-1_] – rb.W[_x_]) s>> 1;
 (RV64: __x__=1)
 
 |13 |URCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Add & Sub a|
-rt.W[_x_] = (ra.W[_x_] + rb.W[_x-1_]) u>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] – rb.W[_x_]) u>> 1;
+rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) + CONCAT(1'b0,rb.W[_x-1_])) >> 1; +
+rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) – CONCAT(1'b0,rb.W[_x_])) >> 1;
 
 (RV64: __x__=1)
 
@@ -2044,8 +2048,8 @@ rt.W[_x-1_] = (ra.W[_x-1_] + rb.W[_x_]) s>> 1;
 (RV64: __x__=1)
 
 |18 |URCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Sub & Add a|
-rt.W[_x_] = (ra.W[_x_] - rb.W[_x-1_]) u>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] + rb.W[_x_]) u>> 1;
+rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) - CONCAT(1'b0,rb.W[_x-1_])) >> 1; +
+rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) + CONCAT(1'b0,rb.W[_x_])) >> 1;
 
 (RV64: __x__=1)
 
@@ -2074,8 +2078,8 @@ rt.W[_x-1_] = (ra.W[_x-1_] – rb.W[_x-1_]) s>> 1;
 (RV64: __x__=1)
 
 |23 |URSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Add & Sub a|
-rt.W[_x_] = (ra.W[_x_] + rb.W[_x_]) u>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] – rb.W[_x-1_]) u>> 1;
+rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) + CONCAT(1'b0,rb.W[_x_])) >> 1; +
+rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) – CONCAT(1'b0,rb.W[_x-1_])) >> 1;
 
 (RV64: __x__=1)
 
@@ -2104,8 +2108,8 @@ rt.W[_x-1_] = (ra.W[_x-1_] + rb.W[_x-1_]) s>> 1;
 (RV64: __x__=1)
 
 |28 |URSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Sub & Add a|
-rt.W[_x_] = (ra.W[_x_] - rb.W[_x_]) u>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] + rb.W[_x-1_]) u>> 1;
+rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) - CONCAT(1'b0,rb.W[_x_])) >> 1; +
+rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) + CONCAT(1'b0,rb.W[_x-1_])) >> 1;
 
 (RV64: __x__=1)
 
@@ -2451,7 +2455,20 @@ The instructions in Zp64 are listed in the following table.
 |28 |SMSLDA |29 |SMSLXDA
 |===
 
+== Instructions Duplicated in Bit Manipulation Extension (v0.92)
 
+[cols="^.^,^.^,^.^",options="header",]
+|===
+|P Instruction |B Instruction |Architecture
+|CLZ32 |CLZ |RV32
+|MAXW |MAX |RV32
+|MINW |MIN |RV32
+|BPICK |CMIX |RV32, RV64
+|PKBB16 |PACK |RV32
+|PKTT16 |PACKU |RV32
+|PKBB32 |PACK |RV64
+|PKTT32 |PACKU |RV64
+|===
 
 
 == Detailed Instruction Descriptions (both RV32 & RV64)
@@ -2466,6 +2483,24 @@ be used in these instructions. Also, although the instruction encodings of these
 instructions allow a software developer to specify the pair number of an operand
 using either an even or an odd number of register index, an assembler or instruction geneator
 may choose to block the use of an odd number as a register index for the paired-register operand.
+
+*Intrinsic Function Data Type Definition:*
+
+Having a fixed-size data type increases code readability and avoids confusion on the value range
+of an operand. On the other hand, the instructions defined here operate on registers of different sizes.
+Some operands have a size depending on the XLEN value. Some operands have fixed sizes independt of the
+XLEN value. To help distinguish them and still conform to the fixed-size principle,
+the following symbols will be defined and used in the intrinsic function prototype descriptions.
+
+* RV32
+
+ typedef int32_t  intXLEN_t
+ typedef uint32_t uintXLEN_t
+
+* RV64
+
+ typedef int64_t  intXLEN_t
+ typedef uint64_t uintXLEN_t
 
 <<<
 ===  ADD8 (SIMD 8-bit Addition)
@@ -2506,7 +2541,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__add8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__add8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
   uint8x4_t __nds__v_uadd8(uint8x4_t a, uint8x4_t b);
@@ -2554,7 +2589,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__add16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__add16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
   uint16x2_t __nds__v_uadd16(uint16x2_t a, uint16x2_t b);
@@ -2617,8 +2652,8 @@ and the even “2__d__” register of the pair contains the low 32-bit of the re
 
 *Intrinsic functions:*
 
- long long __nds__sadd64(long long a, long long b);
- unsigned long long __nds__uadd64(unsigned long long a, unsigned long long b);
+ int64_t __nds__sadd64(int64_t a, int64_t b);
+ uint64_t __nds__uadd64(uint64_t a, uint64_t b);
 
 <<<
 === AVE (Average with Rounding)
@@ -2661,7 +2696,7 @@ writes the result to Rd.
 
 *Intrinsic functions:*
 
- long __nds__ave(long a, long b);
+ intXLEN_t __nds__ave(intXLEN_t a, intXLEN_t b);
 
 <<<
 === BITREV (Bit Reverse)
@@ -2702,7 +2737,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__bitrev(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__bitrev(uintXLEN_t a, uintXLEN_t msb);
 
 <<<
 ===  BITREVI (Bit Reverse Immediate)
@@ -2748,7 +2783,7 @@ operation, the result is written to Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__bitrev(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__bitrev(uintXLEN_t a, uintXLEN_t msb);
 
 <<<
 === BPICK (Bit-wise Pick)
@@ -2760,8 +2795,8 @@ operation, the result is written to Rd.
 [cols="7*^.^"]
 |===
 l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|BPICK +
-Rc |00 |Rs2 |Rs1 |011 |Rd
+|Rc |BPICK +
+00 |Rs2 |Rs1 |011 |Rd
 |GE80B +
 1111111
 |===
@@ -2790,7 +2825,7 @@ otherwise, the corresponding bit is from Rs2. The selection results are written 
 
 *Intrinsic functions:*
 
- unsigned long __nds__bpick(unsigned long a, unsigned long b, unsigned long c);
+ uintXLEN_t __nds__bpick(uintXLEN_t a, uintXLEN_t b, uintXLEN_t c);
 
 <<<
 === CLROV (Clear OV flag)
@@ -2870,7 +2905,7 @@ result to the corresponding 8-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clrs8(unsigned long a);
+ uintXLEN_t __nds__clrs8(uintXLEN_t a);
 
  RV32:
   uint8x4_t __nds__v_clrs8(int8x4_t a);
@@ -2928,7 +2963,7 @@ result to the corresponding 16-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clrs16(unsigned long a);
+ uintXLEN_t __nds__clrs16(uintXLEN_t a);
 
  RV32:
   uint16x2_t __nds__v_clrs16(int16x2_t a);
@@ -2986,7 +3021,7 @@ result to the corresponding 32-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clrs32(unsigned long a);
+ uintXLEN_t __nds__clrs32(uintXLEN_t a);
 
  RV64:
   uint32x2_t __nds__v_clrs32(int32x2_t a);
@@ -3042,7 +3077,7 @@ to the corresponding 8-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clo8(unsigned long a);
+ uintXLEN_t __nds__clo8(uintXLEN_t a);
 
  RV32:
    uint8x4_t __nds__v_clo8(uint8x4_t a);
@@ -3100,7 +3135,7 @@ corresponding 16-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clo16(unsigned long a);
+ uintXLEN_t __nds__clo16(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_clo16(uint16x2_t a);
@@ -3158,7 +3193,7 @@ results to the corresponding 32-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clo32(unsigned long a);
+ uintXLEN_t __nds__clo32(uintXLEN_t a);
 
  RV64:
    uint32x2_t __nds__v_clo32(uint32x2_t a);
@@ -3214,7 +3249,7 @@ results to the corresponding 8-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clz8(unsigned long a);
+ uintXLEN_t __nds__clz8(uintXLEN_t a);
 
  RV32:
    uint8x4_t __nds__v_clz8(uint8x4_t a);
@@ -3272,7 +3307,7 @@ results to the corresponding 16-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clz16(unsigned long a);
+ uintXLEN_t __nds__clz16(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_clz16(uint16x2_t a);
@@ -3330,7 +3365,7 @@ results to the corresponding 32-bit elements of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__clz32(unsigned long a);
+ uintXLEN_t __nds__clz32(uintXLEN_t a);
 
  RV64:
    uint32x2_t __nds__v_clz32(uint32x2_t a);
@@ -3353,7 +3388,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- CMPEQ8 Rs, Rs1, Rs2
+ CMPEQ8 Rd, Rs1, Rs2
 
 *Purpose:* Do 8-bit integer elements equal comparisons simultaneously.
 
@@ -3376,7 +3411,7 @@ results are written to Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__cmpeq8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__cmpeq8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_scmpeq8(int8x4_t a, int8x4_t b);
@@ -3426,7 +3461,7 @@ results are written to Rt.
 
 *Intrinsic functions:*
 
- unsigned long __nds__cmpeq16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__cmpeq16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_scmpeq16(int16x2_t a, int16x2_t b);
@@ -3481,7 +3516,7 @@ result to [15:0] of 32-bit chunks in Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__cras16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__cras16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ucras16(uint16x2_t a, uint16x2_t b);
@@ -3537,7 +3572,7 @@ writes the result to [15:0] of 32-bit chunks in Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__crsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__crsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ucrsa16(uint16x2_t a, uint16x2_t b);
@@ -3590,7 +3625,7 @@ or “imm[2:0]” (RV64) of Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__insb(unsigned long t, unsigned long a, unsigned long b);
+ uintXLEN_t __nds__insb(uintXLEN_t t, uintXLEN_t a, uint32_t bpos);
 
 <<<
 ===  KABS8 (SIMD 8-bit Saturating Absolute)
@@ -3640,7 +3675,7 @@ number is 0x80, this instruction generates 0x7f as the output and sets the OV bi
 
 *Intrinsic functions:*
 
- unsigned long __nds__kabs8(unsigned long a);
+ uintXLEN_t __nds__kabs8(uintXLEN_t a);
 
  RV32:
    int8x4_t __nds__v_kabs8(int8x4_t a);
@@ -3696,7 +3731,7 @@ the OV bit to 1.
 
 *Intrinsic functions:*
 
- unsigned long __nds__kabs16(unsigned long a);
+ uintXLEN_t __nds__kabs16(uintXLEN_t a);
 
  RV32:
    int16x2_t __nds__v_kabs16(int16x2_t a);
@@ -3754,7 +3789,7 @@ OV flag will be set to 1.
 
 *Intrinsic functions:*
 
- unsigned long __nds__kabsw(signed long a);
+ uintXLEN_t __nds__kabsw(intXLEN_t a);
 
 <<<
 ===  KADD8 (SIMD 8-bit Signed Saturating Addition)
@@ -3805,7 +3840,7 @@ the OV bit is set to 1. The saturated results are written to Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__kadd8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kadd8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_kadd8(int8x4_t a, int8x4_t b);
@@ -3861,7 +3896,7 @@ and the OV bit is set to 1. The saturated results are written to Rd.
 
 *Intrinsic functions:*
 
- unsigned long __nds__kadd16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kadd16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_kadd16(int16x2_t a, int16x2_t b);
@@ -3939,7 +3974,7 @@ The saturated result is written to Rd.
 
 *Intrinsic functions:*
 
- long long __nds__kadd64(long long a, long long b);
+ int64_t __nds__kadd64(int64_t a, int64_t b);
 
 <<<
 === KADDH (Signed Addition with Q15 Saturation)
@@ -3991,7 +4026,7 @@ saturation happens, this instruction sets the OV flag.
 
 *Intrinsic functions:*
 
- long __nds__kaddh(int a, int b);
+ intXLEN_t __nds__kaddh(int32_t a, int32_t b);
 
 <<<
 === KADDW (Signed Addition with Q31 Saturation)
@@ -4043,7 +4078,7 @@ saturation happens, this instruction sets the OV flag.
 
 *Intrinsic functions:*
 
- long __nds__kaddw(int a, int b);
+ intXLEN_t __nds__kaddw(int32_t a, int32_t b);
 
 <<<
 === KCRAS16 (SIMD 16-bit Signed Saturating Cross Addition & Subtraction)
@@ -4105,7 +4140,7 @@ in Rd for addition and [15:0] of 32-bit chunks in Rd for subtraction.
 
 *Intrinsic functions:*
 
- unsigned long __nds__kcras16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kcras16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_kcras16(int16x2_t a, int16x2_t b);
@@ -4171,7 +4206,7 @@ subtraction and [15:0] of 32-bit chunks in Rd for addition.
 
 *Intrinsic functions:*
 
- unsigned long __nds__kcrsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kcrsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_kcrsa16(int16x2_t a, int16x2_t b);
@@ -4268,30 +4303,30 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
 
 * KDMBB
 
- long __nds__kdmbb(unsigned int a, unsigned int b);
+ intXLEN_t __nds__kdmbb(uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_kdmbb(int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_kdmbb(int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_kdmbb(int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_kdmbb(int16x4_t a, int16x4_t b);
 
 * KDMBT
 
- long __nds__kdmbt(unsigned int a, unsigned int b);
+ intXLEN_t __nds__kdmbt(uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_kdmbt(int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_kdmbt(int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_kdmbt(int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_kdmbt(int16x4_t a, int16x4_t b);
 
 * KDMTT
 
- long __nds__kdmtt(unsigned int a, unsigned int b);
+ intXLEN_t __nds__kdmtt(uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_kdmtt(int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_kdmtt(int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_kdmtt(int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_kdmtt(int16x4_t a, int16x4_t b);
 
 <<<
 === KDMABB, KDMABT, KDMATT
@@ -4394,31 +4429,31 @@ flag OV will be set.
 
 * KDMABB
 
- long __nds__kdmabb(long t, unsigned int a, unsigned int b);
+ intXLEN_t __nds__kdmabb(intXLEN_t t, uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_kdmabb(long t, int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_kdmabb(intXLEN_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_kdmabb(long t, int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_kdmabb(intXLEN_t t, int16x4_t a, int16x4_t b);
 
 
 * KDMABT
 
- long __nds__kdmabt(long t, unsigned int a, unsigned int b);
+ intXLEN_t __nds__kdmabt(intXLEN_t t, uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_kdmabt(long t, int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_kdmabt(intXLEN_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_kdmabt(long t, int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_kdmabt(intXLEN_t t, int16x4_t a, int16x4_t b);
 
 * KDMATT
 
- long __nds__kdmatt(long t, unsigned int a, unsigned int b);
+ intXLEN_t __nds__kdmatt(intXLEN_t t, uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_kdmatt(long t, int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_kdmatt(intXLEN_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_kdmatt(long t, int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_kdmatt(intXLEN_t t, int16x4_t a, int16x4_t b);
 
 <<<
 === KHM8, KHMX8
@@ -4447,7 +4482,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 [cols="6*^.^"]
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|KHM8 +
+|KHMX8 +
 1001111 |Rs2 |Rs1 |000 |Rd
 |GE80B +
 1111111
@@ -4509,7 +4544,7 @@ to 0x7F and the overflow flag OV will be set.
 
 * KHM8
 
- unsigned long __nds__khm8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khm8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_khm8(int8x4_t a, int8x4_t b);
@@ -4518,7 +4553,7 @@ to 0x7F and the overflow flag OV will be set.
 
 * KHMX8
 
- unsigned long __nds__khmx8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khmx8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_khmx8(int8x4_t a, int8x4_t b);
@@ -4614,7 +4649,7 @@ to 0x7FFF and the overflow flag OV will be set.
 
 * KHM16
 
- unsigned long __nds__khm6(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khm6(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_khm16(int16x2_t a, int16x2_t b);
@@ -4623,7 +4658,7 @@ to 0x7FFF and the overflow flag OV will be set.
 
 * KHMX16
 
- unsigned long __nds__khmx16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khmx16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_khmx16(int16x2_t a, int16x2_t b);
@@ -4718,31 +4753,31 @@ saturated to 0x7FFF and the overflow flag OV will be set.
 
 * KHMBB
 
- long __nds__khmbb(unsigned int a, unsigned int b);
+ intXLEN_t __nds__khmbb(uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_khmbb(int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_khmbb(int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_khmbb(int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_khmbb(int16x4_t a, int16x4_t b);
 
 
 * KHMBT
 
- long __nds__khmbt(unsigned int a, unsigned int b);
+ intXLEN_t __nds__khmbt(uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_khmbt(int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_khmbt(int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_khmbt(int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_khmbt(int16x4_t a, int16x4_t b);
 
 * KHMTT
 
- long __nds__khmtt(unsigned int a, unsigned int b);
+ intXLEN_t __nds__khmtt(uint32_t a, uint32_t b);
 
  RV32:
-   long __nds__v_khmtt(int16x2_t a, int16x2_t b);
+   intXLEN_t __nds__v_khmtt(int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_khmtt(int16x4_t a, int16x4_t b);
+   intXLEN_t __nds__v_khmtt(int16x4_t a, int16x4_t b);
 
 <<<
 === KMABB, KMABT, KMATT
@@ -4851,28 +4886,28 @@ signed integers.
 
 * KMABB
 
- long __nds__kmabb(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmabb(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmabb(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmabb(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmabb(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KMABT
 
- long __nds__kmabt(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmabt(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmabt(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmabt(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmabt(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KMATT
 
-long __nds__kmatt(long t, unsigned long a, unsigned long b);
+intXLEN_t __nds__kmatt(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmatt(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmatt(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmatt(int32x2_t t, int16x4_t a, int16x4_t b);
 
@@ -4967,19 +5002,19 @@ written to Rd. The 16-bit contents of Rs1 and Rs2 are treated as signed integers
 
 * KMADA
 
- long __nds__kmada(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmada(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmada(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmada(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmada(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KMAXDA
 
- long __nds__kmaxda(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmaxda(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmaxda(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmaxda(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmaxda(int32x2_t t, int16x4_t a, int16x4_t b);
 
@@ -5099,28 +5134,28 @@ signed integers.
 
 * KMADS
 
- long __nds__kmads(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmads(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmads(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmads(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmads(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KMADRS
 
- long __nds__kmadrs(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmadrs(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmadrs(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmadrs(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmadrs(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KMAXDS
 
- long __nds__kmaxds(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmaxds(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmaxds(long t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmaxds(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmaxds(int32x2_t t, int16x4_t a, int16x4_t b);
 
@@ -5200,10 +5235,10 @@ bit is set to 1. The saturated result is written back to Rd.
 
 *Intrinsic functions:*
 
- long long __nds__kmar64(long long t, long a, long b);
+ int64_t __nds__kmar64(int64_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
-   long long __nds__v_kmar64(long long t, int32x2_t a, int32x2_t b);
+   int64_t __nds__v_kmar64(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KMDA, KMXDA
@@ -5294,19 +5329,19 @@ for RV64: x=1…0
 
 * KMDA
 
- long __nds__kmda(unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmda(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmda(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmda(int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmda(int16x4_t a, int16x4_t b);
 
 * KMXDA
 
- long __nds__kmxda(unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmxda(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long __nds__v_kmxda(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmxda(int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmxda(int16x4_t a, int16x4_t b);
 
@@ -5390,14 +5425,14 @@ form of the instruction additionally rounds up the most significant 32-bit of th
 
 * KMMAC
 
- long __nds__kmmac(long t, long a, long b);
+ intXLEN_t __nds__kmmac(intXLEN_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_kmmac(int32x2_t t, int32x2_t a, int32x2_t b);
 
 * KMMAC.u
 
- long __nds__kmmac_u(long t, long a, long b);
+ intXLEN_t __nds__kmmac_u(intXLEN_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_kmmac_u(int32x2_t t, int32x2_t a, int32x2_t b);
@@ -5476,19 +5511,19 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
 
 * KMMAWB
 
- long __nds__kmmawb(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawb(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawb(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawb(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawb(int32x2_t t, int32x2_t a, int16x4_t b);
 
 * KMMAWB.u
 
- long __nds__kmmawb_u(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawb_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawb_u(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawb_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawb_u(in32x2_t t, int32x2_t a, int16x4_t b);
 
@@ -5570,19 +5605,19 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * KMMAWB2
 
- long __nds__kmmawb2(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawb2(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawb2(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawb2(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawb2(in32x2_t t, int32x2_t a, int16x4_t b);
 
 * KMMAWB2.u
 
- long __nds__kmmawb2_u(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawb2_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawb2_u(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawb2_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawb2_u(in32x2_t t, int32x2_t a, int16x4_t b);
 
@@ -5660,19 +5695,19 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed to
 
 * KMMAWT
 
- long __nds__kmmawt(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawt(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawt(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawt(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawt(int32x2_t t, int32x2_t a, int16x4_t b);
 
 * KMMAWT.u
 
- long __nds__kmmawt_u(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawt_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawt_u(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawt_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawt_u(int32x2_t t, int32x2_t a, int16x4_t b);
 
@@ -5754,19 +5789,19 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * KMMAWT2
 
- long __nds__kmmawt2(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawt2(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawt2(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawt2(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawt2(in32x2_t t, int32x2_t a, int16x4_t b);
 
 * KMMAWT2.u
 
- long __nds__kmmawt2_u(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmmawt2_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmawt2_u(int t, int a, int16x2_t b);
+   int32_t __nds__v_kmmawt2_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmawt2_u(in32x2_t t, int32x2_t a, int16x4_t b);
 
@@ -5844,14 +5879,14 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed 32
 
 * KMMSB
 
- long __nds__kmmsb(long t, long a, long b);
+ intXLEN_t __nds__kmmsb(intXLEN_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_kmmsb(int32x2_t t, int32x2_t a, int32x2_t b);
 
 * KMMSB.u
 
- long __nds__kmmsb_u(long t, long a, long b);
+ intXLEN_t __nds__kmmsb_u(intXLEN_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__ v_kmmsb_u(int32x2_t t, int32x2_t a, int32x2_t b);
@@ -5929,20 +5964,20 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * KMMWB2
 
- long __nds__kmmwb2(long a, unsigned long b);
+ intXLEN_t __nds__kmmwb2(intXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmwb2(int a, int16x2_t b);
+   int32_t __nds__v_kmmwb2(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmwb2(int32x2_t a, int16x4_t b);
 
 
 * KMMWB2.u
 
- long __nds__kmmwb2_u(long a, unsigned long b);
+ intXLEN_t __nds__kmmwb2_u(intXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmwb2_u(int a, int16x2_t b);
+   int32_t __nds__v_kmmwb2_u(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmwb2_u(int32x2_t a, int16x4_t b);
 
@@ -6020,20 +6055,20 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * KMMWT2
 
- long __nds__kmmwt2(long a, unsigned long b);
+ intXLEN_t __nds__kmmwt2(intXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmwt2(int a, int16x2_t b);
+   int32_t __nds__v_kmmwt2(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmwt2(int32x2_t a, int16x4_t b);
 
 
 * KMMWT2.u
 
- long __nds__kmmwt2_u(long a, unsigned long b);
+ intXLEN_t __nds__kmmwt2_u(intXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmmwt2_u(int a, int16x2_t b);
+   int32_t __nds__v_kmmwt2_u(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmmwt2_u(int32x2_t a, int16x4_t b);
 
@@ -6115,19 +6150,19 @@ The two 32-bit multiplication results are then subtracted from the content of th
 
 * KMSDA
 
- long __nds__kmsda(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmsda(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmsda(int t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmsda(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmsda(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KMSXDA
 
- long __nds__kmsxda(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__kmsxda(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_kmsxda(int t, int16x2_t a, int16x2_t b);
+   int32_t __nds__v_kmsxda(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_kmsxda(int32x2_t t, int16x4_t a, int16x4_t b);
 
@@ -6194,10 +6229,10 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- long long __nds__kmsr64(long long t, long a, long b);
+ int64_t __nds__kmsr64(int64_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
-   long long __nds__v_kmsr64(long long t, int32x2_t a, int32x2_t b);
+   int64_t __nds__v_kmsr64(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KSLLW (Saturating Shift Left Logical for Word)
@@ -6243,7 +6278,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__ksllw(long a, unsigned int b);
+ intXLEN_t __nds__ksllw(intXLEN_t a, uint32_t b);
 
 <<<
 ===  KSLLIW (Saturating Shift Left Logical Immediate for Word)
@@ -6289,7 +6324,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
-long __nds__ksllw(long a, unsigned int b);
+intXLEN_t __nds__ksllw(intXLEN_t a, uint32_t b);
 
 <<<
 === KSLL8 (SIMD 8-bit Saturating Shift Left Logical)
@@ -6340,12 +6375,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksll8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__ksll8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_ksll8(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_ksll8(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_ksll8(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_ksll8(int8x8_t a, uint32_t b);
 
 <<<
 === KSLLI8 (SIMD 8-bit Saturating Shift Left Logical Immediate)
@@ -6397,12 +6432,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksll8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__ksll8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_ksll8(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_ksll8(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_ksll8(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_ksll8(int8x8_t a, uint32_t b);
 
 <<<
 === KSLL16 (SIMD 16-bit Saturating Shift Left Logical)
@@ -6453,12 +6488,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksll16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__ksll16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_ksll16(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_ksll16(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_ksll16(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_ksll16(int16x4_t a, uint32_t b);
 
 <<<
 ===  KSLLI16 (SIMD 16-bit Saturating Shift Left Logical Immediate)
@@ -6509,12 +6544,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksll16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__ksll16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_ksll16(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_ksll16(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_ksll16(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_ksll16(int16x4_t a, uint32_t b);
 
 <<<
 === KSLRA8, KSLRA8.u
@@ -6595,7 +6630,7 @@ The left-shifted results are saturated to the 8-bit signed integer range of [-2^
 
 * KSLRA8
 
- unsigned long __nds__kslra8(unsigned long a, int b);
+ uintXLEN_t __nds__kslra8(uintXLEN_t a, int b);
 
  RV32:
    int8x4_t __nds__v_kslra8(int8x4_t a, int b);
@@ -6604,7 +6639,7 @@ The left-shifted results are saturated to the 8-bit signed integer range of [-2^
 
 * KSLRA8.u
 
- unsigned long __nds__kslra8_u(unsigned long a, int b);
+ uintXLEN_t __nds__kslra8_u(uintXLEN_t a, int b);
 
  RV32:
    int8x4_t __nds__v_kslra8_u(int8x4_t a, int b);
@@ -6689,7 +6724,7 @@ The left-shifted results are saturated to the 16-bit signed integer range of [-2
 
 * KSLRA16
 
- unsigned long __nds__kslra16(unsigned long a, int b);
+ uintXLEN_t __nds__kslra16(uintXLEN_t a, int b);
 
  RV32:
    int16x2_t __nds__v_kslra16(int16x2_t a, int b);
@@ -6698,7 +6733,7 @@ The left-shifted results are saturated to the 16-bit signed integer range of [-2
 
 * KSLRA16.u
 
- unsigned long __nds__kslra16_u(unsigned long a, int b);
+ uintXLEN_t __nds__kslra16_u(uintXLEN_t a, int b);
 
  RV32:
    int16x2_t __nds__v_kslra16_u(int16x2_t a, int b);
@@ -6761,7 +6796,7 @@ The left-shifted result is saturated to the 32-bit signed integer range of [-2^3
 
 *Intrinsic functions:*
 
- long __nds__kslraw(int a, int b);
+ intXLEN_t __nds__kslraw(int32_t a, int32_t b);
 
 <<<
 === KSLRAW.u (Shift Left Logical with Q31 Saturation or Rounding Shift Right Arithmetic)
@@ -6820,7 +6855,7 @@ The left-shifted result is saturated to the 32-bit signed integer range of [-2^3
 
 *Intrinsic functions:*
 
- long __nds__kslraw_u(int a, int b);
+ intXLEN_t __nds__kslraw_u(int32_t a, int32_t b);
 
 <<<
 === KSTAS16 (SIMD 16-bit Signed Saturating Straight Addition & Subtraction)
@@ -6872,7 +6907,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__kstas16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kstas16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_kstas16(int16x2_t a, int16x2_t b);
@@ -6929,7 +6964,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__kstsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kstsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_kstsa16(int16x2_t a, int16x2_t b);
@@ -6982,7 +7017,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksub8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ksub8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_ksub8(int8x4_t a, int8x4_t b);
@@ -7035,7 +7070,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksub16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ksub16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_ksub16(int16x2_t a, int16x2_t b);
@@ -7105,7 +7140,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the oper
 
 *Intrinsic functions:*
 
- long long __nds__ksub64(long long a, long long b);
+ int64_t __nds__ksub64(int64_t a, int64_t b);
 
 <<<
 === KSUBH (Signed Subtraction with Q15 Saturation)
@@ -7153,7 +7188,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__ksubh(int a, int b);
+ intXLEN_t __nds__ksubh(int32_t a, int32_t b);
 
 <<<
 === KSUBW (Signed Subtraction with Q31 Saturation)
@@ -7202,7 +7237,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__ksubw(int a, int b);
+ intXLEN_t __nds__ksubw(int32_t a, int32_t b);
 
 <<<
 === KWMMUL, KWMMUL.u
@@ -7275,14 +7310,14 @@ This instruction multiplies the 32-bit elements of Rs1 with the 32-bit elements 
 
 * KWMMUL
 
- long __nds__kwmmul(long a, long b);
+ intXLEN_t __nds__kwmmul(intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_kwmmul(int32x2_t a, int32x2_t b);
 
 * KWMMUL.u
 
- long __nds__kwmmul_u(long a, long b);
+ intXLEN_t __nds__kwmmul_u(intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_kwmmul_u(int32x2_t a, int32x2_t b);
@@ -7370,7 +7405,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__maxw(int a, int b);
+ intXLEN_t __nds__maxw(int32_t a, int32_t b);
 
 <<<
 === MINW (32-bit Signed Word Minimum)
@@ -7412,7 +7447,7 @@ if (Rs1.W[0] >= Rs2.W[0]) {
 
 *Intrinsic functions:*
 
- long __nds__minw(int a, int b);
+ intXLEN_t __nds__minw(int32_t a, int32_t b);
 
 <<<
 === MSUBR32 (Multiply and Subtract from 32-Bit Word)
@@ -7606,12 +7641,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__pbsad(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pbsad(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   unsigned int __nds__v_pbsad(uint8x4_t a, uint8x4_t b);
+   uint32_t __nds__v_pbsad(uint8x4_t a, uint8x4_t b);
  RV64:
-   unsigned long __nds__v_pbsad(uint8x8_t a, uint8x8_t b);
+   uint64_t __nds__v_pbsad(uint8x8_t a, uint8x8_t b);
 
 <<<
 === PBSADA (Parallel Byte Sum of Absolute Difference Accum)
@@ -7652,12 +7687,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__pbsada(unsigned long t, unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pbsada(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   unsigned int __nds__v_pbsada(unsigned long t, uint8x4_t a, uint8x4_t b);
+   uint32_t __nds__v_pbsada(uint32_t t, uint8x4_t a, uint8x4_t b);
  RV64:
-   unsigned long __nds__v_pbsada(unsigned long t, uint8x8_t a, uint8x8_t b);
+   uint64_t __nds__v_pbsada(uint64_t t, uint8x8_t a, uint8x8_t b);
 
 <<<
 === PKBB16, PKBT16, PKTT16, PKTB16
@@ -7736,7 +7771,7 @@ Rd.W[x] [15:0].
 
 * PKBB16
 
- unsigned long __nds__pkbb16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pkbb16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_pkbb16(uint16x2_t a, uint16x2_t b);
@@ -7745,7 +7780,7 @@ Rd.W[x] [15:0].
 
 * PKBT16
 
- unsigned long __nds__pkbt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pkbt16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_pkbt16(uint16x2_t a, uint16x2_t b);
@@ -7754,7 +7789,7 @@ Rd.W[x] [15:0].
 
 * PKTB16
 
- unsigned long __nds__pktb16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pktb16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_pktb16(uint16x2_t a, uint16x2_t b);
@@ -7763,7 +7798,7 @@ Rd.W[x] [15:0].
 
 * PKTT16
 
- unsigned long __nds__pktt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pktt16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_pktt16(uint16x2_t a, uint16x2_t b);
@@ -7812,7 +7847,7 @@ for RV64: x=7…0
 
 *Intrinsic functions:*
 
- unsigned long __nds__radd8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__radd8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_radd8(int8x4_t a, int8x4_t b);
@@ -7861,7 +7896,7 @@ for RV64: x=3…0
 
 *Intrinsic functions:*
 
- unsigned long __nds__radd16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__radd16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_radd16(int16x2_t a, int16x2_t b);
@@ -7919,7 +7954,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- long long __nds__radd64(long long a, long long b);
+ int64_t __nds__radd64(int64_t a, int64_t b);
 
 <<<
 === RADDW (32-bit Signed Halving Addition)
@@ -7968,7 +8003,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__raddw(int a, int b);
+ intXLEN_t __nds__raddw(int32_t a, int32_t b);
 
 <<<
 ===  RCRAS16 (SIMD 16-bit Signed Halving Cross Addition & Subtraction)
@@ -8009,7 +8044,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rcras16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rcras16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_rcras16(int16x2_t a, int16x2_t b);
@@ -8055,7 +8090,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rcrsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rcrsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_rcrsa16(int16x2_t a, int16x2_t b);
@@ -8086,7 +8121,7 @@ l|31    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rdov(void);
+ uintXLEN_t __nds__rdov(void);
 
 <<<
 === RSTAS16 (SIMD 16-bit Signed Halving Straight Addition & Subtraction)
@@ -8127,7 +8162,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rstas16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rstas16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_rstas16(int16x2_t a, int16x2_t b);
@@ -8173,7 +8208,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rstsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rstsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_rstsa16(int16x2_t a, int16x2_t b);
@@ -8224,7 +8259,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rsub8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rsub8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_rsub8(int8x4_t a, int8x4_t b);
@@ -8273,7 +8308,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rsub16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rsub16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_rsub16(int16x2_t a, int16x2_t b);
@@ -8331,7 +8366,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- long long __nds__rsub64(long long a, long long b);
+ int64_t __nds__rsub64(int64_t a, int64_t b);
 
 <<<
 === RSUBW (32-bit Signed Halving Subtraction)
@@ -8380,7 +8415,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__rsubw(int a, int b);
+ intXLEN_t __nds__rsubw(int32_t a, int32_t b);
 
 <<<
 === SCLIP8 (SIMD 8-bit Signed Clip Value)
@@ -8428,12 +8463,12 @@ l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sclip8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sclip8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_sclip8(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_sclip8(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_sclip8(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_sclip8(int8x8_t a, uint32_t b);
 
 <<<
 ===  SCLIP16 (SIMD 16-bit Signed Clip Value)
@@ -8481,12 +8516,12 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sclip16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sclip16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_sclip16(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_sclip16(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_sclip16(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_sclip16(int16x4_t a, uint32_t b);
 
 <<<
 === SCLIP32 (SIMD 32-bit Signed Clip Value)
@@ -8534,10 +8569,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__sclip32(long a, unsigned int b);
+ intXLEN_t __nds__sclip32(intXLEN_t a, uint32_t b);
 
  RV64:
-   int32x2_t __nds__v_sclip32(int32x2_t a, unsigned int b);
+   int32x2_t __nds__v_sclip32(int32x2_t a, uint32_t b);
 
 <<<
 === SCMPLE8 (SIMD 8-bit Signed Compare Less Than & Equal)
@@ -8577,7 +8612,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__scmple8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__scmple8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_scmple8(int8x4_t a, int8x4_t b);
@@ -8622,7 +8657,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__scmple16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__scmple16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_scmple16(int16x2_t a, int16x2_t b);
@@ -8667,7 +8702,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__scmplt8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__scmplt8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_scmplt8(int8x4_t a, int8x4_t b);
@@ -8712,7 +8747,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__scmplt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__scmplt16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_scmplt16(int16x2_t a, int16x2_t b);
@@ -8758,12 +8793,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sll8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sll8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_sll8(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_sll8(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_sll8(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_sll8(uint8x8_t a, uint32_t b);
 
 <<<
 === SLLI8 (SIMD 8-bit Shift Left Logical Immediate)
@@ -8804,12 +8839,12 @@ l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sll8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sll8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_sll8(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_sll8(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_sll8(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_sll8(uint8x8_t a, uint32_t b);
 
 <<<
 ===  SLL16 (SIMD 16-bit Shift Left Logical)
@@ -8850,12 +8885,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sll16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sll16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_sll16(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_sll16(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_sll16(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_sll16(uint16x4_t a, uint32_t b);
 
 <<<
 ===  SLLI16 (SIMD 16-bit Shift Left Logical Immediate)
@@ -8896,12 +8931,12 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sll16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sll16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_sll16(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_sll16(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_sll16(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_sll16(uint16x4_t a, uint32_t b);
 
 <<<
 ===  SMAL (Signed Multiply Halfs & Add 64-bit)
@@ -8960,12 +8995,12 @@ This instruction multiplies the bottom 16-bit content of the 32-bit elements of 
 
 *Intrinsic functions:*
 
- long long __nds__smal(long long a, unsigned long b);
+ int64_t __nds__smal(int64_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smal(long long a, int16x2_t b);
+   int64_t __nds__v_smal(int64_t a, int16x2_t b);
  RV64:
-   long __nds__v_smal(long a, int16x4_t b);
+   int64_t __nds__v_smal(int64_t a, int16x4_t b);
 
 <<<
 === SMALBB, SMALBT, SMALTT
@@ -9087,31 +9122,31 @@ The multiplication results are added with the 64-bit value of Rd. The 64-bit add
 
 * SMALBB
 
- long long __nds__smalbb(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smalbb(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smalbb(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smalbb(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smalbb(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smalbb(int64_t t, int16x4_t a, int16x4_t b);
 
 
 * SMALBT
 
- long long __nds__smalbt(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smalbt(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smalbt(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smalbt(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smalbt(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smalbt(int64_t t, int16x4_t a, int16x4_t b);
 
 * SMALTT
 
- long long __nds__smaltt(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smaltt(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smaltt(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smaltt(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smaltt(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smaltt(int64_t t, int16x4_t a, int16x4_t b);
 
 <<<
 === SMALDA, SMALXDA
@@ -9218,22 +9253,22 @@ The results are added to the 64-bit value of Rd. The 64-bit addition result is w
 
 * SMALDA
 
- long long __nds__smalda(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smalda(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smalda(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smalda(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smalda(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smalda(int64_t t, int16x4_t a, int16x4_t b);
 
 
 * SMALXDA
 
- long long __nds__smalxda(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smalxda(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smalxda(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smalxda(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smalxda(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smalxda(int64_t t, int16x4_t a, int16x4_t b);
 
 <<<
 === SMALDS, SMALDRS, SMALXDS
@@ -9352,30 +9387,30 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 
 * SMALDS
 
- long long __nds__smalds(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smalds(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smalds(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smalds(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smalds(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smalds(int64_t t, int16x4_t a, int16x4_t b);
 
 * SMALDRS
 
- long long __nds__smaldrs(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smaldrs(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smaldrs(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smaldrs(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smaldrs(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smaldrs(int64_t t, int16x4_t a, int16x4_t b);
 
 * SMALXDS
 
- long long __nds__smalxds(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smalxds(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smalxds(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smalxds(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long __nds__v_smalxds(long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smalxds(int64_t t, int16x4_t a, int16x4_t b);
 
 <<<
 === SMAR64 (Signed Multiply and Add to 64-Bit Data)
@@ -9426,10 +9461,10 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- long long __nds__smar64(long long t, long a, long b);
+ int64_t __nds__smar64(int64_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
-   long __nds__v_smar64(long t, int32x2_t a, int32x2_t b);
+   int64_t __nds__v_smar64(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === SMAQA (Signed Multiply Four Bytes with 32-bit Adds)
@@ -9476,10 +9511,10 @@ This instruction multiplies the four signed 8-bit elements of 32-bit chunks of R
 
 *Intrinsic functions:*
 
- long __nds__smaqa(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__smaqa(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smaqa(int t, int8x4_t a, int8x4_t b);
+   int32_t __nds__v_smaqa(int32_t t, int8x4_t a, int8x4_t b);
  RV64:
    int32x2_t __nds__v_smaqa(int32x2_t t, int8x8_t a, int8x8_t b);
 
@@ -9528,10 +9563,10 @@ This instruction multiplies the four signed 8-bit elements of 32-bit chunks of R
 
 *Intrinsic functions:*
 
- long __nds__smaqa_su(long t, unsigned long a, unsigned long b);
+ intXLEN_t __nds__smaqa_su(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smaqa_su (int t, int8x4_t a, int8x4_t b);
+   int32_t __nds__v_smaqa_su (int32_t t, int8x4_t a, int8x4_t b);
  RV64:
    int32x2_t __nds__v_smaqa_su (int32x2_t t, int8x8_t a, int8x8_t b);
 
@@ -9573,7 +9608,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__smax8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__smax8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_smax8(int8x4_t a, int8x4_t b);
@@ -9618,7 +9653,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__smax16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__smax16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_smax16(int16x2_t a, int16x2_t b);
@@ -9711,28 +9746,28 @@ The multiplication results are written to Rd. The 16-bit contents of Rs1 and Rs2
 
 * SMBB16
 
- long __nds__smbb16(unsigned long a, unsigned long b);
+ intXLEN_t __nds__smbb16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smbb16(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_smbb16(int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_smbb16(int16x4_t a, int16x4_t b);
 
 * SMBT16
 
- long __nds__smbt16(unsigned long a, unsigned long b);
+ intXLEN_t __nds__smbt16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smbt16(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_smbt16(int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_smbt16(int16x4_t a, int16x4_t b);
 
 * SMTT16
 
- long __nds__smtt16(unsigned long a, unsigned long b);
+ intXLEN_t __nds__smtt16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smtt16(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_smtt16(int16x2_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_smtt16(int16x4_t a, int16x4_t b);
 
@@ -9830,28 +9865,28 @@ The subtraction result is written to the corresponding 32-bit element of Rd. The
 
 * SMDS
 
- long __nds__smds(unsigned long a, unsigned long b);
+ intXLEN_t __nds__smds(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smds(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_smds(int16x2_t a, int16x2_t b);
  RV64:
    int32x2 __nds__v_smds(int16x4_t a, int16x4_t b);
 
 * SMDRS
 
- long __nds__smdrs(unsigned long a, unsigned long b);
+ intXLEN_t __nds__smdrs(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smdrs(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_smdrs(int16x2_t a, int16x2_t b);
  RV64:
    int32x2 __nds__v_smdrs(int16x4_t a, int16x4_t b);
 
 * SMXDS
 
- long __nds__smxds(unsigned long a, unsigned long b);
+ intXLEN_t __nds__smxds(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smxds(int16x2_t a, int16x2_t b);
+   int32_t __nds__v_smxds(int16x2_t a, int16x2_t b);
  RV64:
    int32x2 __nds__v_smxds(int16x4_t a, int16x4_t b);
 
@@ -9893,7 +9928,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__smin8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__smin8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int8x4_t __nds__v_smin8(int8x4_t a, int8x4_t b);
@@ -9938,7 +9973,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__smin16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__smin16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    int16x2_t __nds__v_smin16(int16x2_t a, int16x2_t b);
@@ -10013,14 +10048,14 @@ This instruction multiplies the 32-bit elements of Rs1 with the 32-bit elements 
 
 * SMMUL
 
- long __nds__smmul(long a, long b);
+ intXLEN_t __nds__smmul(intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_smmul(int32x2_t a, int32x2_t b);
 
 * SMMUL.u
 
- long __nds__smmul_u(long a, long b);
+ intXLEN_t __nds__smmul_u(intXLEN_t a, intXLEN_t b);
 
  RV64:
    int32x2_t __nds__v_smmul_u(int32x2_t a, int32x2_t b);
@@ -10091,19 +10126,19 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
 
 * SMMWB
 
- long __nds__smmwb(long a, unsigned long b);
+ intXLEN_t __nds__smmwb(intXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smmwb(int a, int16x2_t b);
+   int32_t __nds__v_smmwb(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_smmwb(int32x2_t a, int16x4_t b);
 
 * SMMWB.u
 
- long __nds__smmwb_u(long a, unsigned long b);
+ intXLEN_t __nds__smmwb_u(intXLEN_t a, uintXLEN_t b);
 
  RV32:
-   int __nds__v_smmwb_u(int a, int16x2_t b);
+   int32_t __nds__v_smmwb_u(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __nds__v_smmwb_u(int32x2_t a, int16x4_t b);
 
@@ -10173,7 +10208,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 
 * SMMWT
 
- long __nds__smmwt(long a, unsigned long b);
+ intXLEN_t __nds__smmwt(intXLEN_t a, uintXLEN_t b);
 
  RV32:
    int __nds__v_smmwt(int a, int16x2_t b);
@@ -10182,7 +10217,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 
 * SMMWT.u
 
- long __nds__smmwt_u(long a, unsigned long b);
+ intXLEN_t __nds__smmwt_u(intXLEN_t a, uintXLEN_t b);
 
  RV32:
    int __nds__v_smmwt_u(int a, int16x2_t b);
@@ -10292,22 +10327,22 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 
 * SMSLDA
 
- long long __nds__smslda(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smslda(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smslda(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smslda(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long long __nds__v_smslda(long long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smslda(int64_t t, int16x4_t a, int16x4_t b);
 
 
 * SMSLXDA
 
- long long __nds__smslxda(long long t, unsigned long a, unsigned long b);
+ int64_t __nds__smslxda(int64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   long long __nds__v_smslxda(long long t, int16x2_t a, int16x2_t b);
+   int64_t __nds__v_smslxda(int64_t t, int16x2_t a, int16x2_t b);
  RV64:
-   long long __nds__v_smslxda(long long t, int16x4_t a, int16x4_t b);
+   int64_t __nds__v_smslxda(int64_t t, int16x4_t a, int16x4_t b);
 
 <<<
 === SMSR64 (Signed Multiply and Subtract from 64-Bit Data)
@@ -10358,10 +10393,10 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- long long __nds__smsr64(long long t, long a, long b);
+ int64_t __nds__smsr64(int64_t t, intXLEN_t a, intXLEN_t b);
 
  RV64:
-   long __nds__v_smsr64(long t, int32x2_t a, int32x2_t b);
+   int64_t __nds__v_smsr64(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === SMUL8, SMULX8
@@ -10403,19 +10438,39 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do signed 8-bit multiplications and generate four 16-bit results simultaneously.
 
-*RV32 Description:* For the “SMUL8” instruction, multiply the 8-bit data elements of Rs1 with the corresponding 8-bit data elements of Rs2.
+*RV32 Description:* For the “SMUL8” instruction, multiply the 8-bit data elements of Rs1
+with the corresponding 8-bit data elements of Rs2.
 
-For the “SMULX8” instruction, multiply the _first_ and _second_ 8-bit data elements of Rs1 with the _second_ and _first_ 8-bit data elements of Rs2. At the same time, multiply the _third_ and _fourth_ 8-bit data elements of Rs1 with the _fourth_ and _third_ 8-bit data elements of Rs2.
+For the “SMULX8” instruction, multiply the _first_ and _second_ 8-bit data elements of Rs1
+with the _second_ and _first_ 8-bit data elements of Rs2. At the same time, multiply the
+_third_ and _fourth_ 8-bit data elements of Rs1 with the _fourth_ and _third_ 8-bit data
+elements of Rs2.
 
-The four 16-bit results are then written into an even/odd pair of registers specified by Rd(4,1). Rd(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
+The four 16-bit results are then written into an even/odd pair of registers specified
+by Rd(4,1). Rd(4,1), i.e., _d_, determines the even/odd pair group of two registers.
+Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-The odd “2__d__+1” register of the pair contains the two 16-bit results calculated from the top part of Rs1 and the even “2__d__” register of the pair contains the two 16-bit results calculated from the bottom part of Rs1.
+The odd “2__d__+1” register of the pair contains the two 16-bit results calculated
+from the top part of Rs1 and the even “2__d__” register of the pair contains the two
+16-bit results calculated from the bottom part of Rs1.
 
-*RV64 Description:* For the “SMUL8” instruction, multiply the 8-bit data elements of Rs1 with the corresponding 8-bit data elements of Rs2.
+image::smul8-rv32.png[]
 
-For the “SMULX8” instruction, multiply the _first_ and _second_ 8-bit data elements of Rs1 with the _second_ and _first_ 8-bit data elements of Rs2. At the same time, multiply the _third_ and _fourth_ 8-bit data elements of Rs1 with the _fourth_ and _third_ 8-bit data elements of Rs2.
+*RV64 Description:* For the “SMUL8” instruction, multiply the 8-bit data elements of
+the lower 32-bit word of Rs1 with the corresponding 8-bit data elements of the lower
+32-bit word of Rs2.
 
-The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 16-bit results calculated from the top part of Rs1 and the Rd.W[0] contains the two 16-bit results calculated from the bottom part of Rs1.
+For the “SMULX8” instruction, multiply the _first_ and _second_ 8-bit data elements of
+the lower 32-bit word of Rs1 with the _second_ and _first_ 8-bit data elements of the lower
+32-bit word of Rs2. At the same time, multiply the _third_ and _fourth_ 8-bit data elements
+of the lower 32-bit word of Rs1 with the _fourth_ and _third_ 8-bit data elements of the
+lower 32-bit word of Rs2.
+
+The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 16-bit
+results calculated from the top part of Rs1 and the Rd.W[0] contains the two 16-bit results
+calculated from the bottom part of Rs1.
+
+image::smul8-rv64.png[]
 
 *Operations:*
 
@@ -10461,14 +10516,14 @@ The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 1
 
 * SMUL8
 
- unsigned long long __nds__smul8(unsigned int a, unsigned int b);
+ uint64_t __nds__smul8(unsigned int a, unsigned int b);
 
  int16x4_t __nds__v_smul8(int8x4_t a, int8x4_t b);
 
 
 * SMULX8
 
- unsigned long long __nds__smulx8(unsigned int a, unsigned int b);
+ uint64_t __nds__smulx8(unsigned int a, unsigned int b);
 
  int16x4_t __nds__v_smulx8(int8x4_t a, int8x4_t b);
 
@@ -10570,14 +10625,14 @@ The two 32-bit Q30 results are then written into Rd. The result calculated from 
 
 * SMUL16
 
- unsigned long long __nds__smul16(unsigned int a, unsigned int b);
+ uint64_t __nds__smul16(uint32_t a, uint32_t b);
 
  int32x2_t __nds__v_smul16(int16x2_t a, int16x2_t b);
 
 
 * SMULX16
 
- unsigned long long __nds__smulx16(unsigned int a, unsigned int b);
+ uint64_t __nds__smulx16(uint32_t a, uint32_t b);
 
  int32x2_t __nds__v_smulx16(int16x2_t a, int16x2_t b);
 
@@ -10635,7 +10690,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__sra_u(long a, unsigned int b);
+ intXLEN_t __nds__sra_u(intXLEN_t a, uint32_t b);
 
 <<<
 ===  SRAI.u (Rounding Shift Right Arithmetic Immediate)
@@ -10692,7 +10747,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- long __nds__sra_u(long a, unsigned int b);
+ intXLEN_t __nds__sra_u(intXLEN_t a, uint32_t b);
 
 <<<
 === SRA8, SRA8.u
@@ -10762,21 +10817,21 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRA8
 
- unsigned long __nds__sra8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sra8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_sra8(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_sra8(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_sra8(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_sra8(int8x8_t a, uint32_t b);
 
 * SRA8.u
 
- unsigned long __nds__sra8_u(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sra8_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_sra8_u(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_sra8_u(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_sra8_u(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_sra8_u(int8x8_t a, uint32_t b);
 
 <<<
 === SRAI8, SRAI8.u
@@ -10847,22 +10902,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRAI8
 
- unsigned long __nds__sra8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sra8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_sra8(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_sra8(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_sra8(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_sra8(int8x8_t a, uint32_t b);
 
 
 * SRAI8.u
 
- unsigned long __nds__sra8_u(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__sra8_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int8x4_t __nds__v_sra8_u(int8x4_t a, unsigned int b);
+   int8x4_t __nds__v_sra8_u(int8x4_t a, uint32_t b);
  RV64:
-   int8x8_t __nds__v_sra8_u(int8x8_t a, unsigned int b);
+   int8x8_t __nds__v_sra8_u(int8x8_t a, uint32_t b);
 
 <<<
 ===  SRA16, SRA16.u
@@ -10932,22 +10987,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRA16
 
- unsigned long __nds__sra16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sra16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_sra16(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_sra16(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_sra16(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_sra16(int16x4_t a, uint32_t b);
 
 
 * SRA16.u
 
- unsigned long __nds__sra16_u(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sra16_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_sra16_u(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_sra16_u(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_sra16_u(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_sra16_u(int16x4_t a, uint32_t b);
 
 <<<
 ===  SRAI16, SRAI16.u
@@ -11017,22 +11072,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRAI16
 
- unsigned long __nds__sra16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sra16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_sra16(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_sra16(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_sra16(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_sra16(int16x4_t a, uint32_t b);
 
 
 * SRAI16.u
 
- unsigned long __nds__sra16_u(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sra16_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   int16x2_t __nds__v_sra16_u(int16x2_t a, unsigned int b);
+   int16x2_t __nds__v_sra16_u(int16x2_t a, uint32_t b);
  RV64:
-   int16x4_t __nds__v_sra16_u(int16x4_t a, unsigned int b);
+   int16x4_t __nds__v_sra16_u(int16x4_t a, uint32_t b);
 
 <<<
 === SRL8, SRL8.u
@@ -11102,22 +11157,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRL8
 
- unsigned long __nds__srl8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_srl8(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_srl8(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_srl8(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_srl8(uint8x8_t a, uint32_t b);
 
 
 * SRL8.u
 
- unsigned long __nds__srl8_u(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl8_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_srl8_u(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_srl8_u(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_srl8_u(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_srl8_u(uint8x8_t a, uint32_t b);
 
 <<<
 === SRLI8, SRLI8.u
@@ -11187,22 +11242,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRLI8
 
- unsigned long __nds__srl8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_srl8(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_srl8(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_srl8(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_srl8(uint8x8_t a, uint32_t b);
 
 
 * SRLI8.u
 
- unsigned long __nds__srl8_u(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl8_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_srl8_u(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_srl8_u(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_srl8_u(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_srl8_u(uint8x8_t a, uint32_t b);
 
 <<<
 ===  SRL16, SRL16.u
@@ -11271,22 +11326,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRL16
 
- unsigned long __nds__srl16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_srl16(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_srl16(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_srl16(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_srl16(uint16x4_t a, uint32_t b);
 
 
 * SRL16.u
 
- unsigned long __nds__srl16_u(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl16_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_srl16_u(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_srl16_u(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_srl16_u(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_srl16_u(uint16x4_t a, uint32_t b);
 
 <<<
 === SRLI16, SRLI16.u
@@ -11356,21 +11411,21 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRLI16
 
- unsigned long __nds__srl16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_srl16(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_srl16(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_srl16(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_srl16(uint16x4_t a, uint32_t b);
 
 * SRLI16.u
 
- unsigned long __nds__srl16_u(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__srl16_u(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_srl16_u(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_srl16_u(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_srl16_u(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_srl16_u(uint16x4_t a, uint32_t b);
 
 <<<
 === STAS16 (SIMD 16-bit Straight Addition & Subtraction)
@@ -11411,7 +11466,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__stas16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__stas16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ustas16(uint16x2_t a, uint16x2_t b);
@@ -11460,7 +11515,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__stsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__stsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ustsa16(uint16x2_t a, uint16x2_t b);
@@ -11508,7 +11563,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sub8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sub8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_usub8(uint8x4_t a, uint8x4_t b);
@@ -11556,7 +11611,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sub16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sub16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_usub16(uint16x2_t a, uint16x2_t b);
@@ -11617,10 +11672,10 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the oper
 
 *Intrinsic functions:*
 
- long long __nds__ssub64(long long a, long long b);
+ int64_t __nds__ssub64(int64_t a, int64_t b);
 
- unsigned long long __nds__usub64(unsigned long long a, +
- unsigned long long b);
+ uint64_t __nds__usub64(uint64_t a, +
+ uint64_t b);
 
 <<<
 === SUNPKD810, SUNPKD820, SUNPKD830, SUNPKD831, SUNPKD832
@@ -11692,7 +11747,7 @@ For the “SUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * SUNPK810
 
- unsigned long __nds__sunpkd810(unsigned long a);
+ uintXLEN_t __nds__sunpkd810(uintXLEN_t a);
 
  RV32:
    int16x2_t __nds__v_sunpkd810(int8x4_t a);
@@ -11702,7 +11757,7 @@ For the “SUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * SUNPK820
 
- unsigned long __nds__sunpkd820(unsigned long a);
+ uintXLEN_t __nds__sunpkd820(uintXLEN_t a);
 
  RV32:
    int16x2_t __nds__v_sunpkd820(int8x4_t a);
@@ -11711,7 +11766,7 @@ For the “SUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * SUNPK830
 
- unsigned long __nds__sunpkd830(unsigned long a);
+ uintXLEN_t __nds__sunpkd830(uintXLEN_t a);
 
  RV32:
    int16x2_t __nds__v_sunpkd830(int8x4_t a);
@@ -11720,7 +11775,7 @@ For the “SUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * SUNPK831
 
- unsigned long __nds__sunpkd831(unsigned long a);
+ uintXLEN_t __nds__sunpkd831(uintXLEN_t a);
 
  RV32:
    int16x2_t __nds__v_sunpkd831(int8x4_t a);
@@ -11729,7 +11784,7 @@ For the “SUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * SUNPK832
 
- unsigned long __nds__sunpkd832(unsigned long a);
+ uintXLEN_t __nds__sunpkd832(uintXLEN_t a);
 
  RV32:
    int16x2_t __nds__v_sunpkd832(int8x4_t a);
@@ -11775,7 +11830,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__swap8(unsigned long a);
+ uintXLEN_t __nds__swap8(uintXLEN_t a);
 
  RV32:
    uint8x4_t __nds__v_swap8(uint8x4_t a);
@@ -11821,7 +11876,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__swap16(unsigned long a);
+ uintXLEN_t __nds__swap16(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_swap16(uint16x2_t a);
@@ -11874,12 +11929,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uclip8(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__uclip8(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint8x4_t __nds__v_uclip8(uint8x4_t a, unsigned int b);
+   uint8x4_t __nds__v_uclip8(uint8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __nds__v_uclip8(uint8x8_t a, unsigned int b);
+   uint8x8_t __nds__v_uclip8(uint8x8_t a, uint32_t b);
 
 <<<
 === UCLIP16 (SIMD 16-bit Unsigned Clip Value)
@@ -11927,12 +11982,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uclip16(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__uclip16(uintXLEN_t a, uint32_t b);
 
  RV32:
-   uint16x2_t __nds__v_uclip16(uint16x2_t a, unsigned int b);
+   uint16x2_t __nds__v_uclip16(uint16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __nds__v_uclip16(uint16x4_t a, unsigned int b);
+   uint16x4_t __nds__v_uclip16(uint16x4_t a, uint32_t b);
 
 <<<
 === UCLIP32 (SIMD 32-bit Unsigned Clip Value)
@@ -11980,10 +12035,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uclip32(unsigned long a, unsigned int b);
+ uintXLEN_t __nds__uclip32(uintXLEN_t a, uint32_t b);
 
  RV64:
-   uint32x2_t __nds__v_uclip32(uint32x2_t a, unsigned int b);
+   uint32x2_t __nds__v_uclip32(uint32x2_t a, uint32_t b);
 
 <<<
 === UCMPLE8 (SIMD 8-bit Unsigned Compare Less Than & Equal)
@@ -12023,7 +12078,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ucmple8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ucmple8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_ucmple8(uint8x4_t a, uint8x4_t b);
@@ -12068,7 +12123,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ucmple16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ucmple16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ucmple16(uint16x2_t a, uint16x2_t b);
@@ -12113,7 +12168,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ucmplt8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ucmplt8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_ucmplt8(uint8x4_t a, uint8x4_t b);
@@ -12158,7 +12213,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ucmplt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ucmplt16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ucmplt16(uint16x2_t a, uint16x2_t b);
@@ -12208,7 +12263,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukadd8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukadd8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_ukadd8(uint8x4_t a, uint8x4_t b);
@@ -12258,7 +12313,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukadd16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukadd16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ukadd16(uint16x2_t a, uint16x2_t b);
@@ -12324,8 +12379,8 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- unsigned long long __nds__ukadd64(unsigned long long a, +
- unsigned long long b);
+ uint64_t __nds__ukadd64(uint64_t a, +
+ uint64_t b);
 
 <<<
 === UKADDH (Unsigned Addition with U16 Saturation)
@@ -12368,7 +12423,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukaddh(unsigned int a, unsigned int b);
+ uintXLEN_t __nds__ukaddh(uint32_t a, uint32_t b);
 
 <<<
 === UKADDW (Unsigned Addition with U32 Saturation)
@@ -12412,7 +12467,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukaddw(unsigned int a, unsigned int b);
+ uintXLEN_t __nds__ukaddw(uint32_t a, uint32_t b);
 
 <<<
 === UKCRAS16 (SIMD 16-bit Unsigned Saturating Cross Addition & Subtraction)
@@ -12463,7 +12518,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukcras16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukcras16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ukcras16(uint16x2_t a, uint16x2_t b);
@@ -12518,7 +12573,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukcrsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukcrsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ukcrsa16(uint16x2_t a, uint16x2_t b);
@@ -12583,11 +12638,11 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- unsigned long long __nds__ukmar64(unsigned long long t, +
- unsigned long a, unsigned long b);
+ uint64_t __nds__ukmar64(uint64_t t, +
+ uintXLEN_t a, uintXLEN_t b);
 
  RV64:
-   unsigned long long __nds__v_ukmar64(unsigned long long t, +
+   uint64_t __nds__v_ukmar64(uint64_t t, +
    uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -12648,11 +12703,11 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- unsigned long long __nds__ukmsr64(unsigned long long t, +
- unsigned long a, unsigned long b);
+ uint64_t __nds__ukmsr64(uint64_t t, +
+ uintXLEN_t a, uintXLEN_t b);
 
  RV64:
-   unsigned long long __nds__v_ukmsr64(unsigned long long t, +
+   uint64_t __nds__v_ukmsr64(uint64_t t, +
    uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -12704,7 +12759,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukstas16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukstas16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ukstas16(uint16x2_t a, uint16x2_t b);
@@ -12759,7 +12814,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukstsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukstsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ukstsa16(uint16x2_t a, uint16x2_t b);
@@ -12809,7 +12864,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uksub8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__uksub8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_uksub8(uint8x4_t a, uint8x4_t b);
@@ -12859,7 +12914,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uksub16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__uksub16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_uksub16(uint16x2_t a, uint16x2_t b);
@@ -12925,8 +12980,8 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the oper
 
 *Intrinsic functions:*
 
- unsigned long long __nds__uksub64(unsigned long long a, +
- unsigned long long b);
+ uint64_t __nds__uksub64(uint64_t a, +
+ uint64_t b);
 
 <<<
 === UKSUBH (Unsigned Subtraction with U16 Saturation)
@@ -12973,7 +13028,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uksubh(unsigned int a, unsigned int b);
+ uintXLEN_t __nds__uksubh(uint32_t a, uint32_t b);
 
 <<<
 === UKSUBW (Unigned Subtraction with U32 Saturation)
@@ -13017,7 +13072,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uksubw(unsigned int a, unsigned int b);
+ uintXLEN_t __nds__uksubw(uint32_t a, uint32_t b);
 
 <<<
 === UMAR64 (Unsigned Multiply and Add to 64-Bit Data)
@@ -13068,11 +13123,11 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- unsigned long long __nds__umar64(unsigned long long t, +
- unsigned long a, unsigned long b);
+ uint64_t __nds__umar64(uint64_t t, +
+ uintXLEN_t a, uintXLEN_t b);
 
  RV64:
-   unsigned long long __nds__v_umar64(unsigned long long t, +
+   uint64_t __nds__v_umar64(uint64_t t, +
    uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -13120,12 +13175,12 @@ This instruction multiplies the four unsigned 8-bit elements of 32-bit chunks of
 
 *Intrinsic functions:*
 
- unsigned long __nds__umaqa(unsigned long t, unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umaqa(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV32:
-   unsigned int __nds__v_umaqa(unsigned int t, uint8x4_t a, uint8x4_t b);
+   uint32_t __nds__v_umaqa(uint32_t t, uint8x4_t a, uint8x4_t b);
  RV64:
-   uint32x2_t __nds__v_umaqa(unsigned long t, uint8x8_t a, uint8x8_t b);
+   uint32x2_t __nds__v_umaqa(uint32x2_t t, uint8x8_t a, uint8x8_t b);
 
 <<<
 === UMAX8 (SIMD 8-bit Unsigned Maximum)
@@ -13165,7 +13220,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__umax8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umax8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_umax8(uint8x4_t a, uint8x4_t b);
@@ -13210,7 +13265,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__umax16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umax16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_umax16(uint16x2_t a, uint16x2_t b);
@@ -13255,7 +13310,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__umin8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umin8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_umin8(uint8x4_t a, uint8x4_t b);
@@ -13300,7 +13355,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__umin16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umin16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_umin16(uint16x2_t a, uint16x2_t b);
@@ -13356,10 +13411,10 @@ Rd = Rd - (Rs1.W[0] u* Rs2.W[0]) - (Rs1.W[1] u* Rs2.W[1]);
 
 *Intrinsic functions:*
 
- unsigned long long __nds__umsr64(unsigned long long t, unsigned long a, unsigned long b);
+ uint64_t __nds__umsr64(uint64_t t, uintXLEN_t a, uintXLEN_t b);
 
  RV64:
-   unsigned long long __nds__v_umsr64(unsigned long long t, uint32x2_t a, uint32x2_t b);
+   uint64_t __nds__v_umsr64(uint64_t t, uint32x2_t a, uint32x2_t b);
 
 <<<
 === UMUL8, UMULX8
@@ -13459,13 +13514,13 @@ x = 0 and 2
 
 * UMUL8
 
- unsigned long long __nds__umul8(unsigned int a, unsigned int b);
+ uint64_t __nds__umul8(unsigned int a, unsigned int b);
  uint16x4_t __nds__v_umul8(uint8x4_t a, uint8x4_t b);
 
 
 * UMULX8
 
- unsigned long long __nds__umulx8(unsigned int a, unsigned int b);
+ uint64_t __nds__umulx8(unsigned int a, unsigned int b);
  uint16x4_t __nds__v_umulx8(uint8x4_t a, uint8x4_t b);
 
 <<<
@@ -13565,12 +13620,12 @@ The two 32-bit U32 results are then written into Rd. The result calculated from 
 
 * UMUL16
 
- unsigned long long __nds__umul16(unsigned int a, unsigned int b);
+ uint64_t __nds__umul16(unsigned int a, unsigned int b);
  uint32x2_t __nds__v_umul16(uint16x2_t a, uint16x2_t b);
 
 * UMULX16
 
- unsigned long long __nds__umulx16(unsigned int a, unsigned int b);
+ uint64_t __nds__umulx16(unsigned int a, unsigned int b);
  uint32x2_t __nds__v_umulx16(uint16x2_t a, uint16x2_t b);
 
 <<<
@@ -13595,11 +13650,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 8-bit unsigned integer element additions simultaneously. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 8-bit unsigned integer elements in Rs1 with the 8-bit unsigned integer elements in Rs2. The results are first logically right-shifted by 1 bit and then written to Rd.
+*Description:* This instruction adds the 8-bit unsigned integer elements in Rs1 with
+the 8-bit unsigned integer elements in Rs2. The 9-bit results are first
+right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.B[x] = (Rs1.B[x] + Rs2.B[x]) u>> 1;
+ Rd.B[x] = (CONCAT(1'b0,Rs1.B[x]) + CONCAT(1'b0,Rs2.B[x])) >> 1;
  for RV32: x=3…0,
  for RV64: x=7…0
 
@@ -13615,7 +13672,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uradd8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__uradd8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_uradd8(uint8x4_t a, uint8x4_t b);
@@ -13644,11 +13701,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 16-bit unsigned integer element additions simultaneously. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 16-bit unsigned integer elements in Rs1 with the 16-bit unsigned integer elements in Rs2. The results are first logically right-shifted by 1 bit and then written to Rd.
+*Description:* This instruction adds the 16-bit unsigned integer elements in Rs1
+with the 16-bit unsigned integer elements in Rs2. The 17-bit results are first
+right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.H[x] = (Rs1.H[x] + Rs2.H[x]) u>> 1;
+ Rd.H[x] = (CONCAT(1'b0,Rs1.H[x]) + CONCAT(1'b0,Rs2.H[x])) >> 1;
  for RV32: x=1…0,
  for RV64: x=3…0
 
@@ -13664,7 +13723,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uradd16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__uradd16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_uradd16(uint16x2_t a, uint16x2_t b);
@@ -13693,7 +13752,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Add two 64-bit unsigned integers. The result is halved to avoid overflow or saturation.
 
-*RV32 Description:* This instruction adds the 64-bit unsigned integer of an even/odd pair of registers specified by Rs1(4,1) with the 64-bit unsigned integer of an even/odd pair of registers specified by Rs2(4,1). The 64-bit addition result is first logically right-shifted by 1 bit and then written to an even/odd pair of registers specified by Rd(4,1).
+*RV32 Description:* This instruction adds the 64-bit unsigned integer of an even/odd
+pair of registers specified by Rs1(4,1) with the 64-bit unsigned integer of an
+even/odd pair of registers specified by Rs2(4,1). The 65-bit addition result is first
+right-shifted by 1 bit and then written to an even/odd pair of registers specified by Rd(4,1).
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
@@ -13708,11 +13770,11 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
  t_L = CONCAT(Rt(4,1),1’b0); t_H = CONCAT(Rt(4,1),1’b1);
  a_L = CONCAT(Ra(4,1),1’b0); a_H = CONCAT(Ra(4,1),1’b1);
  b_L = CONCAT(Rb(4,1),1’b0); b_H = CONCAT(Rb(4,1),1’b1);
- R[t_H].R[t_L] = (R[a_H].R[a_L] + R[b_H].R[b_L]) u>> 1;
+ R[t_H].R[t_L] = (CONCAT(1'b0,R[a_H].R[a_L]) + CONCAT(1'b0,R[b_H].R[b_L])) >> 1;
 
 * RV64:
 
- Rd = (Rs1 + Rs2) u>> 1;
+ Rd = (CONCAT(1'b0,Rs1) + CONCAT(1'b0,Rs2)) >> 1;
 
 *Exceptions:* None
 
@@ -13722,7 +13784,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- unsigned long long __nds__uradd64(unsigned long long a, unsigned long long b);
+ uint64_t __nds__uradd64(uint64_t a, uint64_t b);
 
 <<<
 === URADDW (32-bit Unsigned Halving Addition)
@@ -13746,17 +13808,19 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Add 32-bit unsigned integers and the results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the first 32-bit unsigned integer in Rs1 with the first 32-bit unsigned integer in Rs2. The result is first logically right-shifted by 1 bit and then sign-extended and written to Rd.
+*Description:* This instruction adds the first 32-bit unsigned integer in Rs1 with
+the first 32-bit unsigned integer in Rs2. The 33-bit result is first right-shifted
+by 1 bit and then sign-extended and written to Rd.
 
 *Operations:*
 
 * RV32:
 
-Rd[31:0] = (Rs1[31:0] + Rs2[31:0]) u>> 1;
+Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) >> 1;
 
 * RV64:
 
- resw[31:0] = (Rs1[31:0] + Rs2[31:0]) u>> 1;
+ resw[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) >> 1;
  Rd[63:0] = SE(resw[31:0]);
 
 *Exceptions:* None
@@ -13771,7 +13835,7 @@ Rd[31:0] = (Rs1[31:0] + Rs2[31:0]) u>> 1;
 
 *Intrinsic functions:*
 
- unsigned long __nds__uraddw(unsigned int a, unsigned int b);
+ uintXLEN_t __nds__uraddw(uint32_t a, uint32_t b);
 
 <<<
 ===  URCRAS16 (SIMD 16-bit Unsigned Halving Cross Addition & Subtraction)
@@ -13795,12 +13859,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 16-bit unsigned integer element addition and 16-bit unsigned integer element subtraction in a 32-bit chunk simultaneously. Operands are from crossed positions in 32-bit chunks. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs1 with the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs2, and subtracts the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs2 from the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs1. The element results are first logically right-shifted by 1 bit and then written to [31:16] of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
+*Description:* This instruction adds the 16-bit unsigned integer in [31:16] of 32-bit
+chunks in Rs1 with the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs2,
+and subtracts the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs2 from
+the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs1. The 17-bit element
+results are first right-shifted by 1 bit and then written to [31:16] of 32-bit
+chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] + Rs2.W[x][15:0]) u>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] – Rs2.W[x][31:16]) u>> 1;
+ Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) + CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
+ Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) – CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -13812,7 +13881,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urcras16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urcras16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_urcras16(uint16x2_t a, uint16x2_t b);
@@ -13841,12 +13910,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 16-bit unsigned integer element subtraction and 16-bit unsigned integer element addition in a 32-bit chunk simultaneously. Operands are from crossed positions in 32-bit chunks. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs2 from the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs1, and adds the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs1 with the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs2. The two results are first logically right-shifted by 1 bit and then written to [31:16] of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
+*Description:* This instruction subtracts the 16-bit unsigned integer in [15:0]
+of 32-bit chunks in Rs2 from the 16-bit unsigned integer in [31:16] of 32-bit
+chunks in Rs1, and adds the 16-bit unsigned integer in [15:0] of 32-bit chunks
+in Rs1 with the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs2. The
+two 17-bit results are first right-shifted by 1 bit and then written to [31:16]
+of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] - Rs2.W[x][15:0]) u>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] + Rs2.W[x][31:16]) u>> 1;
+ Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) - CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
+ Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) + CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -13858,7 +13932,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urcrsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urcrsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_urcrsa16(uint16x2_t a, uint16x2_t b);
@@ -13887,12 +13961,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 16-bit unsigned integer element addition and 16-bit unsigned integer element subtraction in a 32-bit chunk simultaneously. Operands are from corresponding positions in 32-bit chunks. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs1 with the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs2, and subtracts the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs2 from the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs1. The element results are first logically right-shifted by 1 bit and then written to [31:16] of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
+*Description:* This instruction adds the 16-bit unsigned integer in [31:16] of
+32-bit chunks in Rs1 with the 16-bit unsigned integer in [31:16] of 32-bit chunks
+in Rs2, and subtracts the 16-bit unsigned integer in [15:0] of 32-bit chunks in
+Rs2 from the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs1. The 17-bit
+element results are first right-shifted by 1 bit and then written to [31:16] of
+32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] + Rs2.W[x][31:16]) u>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] – Rs2.W[x][15:0]) u>> 1;
+ Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) + CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
+ Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) – CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -13904,7 +13983,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urstas16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urstas16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_urstas16(uint16x2_t a, uint16x2_t b);
@@ -13933,12 +14012,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 16-bit unsigned integer element subtraction and 16-bit unsigned integer element addition in a 32-bit chunk simultaneously. Operands are from corresponding positions in 32-bit chunks. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs2 from the 16-bit unsigned integer in [31:16] of 32-bit chunks in Rs1, and adds the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs1 with the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs2. The two results are first logically right-shifted by 1 bit and then written to [31:16] of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
+*Description:* This instruction subtracts the 16-bit unsigned integer in [31:16]
+of 32-bit chunks in Rs2 from the 16-bit unsigned integer in [31:16] of 32-bit
+chunks in Rs1, and adds the 16-bit unsigned integer in [15:0] of 32-bit chunks
+in Rs1 with the 16-bit unsigned integer in [15:0] of 32-bit chunks in Rs2.
+The two 17-bit results are first right-shifted by 1 bit and then written to [31:16]
+of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] - Rs2.W[x][31:16]) u>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] + Rs2.W[x][15:0]) u>> 1;
+ Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) - CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
+ Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) + CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -13950,7 +14034,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urstsa16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urstsa16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_urstsa16(uint16x2_t a, uint16x2_t b);
@@ -13979,11 +14063,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 8-bit unsigned integer element subtractions simultaneously. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 8-bit unsigned integer elements in Rs2 from the 8-bit unsigned integer elements in Rs1. The results are first logically right-shifted by 1 bit and then written to Rd.
+*Description:* This instruction subtracts the 8-bit unsigned integer elements in
+Rs2 from the 8-bit unsigned integer elements in Rs1. The 9-bit results are first
+right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.B[x] = (Rs1.B[x] - Rs2.B[x]) u>> 1;
+ Rd.B[x] = (CONCAT(1'b0,Rs1.B[x]) - CONCAT(1'b0,Rs2.B[x])) >> 1;
  for RV32: x=3…0,
  for RV64: x=7…0
 
@@ -13993,13 +14079,14 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Examples:*
 
-* Ra = 0x7F, Rb = 0x80 Rt = 0xFF
-* Ra = 0x80, Rb = 0x7F Rt = 0x00
-* Ra = 0x80, Rb = 0x40 Rt = 0x20
+* Ra = 0x7F, Rb = 0x80, Rt = 0xFF
+* Ra = 0x80, Rb = 0x7F, Rt = 0x00
+* Ra = 0x80, Rb = 0x40, Rt = 0x20
+* Ra = 0x81, Rb = 0x01, Rt = 0x40
 
 *Intrinsic functions:*
 
- unsigned long __nds__ursub8(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ursub8(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint8x4_t __nds__v_ursub8(uint8x4_t a, uint8x4_t b);
@@ -14028,11 +14115,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 16-bit unsigned integer element subtractions simultaneously. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 16-bit unsigned integer elements in Rs2 from the 16-bit unsigned integer elements in Rs1. The results are first logically right-shifted by 1 bit and then written to Rd.
+*Description:* This instruction subtracts the 16-bit unsigned integer elements in
+Rs2 from the 16-bit unsigned integer elements in Rs1. The 17-bit results are first
+right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.H[x] = (Rs1.H[x] - Rs2.H[x]) u>> 1;
+ Rd.H[x] = (CONCAT(1'b0,Rs1.H[x]) - CONCAT(1'b0,Rs2.H[x])) >> 1;
  for RV32: x=1…0,
  for RV64: x=3…0
 
@@ -14042,13 +14131,14 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Examples:*
 
-* Ra = 0x7FFF, Rb = 0x8000 Rt = 0xFFFF
-* Ra = 0x8000, Rb = 0x7FFF Rt = 0x0000
-* Ra = 0x8000, Rb = 0x4000 Rt = 0x2000
+* Ra = 0x7FFF, Rb = 0x8000, Rt = 0xFFFF
+* Ra = 0x8000, Rb = 0x7FFF, Rt = 0x0000
+* Ra = 0x8000, Rb = 0x4000, Rt = 0x2000
+* Ra = 0x8001, Rb = 0x0001, Rt = 0x4000
 
 *Intrinsic functions:*
 
- unsigned long __nds__ursub16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ursub16(uintXLEN_t a, uintXLEN_t b);
 
  RV32:
    uint16x2_t __nds__v_ursub16(uint16x2_t a, uint16x2_t b);
@@ -14077,13 +14167,21 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform a 64-bit unsigned integer subtraction. The result is halved to avoid overflow or saturation.
 
-*RV32 Description:* This instruction subtracts the 64-bit unsigned integer of an even/odd pair of registers specified by Rs2(4,1) from the 64-bit unsigned integer of an even/odd pair of registers specified by Rs1(4,1). The subtraction result is first logically right-shifted by 1 bit and then written to an even/odd pair of registers specified by Rd(4,1).
+*RV32 Description:* This instruction subtracts the 64-bit unsigned integer of an
+even/odd pair of registers specified by Rs2(4,1) from the 64-bit unsigned integer
+of an even/odd pair of registers specified by Rs1(4,1). The 65-bit subtraction
+result is first right-shifted by 1 bit and then written to an even/odd pair of
+registers specified by Rd(4,1).
 
-R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
+R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers.
+Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-The odd “2__d__+1” register of the pair contains the high 32-bit of the result and the even “2__d__” register of the pair contains the low 32-bit of the result.
+The odd “2__d__+1” register of the pair contains the high 32-bit of the result
+and the even “2__d__” register of the pair contains the low 32-bit of the result.
 
-*RV64 Description:* This instruction subtracts the 64-bit unsigned integer in Rs2 from the 64-bit unsigned integer in Rs1. The subtraction result is first logically right-shifted by 1 bit and then written to Rd.
+*RV64 Description:* This instruction subtracts the 64-bit unsigned integer in
+Rs2 from the 64-bit unsigned integer in Rs1. The 65-bit subtraction result is
+first right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
@@ -14092,12 +14190,12 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
  t_L = CONCAT(Rt(4,1),1’b0); t_H = CONCAT(Rt(4,1),1’b1);
  a_L = CONCAT(Ra(4,1),1’b0); a_H = CONCAT(Ra(4,1),1’b1);
  b_L = CONCAT(Rb(4,1),1’b0); b_H = CONCAT(Rb(4,1),1’b1);
- R[t_H].R[t_L] = (R[a_H].R[a_L] - R[b_H].R[b_L]) u>> 1;
+ R[t_H].R[t_L] = (CONCAT(1'b0,R[a_H].R[a_L]) - CONCAT(1'b0,R[b_H].R[b_L])) >> 1;
 
 
 * RV64:
 
- Rd = (Rs1 - Rs2) u>> 1;
+ Rd = (CONCAT(1'b0,Rs1) - CONCAT(1'b0,Rs2)) >> 1;
 
 *Exceptions:* None
 
@@ -14107,7 +14205,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the resu
 
 *Intrinsic functions:*
 
- unsigned long long __nds__ursub64(unsigned long long a, unsigned long long b);
+ uint64_t __nds__ursub64(uint64_t a, uint64_t b);
 
 <<<
 === URSUBW (32-bit Unsigned Halving Subtraction)
@@ -14131,17 +14229,19 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Subtract 32-bit unsigned integers and the result is halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the first 32-bit signed integer in Rs2 from the first 32-bit signed integer in Rs1. The result is first logically right-shifted by 1 bit and then sign-extended and written to Rd.
+*Description:* This instruction subtracts the first 32-bit signed integer in Rs2
+from the first 32-bit signed integer in Rs1. The 33-bit result is first
+right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Operations:*
 
 * RV32:
 
- Rd[31:0] = (Rs1[31:0] – Rs2[31:0]) u>> 1;
+ Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) – CONCAT(1'b0,Rs2[31:0])) >> 1;
 
 * RV64:
 
- resw[31:0] = (Rs1[31:0] – Rs2[31:0]) u>> 1;
+ resw[31:0] = (CONCAT(1'b0,Rs1[31:0]) – CONCAT(1'b0,Rs2[31:0])) >> 1;
  Rd[63:0] = SE(resw[31:0]);
 
 *Exceptions:* None
@@ -14150,13 +14250,14 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x80000000 Rt = 0xFFFFFFFF
-* Ra = 0x80000000, Rb = 0x7FFFFFFF Rt = 0x00000000
-* Ra = 0x80000000, Rb = 0x40000000 Rt = 0x20000000
+* Ra = 0x7FFFFFFF, Rb = 0x80000000, Rt = 0xFFFFFFFF
+* Ra = 0x80000000, Rb = 0x7FFFFFFF, Rt = 0x00000000
+* Ra = 0x80000000, Rb = 0x40000000, Rt = 0x20000000
+* Ra = 0x80000001, Rb = 0x00000001, Rt = 0x40000000
 
 *Intrinsic functions:*
 
- unsigned long __nds__ursubw(unsigned int a, unsigned int b);
+ uintXLEN_t __nds__ursubw(uint32_t a, uint32_t b);
 
 <<<
 === WEXTI (Extract Word from 64-bit Immediate)
@@ -14213,7 +14314,7 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 
 *Intrinsic functions:*
 
- unsigned long __nds__wext(long long a, unsigned int b);
+ uintXLEN_t __nds__wext(int64_t a, uint32_t b);
 
 <<<
 === WEXT (Extract Word from 64-bit)
@@ -14268,7 +14369,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the 64-b
 
 *Intrinsic functions:*
 
- unsigned long __nds__wext(long long a, unsigned int b);
+ uintXLEN_t __nds__wext(int64_t a, uint32_t b);
 
 <<<
 === ZUNPKD810, ZUNPKD820, ZUNPKD830, ZUNPKD831, ZUNPKD832
@@ -14340,7 +14441,7 @@ For the “ZUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * ZUNPK810
 
- unsigned long __nds__zunpkd810(unsigned long a);
+ uintXLEN_t __nds__zunpkd810(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_zunpkd810(uint8x4_t a);
@@ -14349,7 +14450,7 @@ For the “ZUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * ZUNPK820
 
- unsigned long __nds__zunpkd820(unsigned long a);
+ uintXLEN_t __nds__zunpkd820(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_zunpkd820(uint8x4_t a);
@@ -14358,7 +14459,7 @@ For the “ZUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * ZUNPK830
 
- unsigned long __nds__zunpkd830(unsigned long a);
+ uintXLEN_t __nds__zunpkd830(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_zunpkd830(uint8x4_t a);
@@ -14367,7 +14468,7 @@ For the “ZUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * ZUNPK831
 
- unsigned long __nds__zunpkd831(unsigned long a);
+ uintXLEN_t __nds__zunpkd831(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_zunpkd831(uint8x4_t a);
@@ -14376,7 +14477,7 @@ For the “ZUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.u
 
 * ZUNPK832
 
- unsigned long __nds__zunpkd832(unsigned long a);
+ uintXLEN_t __nds__zunpkd832(uintXLEN_t a);
 
  RV32:
    uint16x2_t __nds__v_zunpkd832(uint8x4_t a);
@@ -14425,7 +14526,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__add32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__add32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_uadd32(uint32x2_t a, uint32x2_t b);
  int32x2_t __nds__v_sadd32(int32x2_t a, int32x2_t b);
 
@@ -14466,7 +14567,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__cras32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__cras32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ucras32(uint32x2_t a, uint32x2_t b);
  int32x2_t __nds__v_scras32(int32x2_t a, int32x2_t b);
 
@@ -14509,7 +14610,7 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 
 *Intrinsic functions:*
 
- unsigned long __nds__crsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__crsa32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ucrsa32(uint32x2_t a, uint32x2_t b);
  int32x2_t __nds__v_scrsa32(int32x2_t a, int32x2_t b);
 
@@ -14561,7 +14662,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__kabs32(unsigned long a);
+ uintXLEN_t __nds__kabs32(uintXLEN_t a);
  int32x2_t __nds__v_kabs32(int32x2_t a);
 
 <<<
@@ -14609,7 +14710,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__kadd32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kadd32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kadd32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -14659,7 +14760,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__kcras32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kcras32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kcras32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -14711,7 +14812,7 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 
 *Intrinsic functions:*
 
- unsigned long __nds__kcrsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kcrsa32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kcrsa32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -14793,17 +14894,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * KDMBB16
 
- unsigned long __nds__kdmbb16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kdmbb16(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kdmbb16(int16x4_t a, int16x4_t b);
 
 * KDMBT16
 
- unsigned long __nds__kdmbt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kdmbt16(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kdmbt16(int16x4_t a, int16x4_t b);
 
 * KDMTT16
 
- unsigned long __nds__kdmtt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kdmtt16(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kdmtt16(int16x4_t a, int16x4_t b);
 
 <<<
@@ -14895,17 +14996,17 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 
 * KDMABB16
 
- unsigned long __nds__kdmabb16(unsigned long t, unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kdmabb16(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kdmabb16(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KDMABT16
 
- unsigned long __nds__kdmabt16(unsigned long t, unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kdmabt16(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kdmabt16(int32x2_t t, int16x4_t a, int16x4_t b);
 
 * KDMATT16
 
- unsigned long __nds__kdmatt16(unsigned long t, unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kdmatt16(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kdmatt16(int32x2_t t, int16x4_t a, int16x4_t b);
 
 <<<
@@ -14987,17 +15088,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * KHMBB16
 
- unsigned long __nds__khmbb16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khmbb16(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_khmbb16(int16x4_t a, int16x4_t b);
 
 * KHMBT16
 
- unsigned long __nds__khmbt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khmbt16(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_khmbt16(int16x4_t a, int16x4_t b);
 
 * KHMTT16
 
- unsigned long __nds__khmtt16(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__khmtt16(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_khmtt16(int16x4_t a, int16x4_t b);
 
 <<<
@@ -15091,18 +15192,18 @@ The multiplication result is added to the content of 64-bit data in Rd. If the a
 
 * KMABB32
 
- long __nds__kmabb32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmabb32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmabb32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmabb32(int64_t t, int32x2_t a, int32x2_t b);
 
 * KMABT32
 
- long __nds__kmabt32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmabt32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmabt32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmabt32(int64_t t, int32x2_t a, int32x2_t b);
 
 * KMATT32
 
- long __nds__kmatt32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmatt32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmatt32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmatt32(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KMADA32, KMAXDA32
@@ -15175,13 +15276,13 @@ The result is added to the content of 64-bit data in Rd. If the addition result 
 
 * KMADA32
 
- long __nds__kmada32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmada32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmada32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmada32(int64_t t, int32x2_t a, int32x2_t b);
 
 * KMAXDA32
 
- long __nds__kmaxda32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmaxda32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmaxda32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmaxda32(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KMDA32, KMXDA32
@@ -15256,13 +15357,13 @@ The addition result is checked for saturation. If saturation happens, the result
 
 * KMDA32
 
- long __nds__kmda32(unsigned long a, unsigned long b);
- long __nds__v_kmda32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmda32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmda32(int32x2_t a, int32x2_t b);
 
 * KMXDA32
 
- long __nds__kmxda32(unsigned long a, unsigned long b);
- long __nds__v_kmxda32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmxda32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmxda32(int32x2_t a, int32x2_t b);
 
 <<<
 === KMADS32, KMADRS32, KMAXDS32
@@ -15356,18 +15457,18 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 
 * KMADS32
 
- long __nds__kmads32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmads32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmads32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmads32(int64_t t, int32x2_t a, int32x2_t b);
 
 * KMADRS32
 
- long __nds__kmadrs32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmadrs32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmadrs32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmadrs32(int64_t t, int32x2_t a, int32x2_t b);
 
 * KMAXDS32
 
- long __nds__kmaxds32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmaxds32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmaxds32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmaxds32(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KMSDA32, KMSXDA32
@@ -15443,13 +15544,13 @@ The two 64-bit multiplication results are then subtracted from the content of Rd
 
 * KMSDA32
 
- long __nds__kmsda32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmsda32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmsda32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmsda32(int64_t t, int32x2_t a, int32x2_t b);
 
 * KMSXDA32
 
- long __nds__kmsxda32(long t, unsigned long a, unsigned long b);
- long __nds__v_kmsxda32(long t, int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__kmsxda32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_kmsxda32(int64_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KSLL32 (SIMD 32-bit Saturating Shift Left Logical)
@@ -15499,8 +15600,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksll32(unsigned long a, unsigned int b);
- int32x2_t __nds__v_ksll32(int32x2_t a, unsigned int b);
+ uintXLEN_t __nds__ksll32(uintXLEN_t a, uint32_t b);
+ int32x2_t __nds__v_ksll32(int32x2_t a, uint32_t b);
 
 <<<
 ===  KSLLI32 (SIMD 32-bit Saturating Shift Left Logical Immediate)
@@ -15550,8 +15651,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksll32(unsigned long a, unsigned int b);
- int32x2_t __nds__v_ksll32(int32x2_t a, unsigned int b);
+ uintXLEN_t __nds__ksll32(uintXLEN_t a, uint32_t b);
+ int32x2_t __nds__v_ksll32(int32x2_t a, uint32_t b);
 
 <<<
 === KSLRA32, KSLRA32.u
@@ -15630,13 +15731,13 @@ The left-shifted results are saturated to the 32-bit signed integer range of [-2
 
 * KSLRA32
 
- unsigned long __nds__kslra32(unsigned long a, int b);
- int32x2_t __nds__v_kslra32(int32x2_t a, int b);
+ uintXLEN_t __nds__kslra32(uintXLEN_t a, int32_t b);
+ int32x2_t __nds__v_kslra32(int32x2_t a, int32_t b);
 
 * KSLRA32.u
 
- unsigned long __nds__kslra32_u(unsigned long a, int b);
- int32x2_t __nds__v_kslra32_u(int32x2_t a, int b);
+ uintXLEN_t __nds__kslra32_u(uintXLEN_t a, int32_t b);
+ int32x2_t __nds__v_kslra32_u(int32x2_t a, int32_t b);
 
 <<<
 === KSTAS32 (SIMD 32-bit Signed Saturating Straight Addition & Subtraction)
@@ -15685,7 +15786,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__kstas32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kstas32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kstas32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -15737,7 +15838,7 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 
 *Intrinsic functions:*
 
- unsigned long __nds__kstsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__kstsa32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_kstsa32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -15785,7 +15886,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ksub32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ksub32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_ksub32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -15862,22 +15963,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * PKBB32
 
- unsigned long __nds__pkbb32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pkbb32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_pkbb32(uint32x2_t a, uint32x2_t b);
 
 * PKBT32
 
- unsigned long __nds__pkbt32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pkbt32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_pkbt32(uint32x2_t a, uint32x2_t b);
 
 * PKTB32
 
- unsigned long __nds__pktb32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pktb32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_pktb32(uint32x2_t a, uint32x2_t b);
 
 * PKTT32
 
- unsigned long __nds__pktt32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__pktt32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_pktt32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -15921,7 +16022,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__radd32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__radd32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_radd32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -15961,7 +16062,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rcras32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rcras32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_rcras32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16001,7 +16102,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rcrsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rcrsa32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_rcrsa32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16041,7 +16142,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rstas32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rstas32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_rstas32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16081,7 +16182,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rstsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rstsa32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_rstsa32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16125,7 +16226,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__rsub32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__rsub32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_rsub32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16166,8 +16267,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sll32(unsigned long a, unsigned int b);
- uint32x2_t __nds__v_sll32(uint32x2_t a, unsigned int b);
+ uintXLEN_t __nds__sll32(uintXLEN_t a, uint32_t b);
+ uint32x2_t __nds__v_sll32(uint32x2_t a, uint32_t b);
 
 <<<
 [#slli32]
@@ -16209,8 +16310,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sll32(unsigned long a, unsigned int b);
- uint32x2_t __nds__v_sll32(uint32x2_t a, unsigned int b);
+ uintXLEN_t __nds__sll32(uintXLEN_t a, uint32_t b);
+ uint32x2_t __nds__v_sll32(uint32x2_t a, uint32_t b);
 
 <<<
 === SMAX32 (SIMD 32-bit Signed Maximum)
@@ -16249,7 +16350,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__smax32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__smax32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_smax32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16332,18 +16433,18 @@ Rd = res;
 
 * SMBB32
 
- long __nds__smbb32(unsigned long a, unsigned long b);
- long __nds__v_smbb32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__smbb32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_smbb32(int32x2_t a, int32x2_t b);
 
 * SMBT32
 
- long __nds__smbt32(unsigned long a, unsigned long b);
- long __nds__v_smbt32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__smbt32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_smbt32(int32x2_t a, int32x2_t b);
 
 * SMTT32
 
- long __nds__smtt32(unsigned long a, unsigned long b);
- long __nds__v_smtt32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__smtt32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_smtt32(int32x2_t a, int32x2_t b);
 
 <<<
 === SMDS32, SMDRS32, SMXDS32
@@ -16431,18 +16532,18 @@ The subtraction result is written to Rd. The 32-bit contents of Rs1 and Rs2 are 
 
 * SMDS32
 
- long __nds__smds32(unsigned long a, unsigned long b);
- long __nds__v_smds32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__smds32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_smds32(int32x2_t a, int32x2_t b);
 
 * SMDRS32
 
- long __nds__smdrs32(unsigned long a, unsigned long b);
- long __nds__v_smdrs32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__smdrs32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_smdrs32(int32x2_t a, int32x2_t b);
 
 * SMXDS32
 
- long __nds__smxds32(unsigned long a, unsigned long b);
- long __nds__v_smxds32(int32x2_t a, int32x2_t b);
+ intXLEN_t __nds__smxds32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __nds__v_smxds32(int32x2_t a, int32x2_t b);
 
 <<<
 === SMIN32 (SIMD 32-bit Signed Minimum)
@@ -16481,7 +16582,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__smin32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__smin32(uintXLEN_t a, uintXLEN_t b);
  int32x2_t __nds__v_smin32(int32x2_t a, int32x2_t b);
 
 <<<
@@ -16551,13 +16652,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRA32
 
- unsigned long __nds__sra32(unsigned long a, unsigned int b);
- int32x2_t __nds__v_sra32(int32x2_t a, unsigned int b);
+ uintXLEN_t __nds__sra32(uintXLEN_t a, uint32_t b);
+ int32x2_t __nds__v_sra32(int32x2_t a, uint32_t b);
 
 * SRA32.u
 
- unsigned long __nds__sra32_u(unsigned long a, unsigned int b);
- int32x2_t __nds__v_sra32_u(int32x2_t a, unsigned int b);
+ uintXLEN_t __nds__sra32_u(uintXLEN_t a, uint32_t b);
+ int32x2_t __nds__v_sra32_u(int32x2_t a, uint32_t b);
 
 <<<
 === SRAI32, SRAI32.u
@@ -16626,13 +16727,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRAI32
 
- unsigned long __nds__sra32(unsigned long a, unsigned int b);
- int32x2_t __nds__v_sra32(int32x2_t a, unsigned int b);
+ uintXLEN_t __nds__sra32(uintXLEN_t a, uint32_t b);
+ int32x2_t __nds__v_sra32(int32x2_t a, uint32_t b);
 
 * SRAI32.u
 
- unsigned long __nds__sra32_u(unsigned long a, unsigned int b);
- int32x2_t __nds__v_sra32_u(int32x2_t a, unsigned int b);
+ uintXLEN_t __nds__sra32_u(uintXLEN_t a, uint32_t b);
+ int32x2_t __nds__v_sra32_u(int32x2_t a, uint32_t b);
 
 <<<
 [#sraiw_u]
@@ -16683,7 +16784,7 @@ and written to Rd.
 
 *Intrinsic functions:*
 
- long __nds__sraw_u(int a, unsigned int b);
+ intXLEN_t __nds__sraw_u(intXLEN_t a, uint32_t b);
 
 <<<
 === SRL32, SRL32.u
@@ -16752,13 +16853,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRL32
 
- unsigned long __nds__srl32(unsigned long a, unsigned int b);
- uint32x2_t __nds__v_srl32(uint32x2_t a, unsigned int b);
+ uintXLEN_t __nds__srl32(uintXLEN_t a, uint32_t b);
+ uint32x2_t __nds__v_srl32(uint32x2_t a, uint32_t b);
 
 * SRL32.u
 
- unsigned long __nds__srl32_u(unsigned long a, unsigned int b);
- uint32x2_t __nds__v_srl32_u(uint32x2_t a, unsigned int b);
+ uintXLEN_t __nds__srl32_u(uintXLEN_t a, uint32_t b);
+ uint32x2_t __nds__v_srl32_u(uint32x2_t a, uint32_t b);
 
 <<<
 === SRLI32, SRLI32.u
@@ -16827,13 +16928,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * SRLI32
 
- unsigned long __nds__srl32(unsigned long a, unsigned int b);
- uint32x2_t __nds__v_srl32(uint32x2_t a, unsigned int b);
+ uintXLEN_t __nds__srl32(uintXLEN_t a, uint32_t b);
+ uint32x2_t __nds__v_srl32(uint32x2_t a, uint32_t b);
 
 * SRLI32.u
 
- unsigned long __nds__srl32_u(unsigned long a, unsigned int b);
- uint32x2_t __nds__v_srl32_u(uint32x2_t a, unsigned int b);
+ uintXLEN_t __nds__srl32_u(uintXLEN_t a, uint32_t b);
+ uint32x2_t __nds__v_srl32_u(uint32x2_t a, uint32_t b);
 
 <<<
 === STAS32 (SIMD 32-bit Straight Addition & Subtraction)
@@ -16872,7 +16973,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__stas32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__stas32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ustas32(uint32x2_t a, uint32x2_t b);
  int32x2_t __nds__v_sstas32(int32x2_t a, int32x2_t b);
 
@@ -16915,7 +17016,7 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 
 *Intrinsic functions:*
 
- unsigned long __nds__stsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__stsa32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ustsa32(uint32x2_t a, uint32x2_t b);
  int32x2_t __nds__v_sstsa32(int32x2_t a, int32x2_t b);
 
@@ -16956,7 +17057,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__sub32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__sub32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_usub32(uint32x2_t a, uint32x2_t b);
  int32x2_t __nds__v_ssub32(int32x2_t a, int32x2_t b);
 
@@ -17002,7 +17103,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukadd32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukadd32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ukadd32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17052,7 +17153,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukcras32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukcras32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ukcras32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17101,7 +17202,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
-  unsigned long __nds__ukcrsa32(unsigned long a, unsigned long b);
+  uintXLEN_t __nds__ukcrsa32(uintXLEN_t a, uintXLEN_t b);
   uint32x2_t __nds__v_ukcrsa32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17151,7 +17252,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukstas32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukstas32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ukstas32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17200,7 +17301,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__ukstsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ukstsa32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ukstsa32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17245,7 +17346,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__uksub32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__uksub32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_uksub32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17285,7 +17386,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__umax32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umax32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_umax32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17325,7 +17426,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__umin32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__umin32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_umin32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17350,11 +17451,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 32-bit unsigned integer element additions simultaneously. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 32-bit unsigned integer elements in Rs1 with the 32-bit unsigned integer elements in Rs2. The results are first logically right-shifted by 1 bit and then written to Rd.
+*Description:* This instruction adds the 32-bit unsigned integer elements in Rs1
+with the 32-bit unsigned integer elements in Rs2. The 33-bit results are first
+right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.W[x] = (Rs1.W[x] + Rs2.W[x]) u>> 1;
+ Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) + CONCAT(1'b0,Rs2.W[x])) >> 1;
  for RV64: x=1…0
 
 *Exceptions:* None
@@ -17363,13 +17466,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x7FFFFFFF Rt = 0x7FFFFFFF
-* Ra = 0x80000000, Rb = 0x80000000 Rt = 0x80000000
-* Ra = 0x40000000, Rb = 0x80000000 Rt = 0x60000000
+* Ra = 0x7FFFFFFF, Rb = 0x7FFFFFFF, Rt = 0x7FFFFFFF
+* Ra = 0x80000000, Rb = 0x80000000, Rt = 0x80000000
+* Ra = 0x40000000, Rb = 0x80000000, Rt = 0x60000000
 
 *Intrinsic functions:*
 
- unsigned long __nds__uradd32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__uradd32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_uradd32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17394,12 +17497,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 32-bit unsigned integer element addition and 32-bit unsigned integer element subtraction in a 64-bit chunk simultaneously. Operands are from crossed 32-bit elements. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 32-bit unsigned integer element in [63:32] of Rs1 with the 32-bit unsigned integer element in [31:0] of Rs2, and subtracts the 32-bit unsigned integer element in [63:32] of Rs2 from the 32-bit unsigned integer element in [31:0] of Rs1. The element results are first logically right-shifted by 1 bit and then written to [63:32] of Rd for addition and [31:0] of Rd for subtraction.
+*Description:* This instruction adds the 32-bit unsigned integer element in [63:32]
+of Rs1 with the 32-bit unsigned integer element in [31:0] of Rs2, and subtracts
+the 32-bit unsigned integer element in [63:32] of Rs2 from the 32-bit unsigned
+integer element in [31:0] of Rs1. The 33-bit element results are first
+right-shifted by 1 bit and then written to [63:32] of Rd for addition and [31:0]
+of Rd for subtraction.
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] + Rs2.W[0]) u>> 1;
- Rd.W[0] = (Rs1.W[0] – Rs2.W[1]) u>> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[0])) >> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[1])) >> 1;
 
 *Exceptions:* None
 
@@ -17409,7 +17517,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urcras32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urcras32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_urcras32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17434,12 +17542,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 32-bit unsigned integer element subtraction and 32-bit unsigned integer element addition in a 64-bit chunk simultaneously. Operands are from crossed 32-bit elements. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 32-bit unsigned integer element in [31:0] of Rs2 from the 32-bit unsigned integer element in [63:32] of Rs1, and adds the 32-bit unsigned element integer in [31:0] of Rs1 with the 32-bit unsigned integer element in [63:32] of Rs2. The two results are first logically right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and [31:0] of Rd for addition.
+*Description:* This instruction subtracts the 32-bit unsigned integer element in
+[31:0] of Rs2 from the 32-bit unsigned integer element in [63:32] of Rs1, and
+adds the 32-bit unsigned element integer in [31:0] of Rs1 with the 32-bit
+unsigned integer element in [63:32] of Rs2. The two 33-bit results are first
+right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and
+[31:0] of Rd for addition.
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] - Rs2.W[0]) u>> 1;
- Rd.W[0] = (Rs1.W[0] + Rs2.W[1]) u>> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[0])) >> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[1])) >> 1;
 
 *Exceptions:* None
 
@@ -17449,7 +17562,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urcrsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urcrsa32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_urcrsa32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17474,12 +17587,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 32-bit unsigned integer element addition and 32-bit unsigned integer element subtraction in a 64-bit chunk simultaneously. Operands are from corresponding 32-bit elements. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction adds the 32-bit unsigned integer element in [63:32] of Rs1 with the 32-bit unsigned integer element in [63:32] of Rs2, and subtracts the 32-bit unsigned integer element in [31:0] of Rs2 from the 32-bit unsigned integer element in [31:0] of Rs1. The element results are first logically right-shifted by 1 bit and then written to [63:32] of Rd for addition and [31:0] of Rd for subtraction.
+*Description:* This instruction adds the 32-bit unsigned integer element in [63:32]
+of Rs1 with the 32-bit unsigned integer element in [63:32] of Rs2, and subtracts
+the 32-bit unsigned integer element in [31:0] of Rs2 from the 32-bit unsigned
+integer element in [31:0] of Rs1. The 33-bit element results are first
+right-shifted by 1 bit and then written to [63:32] of Rd for addition and [31:0]
+of Rd for subtraction.
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] + Rs2.W[1]) u>> 1;
- Rd.W[0] = (Rs1.W[0] – Rs2.W[0]) u>> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[1])) >> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[0])) >> 1;
 
 *Exceptions:* None
 
@@ -17489,7 +17607,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urstas32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urstas32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_urstas32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17514,12 +17632,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 32-bit unsigned integer element subtraction and 32-bit unsigned integer element addition in a 64-bit chunk simultaneously. Operands are from corresponding 32-bit elements. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 32-bit unsigned integer element in [63:32] of Rs2 from the 32-bit unsigned integer element in [63:32] of Rs1, and adds the 32-bit unsigned element integer in [31:0] of Rs1 with the 32-bit unsigned integer element in [31:0] of Rs2. The two results are first logically right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and [31:0] of Rd for addition.
+*Description:* This instruction subtracts the 32-bit unsigned integer element in
+[63:32] of Rs2 from the 32-bit unsigned integer element in [63:32] of Rs1, and
+adds the 32-bit unsigned element integer in [31:0] of Rs1 with the 32-bit unsigned
+integer element in [31:0] of Rs2. The two 33-bit results are first right-shifted
+by 1 bit and then written to [63:32] of Rd for subtraction and [31:0] of Rd for
+addition.
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] - Rs2.W[1]) u>> 1;
- Rd.W[0] = (Rs1.W[0] + Rs2.W[0]) u>> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[1])) >> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[0])) >> 1;
 
 *Exceptions:* None
 
@@ -17529,7 +17652,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- unsigned long __nds__urstsa32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__urstsa32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_urstsa32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17554,11 +17677,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Do 32-bit unsigned integer element subtractions simultaneously. The results are halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the 32-bit unsigned integer elements in Rs2 from the 32-bit unsigned integer elements in Rs1. The results are first logically right-shifted by 1 bit and then written to Rd.
+*Description:* This instruction subtracts the 32-bit unsigned integer elements
+in Rs2 from the 32-bit unsigned integer elements in Rs1. The 33-bit results are
+first right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.W[x] = (Rs1.W[x] - Rs2.W[x]) u>> 1;
+ Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) - CONCAT(1'b0,Rs2.W[x])) >> 1;
  for RV64: x=1…0
 
 *Exceptions:* None
@@ -17570,10 +17695,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 * Ra = 0x7FFFFFFF, Rb = 0x80000000, Rt = 0xFFFFFFFF
 * Ra = 0x80000000, Rb = 0x7FFFFFFF, Rt = 0x00000000
 * Ra = 0x80000000, Rb = 0x40000000, Rt = 0x20000000
+* Ra = 0x80000001, Rb = 0x00000001, Rt = 0x40000000
 
 *Intrinsic functions:*
 
- unsigned long __nds__ursub32(unsigned long a, unsigned long b);
+ uintXLEN_t __nds__ursub32(uintXLEN_t a, uintXLEN_t b);
  uint32x2_t __nds__v_ursub32(uint32x2_t a, uint32x2_t b);
 
 <<<
@@ -17691,7 +17817,7 @@ l|XLEN-1                     1 |0
 
 |*10* |kabs8 |kabs16 |kabs32 |sunpkd832 |kabsw | | |zunpkd832
 
-|*11* |swap8 |swap16 |clz |clo | | | |
+|*11* |swap8 |swap16 | | | | | |
 |===
 
 .Instruction Encoding for funct3[14:12]==0b000 and funct7[31:25]==0b1010111 (oneop2).
