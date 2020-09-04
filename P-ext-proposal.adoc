@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.8-draft-20200807
+Version 0.9-draft-20200904
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -17,6 +17,8 @@ Version 0.8-draft-20200807
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9   | 2020/09/04 | Chuanhua Chang
+| Fixed several typos and encoding inconsistencies between encoding table and instruction format.
 | v0.8   | 2020/08/07 | Chuanhua Chang
 a|
 * Changed ucode (0x801) CSR to vxsat CSR (0x009)
@@ -66,7 +68,7 @@ power and higher performance.
 * r.H == rH1: r[31:16], r.L == r.H0: r[15:0]
 * r.B3: r[31:24], r.B2: r[23:16], r.B1: r[15:8], r.B0: r[7:0]
 * r.B[x]: r[(x*8+7):(x*8+0)]
-* r.H[x]: r[(x*16+7):(x*16+0)]
+* r.H[x]: r[(x*16+15):(x*16+0)]
 * r.W[x]: r[(x*32+31):(x*32+0)]
 * r[xU]: the upper 32-bit of a 64-bit number; xU represents the GPR number that contains this upper part 32-bit value.
 * r[xL]: the lower 32-bit of a 64-bit number; xL represents the GPR number that contains this lower part 32-bit value.
@@ -102,171 +104,171 @@ Together, there are 30 SIMD 16-bit add/subtract instructions.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |ADD16 rt, ra, rb |16-bit Addition a|
+|1 |ADD16 rt, ra, rb |16-bit Addition m|
 rt.H[_x_] = ra.H[_x_] + rb.H[_x_];
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|2 |RADD16 rt, ra, rb |16-bit Signed Halving Addition a|
+|2 |RADD16 rt, ra, rb |16-bit Signed Halving Addition m|
 rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) s>> 1;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|3 |URADD16 rt, ra, rb |16-bit Unsigned Halving Addition a|
+|3 |URADD16 rt, ra, rb |16-bit Unsigned Halving Addition m|
 rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|4 |KADD16 rt, ra, rb |16-bit Signed Saturating Addition a|
+|4 |KADD16 rt, ra, rb |16-bit Signed Saturating Addition m|
 rt.H[_x_] = SAT.Q15(ra.H[_x_] + rb.H[_x_]);
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|5 |UKADD16 rt, ra, rb |16-bit Unsigned Saturating Addition a|
+|5 |UKADD16 rt, ra, rb |16-bit Unsigned Saturating Addition m|
 rt.H[_x_] = SAT.U16(ra.H[_x_] + rb.H[_x_];
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|6 |SUB16 rt, ra, rb |16-bit Subtraction a|
+|6 |SUB16 rt, ra, rb |16-bit Subtraction m|
 rt.H[_x_] = ra.H[_x_] - rb.H[_x_];
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|7 |RSUB16 rt, ra, rb |16-bit Signed Halving Subtraction a|
+|7 |RSUB16 rt, ra, rb |16-bit Signed Halving Subtraction m|
 rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) s>> 1;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|8 |URSUB16 rt, ra, rb |16-bit Unsigned Halving Subtraction a|
+|8 |URSUB16 rt, ra, rb |16-bit Unsigned Halving Subtraction m|
 rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|9 |KSUB16 rt, ra, rb |16-bit Signed Saturating Subtraction a|
+|9 |KSUB16 rt, ra, rb |16-bit Signed Saturating Subtraction m|
 rt.H[_x_] = SAT.Q15(ra.H[_x_] - rb.H[_x_]);
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|10 |UKSUB16 rt, ra, rb |16-bit Unsigned Saturating Subtraction a|
+|10 |UKSUB16 rt, ra, rb |16-bit Unsigned Saturating Subtraction m|
 rt.H[_x_] = SAT.U16(ra.H[_x_] - rb.H[_x_]);
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|11 |CRAS16 rt, ra, rb |16-bit Cross Add & Sub a|
+|11 |CRAS16 rt, ra, rb |16-bit Cross Add & Sub m|
 rt.H[_x_] = ra.H[_x_] + rb.H[_x-1_]; +
 rt.H[_x-1_] = ra.H[_x-1_] – rb.H[_x_];
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|12 |RCRAS16 rt, ra, rb |16-bit Signed Halving Cross Add & Sub a|
+|12 |RCRAS16 rt, ra, rb |16-bit Signed Halving Cross Add & Sub m|
 rt.H[_x_] = (ra.H[_x_] + rb.H[_x-1_]) s>> 1; +
 rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x_]) s>> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|13 |URCRAS16 rt, ra, rb |16-bit Unsigned Halving Cross Add & Sub a|
+|13 |URCRAS16 rt, ra, rb |16-bit Unsigned Halving Cross Add & Sub m|
 rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x-1_])) >> 1; +
 rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) – CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|14 |KCRAS16 rt, ra, rb |16-bit Signed Saturating Cross Add & Sub a|
+|14 |KCRAS16 rt, ra, rb |16-bit Signed Saturating Cross Add & Sub m|
 rt.H[_x_] = SAT.Q15(ra.H[_x_] + rb.H[_x-1_]); +
 rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] – rb.H[_x_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|15 |UKCRAS16 rt, ra, rb |16-bit Unsigned Saturating Cross Add & Sub a|
+|15 |UKCRAS16 rt, ra, rb |16-bit Unsigned Saturating Cross Add & Sub m|
 rt.H[_x_] = SAT.U16(ra.H[_x_] + rb.H[_x-1_]); +
 rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] – rb.H[_x_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|16 |CRSA16 rt, ra, rb |16-bit Cross Sub & Add a|
+|16 |CRSA16 rt, ra, rb |16-bit Cross Sub & Add m|
 rt.H[_x_] = ra.H[_x_] - rb.H[_x-1_]; +
 rt.H[_x-1_] = ra.H[_x-1_] + rb.H[_x_];
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|17 |RCRSA16 rt, ra, rb |16-bit Signed Halving Cross Sub & Add a|
+|17 |RCRSA16 rt, ra, rb |16-bit Signed Halving Cross Sub & Add m|
 rt.H[_x_] = (ra.H[_x_] - rb.H[_x-1_]) s>> 1; +
 rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x_]) s>> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|18 |URCRSA16 rt, ra, rb |16-bit Unsigned Halving Cross Sub & Add a|
+|18 |URCRSA16 rt, ra, rb |16-bit Unsigned Halving Cross Sub & Add m|
 rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x-1_])) >> 1; +
 rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) + CONCAT(1'b0,rb.H[_x_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|19 |KCRSA16 rt, ra, rb |16-bit Signed Saturating Cross Sub & Add a|
+|19 |KCRSA16 rt, ra, rb |16-bit Signed Saturating Cross Sub & Add m|
 rt.H[_x_] = SAT.Q15(ra.H[_x_] - rb.H[_x-1_]); +
 rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] + rb.H[_x_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|20 |UKCRSA16 rt, ra, rb |16-bit Unsigned Saturating Cross Sub & Add a|
+|20 |UKCRSA16 rt, ra, rb |16-bit Unsigned Saturating Cross Sub & Add m|
 rt.H[_x_] = SAT.U16(ra.H[_x_] - rb.H[_x-1_]); +
 rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] + rb.H[_x_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|21 |STAS16 rt, ra, rb |16-bit Straight Add & Sub a|
+|21 |STAS16 rt, ra, rb |16-bit Straight Add & Sub m|
 rt.H[_x_] = ra.H[_x_] + rb.H[_x_]; +
 rt.H[_x-1_] = ra.H[_x-1_] – rb.H[_x-1_];
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|22 |RSTAS16 rt, ra, rb |16-bit Signed Halving Straight Add & Sub a|
+|22 |RSTAS16 rt, ra, rb |16-bit Signed Halving Straight Add & Sub m|
 rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) s>> 1; +
 rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x-1_]) s>> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|23 |URSTAS16 rt, ra, rb |16-bit Unsigned Halving Straight Add & Sub a|
+|23 |URSTAS16 rt, ra, rb |16-bit Unsigned Halving Straight Add & Sub m|
 rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x_])) >> 1; +
 rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) – CONCAT(1'b0,rb.H[_x-1_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|24 |KSTAS16 rt, ra, rb |16-bit Signed Saturating Straight Add & Sub a|
+|24 |KSTAS16 rt, ra, rb |16-bit Signed Saturating Straight Add & Sub m|
 rt.H[_x_] = SAT.Q15(ra.H[_x_] + rb.H[_x_]); +
 rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] – rb.H[_x-1_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|25 |UKSTAS16 rt, ra, rb |16-bit Unsigned Saturating Straight Add & Sub a|
+|25 |UKSTAS16 rt, ra, rb |16-bit Unsigned Saturating Straight Add & Sub m|
 rt.H[_x_] = SAT.U16(ra.H[_x_] + rb.H[_x_]); +
 rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] – rb.H[_x-1_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|26 |STSA16 rt, ra, rb |16-bit Straight Sub & Add a|
+|26 |STSA16 rt, ra, rb |16-bit Straight Sub & Add m|
 rt.H[_x_] = ra.H[_x_] - rb.H[_x_]; +
 rt.H[_x-1_] = ra.H[_x-1_] + rb.H[_x-1_];
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|27 |RSTSA16 rt, ra, rb |16-bit Signed Halving Straight Sub & Add a|
+|27 |RSTSA16 rt, ra, rb |16-bit Signed Halving Straight Sub & Add m|
 rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) s>> 1; +
 rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x-1_]) s>> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|28 |URSTSA16 rt, ra, rb |16-bit Unsigned Halving Straight Sub & Add a|
+|28 |URSTSA16 rt, ra, rb |16-bit Unsigned Halving Straight Sub & Add m|
 rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x_])) >> 1; +
 rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) + CONCAT(1'b0,rb.H[_x-1_])) >> 1;
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|29 |KSTSA16 rt, ra, rb |16-bit Signed Saturating Straight Sub & Add a|
+|29 |KSTSA16 rt, ra, rb |16-bit Signed Saturating Straight Sub & Add m|
 rt.H[_x_] = SAT.Q15(ra.H[_x_] - rb.H[_x_]); +
 rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] + rb.H[_x-1_]);
 
 (RV32: __x__=1, RV64: __x__=1,3)
 
-|30 |UKSTSA16 rt, ra, rb |16-bit Unsigned Saturating Straight Sub & Add a|
+|30 |UKSTSA16 rt, ra, rb |16-bit Unsigned Saturating Straight Sub & Add m|
 rt.H[_x_] = SAT.U16(ra.H[_x_] - rb.H[_x_]); +
 rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] + rb.H[_x-1_]);
 
@@ -523,30 +525,30 @@ rt.B[_x_] = SAT.Q7(ra.B[_x_] << rb[3:0]);
 There are 5 instructions here.
 
 .SIMD 16-bit Compare Instructions
-[cols="^.^1,<.^2,<.^2,<.^4",options="header",]
+[cols="^.^1,<.^2,<.^2,<.^4m",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |CMPEQ16 rt, ra, rb |16-bit Compare Equal a|
+|1 |CMPEQ16 rt, ra, rb |16-bit Compare Equal |
 rt.H[_x_] = (ra.H[_x_] == rb.H[_x_])? 0xffff : 0;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|2 |SCMPLT16 rt, ra, rb |16-bit Signed Compare Less Than a|
+|2 |SCMPLT16 rt, ra, rb |16-bit Signed Compare Less Than |
 rt.H[_x_] = (ra.H[_x_] < rb.H[_x_])? 0xffff : 0;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|3 |SCMPLE16 rt, ra, rb |16-bit Signed Compare Less Than & Equal a|
+|3 |SCMPLE16 rt, ra, rb |16-bit Signed Compare Less Than & Equal |
 rt.H[_x_] = (ra.H[_x_] {le} rb.H[_x_])? 0xffff : 0;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|4 |UCMPLT16 rt, ra, rb |16-bit Unsigned Compare Less Than a|
+|4 |UCMPLT16 rt, ra, rb |16-bit Unsigned Compare Less Than |
 rt.H[_x_] = (ra.H[_x_] u< rb.H[_x_])? 0xffff : 0;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
-|5 |UCMPLE16 rt, ra, rb |16-bit Unsigned Compare Less Than & Equal a|
+|5 |UCMPLE16 rt, ra, rb |16-bit Unsigned Compare Less Than & Equal |
 rt.H[_x_] = (ra.H[_x_] u{le} rb.H[_x_])? 0xffff : 0;
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
@@ -818,8 +820,8 @@ rt.H[_x_] = SAT.Q15(ABS(ra.H[_x_]));
 |8 |CLRS16 rt, ra |16-bit Count Leading Redundant Sign |
 |9 |CLZ16 rt, ra |16-bit Count Leading Zero |
 |10 |CLO16 rt, ra |16-bit Count Leading One |
-|11 |SWAP16 rt, ra |Swap Halfword within WoRd
-rt.W[_x_] = CONCAT(ra.W[_x_].H[0], ra.W[_x_].H[1])
+|11 |SWAP16 rt, ra |Swap Halfword within Word a|
+rt.W[_x_] = CONCAT(ra.W[_x_].H[0], ra.W[_x_].H[1]);
 
 (RV32: __x__=0, RV64: __x__=1..0)
 
@@ -874,8 +876,8 @@ rt.B[_x_] = SAT.Um(ra.B[_x_]);
 |8 |CLRS8 rt, ra |8-bit Count Leading Redundant Sign |
 |9 |CLZ8 rt, ra |8-bit Count Leading Zero |
 |10 |CLO8 rt, ra |8-bit Count Leading One |
-|11 |SWAP8 rt, ra |Swap Byte within HalfwoRd
-rt.H[_x_] = CONCAT(ra.H[_x_].B[0], ra.H[_x_].B[1])
+|11 |SWAP8 rt, ra |Swap Byte within Halfword a|
+rt.H[_x_] = CONCAT(ra.H[_x_].B[0], ra.H[_x_].B[1]);
 
 (RV32: __x__=1..0, RV64: __x__=3..0)
 
@@ -1762,79 +1764,69 @@ rt = SE(SAT.Q31(ABS(ra.W[_0_]))); // RV64
 <<<
 ==== 32-bit Computation Instructions
 
-There are 8 instructions here.
+There are 9 instructions here.
 
 .32-bit Computation Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |RADDW rt, ra, rb |32-bit Signed Halving Addition a|
+|1 |RADDW rt, ra, rb |32-bit Signed Halving Addition l|
 res = (ra.W[0] + rb.W[0]) s>> 1;
-
 rt = SE(res);
 
-|2 |URADDW rt, ra, rb |32-bit Unsigned Halving Addition a|
-res = (CONCAT(1'b0,ra.W[0]) + CONCAT(1'b0,rb.W[0])) >> 1;
-
+|2 |URADDW rt, ra, rb |32-bit Unsigned Halving Addition l|
+res = (CONCAT(1'b0, ra.W[0]) + CONCAT(1'b0, rb.W[0])) >> 1;
 rt = SE(res);
 
-|3 |RSUBW rt, ra, rb |32-bit Signed Halving Subtraction a|
+|3 |RSUBW rt, ra, rb |32-bit Signed Halving Subtraction l|
 res = (ra.W[0] - rb.W[0]) s>> 1;
-
 rt = SE(res);
 
-|4 |URSUBW rt, ra, rb |32-bit Unsigned Halving Subtraction a|
-res = (CONCAT(1'b0,ra.W[0]) - CONCAT(1'b0,rb.W[0])) >> 1;
-
+|4 |URSUBW rt, ra, rb |32-bit Unsigned Halving Subtraction l|
+res = (CONCAT(1'b0, ra.W[0]) - CONCAT(1'b0, rb.W[0])) >> 1;
 rt = SE(res);
 
-|5 |MAXW rt, ra, rb |32-bit Signed Word Maximum a|
-if (ra.W[0] >= rb.W[0]) \{
-
-rt = SE(ra.W[0]);
-
-else \{
-
-rt = SE(rb.W[0]);
-
+|5 |MAXW rt, ra, rb |32-bit Signed Word Maximum l|
+if (ra.W[0] >= rb.W[0]) {
+   rt = SE(ra.W[0]);
+else {
+   rt = SE(rb.W[0]);
 }
 
-|6 |MINW rt, ra, rb |32-bit Signed Word Minimum a|
-if (ra.W[0] >= rb.W[0]) \{
-
-rt = SE(rb.W[0]);
-
-else \{
-
-rt = SE(ra.W[0]);
-
+|6 |MINW rt, ra, rb |32-bit Signed Word Minimum l|
+if (ra.W[0] >= rb.W[0]) {
+   rt = SE(rb.W[0]);
+else {
+   rt = SE(ra.W[0]);
 }
 
-|7 |MULR64 rt, ra, rb |Multiply Word Unsigned to 64-bit data a|
+|7 |MULR64 rt, ra, rb |Multiply Word Unsigned to 64-bit data l|
 RV32:
-
 mres[63:0] = ra u* rb;
-
 r[tU] = mres.W[1];
-
 r[tL] = mres.W[0];
 
 RV64:
-
 rt = ra.W[0] u* rb.W[0];
 
-|8 |MULSR64 rt, ra, rb |Multiply Word Signed to 64-bit data a|
+|8 |MULSR64 rt, ra, rb |Multiply Word Signed to 64-bit data l|
 RV32:
-
 mres[63:0] = ra s* rb;
-
 r[tU] = mres.W[1];
-
 r[tL] = mres.W[0];
 
 RV64:
-
 rt = ra.W[0] s* rb.W[0];
+
+|9 |MSUBR32 rt, ra, rb |Multiply and Subtract from 32-bit Word l|
+RV32:
+mres = ra * rb;
+rt = rt - mres.W[0];
+
+RV64:
+mres = ra.W[0] * rb.W[0];
+tres[31:0] = rt.W[0] - mres.W[0];
+rt = SE64(tres[31:0]);
 
 |===
 
@@ -19124,14 +19116,14 @@ l|XLEN-1                                     1 |0
 
 |*1011* |umul16 |umulx16 | | |umul8 |umulx8 | |
 
-|*1100* |smul16h |smulx16h | | |smaqa |smaqa.su |umaqa
+|*1100* | | | | |smaqa |smaqa.su |umaqa
 |wext
 
-|*1101* |umul16h |umulx16h | | | | | |wexti
+|*1101* | | | | | | | |wexti
 
 |*1110* |ave | |sclip32 |bitrev |bitrevi | | |
 
-|*1111* |minw |maxw |uclip32 | |mtlbi |mtlei |pbsad |pbsada
+|*1111* |minw |maxw |uclip32 | | | |pbsad |pbsada
 |===
 
 .Instruction Encoding for funct3[14:12]==0b000 and funct7[31:25]==0b1010110 (oneop).
@@ -19159,16 +19151,16 @@ l|XLEN-1                                     1 |0
 9+|*ONEOP2 == 1010111*
 |*subf5* 8+|*[2:0]*
 
-|*[4:3]* |*000* |*001* |*010* |*011* |*100* |*101*
-|*110* |*111*
+|*[4:3]* |*000* |*001* |*011* |*010* |*100* |*101*
+|*111* |*110*
 
 |*00* |clrs8 |clz8 |clo8 | | | | |
 
 |*01* |clrs16 |clz16 |clo16 | | | | |
 
-|*10* |clrs32 |clz32 |clo32 | | | | |
+|*11* |clrs32 |clz32 |clo32 | | | | |
 
-|*11* | | | | | | | |
+|*10* | | | | | | | |
 |===
 
 
@@ -19185,9 +19177,9 @@ l|XLEN-1                                     1 |0
 
 |*0001* |ukaddw |uksubw |ukaddh |uksubh |smbt16 |kdmbt |khmbt |pkbt16
 
-|*0010* |raddw |rsubw |sra.u |ksll |smtt16 |kdmtt |khmtt |pktt16
+|*0010* |raddw |rsubw |sra.u |ksllw |smtt16 |kdmtt |khmtt |pktt16
 
-|*0011* |uraddw |ursubw |sraiw.u |kslli |kmda |kmxda | |pktb16
+|*0011* |uraddw |ursubw |sraiw.u |kslliw |kmda |kmxda | |pktb16
 
 |*0100* |smmul |kmmsb |smmwb |kmmawb |kmada |kmaxda |kmsda |kmsxda
 
@@ -19211,14 +19203,11 @@ l|XLEN-1                                     1 |0
 
 |*1100* |add64 |sub64 |maddr32 |msubr32 | | | |kmmawb2
 
-|*1101* | |kdmabb |srai.u |kdmabb16 |kdmbb16 |khmbb16
-|kmmawb2.u |
+|*1101* | |kdmabb |srai.u | |kdmabb16 |kdmbb16 |khmbb16 |kmmawb2.u
 
-|*1110* |mulsr64 |kdmabt | | |kdmabt16 |kdmbt16 |khmbt16
-|kmmwt2
+|*1110* |mulsr64 |kdmabt | | |kdmabt16 |kdmbt16 |khmbt16 |kmmawt2
 
-|*1111* |mulr64 |kdmatt | | |kdmatt16 |kdmtt16 |khmtt16
-|kmmwt2.u
+|*1111* |mulr64 |kdmatt | | |kdmatt16 |kdmtt16 |khmtt16 |kmmawt2.u
 |===
 
 .P Extension Instruction Encoding for funct3[14:12]==0b010.
