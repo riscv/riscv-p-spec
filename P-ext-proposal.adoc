@@ -16541,7 +16541,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__add32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__add32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16587,7 +16587,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__cras32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__cras32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16635,7 +16635,7 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 
 * Required:
 
- uintXLEN_t __rv__crsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__crsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16692,7 +16692,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kabs32(uintXLEN_t a);
+ uint64_t __rv__kabs32(uint64_t a);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16745,7 +16745,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kadd32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kadd32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16800,7 +16800,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kcras32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kcras32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16857,7 +16857,7 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 
 * Required:
 
- uintXLEN_t __rv__kcrsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kcrsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16948,7 +16948,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kdmbb16(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kdmbb16(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16958,7 +16958,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kdmbt16(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kdmbt16(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -16968,7 +16968,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kdmtt16(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kdmtt16(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17069,7 +17069,7 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 
 * Required:
 
- uintXLEN_t __rv__kdmabb16(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kdmabb16(uint64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17079,7 +17079,7 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 
 * Required:
 
- uintXLEN_t __rv__kdmabt16(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kdmabt16(uint64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17089,7 +17089,7 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 
 * Required:
 
- uintXLEN_t __rv__kdmatt16(uintXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kdmatt16(uint64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17179,7 +17179,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__khmbb16(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__khmbb16(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17189,7 +17189,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__khmbt16(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__khmbt16(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17199,7 +17199,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__khmtt16(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__khmtt16(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17302,7 +17302,7 @@ The multiplication result is added to the content of 64-bit data in Rd. If the a
 
 * Required:
 
- intXLEN_t __rv__kmabb32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmabb32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17312,7 +17312,7 @@ The multiplication result is added to the content of 64-bit data in Rd. If the a
 
 * Required:
 
- intXLEN_t __rv__kmabt32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmabt32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17322,7 +17322,7 @@ The multiplication result is added to the content of 64-bit data in Rd. If the a
 
 * Required:
 
- intXLEN_t __rv__kmatt32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmatt32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17403,7 +17403,7 @@ The result is added to the content of 64-bit data in Rd. If the addition result 
 
 * Required:
 
- intXLEN_t __rv__kmada32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmada32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17413,7 +17413,7 @@ The result is added to the content of 64-bit data in Rd. If the addition result 
 
 * Required:
 
- intXLEN_t __rv__kmaxda32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmaxda32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17496,7 +17496,7 @@ The addition result is checked for saturation. If saturation happens, the result
 
 * Required:
 
- intXLEN_t __rv__kmda32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmda32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17506,7 +17506,7 @@ The addition result is checked for saturation. If saturation happens, the result
 
 * Required:
 
- intXLEN_t __rv__kmxda32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmxda32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17609,7 +17609,7 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 
 * Required:
 
- intXLEN_t __rv__kmads32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmads32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17619,7 +17619,7 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 
 * Required:
 
- intXLEN_t __rv__kmadrs32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmadrs32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17629,7 +17629,7 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 
 * Required:
 
- intXLEN_t __rv__kmaxds32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmaxds32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17714,7 +17714,7 @@ The two 64-bit multiplication results are then subtracted from the content of Rd
 
 * Required:
 
- intXLEN_t __rv__kmsda32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmsda32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17724,7 +17724,7 @@ The two 64-bit multiplication results are then subtracted from the content of Rd
 
 * Required:
 
- intXLEN_t __rv__kmsxda32(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__kmsxda32(int64_t t, uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17780,7 +17780,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ksll32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__ksll32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17836,7 +17836,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ksll32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__ksll32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17923,7 +17923,7 @@ The left-shifted results are saturated to the 32-bit signed integer range of [-2
 
 * Required:
 
- uintXLEN_t __rv__kslra32(uintXLEN_t a, int32_t b);
+ uint64_t __rv__kslra32(uint64_t a, int32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17933,7 +17933,7 @@ The left-shifted results are saturated to the 32-bit signed integer range of [-2
 
 * Required:
 
- uintXLEN_t __rv__kslra32_u(uintXLEN_t a, int32_t b);
+ uint64_t __rv__kslra32_u(uint64_t a, int32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -17988,7 +17988,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__kstas32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kstas32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18045,7 +18045,7 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 
 * Required:
 
- uintXLEN_t __rv__kstsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__kstsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18098,7 +18098,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ksub32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ksub32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18180,7 +18180,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__pkbb32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__pkbb32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18190,7 +18190,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__pkbt32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__pkbt32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18200,7 +18200,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__pktb32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__pktb32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18210,7 +18210,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__pktt32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__pktt32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18260,7 +18260,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__radd32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__radd32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18307,7 +18307,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__rcras32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__rcras32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18354,7 +18354,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__rcrsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__rcrsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18401,7 +18401,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__rstas32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__rstas32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18448,7 +18448,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__rstsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__rstsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18498,7 +18498,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__rsub32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__rsub32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18544,7 +18544,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sll32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__sll32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18592,7 +18592,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sll32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__sll32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18637,7 +18637,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__smax32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__smax32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18728,7 +18728,7 @@ Rd = res;
 
 * Required:
 
- intXLEN_t __rv__smbb32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__smbb32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18738,7 +18738,7 @@ Rd = res;
 
 * Required:
 
- intXLEN_t __rv__smbt32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__smbt32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18748,7 +18748,7 @@ Rd = res;
 
 * Required:
 
- intXLEN_t __rv__smtt32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__smtt32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18845,7 +18845,7 @@ The subtraction result is written to Rd. The 32-bit contents of Rs1 and Rs2 are 
 
 * Required:
 
- intXLEN_t __rv__smds32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__smds32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18855,7 +18855,7 @@ The subtraction result is written to Rd. The 32-bit contents of Rs1 and Rs2 are 
 
 * Required:
 
- intXLEN_t __rv__smdrs32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__smdrs32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18865,7 +18865,7 @@ The subtraction result is written to Rd. The 32-bit contents of Rs1 and Rs2 are 
 
 * Required:
 
- intXLEN_t __rv__smxds32(uintXLEN_t a, uintXLEN_t b);
+ int64_t __rv__smxds32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18910,7 +18910,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__smin32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__smin32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18987,7 +18987,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sra32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__sra32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -18997,7 +18997,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sra32_u(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__sra32_u(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19074,7 +19074,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sra32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__sra32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19084,7 +19084,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sra32_u(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__sra32_u(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19212,7 +19212,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__srl32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__srl32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19222,7 +19222,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__srl32_u(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__srl32_u(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19299,7 +19299,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__srl32(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__srl32(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19309,7 +19309,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__srl32_u(uintXLEN_t a, uint32_t b);
+ uint64_t __rv__srl32_u(uint64_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19354,7 +19354,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__stas32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__stas32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19402,7 +19402,7 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 
 * Required:
 
- uintXLEN_t __rv__stsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__stsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19448,7 +19448,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__sub32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__sub32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19499,7 +19499,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ukadd32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ukadd32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19554,7 +19554,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ukcras32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ukcras32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19609,7 +19609,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
-  uintXLEN_t __rv__ukcrsa32(uintXLEN_t a, uintXLEN_t b);
+  uint64_t __rv__ukcrsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19664,7 +19664,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ukstas32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ukstas32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19719,7 +19719,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__ukstsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ukstsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19769,7 +19769,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__uksub32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__uksub32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19814,7 +19814,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__umax32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__umax32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19859,7 +19859,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__umin32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__umin32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19911,7 +19911,7 @@ right-shifted by 1 bit and then written to Rd.
 
 * Required:
 
- uintXLEN_t __rv__uradd32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__uradd32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -19963,7 +19963,7 @@ of Rd for subtraction.
 
 * Required:
 
- uintXLEN_t __rv__urcras32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__urcras32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -20015,7 +20015,7 @@ right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and
 
 * Required:
 
- uintXLEN_t __rv__urcrsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__urcrsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -20067,7 +20067,7 @@ of Rd for subtraction.
 
 * Required:
 
- uintXLEN_t __rv__urstas32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__urstas32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -20119,7 +20119,7 @@ addition.
 
 * Required:
 
- uintXLEN_t __rv__urstsa32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__urstsa32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -20172,7 +20172,7 @@ first right-shifted by 1 bit and then written to Rd.
 
 * Required:
 
- uintXLEN_t __rv__ursub32(uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ursub32(uint64_t a, uint64_t b);
 
 * Optional (e.g., GCC vector extensions):
 
