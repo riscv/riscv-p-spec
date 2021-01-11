@@ -2857,7 +2857,7 @@ l|31    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- CLROV # pseudo mnemonic
+ CLROV Rd # pseudo mnemonic
 
 *Purpose:* This pseudo instruction is an alias to “CSRRCI x0, vxsat, 1” instruction.
 
