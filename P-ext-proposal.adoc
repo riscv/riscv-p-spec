@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9-draft-20200904
+Version 0.9.1-draft-20210126
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -17,6 +17,8 @@ Version 0.9-draft-20200904
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.1 | 2021/01/26 | Chuanhua Chang
+| Maintainance update; fixed several format issues and typos.
 | v0.9   | 2020/09/04 | Chuanhua Chang
 | Fixed several typos and encoding inconsistencies between encoding table and instruction format.
 | v0.8   | 2020/08/07 | Chuanhua Chang
@@ -83,11 +85,12 @@ power and higher performance.
 ** ZEm(data): Zero-Extend data to m-bit.
 * ABS(x): Calculate the absolute value of “x”.
 * CONCAT(x,y): Concatinate “x” and “y” to form a value.
-* u<: Unsinged less than comparison.
-* u{le}: Unsinged less than & equal comparison.
-* u>: Unsinged greater than comparison.
+* u<: Unsigned less than comparison.
+* u{le}: Unsigned less than & equal comparison.
+* u>: Unsigned greater than comparison.
 * s*: Signed multiplication.
 * u*: Unsigned multiplication.
+* su*: Signed and Unsigned multiplication.
 
 <<<
 === SIMD Data Processing Instructions
@@ -104,176 +107,286 @@ Together, there are 30 SIMD 16-bit add/subtract instructions.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |ADD16 rt, ra, rb |16-bit Addition m|
-rt.H[_x_] = ra.H[_x_] + rb.H[_x_];
+|1 |ADD16 rt, ra, rb |16-bit Addition a|
+....
+rt.H[x] = ra.H[x] + rb.H[x];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|2 |RADD16 rt, ra, rb |16-bit Signed Halving Addition a|
+....
+t17[x] = ra.H[x] + rb.H[x];
+rt.H[x] = t17[x] s>> 1;
 
-|2 |RADD16 rt, ra, rb |16-bit Signed Halving Addition m|
-rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) s>> 1;
+(RV32: x=1..0, RV64: x=3..0)
+....
+|3 |URADD16 rt, ra, rb |16-bit Unsigned Halving Addition a|
+....
+a17[x] = CONCAT(1'b0,ra.H[x]);
+b17[x] = CONCAT(1'b0,rb.H[x]);
+t17[x] = a17[x] + b17[x];
+rt.H[x] = t17[x] >> 1;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|4 |KADD16 rt, ra, rb |16-bit Signed Saturating Addition a|
+....
+t17[x] = ra.H[x] + rb.H[x];
+rt.H[x] = SAT.Q15(t17[x]);
 
-|3 |URADD16 rt, ra, rb |16-bit Unsigned Halving Addition m|
-rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x_])) >> 1;
+(RV32: x=1..0, RV64: x=3..0)
+....
+|5 |UKADD16 rt, ra, rb |16-bit Unsigned Saturating Addition a|
+....
+a17[x] = CONCAT(1'b0,ra.H[x]);
+b17[x] = CONCAT(1'b0,rb.H[x]);
+t17[x] = a17[x] + b17[x];
+rt.H[x] = SAT.U16(t17[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|6 |SUB16 rt, ra, rb |16-bit Subtraction a|
+....
+rt.H[x] = ra.H[x] - rb.H[x];
 
-|4 |KADD16 rt, ra, rb |16-bit Signed Saturating Addition m|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] + rb.H[_x_]);
+(RV32: x=1..0, RV64: x=3..0)
+....
+|7 |RSUB16 rt, ra, rb |16-bit Signed Halving Subtraction a|
+....
+t17[x] = ra.H[x] - rb.H[x];
+rt.H[x] = t17[x] s>> 1;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|8 |URSUB16 rt, ra, rb |16-bit Unsigned Halving Subtraction a|
+....
+a17[x] = CONCAT(1'b0,ra.H[x]);
+b17[x] = CONCAT(1'b0,rb.H[x]);
+t17[x] = a17[x] - b17[x];
+rt.H[x] = t17[x] >> 1;
 
-|5 |UKADD16 rt, ra, rb |16-bit Unsigned Saturating Addition m|
-rt.H[_x_] = SAT.U16(ra.H[_x_] + rb.H[_x_];
+(RV32: x=1..0, RV64: x=3..0)
+....
+|9 |KSUB16 rt, ra, rb |16-bit Signed Saturating Subtraction a|
+....
+t17[x] = ra.H[x] - rb.H[x];
+rt.H[x] = SAT.Q15(t17[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|10 |UKSUB16 rt, ra, rb |16-bit Unsigned Saturating Subtraction a|
+....
+a17[x] = CONCAT(1'b0,ra.H[x]);
+b17[x] = CONCAT(1'b0,rb.H[x]);
+t17[x] = a17[x] - b17[x];
+rt.H[x] = SAT.U16(t17[x]);
 
-|6 |SUB16 rt, ra, rb |16-bit Subtraction m|
-rt.H[_x_] = ra.H[_x_] - rb.H[_x_];
+(RV32: x=1..0, RV64: x=3..0)
+....
+|11 |CRAS16 rt, ra, rb |16-bit Cross Add & Sub a|
+....
+rt.H[x] = ra.H[x] + rb.H[x-1]; 
+rt.H[x-1] = ra.H[x-1] – rb.H[x];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1, RV64: x=1,3)
+....
+|12 |RCRAS16 rt, ra, rb |16-bit Signed Halving Cross Add & Sub a|
+....
+e17[x] = ra.H[x] + rb.H[x-1];
+f17[x] = ra.H[x-1] – rb.H[x];
+rt.H[x]   = e17[x] s>> 1; 
+rt.H[x-1] = f17[x] s>> 1;
 
-|7 |RSUB16 rt, ra, rb |16-bit Signed Halving Subtraction m|
-rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) s>> 1;
+(RV32: x=1, RV64: x=1,3)
+....
+|13 |URCRAS16 rt, ra, rb |16-bit Unsigned Halving Cross Add & Sub a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] + bl17[x];
+tl17[x] = al17[x] – bh17[x];
+rt.H[x]   = th17[x] >> 1;
+rt.H[x-1] = tl17[x] >> 1;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1, RV64: x=1,3)
+....
+|14 |KCRAS16 rt, ra, rb |16-bit Signed Saturating Cross Add & Sub a|
+....
+th17[x] = ra.H[x] + rb.H[x-1];
+tl17[x] = ra.H[x-1] – rb.H[x];
+rt.H[x]   = SAT.Q15(th17[x]);
+rt.H[x-1] = SAT.Q15(tl17[x]);
 
-|8 |URSUB16 rt, ra, rb |16-bit Unsigned Halving Subtraction m|
-rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x_])) >> 1;
+(RV32: x=1, RV64: x=1,3)
+....
+|15 |UKCRAS16 rt, ra, rb |16-bit Unsigned Saturating Cross Add & Sub a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] + bl17[x];
+tl17[x] = al17[x] – bh17[x];
+rt.H[x]   = SAT.U16(th17[x]);
+rt.H[x-1] = SAT.U16(tl17[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1, RV64: x=1,3)
+....
+|16 |CRSA16 rt, ra, rb |16-bit Cross Sub & Add a|
+....
+rt.H[x] = ra.H[x] - rb.H[x-1]; 
+rt.H[x-1] = ra.H[x-1] + rb.H[x];
 
-|9 |KSUB16 rt, ra, rb |16-bit Signed Saturating Subtraction m|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] - rb.H[_x_]);
+(RV32: x=1, RV64: x=1,3)
+....
+|17 |RCRSA16 rt, ra, rb |16-bit Signed Halving Cross Sub & Add a|
+....
+th17[x] = ra.H[x] - rb.H[x-1];
+tl17[x] = ra.H[x-1] + rb.H[x];
+rt.H[x]   = th17[x] s>> 1;
+rt.H[x-1] = tl17[x] s>> 1;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1, RV64: x=1,3)
+....
+|18 |URCRSA16 rt, ra, rb |16-bit Unsigned Halving Cross Sub & Add a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] - bl17[x];
+tl17[x] = al17[x] + bh17[x];
+rt.H[x]   = th17[x] >> 1;
+rt.H[x-1] = tl17[x] >> 1;
 
-|10 |UKSUB16 rt, ra, rb |16-bit Unsigned Saturating Subtraction m|
-rt.H[_x_] = SAT.U16(ra.H[_x_] - rb.H[_x_]);
+(RV32: x=1, RV64: x=1,3)
+....
+|19 |KCRSA16 rt, ra, rb |16-bit Signed Saturating Cross Sub & Add a|
+....
+th17[x] = ra.H[x] - rb.H[x-1];
+tl17[x] = ra.H[x-1] + rb.H[x];
+rt.H[x]   = SAT.Q15(th17[x]);
+rt.H[x-1] = SAT.Q15(tl17[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1, RV64: x=1,3)
+....
+|20 |UKCRSA16 rt, ra, rb |16-bit Unsigned Saturating Cross Sub & Add a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] - bl17[x];
+tl17[x] = al17[x] + bh17[x];
+rt.H[x]   = SAT.U16(th17[x]);
+rt.H[x-1] = SAT.U16(tl17[x]);
 
-|11 |CRAS16 rt, ra, rb |16-bit Cross Add & Sub m|
-rt.H[_x_] = ra.H[_x_] + rb.H[_x-1_]; +
-rt.H[_x-1_] = ra.H[_x-1_] – rb.H[_x_];
+(RV32: x=1, RV64: x=1,3)
+....
+|21 |STAS16 rt, ra, rb |16-bit Straight Add & Sub a|
+....
+rt.H[x] = ra.H[x] + rb.H[x]; +
+rt.H[x-1] = ra.H[x-1] – rb.H[x-1];
 
-(RV32: __x__=1, RV64: __x__=1,3)
+(RV32: x=1, RV64: x=1,3)
+....
+|22 |RSTAS16 rt, ra, rb |16-bit Signed Halving Straight Add & Sub a|
+....
+th17[x] = ra.H[x] + rb.H[x];
+tl17[x] = ra.H[x-1] – rb.H[x-1];
+rt.H[x]   = th17[x] s>> 1;
+rt.H[x-1] = tl17[x] s>> 1;
 
-|12 |RCRAS16 rt, ra, rb |16-bit Signed Halving Cross Add & Sub m|
-rt.H[_x_] = (ra.H[_x_] + rb.H[_x-1_]) s>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x_]) s>> 1;
+(RV32: x=1, RV64: x=1,3)
+....
+|23 |URSTAS16 rt, ra, rb |16-bit Unsigned Halving Straight Add & Sub a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] + bh17[x];
+tl17[x] = al17[x] – bl17[x];
+rt.H[x]   = th17[x] >> 1;
+rt.H[x-1] = tl17[x] >> 1;
 
-(RV32: __x__=1, RV64: __x__=1,3)
+(RV32: x=1, RV64: x=1,3)
+....
+|24 |KSTAS16 rt, ra, rb |16-bit Signed Saturating Straight Add & Sub a|
+....
+th17[x] = ra.H[x] + rb.H[x];
+tl17[x] = ra.H[x-1] – rb.H[x-1];
+rt.H[x]   = SAT.Q15(th17[x]);
+rt.H[x-1] = SAT.Q15(tl17[x]);
 
-|13 |URCRAS16 rt, ra, rb |16-bit Unsigned Halving Cross Add & Sub m|
-rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x-1_])) >> 1; +
-rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) – CONCAT(1'b0,rb.H[_x_])) >> 1;
+(RV32: x=1, RV64: x=1,3)
+....
+|25 |UKSTAS16 rt, ra, rb |16-bit Unsigned Saturating Straight Add & Sub a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] + bh17[x];
+tl17[x] = al17[x] – bl17[x];
+rt.H[x]   = SAT.U16(th17[x]);
+rt.H[x-1] = SAT.U16(tl17[x]);
 
-(RV32: __x__=1, RV64: __x__=1,3)
+(RV32: x=1, RV64: x=1,3)
+....
+|26 |STSA16 rt, ra, rb |16-bit Straight Sub & Add a|
+....
+rt.H[x] = ra.H[x] - rb.H[x]; +
+rt.H[x-1] = ra.H[x-1] + rb.H[x-1];
 
-|14 |KCRAS16 rt, ra, rb |16-bit Signed Saturating Cross Add & Sub m|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] + rb.H[_x-1_]); +
-rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] – rb.H[_x_]);
+(RV32: x=1, RV64: x=1,3)
+....
+|27 |RSTSA16 rt, ra, rb |16-bit Signed Halving Straight Sub & Add a|
+....
+th17[x] = ra.H[x] - rb.H[x];
+tl17[x] = ra.H[x-1] + rb.H[x-1];
+rt.H[x]   = th17[x] s>> 1;
+rt.H[x-1] = tl17[x] s>> 1;
 
-(RV32: __x__=1, RV64: __x__=1,3)
+(RV32: x=1, RV64: x=1,3)
+....
+|28 |URSTSA16 rt, ra, rb |16-bit Unsigned Halving Straight Sub & Add a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] - bh17[x];
+tl17[x] = al17[x] + bl17[x];
+rt.H[x]   = th17[x] >> 1;
+rt.H[x-1] = tl17[x] >> 1;
 
-|15 |UKCRAS16 rt, ra, rb |16-bit Unsigned Saturating Cross Add & Sub m|
-rt.H[_x_] = SAT.U16(ra.H[_x_] + rb.H[_x-1_]); +
-rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] – rb.H[_x_]);
+(RV32: x=1, RV64: x=1,3)
+....
+|29 |KSTSA16 rt, ra, rb |16-bit Signed Saturating Straight Sub & Add a|
+....
+th17[x] = ra.H[x] - rb.H[x];
+tl17[x] = ra.H[x-1] + rb.H[x-1];
+rt.H[x]   = SAT.Q15(th17[x]);
+rt.H[x-1] = SAT.Q15(tl17[x]);
 
-(RV32: __x__=1, RV64: __x__=1,3)
+(RV32: x=1, RV64: x=1,3)
+....
+|30 |UKSTSA16 rt, ra, rb |16-bit Unsigned Saturating Straight Sub & Add a|
+....
+ah17[x] = CONCAT(1'b0,ra.H[x]);
+bh17[x] = CONCAT(1'b0,rb.H[x]);
+al17[x] = CONCAT(1'b0,ra.H[x-1]);
+bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+th17[x] = ah17[x] - bh17[x];
+tl17[x] = al17[x] + bl17[x];
+rt.H[x]   = SAT.U16(th17[x]);
+rt.H[x-1] = SAT.U16(tl17[x]);
 
-|16 |CRSA16 rt, ra, rb |16-bit Cross Sub & Add m|
-rt.H[_x_] = ra.H[_x_] - rb.H[_x-1_]; +
-rt.H[_x-1_] = ra.H[_x-1_] + rb.H[_x_];
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|17 |RCRSA16 rt, ra, rb |16-bit Signed Halving Cross Sub & Add m|
-rt.H[_x_] = (ra.H[_x_] - rb.H[_x-1_]) s>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x_]) s>> 1;
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|18 |URCRSA16 rt, ra, rb |16-bit Unsigned Halving Cross Sub & Add m|
-rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x-1_])) >> 1; +
-rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) + CONCAT(1'b0,rb.H[_x_])) >> 1;
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|19 |KCRSA16 rt, ra, rb |16-bit Signed Saturating Cross Sub & Add m|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] - rb.H[_x-1_]); +
-rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] + rb.H[_x_]);
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|20 |UKCRSA16 rt, ra, rb |16-bit Unsigned Saturating Cross Sub & Add m|
-rt.H[_x_] = SAT.U16(ra.H[_x_] - rb.H[_x-1_]); +
-rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] + rb.H[_x_]);
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|21 |STAS16 rt, ra, rb |16-bit Straight Add & Sub m|
-rt.H[_x_] = ra.H[_x_] + rb.H[_x_]; +
-rt.H[_x-1_] = ra.H[_x-1_] – rb.H[_x-1_];
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|22 |RSTAS16 rt, ra, rb |16-bit Signed Halving Straight Add & Sub m|
-rt.H[_x_] = (ra.H[_x_] + rb.H[_x_]) s>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] – rb.H[_x-1_]) s>> 1;
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|23 |URSTAS16 rt, ra, rb |16-bit Unsigned Halving Straight Add & Sub m|
-rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) + CONCAT(1'b0,rb.H[_x_])) >> 1; +
-rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) – CONCAT(1'b0,rb.H[_x-1_])) >> 1;
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|24 |KSTAS16 rt, ra, rb |16-bit Signed Saturating Straight Add & Sub m|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] + rb.H[_x_]); +
-rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] – rb.H[_x-1_]);
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|25 |UKSTAS16 rt, ra, rb |16-bit Unsigned Saturating Straight Add & Sub m|
-rt.H[_x_] = SAT.U16(ra.H[_x_] + rb.H[_x_]); +
-rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] – rb.H[_x-1_]);
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|26 |STSA16 rt, ra, rb |16-bit Straight Sub & Add m|
-rt.H[_x_] = ra.H[_x_] - rb.H[_x_]; +
-rt.H[_x-1_] = ra.H[_x-1_] + rb.H[_x-1_];
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|27 |RSTSA16 rt, ra, rb |16-bit Signed Halving Straight Sub & Add m|
-rt.H[_x_] = (ra.H[_x_] - rb.H[_x_]) s>> 1; +
-rt.H[_x-1_] = (ra.H[_x-1_] + rb.H[_x-1_]) s>> 1;
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|28 |URSTSA16 rt, ra, rb |16-bit Unsigned Halving Straight Sub & Add m|
-rt.H[_x_] = (CONCAT(1'b0,ra.H[_x_]) - CONCAT(1'b0,rb.H[_x_])) >> 1; +
-rt.H[_x-1_] = (CONCAT(1'b0,ra.H[_x-1_]) + CONCAT(1'b0,rb.H[_x-1_])) >> 1;
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|29 |KSTSA16 rt, ra, rb |16-bit Signed Saturating Straight Sub & Add m|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] - rb.H[_x_]); +
-rt.H[_x-1_] = SAT.Q15(ra.H[_x-1_] + rb.H[_x-1_]);
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
-|30 |UKSTSA16 rt, ra, rb |16-bit Unsigned Saturating Straight Sub & Add m|
-rt.H[_x_] = SAT.U16(ra.H[_x_] - rb.H[_x_]); +
-rt.H[_x-1_] = SAT.U16(ra.H[_x-1_] + rb.H[_x-1_]);
-
-(RV32: __x__=1, RV64: __x__=1,3)
-
+(RV32: x=1, RV64: x=1,3)
+....
 |===
 
 <<<
@@ -290,55 +403,79 @@ Together, there are 10 SIMD 8-bit add/subtract instructions.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |ADD8 rt, ra, rb |8-bit Addition a|
-rt.B[_x_] = ra.B[_x_] + rb.B[_x_];
+....
+rt.B[x] = ra.B[x] + rb.B[x];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |2 |RADD8 rt, ra, rb |8-bit Signed Halving Addition a|
-rt.B[_x_] = (ra.B[_x_] + rb.B[_x_]) s>> 1;
+....
+t9[x] = ra.B[x] + rb.B[x];
+rt.B[x] = t9[x] s>> 1;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |3 |URADD8 rt, ra, rb |8-bit Unsigned Halving Addition a|
-rt.B[_x_] = (CONCAT(1'b0,ra.B[_x_]) + CONCAT(1'b0,rb.B[_x_])) >> 1;
+....
+a9[x] = CONCAT(1'b0,ra.B[x]);
+b9[x] = CONCAT(1'b0,rb.B[x]);
+rt.B[x] = (a9[x] + b9[x]) >> 1;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |4 |KADD8 rt, ra, rb |8-bit Signed Saturating Addition a|
-rt.B[_x_] = SAT.Q7(ra.B[_x_] + rb.B[_x_]);
+....
+t9[x] = ra.B[x] + rb.B[x];
+rt.B[x] = SAT.Q7(t9[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |5 |UKADD8 rt, ra, rb |8-bit Unsigned Saturating Addition a|
-rt.B[_x_] = SAT.U8(ra.B[_x_] + rb.B[_x_]);
+....
+a9[x] = CONCAT(1'b0,ra.B[x]);
+b9[x] = CONCAT(1'b0,rb.B[x]);
+t9[x] = a9[x] + b9[x];
+rt.H[x] = SAT.U8(t9[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |6 |SUB8 rt, ra, rb |8-bit Subtraction a|
-rt.B[_x_] = ra.B[_x_] - rb.B[_x_];
+....
+rt.B[x] = ra.B[x] - rb.B[x];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |7 |RSUB8 rt, ra, rb |8-bit Signed Halving Subtraction a|
-rt.B[_x_] = (ra.B[_x_] - rb.B[_x_]) s>> 1;
+....
+t9[x] = ra.B[x] - rb.B[x];
+rt.B[x] = t9[x] s>> 1;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |8 |URSUB8 rt, ra, rb |8-bit Unsigned Halving Subtraction a|
-rt.B[_x_] = (CONCAT(1'b0,ra.B[_x_]) - CONCAT(1'b0,rb.B[_x_])) >> 1;
+....
+a9[x] = CONCAT(1'b0,ra.B[x]);
+b9[x] = CONCAT(1'b0,rb.B[x]);
+rt.B[x] = (a9[x] - b9[x]) >> 1;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |9 |KSUB8 rt, ra, rb |8-bit Signed Saturating Subtraction a|
-rt.B[_x_] = SAT.Q7(ra.B[_x_] - rb.B[_x_]);
+....
+t9[x] = ra.B[x] - rb.B[x];
+rt.B[x] = SAT.Q7(t9[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |10 |UKSUB8 rt, ra, rb |8-bit Unsigned Saturating Subtraction a|
-rt.B[_x_] = SAT.U8(ra.B[_x_] - rb.B[_x_]);
+....
+a9[x] = CONCAT(1'b0,ra.B[x]);
+b9[x] = CONCAT(1'b0,rb.B[x]);
+t9[x] = a9[x] - b9[x];
+rt.H[x] = SAT.U8(t9[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |===
 
 <<<
@@ -351,83 +488,102 @@ There are 14 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SRA16 rt, ra, rb |16-bit Shift Right Arithmetic a|
-rt.H[_x_] = ra.H[_x_] s>> rb[3:0];
+....
+rt.H[x] = ra.H[x] s>> rb[3:0];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |2 |SRAI16 rt, ra, im4u |16-bit Shift Right Arithmetic Immediate a|
-rt.H[_x_] = ra.H[_x_] s>> im4u;
+....
+rt.H[x] = ra.H[x] s>> im4u;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |3 |SRA16.u rt, ra, rb |16-bit Rounding Shift Right Arithmetic a|
-rt.H[_x_] = RUND(ra.H[_x_] s>> rb[3:0]);
+....
+a[x] = ra.H[x];
+rt.H[x] = RUND(a[x] s>> rb[3:0]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |4 |SRAI16.u rt, ra, im4u |16-bit Rounding Shift Right Arithmetic Immediate a|
-rt.H[_x_] = RUND(ra.H[_x_] s>> im4u);
+....
+rt.H[x] = RUND(ra.H[x] s>> im4u);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |5 |SRL16 rt, ra, rb |16-bit Shift Right Logical a|
-rt.H[_x_] = ra.H[_x_] u>> rb[3:0];
+....
+rt.H[x] = ra.H[x] u>> rb[3:0];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |6 |SRLI16 rt, ra, im4u |16-bit Shift Right Logical Immediate a|
-rt.H[_x_] = ra.H[_x_] u>> im4u;
+....
+rt.H[x] = ra.H[x] u>> im4u;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |7 |SRL16.u rt, ra, rb |16-bit Rounding Shift Right Logical a|
-rt.H[_x_] = RUND(ra.H[_x_] u>> rb[3:0]);
+....
+a[x] = ra.H[x];
+rt.H[x] = RUND(a[x] u>> rb[3:0]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |8 |SRLI16.u rt, ra, im4u |16-bit Rounding Shift Right Logical Immediate a|
-rt.H[_x_] = RUND(ra.H[_x_] u>> im4u);
+....
+rt.H[x] = RUND(ra.H[x] u>> im4u);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |9 |SLL16 rt, ra, rb |16-bit Shift Left Logical a|
-rt.H[_x_] = ra.H__x__ << rb[3:0];
+....
+rt.H[x] = ra.H[x] << rb[3:0];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |10 |SLLI16 rt, ra, im4u |16-bit Shift Left Logical Immediate a|
-rt.H[_x_] = ra.H[_x_] << im4u;
+....
+rt.H[x] = ra.H[x] << im4u;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |11 |KSLL16 rt, ra, rb |16-bit Saturating Shift Left Logical a|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] << im4u);
+....
+a[x] = ra.H[x];
+rt.H[x] = SAT.Q15(a[x] << rb[3:0]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |12 |KSLLI16 rt, ra, im4u |16-bit Saturating Shift Left Logical Immediate a|
-rt.H[_x_] = SAT.Q15(ra.H[_x_] << rb[3:0]);
+....
+rt.H[x] = SAT.Q15(ra.H[x] << im4u);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |13 |KSLRA16 rt, ra, rb |16-bit Shift Left Logical with Saturation & Shift Right Arithmetic a|
-if (rb[4:0] < 0) +
-rt.H[_x_] = ra.H[_x_] s>> -rb[4:0];
+....
+a[x] = ra.H[x];
+if (rb[4:0] < 0)
+  t[x] = a[x] s>> -rb[4:0];
+if (rb[4:0] > 0)
+  t[x] = SAT.Q15(a[x] << rb[4:0]);
+rt.H[x] = t[x];
 
-if (rb[4:0] > 0) +
-rt.H[_x_] = SAT.Q15(ra.H[_x_] << rb[4:0]);
-
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |14 |KSLRA16.u rt, ra, rb |16-bit Shift Left Logical with Saturation & Rounding Shift Right Arithmetic a|
-if (rb[4:0] < 0) +
-rt.H[_x_] = RUND(ra.H[_x_] s>> -rb[4:0]);
+....
+a[x] = ra.H[x];
+if (rb[4:0] < 0)
+  t[x] = RUND(a[x] s>> -rb[4:0]);
+if (rb[4:0] > 0)
+  t[x] = SAT.Q15(a[x] << rb[4:0]);
+rt.H[x] = t[x];
 
-if (rb[4:0] > 0) +
-rt.H[_x_] = SAT.Q15(ra.H[_x_] << rb[4:0]);
-
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |===
 
 <<<
@@ -440,83 +596,102 @@ There are 14 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SRA8 rt, ra, rb |8-bit Shift Right Arithmetic a|
-rt.B[_x_] = ra.B[_x_] s>> rb[2:0];
+....
+rt.B[x] = ra.B[x] s>> rb[2:0];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |2 |SRAI8 rt, ra, im3u |8-bit Shift Right Arithmetic Immediate a|
-rt.B[_x_] = ra.B[_x_] s>> im3u;
+....
+rt.B[x] = ra.B[x] s>> im3u;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |3 |SRA8.u rt, ra, rb |8-bit Rounding Shift Right Arithmetic a|
-rt.B[_x_] = RUND(ra.B[_x_] s>> rb[2:0]);
+....
+a[x] = ra.B[x];
+rt.B[x] = RUND(a[x] s>> rb[2:0]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
+(RV32: x=3..0, RV64: x=7..0)
+....
+|4 |SRAI8.u rt, ra, im3u |8-bit Rounding Shift Right Arithmetic Immediate a|
+....
+rt.B[x] = RUND(ra.B[x] s>> im3u);
 
-|4 |SRAI8.u rt, ra, im4u |8-bit Rounding Shift Right Arithmetic Immediate a|
-rt.B[_x_] = RUND(ra.B[_x_] s>> im3u);
-
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |5 |SRL8 rt, ra, rb |8-bit Shift Right Logical a|
-rt.B[_x_] = ra.B[_x_] u>> rb[2:0];
+....
+rt.B[x] = ra.B[x] u>> rb[2:0];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |6 |SRLI8 rt, ra, im3u |8-bit Shift Right Logical Immediate a|
-rt.B[_x_] = ra.B[_x_] u>> im3u;
+....
+rt.B[x] = ra.B[x] u>> im3u;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |7 |SRL8.u rt, ra, rb |8-bit Rounding Shift Right Logical a|
-rt.B[_x_] = RUND(ra.B[_x_] u>> rb[2:0]);
+....
+a[x] = ra.B[x];
+rt.B[x] = RUND(a[x] u>> rb[2:0]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
+(RV32: x=3..0, RV64: x=7..0)
+....
+|8 |SRLI8.u rt, ra, im3u |8-bit Rounding Shift Right Logical Immediate a|
+....
+rt.B[x] = RUND(ra.B[x] u>> im3u);
 
-|8 |SRLI8.u rt, ra, im4u |8-bit Rounding Shift Right Logical Immediate a|
-rt.B[_x_] = RUND(ra.B[_x_] u>> im3u);
-
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |9 |SLL8 rt, ra, rb |8-bit Shift Left Logical a|
-rt.B[_x_] = ra.B[_x_] << rb[2:0];
+....
+rt.B[x] = ra.B[x] << rb[2:0];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |10 |SLLI8 rt, ra, im3u |8-bit Shift Left Logical Immediate a|
-rt.B[_x_] = ra.B[_x_] << im3u;
+....
+rt.B[x] = ra.B[x] << im3u;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |11 |KSLL8 rt, ra, rb |8-bit Saturating Shift Left Logical a|
-rt.B[_x_] = SAT.Q7(ra.B[_x_] << rb[2:0]);
+....
+a[x] = ra.B[x];
+rt.B[x] = SAT.Q7(a[x] << rb[2:0]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |12 |KSLLI8 rt, ra, im3u |8-bit Saturating Shift Left Logical Immediate a|
-rt.B[_x_] = SAT.Q7(ra.B[_x_] << im3u);
+....
+rt.B[x] = SAT.Q7(ra.B[x] << im3u);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |13 |KSLRA8 rt, ra, rb |8-bit Shift Left Logical with Saturation & Shift Right Arithmetic a|
-if (rb[3:0] < 0) +
-rt.B[_x_] = ra.B[_x_] s>> -rb[3:0];
+....
+a[x] = ra.B[x];
+if (rb[3:0] < 0)
+  t[x] = a[x] s>> -rb[3:0];
+if (rb[3:0] > 0)
+  t[x] = SAT.Q7(a[x] << rb[3:0]);
+rt.B[x] = t[x];  
 
-if (rb[3:0] > 0) +
-rt.B[_x_] = SAT.Q7(ra.B[_x_] << rb[3:0]);
-
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |14 |KSLRA8.u rt, ra, rb |8-bit Shift Left Logical with Saturation & Rounding Shift Right Arithmetic a|
-if (rb[3:0] < 0) +
-rt.B[_x_] = RUND(ra.B[_x_] s>> -rb[3:0]);
+....
+a[x] = ra.B[x];
+if (rb[3:0] < 0)
+  t[x] = RUND(a[x] s>> -rb[3:0]);
+if (rb[3:0] > 0)
+  t[x] = SAT.Q7(a[x] << rb[3:0]);
+rt.B[x] = t[x];  
 
-if (rb[3:0] > 0) +
-rt.B[_x_] = SAT.Q7(ra.B[_x_] << rb[3:0]);
-
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |===
 
 <<<
@@ -528,31 +703,41 @@ There are 5 instructions here.
 [cols="^.^1,<.^2,<.^2,<.^4m",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |CMPEQ16 rt, ra, rb |16-bit Compare Equal |
-rt.H[_x_] = (ra.H[_x_] == rb.H[_x_])? 0xffff : 0;
+|1 |CMPEQ16 rt, ra, rb |16-bit Compare Equal a|
+....
+eq[x] = (ra.H[x] == rb.H[x]);
+rt.H[x] = eq[x]? 0xffff : 0;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|2 |SCMPLT16 rt, ra, rb |16-bit Signed Compare Less Than a|
+....
+lt[x] = (ra.H[x] < rb.H[x]);
+rt.H[x] = lt[x]? 0xffff : 0;
 
-|2 |SCMPLT16 rt, ra, rb |16-bit Signed Compare Less Than |
-rt.H[_x_] = (ra.H[_x_] < rb.H[_x_])? 0xffff : 0;
+(RV32: x=1..0, RV64: x=3..0)
+....
+|3 |SCMPLE16 rt, ra, rb |16-bit Signed Compare Less Than & Equal a|
+....
+le[x] = (ra.H[x] <= rb.H[x]);
+rt.H[x] = le[x]? 0xffff : 0;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
+(RV32: x=1..0, RV64: x=3..0)
+....
+|4 |UCMPLT16 rt, ra, rb |16-bit Unsigned Compare Less Than a|
+....
+ult[x] = (ra.H[x] u< rb.H[x]);
+rt.H[x] = ult[x]? 0xffff : 0;
 
-|3 |SCMPLE16 rt, ra, rb |16-bit Signed Compare Less Than & Equal |
-rt.H[_x_] = (ra.H[_x_] {le} rb.H[_x_])? 0xffff : 0;
+(RV32: x=1..0, RV64: x=3..0)
+....
+|5 |UCMPLE16 rt, ra, rb |16-bit Unsigned Compare Less Than & Equal a|
+....
+ule[x] = (ra.H[x] u<= rb.H[x]);
+rt.H[x] = ule[x]? 0xffff : 0;
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
-|4 |UCMPLT16 rt, ra, rb |16-bit Unsigned Compare Less Than |
-rt.H[_x_] = (ra.H[_x_] u< rb.H[_x_])? 0xffff : 0;
-
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
-|5 |UCMPLE16 rt, ra, rb |16-bit Unsigned Compare Less Than & Equal |
-rt.H[_x_] = (ra.H[_x_] u{le} rb.H[_x_])? 0xffff : 0;
-
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |===
 
 <<<
@@ -565,30 +750,40 @@ There are 5 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |CMPEQ8 rt, ra, rb |8-bit Compare Equal a|
-rt.B[_x_] = (ra.B[_x_] == rb.B[_x_])? 0xff : 0;
+....
+eq[x] = (ra.B[x] == rb.B[x]);
+rt.B[x] = eq[x]? 0xff : 0;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |2 |SCMPLT8 rt, ra, rb |8-bit Signed Compare Less Than a|
-rt.B[_x_] = (ra.B[_x_] < rb.B[_x_])? 0xff : 0;
+....
+lt[x] = (ra.B[x] < rb.B[x]);
+rt.B[x] = lt[x]? 0xff : 0;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |3 |SCMPLE8 rt, ra, rb |8-bit Signed Compare Less Than & Equal a|
-rt.B[_x_] = (ra.B[_x_] {le} rb.B[_x_])? 0xff : 0;
+....
+le[x] = (ra.B[x] <= rb.B[x]);
+rt.B[x] = le[x]? 0xff : 0;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |4 |UCMPLT8 rt, ra, rb |8-bit Unsigned Compare Less Than a|
-rt.B[_x_] = (ra.B[_x_] u< rb.B[_x_])? 0xff : 0;
+....
+ult[x] = (ra.B[x] u< rb.B[x]);
+rt.B[x] = ult[x]? 0xff : 0;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |5 |UCMPLE8 rt, ra, rb |8-bit Unsigned Compare Less Than & Equal a|
-rt.B[_x_] = (ra.B[_x_] u{le} rb.B[_x_])? 0xff : 0;
+....
+ule[x] = (ra.B[x] u<= rb.B[x]);
+rt.B[x] = ule[x]? 0xff : 0;
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |===
 
 <<<
@@ -601,68 +796,69 @@ There are 6 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMUL16 rt, ra, rb |16-bit Signed Multiply a|
+....
 RV32:
 
-r[tL] = ra.H[_0_] s* rb.H[_0_];
-
-r[tH] = ra.H[_1_] s* rb.H[_1_];
+r[tL] = ra.H[0] s* rb.H[0];
+r[tH] = ra.H[1] s* rb.H[1];
 
 RV64:
 
-rt.W[_0_] = ra.H[_0_] s* rb.H[_0_];
-
-rt.W[_1_] = ra.H[_1_] s* rb.H[_1_];
-
+rt.W[0] = ra.H[0] s* rb.H[0];
+rt.W[1] = ra.H[1] s* rb.H[1];
+....
 |2 |SMULX16 rt, ra, rb |16-bit Signed Crossed Multiply a|
+....
 RV32:
 
-r[tL] = ra.H[_0_] s* rb.H[_1_];
-
-r[tH] = ra.H[_1_] s* rb.H[_0_];
+r[tL] = ra.H[0] s* rb.H[1];
+r[tH] = ra.H[1] s* rb.H[0];
 
 RV64:
 
-rt.W[_0_] = ra.H[_0_] s* rb.H[_1_];
-
-rt.W[_1_] = ra.H[_1_] s* rb.H[_0_];
-
+rt.W[0] = ra.H[0] s* rb.H[1];
+rt.W[1] = ra.H[1] s* rb.H[0];
+....
 |3 |UMUL16 rt, ra, rb |16-bit Unsigned Multiply a|
+....
 RV32:
 
-r[tL] = ra.H[_0_] u* rb.H[_0_];
-
-r[tH] = ra.H[_1_] u* rb.H[_1_];
+r[tL] = ra.H[0] u* rb.H[0];
+r[tH] = ra.H[1] u* rb.H[1];
 
 RV64:
 
-rt.W[_0_] = ra.H[_0_] u* rb.H[_0_];
-
-rt.W[_1_] = ra.H[_1_] u* rb.H[_1_];
-
+rt.W[0] = ra.H[0] u* rb.H[0];
+rt.W[1] = ra.H[1] u* rb.H[1];
+....
 |4 |UMULX16 rt, ra, rb |16-bit Unsigned Crossed Multiply a|
+....
 RV32:
 
-r[tL] = ra.H[_0_] u* rb.H[_1_];
-
-r[tH] = ra.H[_1_] u* rb.H[_0_];
+r[tL] = ra.H[0] u* rb.H[1];
+r[tH] = ra.H[1] u* rb.H[0];
 
 RV64:
 
-rt.W[_0_] = ra.H[_0_] u* rb.H[_1_];
-
-rt.W[_1_] = ra.H[_1_] u* rb.H[_0_];
-
+rt.W[0] = ra.H[0] u* rb.H[1];
+rt.W[1] = ra.H[1] u* rb.H[0];
+....
 |5 |KHM16 rt, ra, rb |Q15 Signed Saturating Multiply a|
-rt.H[_x_] = SAT.Q15((ra.H[_x_] s* rb.H[_x_]) >> 15);
+....
+t[x] = ra.H[x] s* rb.H[x];
+rt.H[x] = SAT.Q15(t[x] s>> 15);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |6 |KHMX16 rt, ra, rb |Q15 Signed Saturating Crossed Multiply a|
-rt.H[_x_] = SAT.Q15((ra.H[_x_] s* rb.H[_y_]) >> 15);
+....
+t[x] = ra.H[x] s* rb.H[y];
+rt.H[x] = SAT.Q15(t[x] s>> 15);
 
-(RV32: (_x,y_)=(1,0), (0,1), +
-RV64: (_x,y_)=(3,2),(2,3),(1,0), (0,1))
-
+(RV32: (x,y)=(1,0),(0,1),
+ RV64: (x,y)=(3,2),(2,3),
+             (1,0),(0,1))
+....
 |===
 
 <<<
@@ -675,100 +871,87 @@ There are 6 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMUL8 rt, ra, rb |8-bit Signed Multiply a|
+....
 RV32:
 
-r[tL].H[_0_] = ra.B[_0_] s* rb.B[_0_];
-
-r[tL].H[_1_] = ra.B[_1_] s* rb.B[_1_];
-
-r[tH].H[_0_] = ra.B[_2_] s* rb.B[_2_];
-
-r[tH].H[_1_] = ra.B[_3_] s* rb.B[_3_];
+r[tL].H[0] = ra.B[0] s* rb.B[0];
+r[tL].H[1] = ra.B[1] s* rb.B[1];
+r[tH].H[0] = ra.B[2] s* rb.B[2];
+r[tH].H[1] = ra.B[3] s* rb.B[3];
 
 RV64:
 
-rt.H[_0_] = ra.B[_0_] s* rb.B[_0_];
-
-rt.H[_1_] = ra.B[_1_] s* rb.B[_1_];
-
-rt.H[_2_] = ra.B[_2_] s* rb.B[_2_];
-
-rt.H[_3_] = ra.B[_3_] s* rb.B[_3_];
-
+rt.H[0] = ra.B[0] s* rb.B[0];
+rt.H[1] = ra.B[1] s* rb.B[1];
+rt.H[2] = ra.B[2] s* rb.B[2];
+rt.H[3] = ra.B[3] s* rb.B[3];
+....
 |2 |SMULX8 rt, ra, rb |8-bit Signed Crossed Multiply a|
+....
 RV32:
 
-r[tL].H[_0_] = ra.B[_0_] s* rb.B[_1_];
-
-r[tL].H[_1_] = ra.B[_1_] s* rb.B[_0_];
-
-r[tH].H[_0_] = ra.B[_2_] s* rb.B[_3_];
-
-r[tH].H[_1_] = ra.B[_3_] s* rb.B[_2_];
+r[tL].H[0] = ra.B[0] s* rb.B[1];
+r[tL].H[1] = ra.B[1] s* rb.B[0];
+r[tH].H[0] = ra.B[2] s* rb.B[3];
+r[tH].H[1] = ra.B[3] s* rb.B[2];
 
 RV64:
 
-rt.H[_0_] = ra.B[_0_] s* rb.B[_1_];
-
-rt.H[_1_] = ra.B[_1_] s* rb.B[_0_];
-
-rt.H[_2_] = ra.B[_2_] s* rb.B[_3_];
-
-rt.H[_3_] = ra.B[_3_] s* rb.B[_2_];
-
+rt.H[0] = ra.B[0] s* rb.B[1];
+rt.H[1] = ra.B[1] s* rb.B[0];
+rt.H[2] = ra.B[2] s* rb.B[3];
+rt.H[3] = ra.B[3] s* rb.B[2];
+....
 |3 |UMUL8 rt, ra, rb |8-bit Unsigned Multiply a|
+....
 RV32:
 
-r[tL].H[_0_] = ra.B[_0_] u* rb.B[_0_];
-
-r[tL].H[_1_] = ra.B[_1_] u* rb.B[_1_];
-
-r[tH].H[_0_] = ra.B[_2_] u* rb.B[_2_];
-
-r[tH].H[_1_] = ra.B[_3_] u* rb.B[_3_];
+r[tL].H[0] = ra.B[0] u* rb.B[0];
+r[tL].H[1] = ra.B[1] u* rb.B[1];
+r[tH].H[0] = ra.B[2] u* rb.B[2];
+r[tH].H[1] = ra.B[3] u* rb.B[3];
 
 RV64:
 
-rt.H[_0_] = ra.B[_0_] u* rb.B[_0_];
-
-rt.H[_1_] = ra.B[_1_] u* rb.B[_1_];
-
-rt.H[_2_] = ra.B[_2_] u* rb.B[_2_];
-
-rt.H[_3_] = ra.B[_3_] u* rb.B[_3_];
-
+rt.H[0] = ra.B[0] u* rb.B[0];
+rt.H[1] = ra.B[1] u* rb.B[1];
+rt.H[2] = ra.B[2] u* rb.B[2];
+rt.H[3] = ra.B[3] u* rb.B[3];
+....
 |4 |UMULX8 rt, ra, rb |8-bit Unsigned Crossed Multiply a|
+....
 RV32:
 
-r[tL].H[_0_] = ra.B[_0_] u* rb.B[_1_];
-
-r[tL].H[_1_] = ra.B[_1_] u* rb.B[_0_];
-
-r[tH].H[_0_] = ra.B[_2_] u* rb.B[_3_];
-
-r[tH].H[_1_] = ra.B[_3_] u* rb.B[_2_];
+r[tL].H[0] = ra.B[0] u* rb.B[1];
+r[tL].H[1] = ra.B[1] u* rb.B[0];
+r[tH].H[0] = ra.B[2] u* rb.B[3];
+r[tH].H[1] = ra.B[3] u* rb.B[2];
 
 RV64:
 
-rt.H[_0_] = ra.B[_0_] u* rb.B[_1_];
-
-rt.H[_1_] = ra.B[_1_] u* rb.B[_0_];
-
-rt.H[_2_] = ra.B[_2_] u* rb.B[_3_];
-
-rt.H[_3_] = ra.B[_3_] u* rb.B[_2_];
-
+rt.H[0] = ra.B[0] u* rb.B[1];
+rt.H[1] = ra.B[1] u* rb.B[0];
+rt.H[2] = ra.B[2] u* rb.B[3];
+rt.H[3] = ra.B[3] u* rb.B[2];
+....
 |5 |KHM8 rt, ra, rb |Q7 Signed Saturating Multiply a|
-rt.B[_x_] = SAT.Q7((ra.B[_x_] s* rb.B[_x_]) >> 7);
+....
+t[x] = ra.B[x] s* rb.B[x];
+rt.B[x] = SAT.Q7(t[x] s>> 7);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |6 |KHMX8 rt, ra, rb |Q7 Signed Saturating Crossed Multiply a|
-rt.B[_x_] = SAT.Q7((ra.B[_x_] s* rb.B[_y_]) >> 7);
+....
+t[x] = ra.B[x] s* rb.B[y];
+rt.B[x] = SAT.Q7(t[x] s>> 7);
 
-(RV32: (_x,y_)=(3,2),(2,3),(1,0), (0,1), +
-RV64: (_x,y_)=(7,6),(6,7),(5,4), (4,5), (3,2), (2,3), (1,0), (0,1))
-
+(RV32: (x,y)=(3,2),(2,3),
+             (1,0),(0,1),
+ RV64: 
+ (x,y)=(7,6),(6,7),(5,4),(4,5),
+      (3,2),(2,3),(1,0),(0,1))
+....
 |===
 
 <<<
@@ -781,50 +964,64 @@ There are 11 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMIN16 rt, ra, rb |16-bit Signed Minimum a|
-rt.H[_x_] = (ra.H[_x_] < rb.H[_x_])? ra.H[_x_] : rb.H[_x_];
+....
+le[x] = ra.H[x] s< rb.H[x];
+rt.H[x] = le[x]? ra.H[x] : rb.H[x];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+.... 
 |2 |UMIN16 rt, ra, rb |16-bit Unsigned Minimum a|
-rt.H[_x_] = (ra.H[_x_] u< rb.H[_x_])? ra.H[_x_] : rb.H[_x_];
+....
+le[x] = ra.H[x] u< rb.H[x];
+rt.H[x] = le[x]? ra.H[x] : rb.H[x];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |3 |SMAX16 rt, ra, rb |16-bit Signed Maximum a|
-rt.H[_x_] = (ra.H[_x_] > rb.H[_x_])? ra.H[_x_] : rb.H[_x_];
+....
+ge[x] = ra.H[x] s> rb.H[x];
+rt.H[x] = ge[x]? ra.H[x] : rb.H[x];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |4 |UMAX16 rt, ra, rb |16-bit Unsigned Maximum a|
-rt.H[_x_] = (ra.H[_x_] u> rb.H[_x_])? ra.H[_x_] : rb.H[_x_];
+....
+ge[x] = ra.H[x] u> rb.H[x];
+rt.H[x] = ge[x]? ra.H[x] : rb.H[x];
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |5 |SCLIP16 rt, ra, imm4u |16-bit Signed Clip Value a|
-n = imm4u; +
-rt.H[_x_] = SAT.Qn(ra.H[_x_]);
+....
+n = imm4u;
+rt.H[x] = SAT.Qn(ra.H[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |6 |UCLIP16 rt, ra, imm4u |16-bit Unsigned Clip Value a|
-m = imm4u; +
-rt.H[_x_] = SAT.Um(ra.H[_x_]);
+....
+m = imm4u;
+rt.H[x] = SAT.Um(ra.H[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |7 |KABS16 rt, ra |16-bit Absolute Value a|
-rt.H[_x_] = SAT.Q15(ABS(ra.H[_x_]));
+....
+rt.H[x] = SAT.Q15(ABS(ra.H[x]));
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |8 |CLRS16 rt, ra |16-bit Count Leading Redundant Sign |
 |9 |CLZ16 rt, ra |16-bit Count Leading Zero |
 |10 |CLO16 rt, ra |16-bit Count Leading One |
 |11 |SWAP16 rt, ra |Swap Halfword within Word a|
-rt.W[_x_] = CONCAT(ra.W[_x_].H[0], ra.W[_x_].H[1]);
+....
+ah0[x] = ra.W[x].H[0];
+ah1[x] = ra.W[x].H[1];
+rt.W[x] = CONCAT(ah0[x], ah1[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |===
 
 <<<
@@ -837,131 +1034,155 @@ There are 11 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMIN8 rt, ra, rb |8-bit Signed Minimum a|
-rt.B[_x_] = (ra.B[_x_] < rb.B[_x_])? ra.B[_x_] : rb.B[_x_];
+....
+le[x] = ra.B[x] s< rb.B[x];
+rt.B[x] = le[x]? ra.B[x] : rb.B[x];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |2 |UMIN8 rt, ra, rb |8-bit Unsigned Minimum a|
-rt.B[_x_] = (ra.B[_x_] u< rb.B[_x_])? ra.B[_x_] : rb.B[_x_];
+....
+le[x] = ra.B[x] u< rb.B[x];
+rt.B[x] = le[x]? ra.B[x] : rb.B[x];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |3 |SMAX8 rt, ra, rb |8-bit Signed Maximum a|
-rt.B[_x_] = (ra.B[_x_] > rb.B[_x_])? ra.B[_x_] : rb.B[_x_];
+....
+ge[x] = ra.B[x] s> rb.B[x];
+rt.B[x] = ge[x]? ra.B[x] : rb.B[x];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |4 |UMAX8 rt, ra, rb |8-bit Unsigned Maximum a|
-rt.B[_x_] = (ra.B[_x_] u> rb.B[_x_])? ra.B[_x_] : rb.B[_x_];
+....
+ge[x] = ra.B[x] u> rb.B[x];
+rt.B[x] = ge[x]? ra.B[x] : rb.B[x];
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |5 |KABS8 rt, ra |8-bit Absolute Value a|
-rt.B[_x_] = SAT.Q7(ABS(ra.B[_x_]));
+....
+rt.B[x] = SAT.Q7(ABS(ra.B[x]));
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |6 |SCLIP8 rt, ra, imm3u |8-bit Signed Clip Value a|
-n = imm3u; +
-rt.B[_x_] = SAT.Qn(ra.B[_x_]);
+....
+n = imm3u;
+rt.B[x] = SAT.Qn(ra.B[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |7 |UCLIP8 rt, ra, imm3u |8-bit Unsigned Clip Value a|
-m = imm3u; +
-rt.B[_x_] = SAT.Um(ra.B[_x_]);
+....
+m = imm3u;
+rt.B[x] = SAT.Um(ra.B[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |8 |CLRS8 rt, ra |8-bit Count Leading Redundant Sign |
 |9 |CLZ8 rt, ra |8-bit Count Leading Zero |
 |10 |CLO8 rt, ra |8-bit Count Leading One |
 |11 |SWAP8 rt, ra |Swap Byte within Halfword a|
-rt.H[_x_] = CONCAT(ra.H[_x_].B[0], ra.H[_x_].B[1]);
+....
+ab0[x] = ra.H[x].B[0];
+ab1[x] = ra.H[x].B[1];
+rt.H[x] = CONCAT(ab0[x], ab1[x]);
 
-(RV32: __x__=1..0, RV64: __x__=3..0)
-
+(RV32: x=1..0, RV64: x=3..0)
+....
 |===
 
 <<<
 ==== 8-bit Unpacking Instructions
 
-There are 8 instructions here.
+There are 10 instructions here.
 
 .8-bit Unpacking Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SUNPKD810 rt, ra |Signed Unpacking Bytes 1 & 0 a|
-rt.H[_x_] = SE16(ra.B[_y_]);
+....
+rt.H[x] = SE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,1), (0,0)
-
-RV64: (_x,y_) = (3,5),(2,4),(1,1), (0,0)
-
+RV32: (x,y) = (1,1),(0,0)
+RV64: (x,y) = (3,5),(2,4),
+              (1,1),(0,0)
+....
 |2 |SUNPKD820 rt, ra |Signed Unpacking Bytes 2 & 0 a|
-rt.H[_x_] = SE16(ra.B[_y_]);
+....
+rt.H[x] = SE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,2), (0,0)
-
-RV64: (_x,y_) = (3,6),(2,4),(1,2), (0,0)
-
+RV32: (x,y) = (1,2),(0,0)
+RV64: (x,y) = (3,6),(2,4),
+              (1,2),(0,0)
+....
 |3 |SUNPKD830 rt, ra |Signed Unpacking Bytes 3 & 0 a|
-rt.H[_x_] = SE16(ra.B[_y_]);
+....
+rt.H[x] = SE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,3), (0,0)
-
-RV64: (_x,y_) = (3,7),(2,4),(1,3), (0,0)
-
+RV32: (x,y) = (1,3),(0,0)
+RV64: (x,y) = (3,7),(2,4),
+              (1,3),(0,0)
+....
 |4 |SUNPKD831 rt, ra |Signed Unpacking Bytes 3 & 1 a|
-rt.H[_x_] = SE16(ra.B[_y_]);
+....
+rt.H[x] = SE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,3), (0,1)
-
-RV64: (_x,y_) = (3,7),(2,5),(1,3), (0,1)
-
+RV32: (x,y) = (1,3),(0,1)
+RV64: (x,y) = (3,7),(2,5),
+              (1,3),(0,1)
+....
 |5 |SUNPKD832 rt, ra |Signed Unpacking Bytes 3 & 2 a|
-rt.H[_x_] = SE16(ra.B[_y_]);
+....
+rt.H[x] = SE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,3), (0,2)
-
-RV64: (_x,y_) = (3,7),(2,6),(1,3), (0,2)
-
+RV32: (x,y) = (1,3),(0,2)
+RV64: (x,y) = (3,7),(2,6),
+              (1,3),(0,2)
+....
 |6 |ZUNPKD810 rt, ra |Unsigned Unpacking Bytes 1 & 0 a|
-rt.H[_x_] = ZE16(ra.B[_y_]);
+....
+rt.H[x] = ZE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,1), (0,0)
-
-RV64: (_x,y_) = (3,5),(2,4),(1,1), (0,0)
-
+RV32: (x,y) = (1,1),(0,0)
+RV64: (x,y) = (3,5),(2,4),
+              (1,1),(0,0)
+....
 |7 |ZUNPKD820 rt, ra |Unsigned Unpacking Bytes 2 & 0 a|
-rt.H[_x_] = ZE16(ra.B[_y_]);
+....
+rt.H[x] = ZE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,2), (0,0)
-
-RV64: (_x,y_) = (3,6),(2,4),(1,2), (0,0)
-
+RV32: (x,y) = (1,2),(0,0)
+RV64: (x,y) = (3,6),(2,4),
+              (1,2),(0,0)
+....
 |8 |ZUNPKD830 rt, ra |Unsigned Unpacking Bytes 3 & 0 a|
-rt.H[_x_] = ZE16(ra.B[_y_]);
+....
+rt.H[x] = ZE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,3), (0,0)
-
-RV64: (_x,y_) = (3,7),(2,4),(1,3), (0,0)
-
+RV32: (x,y) = (1,3),(0,0)
+RV64: (x,y) = (3,7),(2,4),
+              (1,3),(0,0)
+....
 |9 |ZUNPKD831 rt, ra |Unsigned Unpacking Bytes 3 & 1 a|
-rt.H[_x_] = ZE16(ra.B[_y_]);
+....
+rt.H[x] = ZE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,3), (0,1)
-
-RV64: (_x,y_) = (3,7),(2,5),(1,3), (0,1)
-
+RV32: (x,y) = (1,3),(0,1)
+RV64: (x,y) = (3,7),(2,5),
+              (1,3),(0,1)
+....
 |10 |ZUNPKD832 rt, ra |Unsigned Unpacking Bytes 3 & 2 a|
-rt.H[_x_] = ZE16(ra.B[_y_]);
+....
+rt.H[x] = ZE16(ra.B[y]);
 
-RV32: (_x,y_) = (1,3), (0,2)
-
-RV64: (_x,y_) = (3,7),(2,6),(1,3), (0,2)
-
+RV32: (x,y) = (1,3),(0,2)
+RV64: (x,y) = (3,7),(2,6),
+              (1,3),(0,2)
+....
 |===
 
 <<<
@@ -976,25 +1197,37 @@ There are 4 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |PKBB16 rt, ra, rb |Pack two 16-bit data from Bottoms a|
-rt.W[_x_] = CONCAT(ra.W[_x_].H[0], rb.W[_x_].H[0]);
+....
+ah0[x] = ra.W[x].H[0];
+bh0[x] = rb.W[x].H[0];
+rt.W[x] = CONCAT(ah0[x], bh0[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |2 |PKBT16 rt, ra, rb |Pack two 16-bit data Bottom & Top a|
-rt.W[_x_] = CONCAT(ra.W[_x_].H[0], rb.W[_x_].H[1]);
+....
+ah0[x] = ra.W[x].H[0];
+bh1[x] = rb.W[x].H[1];
+rt.W[x] = CONCAT(ah0[x], bh1[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |3 |PKTB16 rt, ra, rb |Pack two 16-bit data Top & Bottom a|
-rt.W[_x_] = CONCAT(ra.W[_x_].H[1], rb.W[_x_].H[0]);
+....
+ah1[x] = ra.W[x].H[1];
+bh0[x] = rb.W[x].H[0];
+rt.W[x] = CONCAT(ah1[x], bh0[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |4 |PKTT16 rt, ra, rb |Pack two 16-bit data from Tops a|
-rt.W[_x_] = CONCAT(ra.W[_x_].H[1], rb.W[_x_].H[0]);
+....
+ah1[x] = ra.W[x].H[1];
+bh1[x] = rb.W[x].H[1];
+rt.W[x] = CONCAT(ah1[x], bh1[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |===
 
 <<<
@@ -1008,52 +1241,77 @@ There are 8 instructions here.
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMMUL rt, ra, rb |MSW “32 x 32” Signed Multiplication +
 (MSW 32 = 32x32) a|
-rt.W[_x_] = (ra.W[_x_]*rb.W[_x_])[63:32];
+....
+t64[x] = ra.W[x] s* rb.W[x];
+rt.W[x] = t64[x].W[1];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |2 |SMMUL.u rt, ra, rb |MSW “32 x 32” Signed Multiplication with Rounding +
 (MSW 32 = 32x32) a|
-rt.W[_x_] = RUND(ra.W[_x_]*rb.W[_x_])[63:32];
+....
+t64[x] = ra.W[x] s* rb.W[x];
+rt.W[x] = RUND(t64[x]).W[1];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |3 |KMMAC rt, ra, rb |MSW “32 x 32” Signed Multiplication and Saturating Addition +
 (MSW 32 = 32 + 32x32) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + (ra.W[_x_]*rb.W[_x_])[63:32]);
+....
+t64[x] = ra.W[x] s* rb.W[x];
+res[x] = rt.W[x] + t64[x].W[1];
+rt.W[x] = SAT.Q31(res[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |4 |KMMAC.u rt, ra, rb |MSW “32 x 32” Signed Multiplication and Saturating Addition with Rounding +
 (MSW 32 = 32 + 32x32) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + RUND(ra.W[_x_]*rb.W[_x_])[63:32]);
+....
+t64[x] = ra.W[x] s* rb.W[x];
+t32[x] = RUND(t64[x]).W[1];
+res[x] = rt.W[x] + t32[x];
+rt.W[x] = SAT.Q31(res[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |5 |KMMSB rt, ra, rb |MSW “32 x 32” Signed Multiplication and Saturating Subtraction +
 (MSW 32 = 32 - 32x32) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] - (ra.W[_x_]*rb.W[_x_])[63:32]);
+....
+t64[x] = ra.W[x] s* rb.W[x];
+res[x] = rt.W[x] - t64[x].W[1];
+rt.W[x] = SAT.Q31(res[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |6 |KMMSB.u rt, ra, rb |MSW “32 x 32” Signed Multiplication and Saturating Subtraction with Rounding +
 (MSW 32 = 32 - 32x32) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] - RUND(ra.W[_x_]*rb.W[_x_])[63:32]);
+....
+t64[x] = ra.W[x] s* rb.W[x];
+t32[x] = RUND(t64[x]).W[1];
+res[x] = rt.W[x] - t32[x];
+rt.W[x] = SAT.Q31(res[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |7 |KWMMUL rt, ra, rb |MSW “32 x 32” Signed Multiplication & Double +
 (MSW 32 = 32x32 << 1) a|
-rt.W[_x_] = SAT.Q31((ra.W[_x_]*rb.W[_x_] << 1)[63:32]);
+....
+t64[x] = ra.W[x] s* rb.W[x];
+s64[x] = SAT.Q63(t64[x] << 1);
+rt.W[x] = s64[x].W[1];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |8 |KWMMUL.u rt, ra, rb |MSW “32 x 32” Signed Multiplication & Double with Rounding +
 (MSW 32 = 32x32 << 1) a|
-rt.W[_x_] = SAT.Q31(RUND(ra.W[_x_]*rb.W[_x_] << 1)[63:32]);
+....
+t64[x] = ra.W[x] s* rb.W[x];
+r65[x] = RUND(t64[x] << 1);
+s64[x] = SAT.Q63(r65[x]);
+rt.W[x] = s64[x].W[1];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |===
 
 <<<
@@ -1067,196 +1325,200 @@ There are 16 instructions here.
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMMWB rt, ra, rb |MSW “32 x Bottom 16” Signed Multiplication +
 (MSW 32 = 32x16) a|
-rt.W[_x_] = (ra.W[_x_]*rb.W[_x_].H[0])[47:16];
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[0]);
+rt.W[x] = mul48[x][47:16];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |2 |SMMWB.u rt, ra, rb |MSW “32 x Bottom 16” Signed Multiplication with Rounding +
 (MSW 32 = 32x16) a|
-rt.W[_x_] = RUND(ra.W[_x_]*rb.W[_x_].H[0])[47:16];
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[0]);
+rt.W[x] = RUND(mul48[x])[47:16];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |3 |SMMWT rt, ra, rb |MSW “32 x Top 16” Signed Multiplication +
 (MSW 32 = 32x16) a|
-rt.W[_x_] = (ra.W[_x_]*rb.W[_x_].H[1])[47:16];
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[1]);
+rt.W[x] = mul48[x][47:16];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |4 |SMMWT.u rt, ra, rb |MSW “32 x Top 16” Signed Multiplication with Rounding +
 (MSW 32 = 32x16) a|
-rt.W[_x_] = RUND(ra.W[_x_]*rb.W[_x_].H[1])[47:16];
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[1]);
+rt.W[x] = RUND(mul48[x])[47:16];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |5 |KMMAWB rt, ra, rb |MSW “32 x Bottom 16” Signed Multiplication and Saturating Addition +
 (MSW 32 = 32 + 32x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + (ra.W[_x_]*rb.W[_x_].H[0])[47:16]);
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[0]);
+t[x] = mul48[x][47:16];
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |6 |KMMAWB.u rt, ra, rb |MSW “32 x Bottom 16” Signed Multiplication and Saturating Addition with Rounding +
 (MSW 32 = 32 + 32x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + RUND(ra.W[_x_]*rb.W[_x_].H[0])[47:16]);
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[0]);
+t[x] = RUND(mul48[x])[47:16];
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |7 |KMMAWT rt, ra, rb |MSW “32 x Top 16” Signed Multiplication and Saturating Addition +
 (MSW 32 = 32 + 32x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + (ra.W[_x_]*rb.W[_x_].H[1])[47:16]);
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[1]);
+t[x] = mul48[x][47:16];
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |8 |KMMAWT.u rt, ra, rb |MSW “32 x Top 16” Signed Multiplication and Saturating Addition with Rounding +
 (MSW 32 = 32 + 32x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + RUND(ra.W[_x_]*rb.W[_x_].H[1])[47:16]);
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+mul48[x] = a[x] s* (b[x].H[1]);
+t[x] = RUND(mul48[x])[47:16];
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |9 |KMMWB2 rt, ra, rb |MSW “32 x Bottom 16” Saturating Signed Multiplication and double +
 (MSW 32 = (32x16) << 1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].L==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= ((a[_x_]*b[_x_].L)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[0]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[0]);
+  t[x] = (mul48[x]<<1)[47:16];
 }
+rt.W[x] = t[x];
 
-rt.W[_x_] = t[_x_];
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |10 |KMMWB2.u rt, ra, rb |MSW “32 x Bottom 16” Saturating Signed Multiplication and double with Rounding +
 (MSW 32 = (32x16) << 1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].L==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= RUND((a[_x_]*b[_x_].L)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[0]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[0]);
+  t[x] = RUND(mul48[x]<<1)[47:16];
 }
+rt.W[x] = t[x];
 
-rt.W[_x_] = t[_x_];
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |11 |KMMWT2 rt, ra, rb |MSW “32 x Top 16” Saturating Signed Multiplication and double +
 (MSW 32 = (32x16) << 1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].H==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= ((a[_x_]*b[_x_].H)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[1]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[1]);
+  t[x] = (mul48[x]<<1)[47:16];
 }
+rt.W[x] = t[x];
 
-rt.W[_x_] = t[_x_];
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |12 |KMMWT2.u rt, ra, rb |MSW “32 x Top 16” Saturating Signed Multiplication and double with Rounding +
 (MSW 32 = (32x16) << 1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].H==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= RUND((a[_x_]*b[_x_].H)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[1]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[1]);
+  t[x] = RUND(mul48[x]<<1)[47:16];
 }
+rt.W[x] = t[x];
 
-rt.W[_x_] = t[_x_];
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |13 |KMMAWB2 rt, ra, rb |MSW “32 x Bottom 16” Signed Multiplication & double and Saturating Addition +
 (MSW 32 = 32 + (32x16)<<1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].L==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= ((a[_x_]*b[_x_].L)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[0]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[0]);
+  t[x] = (mul48[x]<<1)[47:16];
 }
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-rt.W[_x_] = SAT.Q31(rt.W[x] + t[_x_]);
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |14 |KMMAWB2.u rt, ra, rb |MSW “32 x Bottom 16” Signed Multiplication & double and Saturating Addition with Rounding +
 (MSW 32 = 32 + (32x16)<<1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].L==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= RUND((a[_x_]*b[_x_].L)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[0]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[0]);
+  t[x] = RUND(mul48[x]<<1)[47:16];
 }
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-rt.W[_x_] = SAT.Q31(rt.W[x] + t[_x_]);
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |15 |KMMAWT2 rt, ra, rb |MSW “32 x Top 16” Signed Multiplication & double and Saturating Addition +
 (MSW 32 = 32 + (32x16)<<1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].H==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= ((a[_x_]*b[_x_].H)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[1]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[1]);
+  t[x] = (mul48[x]<<1)[47:16];
 }
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-rt.W[_x_] = SAT.Q31(rt.W[x] + t[_x_]);
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
-| |KMMAWT2.u rt, ra, rb |MSW “32 x Top 16” Signed Multiplication & double and Saturating Addition with Rounding +
+(RV32: x=0, RV64: x=1..0)
+....
+|16 |KMMAWT2.u rt, ra, rb |MSW “32 x Top 16” Signed Multiplication & double and Saturating Addition with Rounding +
 (MSW 32 = 32 + (32x16)<<1) a|
-a[_x_]=ra.W[_x_]; b[_x_]=rb.W[_x_];
-
-if ((a[_x_]==0x80000000) & (b[_x_].H==0x8000)) \{
-
-t[_x_]=0x7fffffff; OV=1;} else \{
-
-
-t[_x_]= RUND((a[_x_]*b[_x_].H)<<1)[47:16];
-
-
+....
+a[x]=ra.W[x]; b[x]=rb.W[x];
+if ((a[x]==0x80000000) && 
+    (b[x].H[1]==0x8000)) {
+  t[x] = 0x7fffffff; OV=1;
+} else {
+  mul48[x] = a[x] s* (b[x].H[1]);
+  t[x] = RUND(mul48[x]<<1)[47:16];
 }
+rt.W[x] = SAT.Q31(rt.W[x] + t[x]);
 
-rt.W[_x_] = SAT.Q31(rt.W[x] + t[_x_]);
-
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |===
 
 <<<
@@ -1270,112 +1532,190 @@ There are 18 instructions here.
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMBB16 rt, ra, rb |Signed Multiply Bottom 16 & Bottom 16 +
 (32 = 16x16) a|
-rt.W[_x_] = ra.W[_x_].H[0]*rb.W[_x_].H[0];
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+rt.W[x] = a[x].H[0] s* b[x].H[0];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |2 |SMBT16 rt, ra, rb |Signed Multiply Bottom 16 & Top 16 +
 (32 = 16x16) a|
-rt.W[_x_] = ra.W[_x_].H[0]*rb.W[_x_].H[1];
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+rt.W[x] = a[x].H[0] s* b[x].H[1];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |3 |SMTT16 rt, ra, rb |Signed Multiply Top 16 & Top 16 +
 (32 = 16x16) a|
-rt.W[_x_] = ra.W[_x_].H[1]*rb.W[_x_].H[1];
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+rt.W[x] = a[x].H[1] s* b[x].H[1];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |4 |KMDA rt, ra, rb |Two “16x16” and Signed Addition +
 (32 = 16x16 + 16x16) a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_].H[1]*rb.W[_x_].H[1] + ra.W[_x_].H[0]*rb.W[_x_].H[0]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = SAT.Q31(mul1[x] + mul2[x]);
+rt.W[x] = t[x];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |5 |KMXDA rt, ra, rb |Two Crossed “16x16” and Signed Addition +
 (32 = 16x16 + 16x16) a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_].H[1]*rb.W[_x_].H[0] + ra.W[_x_].H[0]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[0];
+mul2[x] = a[x].H[0] s* b[x].H[1];
+t[x] = SAT.Q31(mul1[x] + mul2[x]);
+rt.W[x] = t[x];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |6 |SMDS rt, ra, rb |Two “16x16” and Signed Subtraction +
 (32 = 16x16 - 16x16) a|
-rt.W[_x_] = (ra.W[_x_].H[1]*rb.W[_x_].H[1]) - (ra.W[_x_].H[0]*rb.W[_x_].H[0]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = mul1[x] - mul2[x];
+rt.W[x] = t[x];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |7 |SMDRS rt, ra, rb |Two “16x16” and Signed Reversed Subtraction +
 (32 = 16x16 - 16x16) a|
-rt.W[_x_] = (ra.W[_x_].H[0]*rb.W[_x_].H[0]) - (ra.W[_x_].H[1]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = mul2[x] - mul1[x];
+rt.W[x] = t[x];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |8 |SMXDS rt, ra, rb |Two Crossed “16x16” and Signed Subtraction +
 (32 = 16x16 - 16x16) a|
-rt.W[_x_] = (ra.W[_x_].H[1]*rb.W[_x_].H[0]) - (ra.W[_x_].H[0]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[0];
+mul2[x] = a[x].H[0] s* b[x].H[1];
+t[x] = mul1[x] - mul2[x];
+rt.W[x] = t[x];
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |9 |KMABB rt, ra, rb |“Bottom 16 x Bottom 16” with 32-bit Signed Addition +
 (32 = 32 + 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[0]*rb.W[_x_].H[0]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul[x] = a[x].H[0] s* b[x].H[0];
+t[x] = rt.W[x] + mul[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |10 |KMABT rt, ra, rb |“Bottom 16 x Top 16” with 32-bit Signed Addition +
 (32 = 32 + 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[0]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul[x] = a[x].H[0] s* b[x].H[1];
+t[x] = rt.W[x] + mul[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |11 |KMATT rt, ra, rb |“Top 16 x Top 16” with 32-bit Signed Addition +
 (32 = 32 + 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[1]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul[x] = a[x].H[1] s* b[x].H[1];
+t[x] = rt.W[x] + mul[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |12 |KMADA rt, ra, rb |Two “16x16” with 32-bit Signed Double Addition +
 (32 = 32 + 16x16 + 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[1]*rb.W[_x_].H[1] + ra.W[_x_].H[0]*rb.W[_x_].H[0]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = rt.W[x] + mul1[x] + mul2[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |13 |KMAXDA rt, ra, rb |Two Crossed “16x16” with 32-bit Signed Double Addition +
 (32 = 32 + 16x16 + 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[1]*rb.W[_x_].H[0] + ra.W[_x_].H[0]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[0];
+mul2[x] = a[x].H[0] s* b[x].H[1];
+t[x] = rt.W[x] + mul1[x] + mul2[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |14 |KMADS rt, ra, rb |Two “16x16” with 32-bit Signed Addition and Subtraction +
 (32 = 32 + 16x16 - 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[1]*rb.W[_x_].H[1] - ra.W[_x_].H[0]*rb.W[_x_].H[0]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = rt.W[x] + mul1[x] - mul2[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |15 |KMADRS rt, ra, rb |Two “16x16” with 32-bit Signed Addition and Reversed Subtraction +
 (32 = 32 + 16x16 - 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[0]*rb.W[_x_].H[0] - ra.W[_x_].H[1]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = rt.W[x] + mul2[x] - mul1[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |16 |KMAXDS rt, ra, rb |Two Crossed “16x16” with 32-bit Signed Addition and Subtraction +
 (32 = 32 + 16x16 - 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] + ra.W[_x_].H[1]*rb.W[_x_].H[0] - ra.W[_x_].H[0]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[0];
+mul2[x] = a[x].H[0] s* b[x].H[1];
+t[x] = rt.W[x] + mul1[x] - mul2[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |17 |KMSDA rt, ra, rb |Two “16x16” with 32-bit Signed Double Subtraction +
 (32 = 32 - 16x16 - 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] - ra.W[_x_].H[1]*rb.W[_x_].H[1] - ra.W[_x_].H[0]*rb.W[_x_].H[0]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[1];
+mul2[x] = a[x].H[0] s* b[x].H[0];
+t[x] = rt.W[x] - mul1[x] - mul2[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |18 |KMSXDA rt, ra, rb |Two Crossed “16x16” with 32-bit Signed Double Subtraction +
 (32 = 32 - 16x16 - 16x16) a|
-rt.W[_x_] = SAT.Q31(rt.W[_x_] - ra.W[_x_].H[1]*rb.W[_x_].H[0] - ra.W[_x_].H[0]*rb.W[_x_].H[1]);
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+mul1[x] = a[x].H[1] s* b[x].H[0];
+mul2[x] = a[x].H[0] s* b[x].H[1];
+t[x] = rt.W[x] - mul1[x] - mul2[x];
+rt.W[x] = SAT.Q31(t[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |===
 
 <<<
@@ -1387,17 +1727,22 @@ rt.W[_x_] = SAT.Q31(rt.W[_x_] - ra.W[_x_].H[1]*rb.W[_x_].H[0] - ra.W[_x_].H[0]*r
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMAL rt, ra, rb |“16 x 16” with 64-bit Signed Addition +
 (64 = 64 + 16x16) a|
+....
 RV32:
 
-a64 = r[aU].r[aL]; +
-t64 = a64 + rb.W[_0_].H[1]*rb.W[_0_].H[0]; +
+a64 = r[aU].r[aL];
+mul = rb.H[1] s* rb.H[0];
+t64 = a64 + mul;
 r[tU].r[tL] = t64;
 
 RV64:
 
-a64 = ra; +
-rt = a64 + rb.W[_1_].H[1]*rb.W[_1_].H[0] + rb.W[_0_].H[1]*rb.W[_0_].H[0];
-
+a64 = ra;
+tw = rb.W[1]; bw = rb.W[0];
+mul1 = tw.H[1] s* tw.H[0];
+mul2 = bw.H[1] s* bw.H[0];
+rt = a64 + mul1 + mul2;
+....
 |===
 
 <<<
@@ -1406,50 +1751,57 @@ rt = a64 + rb.W[_1_].H[1]*rb.W[_1_].H[0] + rb.W[_0_].H[1]*rb.W[_0_].H[0];
 There are 7 instructions here.
 
 .Partial-SIMD Miscellaneous Instructions
-[cols="^.^1,<.^2,<.^2,<.^4",options="header",]
+[cols="^.^1,<.^2,<.^2,<.^4m",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SCLIP32 rt, ra, imm5u |Signed Clip Value a|
-n = imm5u; +
-rt = SAT.Qn(ra.W[_x_]);
+....
+n = imm5u;
+rt = SAT.Qn(ra.W[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |2 |UCLIP32 rt, ra, imm5u |Unsigned Clip Value a|
-m = imm5u; +
-rt = SAT.Um(ra.W[_x_]);
+....
+m = imm5u;
+rt = SAT.Um(ra.W[x]);
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |3 |CLRS32 rt, ra |32-bit Count Leading Redundant Sign a|
-rt.W[_x_] = CLRS(ra.W[_x_])
+....
+rt.W[x] = CLRS(ra.W[x])
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |4 |CLZ32 rt, ra |32-bit Count Leading Zero a|
-rt.W[_x_] = CLZ(ra.W[_x_])
+....
+rt.W[x] = CLZ(ra.W[x])
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |5 |CLO32 rt, ra |32-bit Count Leading One a|
-rt.W[_x_] = CLO(ra.W[_x_])
+....
+rt.W[x] = CLO(ra.W[x])
 
-(RV32: __x__=0, RV64: __x__=1..0)
-
+(RV32: x=0, RV64: x=1..0)
+....
 |6 |PBSAD rt, ra, rb |Parallel Byte Sum of Absolute Difference a|
-absdiff[_x_] = ABS(ra.B[_x_] – rb.B[_x_]);
+....
+d[x] = ABS(ra.B[x] – rb.B[x]);
 
-rt = SUM(absdiff[_x_]);
+rt = SUM(d[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |7 |PBSADA rt, ra, rb |Parallel Byte Sum of Absolute Difference Accumulation a|
-absdiff[_x_] = ABS(ra.B[_x_] – rb.B[_x_]);
+....
+d[x] = ABS(ra.B[x] – rb.B[x]);
 
-rt = rt + SUM(absdiff[_x_]);
+rt = rt + SUM(d[x]);
 
-(RV32: __x__=3..0, RV64: __x__=7..0)
-
+(RV32: x=3..0, RV64: x=7..0)
+....
 |===
 
 <<<
@@ -1458,41 +1810,51 @@ rt = rt + SUM(absdiff[_x_]);
 There are 3 instructions here.
 
 .8-bit Multiply with 32-bit Add Instructions
-[cols="^.^1,<.^2,<.^2,<.^4",options="header",]
+[cols="^.^1,<.^2,<.^2,<.^4m",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMAQA rt, ra, rb |Four signed “8x8” with 32-bit Signed Addition +
 (32 = 32 + 8x8 + 8x8 + 8x8 + 8x8)
-m|
-rt.W[x] = rt.W[x] + ra.W[x].B[3]*rb.W[x].B[3] + ra.W[x].B[2]*rb.W[x].B[2]
-+ ra.W[x].B[1]*rb.W[x].B[1] + ra.W[x].B[0]*rb.W[x].B[0]);
-
+a|
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+m0[x] = a[x].B[0] s* b[x].B[0];
+m1[x] = a[x].B[1] s* b[x].B[1];
+m2[x] = a[x].B[2] s* b[x].B[2];
+m3[x] = a[x].B[3] s* b[x].B[3];
+rt.W[x] = rt.W[x] + m3[x] + m2[x]
+          + m1[x] + m0[x];
+ 
 (RV32: x=0, RV64: x=1..0)
-
-Elements of ra and rb are signed numbers.
-
+....
 |2 |UMAQA rt, ra, rb |Four unsigned “8x8” with 32-bit Unsigned Addition +
 (32 = 32 + 8x8 + 8x8 + 8x8 + 8x8)
-m|
-rt.W[x] = rt.W[x] + ra.W[x].B[3]*rb.W[x].B[3] + ra.W[x].B[2]*rb.W[x].B[2]
-+ ra.W[x].B[1]*rb.W[x].B[1] + ra.W[x].B[0]*rb.W[x].B[0]);
-
+a|
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+m0[x] = a[x].B[0] u* b[x].B[0];
+m1[x] = a[x].B[1] u* b[x].B[1];
+m2[x] = a[x].B[2] u* b[x].B[2];
+m3[x] = a[x].B[3] u* b[x].B[3];
+rt.W[x] = rt.W[x] + m3[x] + m2[x]
+          + m1[x] + m0[x];
+ 
 (RV32: x=0, RV64: x=1..0)
-
-Elements of ra and rb are unsigned numbers.
-
+....
 |3 |SMAQA.SU rt, ra, rb |Four “signed 8 x unsigned 8” with 32-bit Signed Addition +
 (32 = 32 + 8x8 + 8x8 + 8x8 + 8x8)
 a|
- rt.W[x] = rt.W[x] + ra.W[x].B[3]*rb.W[x].B[3] + ra.W[x].B[2]*rb.W[x].B[2] +
- ra.W[x].B[1]*rb.W[x].B[1] + ra.W[x].B[0]*rb.W[x].B[0]);
-
+....
+a[x] = ra.W[x]; b[x] = rb.W[x];
+m0[x] = a[x].B[0] su* b[x].B[0];
+m1[x] = a[x].B[1] su* b[x].B[1];
+m2[x] = a[x].B[2] su* b[x].B[2];
+m3[x] = a[x].B[3] su* b[x].B[3];
+rt.W[x] = rt.W[x] + m3[x] + m2[x]
+          + m1[x] + m0[x];
+ 
 (RV32: x=0, RV64: x=1..0)
-
-Elements of ra are signed numbers.
-
-Elements of rb are unsigned numbers.
-
+....
 |===
 
 <<<
@@ -1504,56 +1866,124 @@ Elements of rb are unsigned numbers.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |ADD64 rt, ra, rb |64-bit Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = a64 + b64; +
- +
+|1 |ADD64 rt, ra, rb |64-bit Addition a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = a64 + b64;
 r[tU].r[tL] = t64;
-|2 |RADD64 rt, ra, rb |64-bit Signed Halving Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = (a64 + b64) s>>1; +
- +
+
+RV64:
+rt = ra + rb
+....
+|2 |RADD64 rt, ra, rb |64-bit Signed Halving Addition a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = (a64 + b64) s>> 1;
 r[tU].r[tL] = t64;
-|3 |URADD64 rt, ra, rb |64-bit Unsigned Halving Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = (CONCAT(1'b0,a64) + CONCAT(1'b0,b64)) >>1; +
- +
+
+RV64:
+rt = (ra + rb) s>> 1;
+....
+|3 |URADD64 rt, ra, rb |64-bit Unsigned Halving Addition a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+a65 = CONCAT(1'b0,a64);
+b65 = CONCAT(1'b0,b64);
+t64 = (a65 + b65) u>> 1;
 r[tU].r[tL] = t64;
-|4 |KADD64 rt, ra, rb |64-bit Signed Saturating Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = SAT.Q63(a64 + b64); +
- +
+
+RV64:
+a65 = CONCAT(1'b0,ra);
+b65 = CONCAT(1'b0,rb);
+rt = (a65 + b65) u>> 1;
+....
+|4 |KADD64 rt, ra, rb |64-bit Signed Saturating Addition a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = SAT.Q63(a64 + b64);
 r[tU].r[tL] = t64;
-|5 |UKADD64 rt, ra, rb |64-bit Unsigned Saturating Addition |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = SAT.U64(a64 + b64); +
- +
+
+RV64:
+rt = SAT.Q63(ra + rb);
+....
+|5 |UKADD64 rt, ra, rb |64-bit Unsigned Saturating Addition a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = SAT.U64(a64 + b64);
 r[tU].r[tL] = t64;
-|6 |SUB64 rt, ra, rb |64-bit Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = a64 - b64; +
- +
+
+RV64:
+rt = SAT.U64(ra + rb);
+....
+|6 |SUB64 rt, ra, rb |64-bit Subtraction a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = a64 - b64;
 r[tU].r[tL] = t64;
-|7 |RSUB64 rt, ra, rb |64-bit Signed Halving Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = (a64 - b64) s>>1; +
- +
+
+RV64:
+rt = ra - rb
+....
+|7 |RSUB64 rt, ra, rb |64-bit Signed Halving Subtraction a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = (a64 - b64) s>> 1;
 r[tU].r[tL] = t64;
-|8 |URSUB64 rt, ra, rb |64-bit Unsigned Halving Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = (CONCAT(1'b0,a64) - CONCAT(1'b0,b64)) >>1; +
- +
+
+RV64:
+rt = (ra - rb) s>> 1;
+....
+|8 |URSUB64 rt, ra, rb |64-bit Unsigned Halving Subtraction a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+a65 = CONCAT(1'b0,a64);
+b65 = CONCAT(1'b0,b64);
+t64 = (a65 - b65) u>> 1;
 r[tU].r[tL] = t64;
-|9 |KSUB64 rt, ra, rb |64-bit Signed Saturating Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = SAT.Q63(a64 - b64); +
- +
+
+RV64:
+a65 = CONCAT(1'b0,ra);
+b65 = CONCAT(1'b0,rb);
+rt = (a65 - b65) u>> 1;
+....
+|9 |KSUB64 rt, ra, rb |64-bit Signed Saturating Subtraction a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = SAT.Q63(a64 - b64);
 r[tU].r[tL] = t64;
-|10 |UKSUB64 rt, ra, rb |64-bit Unsigned Saturating Subtraction |a64 = r[aU].r[aL]; b64 = r[bU].r[bL]; +
- +
-t64 = SAT.U64(a64 - b64); +
- +
+
+RV64:
+rt = SAT.Q63(ra - rb);
+....
+|10 |UKSUB64 rt, ra, rb |64-bit Unsigned Saturating Subtraction a|
+....
+RV32:
+a64 = r[aU].r[aL];
+b64 = r[bU].r[bL];
+t64 = SAT.U64(a64 - b64);
 r[tU].r[tL] = t64;
+
+RV64:
+rt = SAT.U64(ra - rb);
+....
 |===
 
 <<<
@@ -1563,46 +1993,102 @@ r[tU].r[tL] = t64;
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SMAR64 rt, ra, rb |32x32 with 64-bit Signed Addition |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra*rb; // signed +
- +
+|1 |SMAR64 rt, ra, rb |32x32 with 64-bit Signed Addition a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 + ra s* rb;
 r[tU].r[tL] = t64;
-|2 |SMSR64 rt, ra, rb |32x32 with 64-bit Signed Subtraction |c64 = r[tU].r[tL]; +
- +
-t64 = c64 - ra*rb; // signed +
- +
+
+RV64:
+m0 = ra.W[0] s* rb.W[0];
+m1 = ra.W[1] s* rb.W[1];
+rt = rt + m0 + m1;
+....
+|2 |SMSR64 rt, ra, rb |32x32 with 64-bit Signed Subtraction a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 - ra s* rb;
 r[tU].r[tL] = t64;
-|3 |UMAR64 rt, ra, rb |32x32 with 64-bit Unsigned Addition |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra*rb; // unsigned +
- +
+
+RV64:
+m0 = ra.W[0] s* rb.W[0];
+m1 = ra.W[1] s* rb.W[1];
+rt = rt - m0 - m1;
+....
+|3 |UMAR64 rt, ra, rb |32x32 with 64-bit Unsigned Addition a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 + ra u* rb;
 r[tU].r[tL] = t64;
-|4 |UMSR64 rt, ra, rb |32x32 with 64-bit Unsigned Subtraction |c64 = r[tU].r[tL]; +
- +
-t64 = c64 - ra*rb; // unsigned +
- +
+
+RV64:
+m0 = ra.W[0] u* rb.W[0];
+m1 = ra.W[1] u* rb.W[1];
+rt = rt + m0 + m1;
+....
+|4 |UMSR64 rt, ra, rb |32x32 with 64-bit Unsigned Subtraction a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 - ra u* rb;
 r[tU].r[tL] = t64;
-|5 |KMAR64 rt, ra, rb |32x32 with Saturating 64-bit Signed Addition |c64 = r[tU].r[tL]; +
- +
-t64 = SAT.Q63(c64 + ra*rb); +
- +
+
+RV64:
+m0 = ra.W[0] u* rb.W[0];
+m1 = ra.W[1] u* rb.W[1];
+rt = rt - m0 - m1;
+....
+|5 |KMAR64 rt, ra, rb |32x32 with Saturating 64-bit Signed Addition a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = SAT.Q63(c64 + ra s* rb);
 r[tU].r[tL] = t64;
-|6 |KMSR64 rt, ra, rb |32x32 with Saturating 64-bit Signed Subtraction |c64 = r[tU].r[tL]; +
- +
-t64 = SAT.Q63(c64 – ra*rb); +
- +
+
+RV64:
+m0 = ra.W[0] s* rb.W[0];
+m1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(rt + m0 + m1);
+....
+|6 |KMSR64 rt, ra, rb |32x32 with Saturating 64-bit Signed Subtraction a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = SAT.Q63(c64 – ra s* rb);
 r[tU].r[tL] = t64;
-|7 |UKMAR64 rt, ra, rb |32x32 with Saturating 64-bit Unsigned Addition |c64 = r[tU].r[tL]; +
- +
-t64 = SAT.U64(c64 + ra*rb); +
- +
+
+RV64:
+m0 = ra.W[0] s* rb.W[0];
+m1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(rt - m0 - m1);
+....
+|7 |UKMAR64 rt, ra, rb |32x32 with Saturating 64-bit Unsigned Addition a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = SAT.U64(c64 + ra u* rb);
 r[tU].r[tL] = t64;
-|8 |UKMSR64 rt, ra, rb |32x32 with Saturating 64-bit Unsigned Subtraction |c64 = r[tU].r[tL]; +
- +
-t64 = SAT.U64(c64 - ra*rb); +
- +
+
+RV64:
+m0 = ra.W[0] u* rb.W[0];
+m1 = ra.W[1] u* rb.W[1];
+rt = SAT.U64(rt + m0 + m1);
+....
+|8 |UKMSR64 rt, ra, rb |32x32 with Saturating 64-bit Unsigned Subtraction a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = SAT.U64(c64 - ra u* rb);
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0] u* rb.W[0];
+m1 = ra.W[1] u* rb.W[1];
+rt = SAT.U64(rt - m0 - m1);
+....
 |===
 
 <<<
@@ -1613,65 +2099,172 @@ r[tU].r[tL] = t64;
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |SMALBB rt, ra, rb |“Bottom 16 x Bottom 16” with 64-bit Signed Addition +
-(64 = 64 + 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.L*rb.L; +
- +
+(64 = 64 + 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 + ra.L s* rb.L;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* rb.W[0].H[0];
+m1 = ra.W[1].H[0] s* rb.W[1].H[0];
+rt = rt + m0 + m1;
+....
 |2 |SMALBT rt, ra, rb |“Bottom 16 x Top 16” with 64-bit Signed Addition +
-(64 = 64 + 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.L*rb.H; +
- +
+(64 = 64 + 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 + ra.L s* rb.H;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* rb.W[0].H[1];
+m1 = ra.W[1].H[0] s* rb.W[1].H[1];
+rt = rt + m0 + m1;
+....
 |3 |SMALTT rt, ra, rb |“Top 16 x Top 16” with 64-bit Signed Addition +
-(64 = 64 + 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.H*rb.H; +
- +
+(64 = 64 + 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+t64 = c64 + ra.H s* rb.H;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[1] s* rb.W[0].H[1];
+m1 = ra.W[1].H[1] s* rb.W[1].H[1];
+rt = rt + m0 + m1;
+....
 |4 |SMALDA rt, ra, rb |Two “16x16” with 64-bit Signed Double Addition +
-(64 = 64 + 16x16 + 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.H*rb.H + ra.L*rb.L; +
- +
+(64 = 64 + 16x16 + 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+m0 = ra.H s* rb.H;
+m1 = ra.L s* rb.L;
+t64 = c64 + m0 + m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* ra.W[0].H[0];
+m1 = ra.W[0].H[1] s* ra.W[0].H[1];
+m2 = ra.W[1].H[0] s* ra.W[1].H[0];
+m3 = ra.W[1].H[1] s* ra.W[1].H[1];
+rt = rt + SUM(m0~3);
+....
 |5 |SMALXDA rt, ra, rb |Two Crossed “16x16” with 64-bit Signed Double Addition +
-(64 = 64 + 16x16 + 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.H*rb.L + ra.L*rb.H; +
- +
+(64 = 64 + 16x16 + 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+m0 = ra.H s* rb.L;
+m1 = ra.L s* rb.H;
+t64 = c64 + m0 + m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* ra.W[0].H[1];
+m1 = ra.W[0].H[1] s* ra.W[0].H[0];
+m2 = ra.W[1].H[0] s* ra.W[1].H[1];
+m3 = ra.W[1].H[1] s* ra.W[1].H[0];
+rt = rt + SUM(m0~3);
+....
 |6 |SMALDS rt, ra, rb |Two “16x16” with 64-bit Signed Addition and Subtraction +
-(64 = 64 + 16x16 - 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.H*rb.H - ra.L*rb.L; +
- +
+(64 = 64 + 16x16 - 16x16) a|
+....
+c64 = r[tU].r[tL];
+m0 = ra.H s* rb.H;
+m1 = ra.L s* rb.L;
+t64 = c64 + m0 - m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[1] s* rb.W[0].H[1];
+m1 = ra.W[0].H[0] s* rb.W[0].H[0];
+m2 = ra.W[1].H[1] s* rb.W[1].H[1];
+m3 = ra.W[1].H[0] s* rb.W[1].H[0];
+s0 = m0 - m1;
+s1 = m2 - m3;
+rt = rt + s0 + s1;
+....
 |7 |SMALDRS rt, ra, rb |Two “16x16” with 64-bit Signed Addition and Reversed Subtraction +
-(64 = 64 + 16x16 - 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.L*rb.L - ra.H*rb.H; +
- +
+(64 = 64 + 16x16 - 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+m0 = ra.L s* rb.L;
+m1 = ra.H s* rb.H;
+t64 = c64 + m0 - m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* rb.W[0].H[0];
+m1 = ra.W[0].H[1] s* rb.W[0].H[1];
+m2 = ra.W[1].H[0] s* rb.W[1].H[0];
+m3 = ra.W[1].H[1] s* rb.W[1].H[1];
+s0 = m0 - m1;
+s1 = m2 - m3;
+rt = rt + s0 + s1;
+....
 |8 |SMALXDS rt, ra, rb |Two Crossed “16x16” with 64-bit Signed Addition and Subtraction +
-(64 = 64 + 16x16 - 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 + ra.H*rb.L - ra.L*rb.H; +
- +
+(64 = 64 + 16x16 - 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+m0 = ra.H s* rb.L;
+m1 = ra.L s* rb.H;
+t64 = c64 + m0 - m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[1] s* rb.W[0].H[0];
+m1 = ra.W[0].H[0] s* rb.W[0].H[1];
+m2 = ra.W[1].H[1] s* rb.W[1].H[0];
+m3 = ra.W[1].H[0] s* rb.W[1].H[1];
+s0 = m0 - m1;
+s1 = m2 - m3;
+rt = rt + s0 + s1;
+....
 |9 |SMSLDA rt, ra, rb |Two “16x16” with 64-bit Signed Double Subtraction +
-(64 = 64 - 16x16 - 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 - ra.H*rb.H - ra.L*rb.L; +
- +
+(64 = 64 - 16x16 - 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+m0 = ra.H s* rb.H;
+m1 = ra.L s* rb.L;
+t64 = c64 - m0 - m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* rb.W[0].H[0];
+m1 = ra.W[0].H[1] s* rb.W[0].H[1];
+m2 = ra.W[1].H[0] s* rb.W[1].H[0];
+m3 = ra.W[1].H[1] s* rb.W[1].H[1];
+s0 = - m0 - m1;
+s1 = - m2 - m3;
+rt = rt + s0 + s1;
+....
 |10 |SMSLXDA rt, ra, rb |Two Crossed “16x16” with 64-bit Signed Double Subtraction +
-(64 = 64 - 16x16 - 16x16) |c64 = r[tU].r[tL]; +
- +
-t64 = c64 - ra.H*rb.L - ra.L*rb.H; +
- +
+(64 = 64 - 16x16 - 16x16) a|
+....
+RV32:
+c64 = r[tU].r[tL];
+m0 = ra.H s* rb.L;
+m1 = ra.L s* rb.H;
+t64 = c64 - m0 - m1;
 r[tU].r[tL] = t64;
+
+RV64:
+m0 = ra.W[0].H[0] s* rb.W[0].H[1];
+m1 = ra.W[0].H[1] s* rb.W[0].H[0];
+m2 = ra.W[1].H[0] s* rb.W[1].H[1];
+m3 = ra.W[1].H[1] s* rb.W[1].H[0];
+s0 = - m0 - m1;
+s1 = - m2 - m3;
+rt = rt + s0 + s1;
+....
 |===
 
 <<<
@@ -1685,13 +2278,48 @@ The following table lists non-SIMD instructions related to Q15 arithmetic.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KADDH Rt, Ra, Rb |Add with Q15 saturation |Rt = SE(SAT.Q15(Ra.W[0] + Rb.W[0]))
-|2 |KSUBH Rt, Ra, Rb |Subtract with Q15 saturation |Rt = SE(SAT.Q15(Ra.W[0] – Rb.W[0]))
-|3 |KHMBB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. |Rt = SAT.Q15((Ra.H0 * Rb.H0) s>> 15)
-|4 |KHMBT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q15 number. |Rt = SAT.Q15((Ra.H0 * Rb.H1) s>> 15)
-|5 |KHMTT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. |Rt = SAT.Q15((Ra.H1 * Rb.H1) s>> 15)
-|6 |UKADDH Rt, Ra, Rb |Add with I16 saturation |Rt = ZE(SAT.U16(Ra.W[0] + Rb.W[0]))
-|7 |UKSUBH Rt, Ra, Rb |Subtract with I16 saturation |Rt = ZE(SAT.U16(Ra.W[0] – Rb.W[0]))
+|1 |KADDH Rt, Ra, Rb |Add with Q15 saturation a|
+....
+a0 = Ra.W[0];
+b0 = Rb.W[0];
+Rt = SE(SAT.Q15(a0 + b0));
+....
+|2 |KSUBH Rt, Ra, Rb |Subtract with Q15 saturation a|
+....
+a0 = Ra.W[0];
+b0 = Rb.W[0];
+Rt = SE(SAT.Q15(a0 – b0));
+....
+|3 |KHMBB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
+....
+a0 = Ra.H[0];
+b0 = Rb.H[0];
+Rt = SAT.Q15((a0 s* b0) s>> 15);
+....
+|4 |KHMBT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q15 number. a|
+....
+a0 = Ra.H[0];
+b1 = Rb.H[1];
+Rt = SAT.Q15((a0 * b1) s>> 15);
+....
+|5 |KHMTT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
+....
+a1 = Ra.H[1];
+b1 = Rb.H[1];
+Rt = SAT.Q15((a1 * b1) s>> 15);
+....
+|6 |UKADDH Rt, Ra, Rb |Add with I16 saturation a|
+....
+a0 = CONCAT(1'b0,Ra.W[0]);
+b0 = CONCAT(1'b0,Rb.W[0]);
+Rt = ZE(SAT.U16(a0 + b0))
+....
+|7 |UKSUBH Rt, Ra, Rb |Subtract with I16 saturation a|
+....
+a0 = CONCAT(1'b0,Ra.W[0]);
+b0 = CONCAT(1'b0,Rb.W[0]);
+Rt = ZE(SAT.U16(a0 - b0))
+....
 |===
 
 <<<
@@ -1704,61 +2332,122 @@ The following table lists non-SIMD instructions related to Q31 arithmetic.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |KADDW Rt, Ra, Rb |Add with Q31 saturation a|
-Rt = SAT.Q31(Ra + Rb) // RV32
+....
+RV32:
+Rt = SAT.Q31(Ra + Rb);
 
-Rt = SE(SAT.Q31(Ra.W[0] + Rb.W[0]) // RV64
-
+RV64:
+a0 = Ra.W[0];
+b0 = Rb.W[0];
+Rt = SE(SAT.Q31(a0 + b0);
+....
 |2 |UKADDW Rt, Ra, Rb |Unsigned Add with I32 saturation a|
-Rt = SAT.I32(Ra + Rb) // RV32
+....
+RV32:
+a0 = CONCAT(1'b0,Ra);
+b0 = CONCAT(1'b0,Rb);
+Rt = SAT.I32(a0 + b0);
 
-Rt = ZE(SAT.U32(Ra.W[0] + Rb.W[0]) // RV64
-
+RV64:
+a0 = CONCAT(1'b0,Ra.W[0]);
+b0 = CONCAT(1'b0,Rb.W[0]);
+Rt = ZE(SAT.U32(a0 + b0);
+....
 |3 |KSUBW Rt, Ra, Rb |Subtract with Q31 saturation a|
-Rt = SAT.Q31(Ra - Rb) // RV32
+....
+RV32:
+Rt = SAT.Q31(Ra - Rb);
 
-Rt = SE(SAT.Q31(Ra.W[0] - Rb.W[0]) // RV64
-
+RV64:
+a0 = Ra.W[0];
+b0 = Rb.W[0];
+Rt = SE(SAT.Q31(a0 - b0);
+....
 |4 |UKSUBW Rt, Ra, Rb |Unsigned Subtract with I32 saturation a|
-Rt = SAT.I32(Ra - Rb) // RV32
+....
+RV32:
+a0 = CONCAT(1'b0,Ra);
+b0 = CONCAT(1'b0,Rb);
+Rt = SAT.I32(a0 - b0);
 
-Rt = ZE(SAT.U32(Ra.W[0] - Rb.W[0]) // RV64
-
-|5 |KDMBB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. |Rt = SAT.Q31((Ra.H0 * Rb.H0) << 1)
-|6 |KDMBT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. |Rt = SAT.Q31((Ra.H0 * Rb.H1) << 1)
-|7 |KDMTT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. |Rt = SAT.Q31((Ra.H1 * Rb.H1) << 1)
+RV64:
+a0 = CONCAT(1'b0,Ra.W[0]);
+b0 = CONCAT(1'b0,Rb.W[0]);
+Rt = ZE(SAT.U32(a0 - b0);
+....
+|5 |KDMBB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. a|
+....
+a0 = Ra.H[0];
+b0 = Rb.H[0];
+m0 = (a0 s* b0) << 1;
+Rt = SAT.Q31(m0);
+....
+|6 |KDMBT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. a|
+....
+a0 = Ra.H[0];
+b1 = Rb.H[1];
+m0 = (a0 s* b1) << 1;
+Rt = SAT.Q31(m0);
+....
+|7 |KDMTT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. a|
+....
+a1 = Ra.H[1];
+b1 = Rb.H[1];
+m0 = (a1 s* b1) << 1;
+Rt = SAT.Q31(m0);
+....
 |8 |KSLRAW Rt, Ra, Rb |Shift Left Logical with Q31 Saturation or Shift Right Arithmetic a|
-(Rb[5:0] >=0) ?
-
-Rt = SAT.Q31(Ra << Rb[5:0]):
-
-Rt = (Ra s>> -Rb[5:0])
-
-|9 |KSLRAW.u Rt, Ra, Rb |Shift Left Logical with Q31 Saturation or Rounding Shift Right Arithmetic |if (rb[5:0] < 0) +
-rt = RUND(ra s>> -rb[5:0]); +
-if (rb[5:0] > 0) +
-rt = SAT.Q31(ra << rb[5:0]);
-|10 |KSLLW rt, ra, rb |Saturating Shift Left Logical for 32-bit Word |rt = SE(SAT.Q31(ra.W[0] << rb[4:0]));
-|11 |KSLLIW rt, ra, imm5u |Saturating Shift Left Logical Immediate for 32-bit Word |rt = SE(SAT.Q31(ra.W[0] << imm5u));
+....
+if (Rb[5:0] >=0) {
+  Rt = SAT.Q31(Ra << Rb[5:0]);
+} else {
+  Rt = (Ra s>> -Rb[5:0]);
+}
+....
+|9 |KSLRAW.u Rt, Ra, Rb |Shift Left Logical with Q31 Saturation or Rounding Shift Right Arithmetic a|
+....
+if (Rb[5:0] >=0) {
+  Rt = SAT.Q31(Ra << Rb[5:0]);
+} else {
+  Rt = RUND(Ra s>> -Rb[5:0]);
+}
+....
+|10 |KSLLW rt, ra, rb |Saturating Shift Left Logical for 32-bit Word a|
+....
+w0 = ra.W[0];
+rt = SE(SAT.Q31(w0 << rb[4:0]));
+....
+|11 |KSLLIW rt, ra, imm5u |Saturating Shift Left Logical Immediate for 32-bit Word a|
+....
+w0 = ra.W[0];
+rt = SE(SAT.Q31(w0 << imm5u));
+....
 |12 |KDMABB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
-res = Rt.W[0] + SAT.Q31((Ra.H0 * Rb.H0) << 1)
-
+....
+m0 = (Ra.H[0] s* Rb.H[0]) << 1;
+res = Rt.W[0] + SAT.Q31(m0);
 Rt = SE(SAT.Q31(res));
-
+....
 |13 |KDMABT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
-res = Rt.W[0] + SAT.Q31((Ra.H0 * Rb.H1) << 1)
-
+....
+m0 = (Ra.H[0] * Rb.H1) << 1;
+res = Rt.W[0] + SAT.Q31(m0);
 Rt = SE(SAT.Q31(res));
-
+....
 |14 |KDMATT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
-res = Rt.W[0] + SAT.Q31((Ra.H1 * Rb.H1) << 1)
-
+....
+m0 = (Ra.H1 * Rb.H1) << 1;
+res = Rt.W[0] + SAT.Q31(m0);
 Rt = SE(SAT.Q31(res));
-
+....
 |15 |KABSW rt, ra |32-bit Absolute Value (scalar version) a|
-rt = SAT.Q31(ABS(ra)); // RV32
+....
+RV32:
+rt = SAT.Q31(ABS(ra));
 
-rt = SE(SAT.Q31(ABS(ra.W[_0_]))); // RV64
-
+RV64:
+rt = SE(SAT.Q31(ABS(ra.W[0])));
+....
 |===
 
 <<<
@@ -1775,7 +2464,9 @@ res = (ra.W[0] + rb.W[0]) s>> 1;
 rt = SE(res);
 
 |2 |URADDW rt, ra, rb |32-bit Unsigned Halving Addition l|
-res = (CONCAT(1'b0, ra.W[0]) + CONCAT(1'b0, rb.W[0])) >> 1;
+a0 = CONCAT(1'b0, ra.W[0]);
+b0 = CONCAT(1'b0, rb.W[0]);
+res = (a0 + b0) u>> 1;
 rt = SE(res);
 
 |3 |RSUBW rt, ra, rb |32-bit Signed Halving Subtraction l|
@@ -1783,7 +2474,9 @@ res = (ra.W[0] - rb.W[0]) s>> 1;
 rt = SE(res);
 
 |4 |URSUBW rt, ra, rb |32-bit Unsigned Halving Subtraction l|
-res = (CONCAT(1'b0, ra.W[0]) - CONCAT(1'b0, rb.W[0])) >> 1;
+a0 = CONCAT(1'b0, ra.W[0]);
+b0 = CONCAT(1'b0, rb.W[0]);
+res = (a0 - b0) u>> 1;
 rt = SE(res);
 
 |5 |MAXW rt, ra, rb |32-bit Signed Word Maximum l|
@@ -1839,8 +2532,10 @@ The following table lists the user instructions related to Overflow (OV) flag ma
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |RDOV Rt |Read vxsat.OV to Rt. |Rt = ZE(vxsat.OV)
-|2 |CLROV |Clear vsat.OV flag |vxsat.OV = 0
+|1 |RDOV Rt |Read vxsat.OV to Rt. l|
+Rt = ZE(vxsat.OV);
+|2 |CLROV |Clear vsat.OV flag l|
+vxsat.OV = 0;
 |===
 
 <<<
@@ -1853,95 +2548,99 @@ There are 11 instructions here.
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |AVE rt, ra, rb |Average with rounding |
-|2 |SRA.u rt, ra, rb |Rounding Shift Right Arithmetic a|
-rt = RUND(ra s>> rb[4:0]); // RV32
+|2 |SRA.u rt, ra, rb |Rounding Shift Right Arithmetic l|
+RV32:
+rt = RUND(ra s>> rb[4:0]);
 
-rt = RUND(ra s>> rb[5:0]); // RV64
+RV64:
+rt = RUND(ra s>> rb[5:0]);
 
-|3 |SRAI.u rt, ra, imm5u |Rounding Shift Right Arithmetic Immediate a|
-rt = RUND(ra s>> imm5u); // RV32
+|3 |SRAI.u rt, ra, imm5u |Rounding Shift Right Arithmetic Immediate l|
+RV32:
+rt = RUND(ra s>> imm5u);
 
-rt = RUND(ra s>> imm6u); // RV64
+RV64:
+rt = RUND(ra s>> imm6u);
 
-|4 |BITREV rt, ra, rb |Bit Reverse a|
-msb = rb[4:0]; // RV32
-
-msb = rb[5:0]; // RV64
-
+|4 |BITREV rt, ra, rb |Bit Reverse l|
+RV32:
+msb = rb[4:0];
 rev[0:msb] = ra[msb:0];
-
 rt = ZE(rev[msb:0]);
 
-|5 |BITREVI rt, ra, imm5u |Bit Reverse Immediate a|
-msb = imm5u; // RV32
-
-msb = imm6u; // RV64
-
+RV64:
+msb = rb[5:0];
 rev[0:msb] = ra[msb:0];
-
 rt = ZE(rev[msb:0]);
 
-|6 |WEXT rt, ra, rb |Extract 32-bit from a 64-bit value a|
-a64 = r[aU].r[aL]; // RV32
+|5 |BITREVI rt, ra, imm5u |Bit Reverse Immediate l|
+RV32:
+msb = imm5u;
+rev[0:msb] = ra[msb:0];
+rt = ZE(rev[msb:0]);
 
-a64 = ra; // RV64
+RV64:
+msb = imm6u;
+rev[0:msb] = ra[msb:0];
+rt = ZE(rev[msb:0]);
 
+|6 |WEXT rt, ra, rb |Extract 32-bit from a 64-bit value l|
+RV32:
+a64 = r[aU].r[aL];
 lsb = rb[4:0];
-
 exword = a64[(31+lsb):lsb];
-
 rt = SE(exword);
 
-|7 |WEXTI rt, ra, imm5u |Extract 32-bit from a 64-bit value Immediate a|
-a64 = r[aU].r[aL]; // RV32
+RV64:
+a64 = ra;
+lsb = rb[4:0];
+exword = a64[(31+lsb):lsb];
+rt = SE(exword);
 
-a64 = ra; // RV64
-
+|7 |WEXTI rt, ra, imm5u |Extract 32-bit from a 64-bit value Immediate l|
+RV32:
+a64 = r[aU].r[aL];
 lsb = imm5u;
-
 exword = a64[(31+lsb):lsb];
-
 rt = SE(exword);
 
-|8 |BPICK rt, ra, rb, rc |Bit-wise Pick |rt[_i_] = rc[_i_]? ra[_i_] : rb[_i_]; +
-(RV32: __i__=31..0, RV64: __i__=63..0)
-|9 |INSB rt, ra, imm3u |Insert Byte a|
-byte_idx = imm2u; // RV32
+RV64
+a64 = ra;
+lsb = imm5u;
+exword = a64[(31+lsb):lsb];
+rt = SE(exword);
 
-byte_idx = imm3u; // RV64
-
+|8 |BPICK rt, ra, rb, rc |Bit-wise Pick l|
+rt[i] = rc[i]? ra[i] : rb[i];
+(RV32: i=31..0, RV64: i=63..0)
+|9 |INSB rt, ra, imm3u |Insert Byte l|
+RV32
+byte_idx = imm2u;
 rt.B[byte_idx] = ra.B[0];
 
-|10 |MADDR32 rt, ra, tb |Multiply and Add to 32-bit WoRd
+RV64:
+byte_idx = imm3u;
+rt.B[byte_idx] = ra.B[0];
+
+|10 |MADDR32 rt, ra, tb |Multiply and Add to 32-bit WoRd l|
 RV32:
-
 Mresult = Ra * Rb;
-
 Rd = Rd + Mresult.W[0];
 
 RV64:
-
 Mresult = Ra.W[0] * Rb.W[0];
-
 tresult[31:0] = Rd.W[0] + Mresult.W[0];
-
 Rd = SE64(tresult[31:0]);
 
-|11 |MSUBR32 rt, ra, tb |Multiply and Subtract from 32-bit WoRd
+|11 |MSUBR32 rt, ra, tb |Multiply and Subtract from 32-bit WoRd l|
 RV32:
-
 Mresult = Ra * Rb;
-
 Rd = Rd - Mresult.W[0];
 
 RV64:
-
 Mresult = Ra.W[0] * Rb.W[0];
-
 tresult[31:0] = Rd.W[0] - Mresult.W[0];
-
 Rd = SE64(tresult[31:0]);
-
 |===
 
 <<<
@@ -1955,176 +2654,159 @@ There are 30 SIMD 32-bit addition or subtraction instructions.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |ADD32 rt, ra, rb |SIMD 32-bit Addition a|
-rt.W[_x_] = ra.W[_x_] + rb.W[_x_];
+|1 |ADD32 rt, ra, rb |SIMD 32-bit Addition l|
+rt.W[x] = ra.W[x] + rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|2 |RADD32 rt, ra, rb |SIMD 32-bit Signed Halving Addition a|
-rt.W[_x_] = (ra.W[_x_] + rb.W[_x_]) s>> 1;
+|2 |RADD32 rt, ra, rb |SIMD 32-bit Signed Halving Addition l|
+rt.W[x] = (ra.W[x] + rb.W[x]) s>> 1;
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|3 |URADD32 rt, ra, rb |SIMD 32-bit Unsigned Halving Addition a|
-rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) + CONCAT(1'b0,rb.W[_x_])) >> 1;
+|3 |URADD32 rt, ra, rb |SIMD 32-bit Unsigned Halving Addition l|
+a[x] = CONCAT(1'b0,ra.W[x];
+b[x] = CONCAT(1'b0,rb.W[x];
+rt.W[x] = (a[x] + b[x]) u>> 1;
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|4 |KADD32 rt, ra, rb |SIMD 32-bit Signed Saturating Addition a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] + rb.W[_x_]);
+|4 |KADD32 rt, ra, rb |SIMD 32-bit Signed Saturating Addition l|
+rt.W[x] = SAT.Q31(ra.W[x] + rb.W[x]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|5 |UKADD32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Addition a|
-rt.W[_x_] = SAT.U32(ra.W[_x_] + rb.W[_x_];
+|5 |UKADD32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Addition l|
+rt.W[x] = SAT.U32(ra.W[x] + rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|6 |SUB32 rt, ra, rb |SIMD 32-bit Subtraction a|
-rt.W[_x_] = ra.W[_x_] - rb.W[_x_];
+|6 |SUB32 rt, ra, rb |SIMD 32-bit Subtraction l|
+rt.W[x] = ra.W[x] - rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|7 |RSUB32 rt, ra, rb |SIMD 32-bit Signed Halving Subtraction a|
-rt.W[_x_] = (ra.W[_x_] - rb.W[_x_]) s>> 1;
+|7 |RSUB32 rt, ra, rb |SIMD 32-bit Signed Halving Subtraction l|
+rt.W[x] = (ra.W[x] - rb.W[x]) s>> 1;
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|8 |URSUB32 rt, ra, rb |SIMD 32-bit Unsigned Halving Subtraction a|
-rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) - CONCAT(1'b0,rb.W[_x_])) >> 1;
+|8 |URSUB32 rt, ra, rb |SIMD 32-bit Unsigned Halving Subtraction l|
+a[x] = CONCAT(1'b0,ra.W[x];
+b[x] = CONCAT(1'b0,rb.W[x];
+rt.W[x] = (a[x] - b[x]) u>> 1;
 
-(RV64: __x__=1..0)
+(RV64: =1..0)
 
-|9 |KSUB32 rt, ra, rb |SIMD 32-bit Signed Saturating Subtraction a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] - rb.W[_x_]);
+|9 |KSUB32 rt, ra, rb |SIMD 32-bit Signed Saturating Subtraction l|
+rt.W[x] = SAT.Q31(ra.W[x] - rb.W[x]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|10 |UKSUB32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Subtraction a|
-rt.W[_x_] = SAT.U32(ra.W[_x_] - rb.W[_x_]);
+|10 |UKSUB32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Subtraction l|
+rt.W[x] = SAT.U32(ra.W[x] - rb.W[x]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|11 |CRAS32 rt, ra, rb |SIMD 32-bit Cross Add & Sub a|
-rt.W[_x_] = ra.W[_x_] + rb.W[_x-1_]; +
-rt.W[_x-1_] = ra.W[_x-1_] – rb.W[_x_];
+|11 |CRAS32 rt, ra, rb |SIMD 32-bit Cross Add & Sub l|
+rt.W[1] = ra.W[1] + rb.W[0];
+rt.W[0] = ra.W[0] – rb.W[1];
 
-(RV64: __x__=1)
+|12 |RCRAS32 rt, ra, rb |SIMD 32-bit Signed Halving Cross Add & Sub l|
+rt.W[1] = (ra.W[1] + rb.W[0]) s>> 1;
+rt.W[0] = (ra.W[0] – rb.W[1]) s>> 1;
 
-|12 |RCRAS32 rt, ra, rb |SIMD 32-bit Signed Halving Cross Add & Sub a|
-rt.W[_x_] = (ra.W[_x_] + rb.W[_x-1_]) s>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] – rb.W[_x_]) s>> 1;
+|13 |URCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Add & Sub l|
+a0 = CONCAT(1'b0,ra.W[0]);
+a1 = CONCAT(1'b0,ra.W[1]);
+b0 = CONCAT(1'b0,rb.W[0]);
+b1 = CONCAT(1'b0,rb.W[1]);
 
-(RV64: __x__=1)
+rt.W[1] = (a1 + b0) u>> 1;
+rt.W[0] = (a0 – b1) u>> 1;
 
-|13 |URCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Add & Sub a|
-rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) + CONCAT(1'b0,rb.W[_x-1_])) >> 1; +
-rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) – CONCAT(1'b0,rb.W[_x_])) >> 1;
+|14 |KCRAS32 rt, ra, rb |SIMD 32-bit Signed Saturating Cross Add & Sub l|
+rt.W[1] = SAT.Q31(ra.W[1] + rb.W[0]);
+rt.W[0] = SAT.Q31(ra.W[0] – rb.W[1]);
 
-(RV64: __x__=1)
+|15 |UKCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Cross Add & Sub l|
+rt.W[1] = SAT.U32(ra.W[1] + rb.W[0]);
+rt.W[0] = SAT.U32(ra.W[0] – rb.W[1]);
 
-|14 |KCRAS32 rt, ra, rb |SIMD 32-bit Signed Saturating Cross Add & Sub a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] + rb.W[_x-1_]); +
-rt.W[_x-1_] = SAT.Q31(ra.W[_x-1_] – rb.W[_x_]);
+|16 |CRSA32 rt, ra, rb |SIMD 32-bit Cross Sub & Add l|
+rt.W[1] = ra.W[1] - rb.W[0];
+rt.W[0] = ra.W[0] + rb.W[1];
 
-(RV64: __x__=1)
+|17 |RCRSA32 rt, ra, rb |SIMD 32-bit Signed Halving Cross Sub & Add l|
+rt.W[1] = (ra.W[1] - rb.W[0]) s>> 1;
+rt.W[0] = (ra.W[0] + rb.W[1]) s>> 1;
 
-|15 |UKCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Cross Add & Sub a|
-rt.W[_x_] = SAT.U32(ra.W[_x_] + rb.W[_x-1_]); +
-rt.W[_x-1_] = SAT.U32(ra.W[_x-1_] – rb.W[_x_]);
+|18 |URCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Sub & Add l|
+a0 = CONCAT(1'b0,ra.W[0]);
+a1 = CONCAT(1'b0,ra.W[1]);
+b0 = CONCAT(1'b0,rb.W[0]);
+b1 = CONCAT(1'b0,rb.W[1]);
 
-(RV64: __x__=1)
+rt.W[1] = (a1 - b0) u>> 1;
+rt.W[0] = (a0 + b1) u>> 1;
 
-|16 |CRSA32 rt, ra, rb |SIMD 32-bit Cross Sub & Add a|
-rt.W[_x_] = ra.W[_x_] - rb.W[_x-1_]; +
-rt.W[_x-1_] = ra.W[_x-1_] + rb.W[_x_];
+|19 |KCRSA32 rt, ra, rb |SIMD 32-bit Signed Saturating Cross Sub & Add l|
+rt.W[1] = SAT.Q31(ra.W[1] - rb.W[0]);
+rt.W[0] = SAT.Q31(ra.W[0] + rb.W[1]);
 
-(RV64: __x__=1)
-
-|17 |RCRSA32 rt, ra, rb |SIMD 32-bit Signed Halving Cross Sub & Add a|
-rt.W[_x_] = (ra.W[_x_] - rb.W[_x-1_]) s>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] + rb.W[_x_]) s>> 1;
-
-(RV64: __x__=1)
-
-|18 |URCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Sub & Add a|
-rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) - CONCAT(1'b0,rb.W[_x-1_])) >> 1; +
-rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) + CONCAT(1'b0,rb.W[_x_])) >> 1;
-
-(RV64: __x__=1)
-
-|19 |KCRSA32 rt, ra, rb |SIMD 32-bit Signed Saturating Cross Sub & Add a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] - rb.W[_x-1_]); +
-rt.W[_x-1_] = SAT.Q31(ra.W[_x-1_] + rb.W[_x_]);
-
-(RV64: __x__=1)
-
-|20 |UKCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Cross Sub & Add a|
-rt.W[_x_] = SAT.U32(ra.W[_x_] - rb.W[_x-1_]); +
-rt.W[_x-1_] = SAT.U32(ra.W[_x-1_] + rb.W[_x_]);
-
-(RV64: __x__=1)
+|20 |UKCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Cross Sub & Add l|
+rt.W[1 = SAT.U32(ra.W[1] - rb.W[0]);
+rt.W[0] = SAT.U32(ra.W[0] + rb.W[1]);
 
 |21 |STAS32 rt, ra, rb |SIMD 32-bit Straight Add & Sub a|
-rt.W[_x_] = ra.W[_x_] + rb.W[_x_]; +
-rt.W[_x-1_] = ra.W[_x-1_] – rb.W[_x-1_];
+rt.W[1] = ra.W[1] + rb.W[1];
+rt.W[0] = ra.W[0] – rb.W[0];
 
-(RV64: __x__=1)
+|22 |RSTAS32 rt, ra, rb |SIMD 32-bit Signed Halving Straight Add & Sub l|
+rt.W[1] = (ra.W[1] + rb.W[1]) s>> 1;
+rt.W[0] = (ra.W[0] – rb.W[0]) s>> 1;
 
-|22 |RSTAS32 rt, ra, rb |SIMD 32-bit Signed Halving Straight Add & Sub a|
-rt.W[_x_] = (ra.W[_x_] + rb.W[_x_]) s>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] – rb.W[_x-1_]) s>> 1;
+|23 |URSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Add & Sub l|
+a0 = CONCAT(1'b0,ra.W[0]);
+a1 = CONCAT(1'b0,ra.W[1]);
+b0 = CONCAT(1'b0,rb.W[0]);
+b1 = CONCAT(1'b0,rb.W[1]);
 
-(RV64: __x__=1)
+rt.W[1] = (a1 + b1) u>> 1; 
+rt.W[0] = (a0 – b0) u>> 1;
 
-|23 |URSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Add & Sub a|
-rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) + CONCAT(1'b0,rb.W[_x_])) >> 1; +
-rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) – CONCAT(1'b0,rb.W[_x-1_])) >> 1;
+|24 |KSTAS32 rt, ra, rb |SIMD 32-bit Signed Saturating Straight Add & Sub l|
+rt.W[1] = SAT.Q31(ra.W[1] + rb.W[1]);
+rt.W[0] = SAT.Q31(ra.W[0] – rb.W[0]);
 
-(RV64: __x__=1)
+|25 |UKSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Straight Add & Sub l|
+rt.W[1] = SAT.U32(ra.W[1] + rb.W[1]);
+rt.W[0] = SAT.U32(ra.W[0] – rb.W[0]);
 
-|24 |KSTAS32 rt, ra, rb |SIMD 32-bit Signed Saturating Straight Add & Sub a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] + rb.W[_x_]); +
-rt.W[_x-1_] = SAT.Q31(ra.W[_x-1_] – rb.W[_x-1_]);
+|26 |STSA32 rt, ra, rb |SIMD 32-bit Straight Sub & Add l|
+rt.W[1] = ra.W[1] - rb.W[1];
+rt.W[0] = ra.W[0] + rb.W[0];
 
-(RV64: __x__=1)
+|27 |RSTSA32 rt, ra, rb |SIMD 32-bit Signed Halving Straight Sub & Add l|
+rt.W[1] = (ra.W[1] - rb.W[1]) s>> 1;
+rt.W[0] = (ra.W[0] + rb.W[0]) s>> 1;
 
-|25 |UKSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Straight Add & Sub a|
-rt.W[_x_] = SAT.U32(ra.W[_x_] + rb.W[_x_]); +
-rt.W[_x-1_] = SAT.U32(ra.W[_x-1_] – rb.W[_x-1_]);
+|28 |URSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Sub & Add l|
+a0 = CONCAT(1'b0,ra.W[0]);
+a1 = CONCAT(1'b0,ra.W[1]);
+b0 = CONCAT(1'b0,rb.W[0]);
+b1 = CONCAT(1'b0,rb.W[1]);
 
-(RV64: __x__=1)
+rt.W[1] = (a1 - b1) u>> 1;
+rt.W[0] = (a0 + b0) u>> 1;
 
-|26 |STSA32 rt, ra, rb |SIMD 32-bit Straight Sub & Add a|
-rt.W[_x_] = ra.W[_x_] - rb.W[_x_]; +
-rt.W[_x-1_] = ra.W[_x-1_] + rb.W[_x-1_];
+|29 |KSTSA32 rt, ra, rb |SIMD 32-bit Signed Saturating Straight Sub & Add l|
+rt.W[1] = SAT.Q31(ra.W[1] - rb.W[1]);
+rt.W[0] = SAT.Q31(ra.W[0] + rb.W[0]);
 
-(RV64: __x__=1)
-
-|27 |RSTSA32 rt, ra, rb |SIMD 32-bit Signed Halving Straight Sub & Add a|
-rt.W[_x_] = (ra.W[_x_] - rb.W[_x_]) s>> 1; +
-rt.W[_x-1_] = (ra.W[_x-1_] + rb.W[_x-1_]) s>> 1;
-
-(RV64: __x__=1)
-
-|28 |URSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Sub & Add a|
-rt.W[_x_] = (CONCAT(1'b0,ra.W[_x_]) - CONCAT(1'b0,rb.W[_x_])) >> 1; +
-rt.W[_x-1_] = (CONCAT(1'b0,ra.W[_x-1_]) + CONCAT(1'b0,rb.W[_x-1_])) >> 1;
-
-(RV64: __x__=1)
-
-|29 |KSTSA32 rt, ra, rb |SIMD 32-bit Signed Saturating Straight Sub & Add a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] - rb.W[_x_]); +
-rt.W[_x-1_] = SAT.Q31(ra.W[_x-1_] + rb.W[_x-1_]);
-
-(RV64: __x__=1)
-
-|30 |UKSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Straight Sub & Add a|
-rt.W[_x_] = SAT.U32(ra.W[_x_] - rb.W[_x_]); +
-rt.W[_x-1_] = SAT.U32(ra.W[_x-1_] + rb.W[_x-1_]);
-
-(RV64: __x__=1)
-
+|30 |UKSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Straight Sub & Add l|
+rt.W[1] = SAT.U32(ra.W[1] - rb.W[1]);
+rt.W[0] = SAT.U32(ra.W[0] + rb.W[0]);
 |===
 
 There are 14 SIMD 32-bit shift instructions.
@@ -2133,181 +2815,193 @@ There are 14 SIMD 32-bit shift instructions.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SRA32 rt, ra, rb |SIMD 32-bit Shift Right Arithmetic a|
-rt.W[_x_] = ra.W[_x_] s>> rb[4:0];
+|1 |SRA32 rt, ra, rb |SIMD 32-bit Shift Right Arithmetic l|
+rt.W[x] = ra.W[x] s>> rb[4:0];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|2 |SRAI32 rt, ra, im5u |SIMD 32-bit Shift Right Arithmetic Immediate a|
-rt.W[_x_] = ra.W[_x_] s>> im5u;
+|2 |SRAI32 rt, ra, im5u |SIMD 32-bit Shift Right Arithmetic Immediate l|
+rt.W[x] = ra.W[x] s>> im5u;
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|3 |SRA32.u rt, ra, rb |SIMD 32-bit Rounding Shift Right Arithmetic a|
-rt.W[_x_] = RUND(ra.W[_x_] s>> rb[4:0]);
+|3 |SRA32.u rt, ra, rb |SIMD 32-bit Rounding Shift Right Arithmetic l|
+rt.W[x] = RUND(ra.W[x] s>> rb[4:0]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|4 |SRAI32.u rt, ra, im5u |SIMD 32-bit Rounding Shift Right Arithmetic Immediate a|
-rt.W[_x_] = RUND(ra.W[_x_] s>> im5u);
+|4 |SRAI32.u rt, ra, im5u |SIMD 32-bit Rounding Shift Right Arithmetic Immediate l|
+rt.W[x] = RUND(ra.W[x] s>> im5u);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|5 |SRL32 rt, ra, rb |SIMD 32-bit Shift Right Logical a|
-rt.W[_x_] = ra.W[_x_] u>> rb[4:0];
+|5 |SRL32 rt, ra, rb |SIMD 32-bit Shift Right Logical l|
+rt.W[x] = ra.W[x] u>> rb[4:0];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|6 |SRLI32 rt, ra, im5u |SIMD 32-bit Shift Right Logical Immediate a|
-rt.W[_x_] = ra.W[_x_] u>> im5u;
+|6 |SRLI32 rt, ra, im5u |SIMD 32-bit Shift Right Logical Immediate l|
+rt.W[x] = ra.W[x] u>> im5u;
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|7 |SRL32.u rt, ra, rb |SIMD 32-bit Rounding Shift Right Logical a|
-rt.W[_x_] = RUND(ra.W[_x_] u>> rb[4:0]);
+|7 |SRL32.u rt, ra, rb |SIMD 32-bit Rounding Shift Right Logical l|
+rt.W[x] = RUND(ra.W[x] u>> rb[4:0]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|8 |SRLI32.u rt, ra, im5u |SIMD 32-bit Rounding Shift Right Logical Immediate a|
-rt.W[_x_] = RUND(ra.W[_x_] u>> im5u);
+|8 |SRLI32.u rt, ra, im5u |SIMD 32-bit Rounding Shift Right Logical Immediate l|
+rt.W[x] = RUND(ra.W[x] u>> im5u);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|9 |SLL32 rt, ra, rb |SIMD 32-bit Shift Left Logical a|
-rt.W[_x_] = ra.W[_x_] << rb[4:0];
+|9 |SLL32 rt, ra, rb |SIMD 32-bit Shift Left Logical l|
+rt.W[x] = ra.W[x] << rb[4:0];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|10 |SLLI32 rt, ra, im5u |SIMD 32-bit Shift Left Logical Immediate a|
-rt.W[_x_] = ra.W[_x_] << im5u;
+|10 |SLLI32 rt, ra, im5u |SIMD 32-bit Shift Left Logical Immediate l|
+rt.W[x] = ra.W[x] << im5u;
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|11 |KSLL32 rt, ra, rb |SIMD 32-bit Saturating Shift Left Logical a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] << rb[4:0]);
+|11 |KSLL32 rt, ra, rb |SIMD 32-bit Saturating Shift Left Logical l|
+rt.W[x] = SAT.Q31(ra.W[x] << rb[4:0]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|12 |KSLLI32 rt, ra, im5u |SIMD 32-bit Saturating Shift Left Logical Immediate a|
-rt.W[_x_] = SAT.Q31(ra.W[_x_] << im5u);
+|12 |KSLLI32 rt, ra, im5u |SIMD 32-bit Saturating Shift Left Logical Immediate l|
+rt.W[x] = SAT.Q31(ra.W[x] << im5u);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|13 |KSLRA32 rt, ra, rb |SIMD 32-bit Shift Left Logical with Saturation & Shift Right Arithmetic a|
-if (rb[5:0] < 0) +
-rt.W[_x_] = ra.W[_x_] s>> -rb[5:0];
+|13 |KSLRA32 rt, ra, rb |SIMD 32-bit Shift Left Logical with Saturation & Shift Right Arithmetic l|
+a[x] = ra.W[x];
+if (rb[5:0] < 0)
+  rt.W[x] = a[x] s>> -rb[5:0];
 
-if (rb[5:0] > 0) +
-rt.W[_x_] = SAT.Q31(ra.W[_x_] << rb[5:0]);
+if (rb[5:0] > 0)
+  rt.W[x] = SAT.Q31(a[x] << rb[5:0]);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|14 |KSLRA32.u rt, ra, rb |SIMD 32-bit Shift Left Logical with Saturation & Rounding Shift Right Arithmetic a|
-if (rb[5:0] < 0) +
-rt.W[_x_] = RUND(ra.W[_x_] s>> -rb[5:0]);
+|14 |KSLRA32.u rt, ra, rb |SIMD 32-bit Shift Left Logical with Saturation & Rounding Shift Right Arithmetic l|
+a[x] = ra.W[x];
+if (rb[5:0] < 0)
+  rt.W[x] = RUND(a[x] s>> -rb[5:0]);
 
-if (rb[5:0] > 0) +
-rt.W[_x_] = SAT.Q31(ra.W[_x_] << rb[5:0]);
+if (rb[5:0] > 0)
+  rt.W[x] = SAT.Q31(a[x] << rb[5:0]);
 
-(RV64: __x__=1..0)
-
+(RV64: x=1..0)
 |===
 
 .(RV64 Only) SIMD 32-bit Miscellaneous Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SMIN32 rt, ra, rb |SIMD 32-bit Signed Minimum a|
-rt.W[_x_] = (ra.W[_x_] < rb.W[_x_])? ra.W[_x_] : rb.W[_x_];
+|1 |SMIN32 rt, ra, rb |SIMD 32-bit Signed Minimum l|
+lt[x] = ra.W[x] < rb.W[x];
+rt.W[x] = (lt[x])? ra.W[x] : rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|2 |UMIN32 rt, ra, rb |SIMD 32-bit Unsigned Minimum a|
-rt.W[_x_] = (ra.W[_x_] u< rb.W[_x_])? ra.W[_x_] : rb.W[_x_];
+|2 |UMIN32 rt, ra, rb |SIMD 32-bit Unsigned Minimum l|
+lt[x] = ra.W[x] u< rb.W[x];
+rt.W[x] = (lt[x])? ra.W[x] : rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|3 |SMAX32 rt, ra, rb |SIMD 32-bit Signed Maximum a|
-rt.W[_x_] = (ra.W[_x_] > rb.W[_x_])? ra.W[_x_] : rb.W[_x_];
+|3 |SMAX32 rt, ra, rb |SIMD 32-bit Signed Maximum l|
+gt[x] = ra.W[x] > rb.W[x];
+rt.W[x] = (gt[x])? ra.W[x] : rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|4 |UMAX32 rt, ra, rb |SIMD 32-bit Unsigned Maximum a|
-rt.W[_x_] = (ra.W[_x_] u> rb.W[_x_])? ra.W[_x_] : rb.W[_x_];
+|4 |UMAX32 rt, ra, rb |SIMD 32-bit Unsigned Maximum l|
+gt[x] = ra.W[x] u> rb.W[x];
+rt.W[x] = (gt[x])? ra.W[x] : rb.W[x];
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|5 |KABS32 rt, ra |SIMD 32-bit Absolute Value a|
-rt.W[_x_] = SAT.Q31(ABS(ra.W[_x_]));
+|5 |KABS32 rt, ra |SIMD 32-bit Absolute Value l|
+rt.W[x] = SAT.Q31(ABS(ra.W[x]));
 
-(RV64: __x__=1..0)
-
+(RV64: x=1..0)
 |===
 
 .(RV64 Only) SIMD Q15 saturating Multiply Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KHMBB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. a|
-Rt.W[_x_] = SAT.Q15((Ra.W[_x_].H0 * Rb.W[_x_].H0) s>> 15)
+|1 |KHMBB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. l|
+t[x] = Ra.W[x].H[0] s* Rb.W[x].H[0];
+Rt.W[x] = SAT.Q15(t[x] s>> 15);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|2 |KHMBT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q15 numbers. a|
-Rt.W[_x_] = SAT.Q15((Ra.W[_x_].H0 * Rb.W[_x_].H1) s>> 15)
+|2 |KHMBT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q15 numbers. l|
+t[x] = Ra.W[x].H[0] s* Rb.W[x].H[1];
+Rt.W[x] = SAT.Q15(t[x] s>> 15);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|3 |KHMTT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. a|
-Rt.W[_x_] = SAT.Q15((Ra.W[_x_].H1 * Rb.W[_x_].H1) s>> 15)
+|3 |KHMTT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. l|
+t[x] = Ra.W[x].H[1] s* Rb.W[x].H[1];
+Rt.W[x] = SAT.Q15(t[x] s>> 15);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|4 |KDMBB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. a|
-Rt.W[_x_] = SAT.Q31((Ra.W[_x_].H0 * Rb.W[_x_].H0) << 1)
+|4 |KDMBB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. l|
+t[x] = Ra.W[x].H[0] s* Rb.W[x].H[0];
+Rt.W[x] = SAT.Q31(t[x] << 1);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|5 |KDMBT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. a|
-Rt.W[_x_] = SAT.Q31((Ra.W[_x_].H0 * Rb.W[_x_].H1) << 1)
+|5 |KDMBT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. l|
+t[x] = Ra.W[x].H[0] s* Rb.W[x].H[1];
+Rt.W[x] = SAT.Q31(t[x] << 1);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|6 |KDMTT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. a|
-Rt.W[_x_] = SAT.Q31((Ra.W[_x_].H1 * Rb.W[_x_].H1) << 1)
+|6 |KDMTT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. l|
+t[x] = Ra.W[x].H[1] s* Rb.W[x].H[1];
+Rt.W[x] = SAT.Q31(t[x] << 1);
 
-(RV64: __x__=1..0)
+(RV64: x=1..0)
 
-|7 |KDMABB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. a|
-res = SAT.Q31((Ra.W[_x_].H0 * Rb.W[_x_].H0) << 1)
+|7 |KDMABB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
+t[x] = Ra.W[x].H[0] s* Rb.W[x].H[0];
+res[x] = SAT.Q31(t[x] << 1);
+Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
 
-Rt.W[_x_] = SAT.Q31(Rt.W[_x_] + res)
+(RV64: x=1..0)
 
-(RV64: __x__=1..0)
+|8 |KDMABT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
+t[x] = Ra.W[x].H[0] s* Rb.W[x].H[1];
+res[x] = SAT.Q31(t[x] << 1);
+Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
 
-|8 |KDMABT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. a|
-res = SAT.Q31((Ra.W[_x_].H0 * Rb.W[_x_].H1) << 1)
+(RV64: x=1..0)
 
-Rt.W[_x_] = SAT.Q31(Rt.W[_x_] + res)
+|9 |KDMATT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
+t[x] = Ra.W[x].H[1] s* Rb.W[x].H[1];
+res[x] = SAT.Q31(t[x] << 1);
+Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
 
-(RV64: __x__=1..0)
-
-|9 |KDMATT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. a|
-res = SAT.Q31((Ra.W[_x_].H1 * Rb.W[_x_].H1) << 1)
-
-Rt.W[_x_] = SAT.Q31(Rt.W[_x_] + res)
-
-(RV64: __x__=1..0)
-
+(RV64: x=1..0)
 |===
 
 .(RV64 Only) 32-bit Multiply Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SMBB32 Rt, Ra, Rb |Multiply the first 32-bit elements of two registers. |Rt = Ra.W[0] * Rb.W[0];
-|2 |SMBT32 Rt, Ra, Rb |Multiply the first 32-bit element of one register with the second 32-bit element of another register. |Rt = Ra.W[0] * Rb.W[1];
-|3 |SMTT32 Rt, Ra, Rb |Multiply the second 32-bit elements of two registers. |Rt = Ra.W[1] * Rb.W[1];
+|1 |SMBB32 Rt, Ra, Rb |Multiply the first 32-bit elements of two registers. l|
+Rt = Ra.W[0] s* Rb.W[0];
+|2 |SMBT32 Rt, Ra, Rb |Multiply the first 32-bit element of one register with the second 32-bit element of another register. l|
+Rt = Ra.W[0] s* Rb.W[1];
+|3 |SMTT32 Rt, Ra, Rb |Multiply the second 32-bit elements of two registers. l|
+Rt = Ra.W[1] s* Rb.W[1];
 |===
 
 .(RV64 Only) 32-bit Multiply & Add Instructions
@@ -2319,19 +3013,20 @@ Multiply the first 32-bit elements of two registers and the signed multiplicatio
 
 (64 = 64 + 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[0] * Rb.W[0]);
+l|
+Rt = SAT.Q63(Rt + Ra.W[0] * Rb.W[0]);
 |2 |KMABT32 Rt, Ra, Rb a|
 Multiply the first 32-bit element of one register with the second 32-bit element of another register and the signed multiplication result is added to a third register with Q63 saturation.
 
 (64 = 64 + 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[0] * Rb.W[1]);
+l|Rt = SAT.Q63(Rt + Ra.W[0] s* Rb.W[1]);
 |3 |KMATT32 Rt, Ra, Rb a|
 Multiply the second 32-bit elements of two registers and the signed multiplication result is added to a third register with Q63 saturation.
 
 (64 = 64 + 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[1] * Rb.W[1]);
+l|Rt = SAT.Q63(Rt + Ra.W[1] s* Rb.W[1]);
 |===
 
 .(RV64 Only) 32-bit Parallel Multiply & Add Instructions
@@ -2343,80 +3038,116 @@ Multiply the corresponding 32-bit elements of two registers and add the signed m
 
 (64 = 32x32 + 32x32)
 
-|Rt = SAT.Q63(Ra.W[1] * Rb.W[1] + Ra.W[0] * Rb.W[0]);
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = SAT.Q63(t1 + t0);
 |2 |KMXDA32 Rt, Ra, Rb a|
 Multiply the cross-positioned 32-bit elements of two registers and add the signed multiplication results with Q63 saturation.
 
 (64 = 32x32 + 32x32)
 
-|Rt = SAT.Q63(Ra.W[1] * Rb.W[0] + Ra.W[0] * Rb.W[1]);
+l|
+t01 = Ra.W[0] s* Rb.W[1];
+t10 = Ra.W[1] s* Rb.W[0];
+Rt = SAT.Q63(t10 + t01);
 |3 |KMADA32 Rt, Ra, Rb a|
 Multiply the corresponding 32-bit elements of two registers and add the signed multiplication results and a third register with Q63 saturation.
 
 (64 = 64+ 32x32 + 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[1] * Rb.W[1] + Ra.W[0] * Rb.W[0]);
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = SAT.Q63(Rt + t1 + t0);
 |4 |KMAXDA32 Rt, Ra, Rb a|
 Multiply the cross-positioned 32-bit elements of two registers and add the signed multiplication results and a third register with Q63 saturation.
 
 (64 = 64+ 32x32 + 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[1] * Rb.W[0] + Ra.W[0] * Rb.W[1]);
+l|
+t01 = Ra.W[0] s* Rb.W[1];
+t10 = Ra.W[1] s* Rb.W[0];
+Rt = SAT.Q63(Rt + t10 + t01);
 |5 |KMADS32 Rt, Ra, Rb a|
 Multiply the corresponding 32-bit elements of two registers and add the top signed multiplication result with a third register and subtract the bottom signed multiplication result with Q63 saturation.
 
 (64 = 64+ 32x32 - 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[1] * Rb.W[1] - Ra.W[0] * Rb.W[0]);
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = SAT.Q63(Rt + t1 - t0);
 |6 |KMADRS32 Rt, Ra, Rb a|
 Multiply the corresponding 32-bit elements of two registers and add the bottom signed multiplication result with a third register and subtract the top signed multiplication result with Q63 saturation.
 
 (64 = 64 + 32x32 - 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[0] * Rb.W[0] - Ra.W[1] * Rb.W[1]);
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = SAT.Q63(Rt + t0 - t1);
 |7 |KMAXDS32 Rt, Ra, Rb a|
 Multiply the cross-positioned 32-bit elements of two registers and add the top signed multiplication result with a third register and subtract the bottom signed multiplication result with Q63 saturation.
 
 (64 = 64 + 32x32 - 32x32)
 
-|Rt = SAT.Q63(Rt + Ra.W[1] * Rb.W[0] - Ra.W[0] * Rb.W[1]);
+l|
+t01 = Ra.W[0] s* Rb.W[1];
+t10 = Ra.W[1] s* Rb.W[0];
+Rt = SAT.Q63(Rt + t10 - t01);
 |8 |KMSDA32 Rt, Ra, Rb a|
 Multiply the corresponding 32-bit elements of two registers and subtract the signed multiplication results from a third register with Q63 saturation.
 
 (64 = 64 - 32x32 - 32x32)
 
-|Rt = SAT.Q63(Rt - Ra.W[1] * Rb.W[1] - Ra.W[0] * Rb.W[0]);
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = SAT.Q63(Rt - t1 - t0);
 |9 |KMSXDA32 Rt, Ra, Rb a|
 Multiply the cross-positioned 32-bit elements of two registers and subtract the signed multiplication results from a third register with Q63 saturation.
 
 (64 = 64 - 32x32 - 32x32)
 
-|Rt = SAT.Q63(Rt - Ra.W[1] * Rb.W[0] - Ra.W[0] * Rb.W[1]);
+l|
+t01 = Ra.W[0] s* Rb.W[1];
+t10 = Ra.W[1] s* Rb.W[0];
+Rt = SAT.Q63(Rt - t10 - t01);
 |10 |SMDS32 Rt, Ra, Rb a|
 Multiply the corresponding 32-bit elements of two registers and subtract the bottom signed multiplication result from the top result.
 
 (64 = 32x32 - 32x32)
 
-|Rt = Ra.W[1] * Rb.W[1] - Ra.W[0] * Rb.W[0];
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = t1 - t0;
 |11 |SMDRS32 Rt, Ra, Rb a|
 Multiply the corresponding 32-bit elements of two registers and subtract the top signed multiplication result from the bottom result.
 
 (64 = 32x32 - 32x32)
 
-|Rt = Ra.W[0] * Rb.W[0] - Ra.W[1] * Rb.W[1];
+l|
+t0 = Ra.W[0] s* Rb.W[0];
+t1 = Ra.W[1] s* Rb.W[1];
+Rt = t0 - t1;
 |12 |SMXDS32 Rt, Ra, Rb a|
 Multiply the cross-positioned 32-bit elements of two registers and subtract the bottom signed multiplication result from the top result.
 
 (64 = 32x32 - 32x32)
 
-|Rt = Ra.W[1] * Rb.W[0] - Ra.W[0] * Rb.W[1];
+l|
+t01 = Ra.W[0] s* Rb.W[1];
+t10 = Ra.W[1] s* Rb.W[0];
+Rt = t10 - t01;
 |===
 
 .(RV64 Only) Non-SIMD 32-bit Shift Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SRAIW.u Rt, Ra, imm5u |32-bit Rounding arithmetic shift right immediate |Rt = SE64(RUND(Ra.W[0] s>> imm5u));
+|1 |SRAIW.u Rt, Ra, imm5u |32-bit Rounding arithmetic shift right immediate l|Rt = SE64(RUND(Ra.W[0] s>> imm5u));
 |===
 
 There are four 32-bit packing instructions here.
@@ -2425,10 +3156,10 @@ There are four 32-bit packing instructions here.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |PKBB32 rt, ra, rb |Pack two 32-bit data from Bottoms |rt = CONCAT(ra.W[_0_], rb.W[_0_]);
-|2 |PKBT32 rt, ra, rb |Pack two 32-bit data Bottom & Top |rt = CONCAT(ra.W[_0_], rb.W[_1_]);
-|3 |PKTB32 rt, ra, rb |Pack two 32-bit data Top & Bottom |rt = CONCAT(ra.W[_1_], rb.W[_0_]);
-|4 |PKTT32 rt, ra, rb |Pack two 32-bit data from Tops |rt = CONCAT(ra.W[_1_], rb.W[_1_]);
+|1 |PKBB32 rt, ra, rb |Pack two 32-bit data from Bottoms l|rt = CONCAT(ra.W[0], rb.W[0]);
+|2 |PKBT32 rt, ra, rb |Pack two 32-bit data Bottom & Top l|rt = CONCAT(ra.W[0], rb.W[1]);
+|3 |PKTB32 rt, ra, rb |Pack two 32-bit data Top & Bottom l|rt = CONCAT(ra.W[1], rb.W[0]);
+|4 |PKTT32 rt, ra, rb |Pack two 32-bit data from Tops l|rt = CONCAT(ra.W[1], rb.W[1]);
 |===
 
 [#pext_subset]
@@ -2453,6 +3184,8 @@ The instructions in Zp64 are listed in the following table.
 |18 |UKMAR64 |19 |UKMSR64 |20 |SMALBB |21 |SMALBT |22 |SMALTT
 |23 |SMALDA |24 |SMALXDA |25 |SMALDS |26 |SMALDRS |27 |SMALXDS
 |28 |SMSLDA |29 |SMSLXDA |30 |MULR64 |31 |MULSR64
+|32 |UMUL8 |33 |UMULX8 |34 |UMUL16 |35 |UMULX16 |36 |SMUL8 
+|37 |SMULX8 |38 |SMUL16 |39 |SMULX16
 |===
 
 == Instructions Duplicated in Bit Manipulation Extension (v0.92)
@@ -2793,6 +3526,8 @@ operation, the result is written to Rd.
 *Note:*
 
 *Intrinsic functions:*
+
+The intrinsic function of this instruction is the same as the intrinsic function of "BITREV" instruction. A compiler can detect constant value in the function msb argument and use this instruction.
 
  uintXLEN_t __rv__bitrev(uintXLEN_t a, uintXLEN_t msb);
 
@@ -3398,7 +4133,7 @@ results to the corresponding 32-bit elements of Rd.
  }
  Rd.W[x] = cnt[x];
  for RV32: x=0
- for RV64: x=1…0
+ for RV64: x=1..0
 
 *Exceptions:* None
 
@@ -3522,8 +4257,8 @@ results are written to Rt.
    uint16x2_t __rv__v_scmpeq16(int16x2_t a, int16x2_t b);
    uint16x2_t __rv__v_ucmpeq16(uint16x2_t a, uint16x2_t b);
  RV64:
-   uint16x4_t __rv__v_scmpeq16(int16x4_t a, int16x2_t b);
-   uint16x4_t __rv__v_ucmpeq16(uint16x4_t a, uint16x2_t b);
+   uint16x4_t __rv__v_scmpeq16(int16x4_t a, int16x4_t b);
+   uint16x4_t __rv__v_ucmpeq16(uint16x4_t a, uint16x4_t b);
 
 <<<
 ===  CRAS16 (SIMD 16-bit Cross Addition & Subtraction)
@@ -4773,7 +5508,7 @@ to 0x7FFF and the overflow flag OV will be set.
 
 * Required:
 
- uintXLEN_t __rv__khm6(uintXLEN_t a, uintXLEN_t b);
+ uintXLEN_t __rv__khm16(uintXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -5730,7 +6465,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
  RV32:
    int32_t __rv__v_kmmawb_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
-   int32x2_t __rv__v_kmmawb_u(in32x2_t t, int32x2_t a, int16x4_t b);
+   int32x2_t __rv__v_kmmawb_u(int32x2_t t, int32x2_t a, int16x4_t b);
 
 <<<
 === KMMAWB2, KMMAWB2.u
@@ -5819,7 +6554,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
  RV32:
    int32_t __rv__v_kmmawb2(int32_t t, int32_t a, int16x2_t b);
  RV64:
-   int32x2_t __rv__v_kmmawb2(in32x2_t t, int32x2_t a, int16x4_t b);
+   int32x2_t __rv__v_kmmawb2(int32x2_t t, int32x2_t a, int16x4_t b);
 
 * *KMMAWB2.u*
 
@@ -5832,7 +6567,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
  RV32:
    int32_t __rv__v_kmmawb2_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
-   int32x2_t __rv__v_kmmawb2_u(in32x2_t t, int32x2_t a, int16x4_t b);
+   int32x2_t __rv__v_kmmawb2_u(int32x2_t t, int32x2_t a, int16x4_t b);
 
 <<<
 === KMMAWT, KMMAWT.u
@@ -6019,7 +6754,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
  RV32:
    int32_t __rv__v_kmmawt2(int32_t t, int32_t a, int16x2_t b);
  RV64:
-   int32x2_t __rv__v_kmmawt2(in32x2_t t, int32x2_t a, int16x4_t b);
+   int32x2_t __rv__v_kmmawt2(int32x2_t t, int32x2_t a, int16x4_t b);
 
 * *KMMAWT2.u*
 
@@ -6032,7 +6767,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
  RV32:
    int32_t __rv__v_kmmawt2_u(int32_t t, int32_t a, int16x2_t b);
  RV64:
-   int32x2_t __rv__v_kmmawt2_u(in32x2_t t, int32x2_t a, int16x4_t b);
+   int32x2_t __rv__v_kmmawt2_u(int32x2_t t, int32x2_t a, int16x4_t b);
 
 <<<
 === KMMSB, KMMSB.u
@@ -6126,7 +6861,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed 32
 * Optional (e.g., GCC vector extensions):
 
  RV64:
-   int32x2_t __rv__ v_kmmsb_u(int32x2_t t, int32x2_t a, int32x2_t b);
+   int32x2_t __rv__v_kmmsb_u(int32x2_t t, int32x2_t a, int32x2_t b);
 
 <<<
 === KMMWB2, KMMWB2.u
@@ -7694,6 +8429,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Note:*
 
+*Intrinsic functions:*
+
+ int32_t __rv__maddr32(int32_t a, int32_t b);
+
+
 <<<
 === MAXW (32-bit Signed Word Maximum)
 
@@ -7720,7 +8460,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- if (Rs1.W[0] >= Rs2.W[0]) {
+ if (Rs1.W[0] s>= Rs2.W[0]) {
    Rd = SE(Rs1.W[0]);
  } else {
    Rd = SE(Rs2.W[0]);
@@ -7762,11 +8502,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
-if (Rs1.W[0] >= Rs2.W[0]) {
-  Rd = SE(Rs2.W[0]);
-} else {
-  Rd = SE(Rs1.W[0]);
-}
+ if (Rs1.W[0] s>= Rs2.W[0]) {
+   Rd = SE(Rs2.W[0]);
+ } else {
+   Rd = SE(Rs1.W[0]);
+ }
 
 *Exceptions:* None
 
@@ -7820,6 +8560,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Privilege level:* All
 
 *Note:*
+
+*Intrinsic functions:*
+
+ int32_t __rv__msubr32(int32_t a, int32_t b);
 
 <<<
 === MULR64 (Multiply Word Unsigned to 64-bit Data)
@@ -7880,6 +8624,11 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as unsigned integers.
 
 *Note:*
 
+*Intrinsic functions:*
+
+ uint64_t __rv__mulr64(uint32_t a, uint32_t b);
+
+
 <<<
 === MULSR64 (Multiply Word Signed to 64-bit Data)
 
@@ -7938,6 +8687,11 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as signed integers.
 *Privilege level:* All
 
 *Note:*
+
+*Intrinsic functions:*
+
+ int64_t __rv__mulsr64(int32_t a, int32_t b);
+
 
 <<<
 === PBSAD (Parallel Byte Sum of Absolute Difference)
@@ -9851,15 +10605,15 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 
  // SMALDS
  Mres[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[1]) - (Rs1.W[0].H[0] * Rs2.W[0].H[0]);
- Mres[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[0].H[1]) - (Rs1.W[1].H[0] * Rs2.W[1].H[0]);
+ Mres[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[1]) - (Rs1.W[1].H[0] * Rs2.W[1].H[0]);
 
  // SMALDRS
  Mres[0][31:0] = (Rs1.W[0].H[0] * Rs2.W[0].H[0]) - (Rs1.W[0].H[1] * Rs2.W[0].H[1]);
- Mres[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[0].H[0]) - (Rs1.W[1].H[1] * Rs2.W[1].H[1]);
+ Mres[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[1].H[0]) - (Rs1.W[1].H[1] * Rs2.W[1].H[1]);
 
  // SMALXDS
  Mres[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[0]) - (Rs1.W[0].H[0] * Rs2.W[0].H[1]);
- Mres[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[0].H[0]) - (Rs1.W[1].H[0] * Rs2.W[1].H[1]);
+ Mres[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[0]) - (Rs1.W[1].H[0] * Rs2.W[1].H[1]);
  Rd = Rd + SE64(Mres[0][31:0]) + SE64(Mres[1][31:0]);
 
 *Exceptions:* None
@@ -10079,9 +10833,9 @@ This instruction multiplies the four signed 8-bit elements of 32-bit chunks of R
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int32_t __rv__v_smaqa_su (int32_t t, int8x4_t a, int8x4_t b);
+   int32_t __rv__v_smaqa_su(int32_t t, int8x4_t a, int8x4_t b);
  RV64:
-   int32x2_t __rv__v_smaqa_su (int32x2_t t, int8x8_t a, int8x8_t b);
+   int32x2_t __rv__v_smaqa_su(int32x2_t t, int8x8_t a, int8x8_t b);
 
 <<<
 === SMAX8 (SIMD 8-bit Signed Maximum)
@@ -10407,7 +11161,7 @@ The subtraction result is written to the corresponding 32-bit element of Rd. The
  RV32:
    int32_t __rv__v_smds(int16x2_t a, int16x2_t b);
  RV64:
-   int32x2 __rv__v_smds(int16x4_t a, int16x4_t b);
+   int32x2_t __rv__v_smds(int16x4_t a, int16x4_t b);
 
 * *SMDRS*
 
@@ -10420,7 +11174,7 @@ The subtraction result is written to the corresponding 32-bit element of Rd. The
  RV32:
    int32_t __rv__v_smdrs(int16x2_t a, int16x2_t b);
  RV64:
-   int32x2 __rv__v_smdrs(int16x4_t a, int16x4_t b);
+   int32x2_t __rv__v_smdrs(int16x4_t a, int16x4_t b);
 
 * *SMXDS*
 
@@ -10433,7 +11187,7 @@ The subtraction result is written to the corresponding 32-bit element of Rd. The
  RV32:
    int32_t __rv__v_smxds(int16x2_t a, int16x2_t b);
  RV64:
-   int32x2 __rv__v_smxds(int16x4_t a, int16x4_t b);
+   int32x2_t __rv__v_smxds(int16x4_t a, int16x4_t b);
 
 <<<
 ===  SMIN8 (SIMD 8-bit Signed Minimum)
@@ -10797,7 +11551,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int __rv__v_smmwt_u(int a, int16x2_t b);
+   int32_t __rv__v_smmwt_u(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __rv__v_smmwt_u(int32x2_t a, int16x4_t b);
 
@@ -12371,8 +13125,7 @@ contains the low 32-bit of the result.
 
  int64_t __rv__ssub64(int64_t a, int64_t b);
 
- uint64_t __rv__usub64(uint64_t a, +
- uint64_t b);
+ uint64_t __rv__usub64(uint64_t a, uint64_t b);
 
 <<<
 === SUNPKD810, SUNPKD820, SUNPKD830, SUNPKD831, SUNPKD832
@@ -13144,8 +13897,7 @@ contains the low 32-bit of the result.
 
 *Intrinsic functions:*
 
- uint64_t __rv__ukadd64(uint64_t a, +
- uint64_t b);
+ uint64_t __rv__ukadd64(uint64_t a, uint64_t b);
 
 <<<
 === UKADDH (Unsigned Addition with U16 Saturation)
@@ -13417,14 +14169,12 @@ contains the low 32-bit of the result.
 
 * Required:
 
- uint64_t __rv__ukmar64(uint64_t t, +
- uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ukmar64(uint64_t t, uintXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV64:
-   uint64_t __rv__v_ukmar64(uint64_t t, +
-   uint32x2_t a, uint32x2_t b);
+   uint64_t __rv__v_ukmar64(uint64_t t, uint32x2_t a, uint32x2_t b);
 
 <<<
 === UKMSR64 (Unsigned Multiply and Saturating Subtract from 64-Bit Data)
@@ -13490,14 +14240,12 @@ contains the low 32-bit of the result.
 
 * Required:
 
- uint64_t __rv__ukmsr64(uint64_t t, +
- uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__ukmsr64(uint64_t t, uintXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV64:
-   uint64_t __rv__v_ukmsr64(uint64_t t, +
-   uint32x2_t a, uint32x2_t b);
+   uint64_t __rv__v_ukmsr64(uint64_t t, uint32x2_t a, uint32x2_t b);
 
 <<<
 === UKSTAS16 (SIMD 16-bit Unsigned Saturating Straight Addition & Subtraction)
@@ -13789,8 +14537,7 @@ contains the low 32-bit of the result.
 
 *Intrinsic functions:*
 
- uint64_t __rv__uksub64(uint64_t a, +
- uint64_t b);
+ uint64_t __rv__uksub64(uint64_t a, uint64_t b);
 
 <<<
 === UKSUBH (Unsigned Subtraction with U16 Saturation)
@@ -13938,14 +14685,12 @@ contains the low 32-bit of the result.
 
 * Required:
 
- uint64_t __rv__umar64(uint64_t t, +
- uintXLEN_t a, uintXLEN_t b);
+ uint64_t __rv__umar64(uint64_t t, uintXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV64:
-   uint64_t __rv__v_umar64(uint64_t t, +
-   uint32x2_t a, uint32x2_t b);
+   uint64_t __rv__v_umar64(uint64_t t, uint32x2_t a, uint32x2_t b);
 
 <<<
 === UMAQA (Unsigned Multiply Four Bytes with 32-bit Adds)
@@ -15133,19 +15878,19 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Subtract 32-bit unsigned integers and the result is halved to avoid overflow or saturation.
 
-*Description:* This instruction subtracts the first 32-bit signed integer in Rs2
-from the first 32-bit signed integer in Rs1. The 33-bit result is first
+*Description:* This instruction subtracts the first 32-bit unsigned integer in Rs2
+from the first 32-bit unsigned integer in Rs1. The 33-bit result is first
 right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Operations:*
 
 * RV32:
 
- Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) – CONCAT(1'b0,Rs2[31:0])) >> 1;
+ Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) – CONCAT(1'b0,Rs2[31:0])) u>> 1;
 
 * RV64:
 
- resw[31:0] = (CONCAT(1'b0,Rs1[31:0]) – CONCAT(1'b0,Rs2[31:0])) >> 1;
+ resw[31:0] = (CONCAT(1'b0,Rs1[31:0]) – CONCAT(1'b0,Rs2[31:0])) u>> 1;
  Rd[63:0] = SE(resw[31:0]);
 
 *Exceptions:* None
@@ -15174,20 +15919,20 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |WEXTI +
-1101111 |LSBloc[4:0] |Rs1 |000 |Rd
+1101111 |Imm5u[4:0] |Rs1 |000 |Rd
 |GE80B +
 1111111
 |===
 
 *Syntax:*
 
- WEXTI Rd, Rs1, #LSBloc
+ WEXTI Rd, Rs1, Imm5u
 
 *Purpose:* Extract a 32-bit word from a 64-bit value stored in an even/odd pair of registers (RV32) or a register (RV64) starting from a specified immediate LSB bit position.
 
 *RV32 Description:*
 
-This instruction extracts a 32-bit word from a 64-bit value of an even/odd pair of registers specified by Rs1(4,1) starting from a specified immediate LSB bit position, #LSBloc. The extracted word is written to Rd.
+This instruction extracts a 32-bit word from a 64-bit value of an even/odd pair of registers specified by Rs1(4,1) starting from a specified immediate LSB bit position, Imm5u. The extracted word is written to Rd.
 
 Rs1(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
@@ -15195,19 +15940,21 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the 64-b
 
 *RV64 Description:*
 
-This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified immediate LSB bit position, #LSBloc. The extracted word is sign-extended and written to lower 32-bit of Rd.
+This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified immediate LSB bit position, Imm5u. The extracted word is sign-extended and written to lower 32-bit of Rd.
 
 *Operations:*
 
 * RV32:
 
- Idx0 = CONCAT(Rs1(4,1),1’b0); Idx1 = CONCAT(Rs2(4,1),1’b1);
+ Idx0 = CONCAT(Rs1(4,1),1’b0); Idx1 = CONCAT(Rs1(4,1),1’b1);
  src[63:0] = Concat(R[Idx1], R[Idx0]);
- Rd = src[31+LSBloc:LSBloc];
+ LSB = Imm5u;
+ Rd = src[31+LSB:LSB];
 
 * RV64:
 
- ExtractW = Rs1[31+LSBloc:LSBloc];
+ LSB = Imm5u;
+ ExtractW = Rs1[31+LSB:LSB];
  Rd = SE(ExtractW)
 
 *Exceptions:* None
@@ -17581,12 +18328,12 @@ For the “SMTT32” instruction, it multiplies the _[.underline]#top#_ 32-bit e
 The 64-bit multiplication result is written to Rd. The 32-bit contents of Rs1 and Rs2 are treated as signed integers.
 
 *Operations:*
-
-res = Rs1.W[0] * Rs2.W[0]; // SMBB32
-res = Rs1.W[0] * Rs2.w[1]; // SMBT32
-res = Rs1.W[1] * Rs2.W[1]; // SMTT32
+....
+res = Rs1.W[0] s* Rs2.W[0]; // SMBB32
+res = Rs1.W[0] s* Rs2.w[1]; // SMBT32
+res = Rs1.W[1] s* Rs2.W[1]; // SMTT32
 Rd = res;
-
+....
 *Exceptions:* None
 
 *Privilege level:* All
@@ -18112,7 +18859,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1111111
 |===
 
-*SRAI32.u*
+*SRLI32.u*
 
 [cols="6*^.^"]
 |===
