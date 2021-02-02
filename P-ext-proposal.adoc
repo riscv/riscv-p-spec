@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.1-draft-20210126
+Version 0.9.2-draft-20210202
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -17,6 +17,11 @@ Version 0.9.1-draft-20210126
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.2 | 2021/02/02 | Chuanhua Chang
+a|
+* Changed major opcode "GE80B 1111111" to "OP-P 1110111".
+* Added Zpn for instructins not belonging to Zp64.
+* Fixed several typos and inconsistencies. 
 | v0.9.1 | 2021/01/26 | Chuanhua Chang
 | Maintainance update; fixed several format issues and typos.
 | v0.9   | 2020/09/04 | Chuanhua Chang
@@ -1011,9 +1016,24 @@ rt.H[x] = SAT.Q15(ABS(ra.H[x]));
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
-|8 |CLRS16 rt, ra |16-bit Count Leading Redundant Sign |
-|9 |CLZ16 rt, ra |16-bit Count Leading Zero |
-|10 |CLO16 rt, ra |16-bit Count Leading One |
+|8 |CLRS16 rt, ra |16-bit Count Leading Redundant Sign a|
+....
+rt.H[x] = CLRS(ra.H[x]);
+
+(RV32: x=1..0, RV64: x=3..0)
+....
+|9 |CLZ16 rt, ra |16-bit Count Leading Zero a|
+....
+rt.H[x] = CLZ(ra.H[x]);
+
+(RV32: x=1..0, RV64: x=3..0)
+....
+|10 |CLO16 rt, ra |16-bit Count Leading One a|
+....
+rt.H[x] = CLO(ra.H[x]);
+
+(RV32: x=1..0, RV64: x=3..0)
+....
 |11 |SWAP16 rt, ra |Swap Halfword within Word a|
 ....
 ah0[x] = ra.W[x].H[0];
@@ -1081,9 +1101,24 @@ rt.B[x] = SAT.Um(ra.B[x]);
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
-|8 |CLRS8 rt, ra |8-bit Count Leading Redundant Sign |
-|9 |CLZ8 rt, ra |8-bit Count Leading Zero |
-|10 |CLO8 rt, ra |8-bit Count Leading One |
+|8 |CLRS8 rt, ra |8-bit Count Leading Redundant Sign a|
+....
+rt.B[x] = CLRS(ra.B[x]);
+
+(RV32: x=3..0, RV64: x=7..0)
+....
+|9 |CLZ8 rt, ra |8-bit Count Leading Zero a|
+....
+rt.B[x] = CLZ(ra.B[x]);
+
+(RV32: x=3..0, RV64: x=7..0)
+....
+|10 |CLO8 rt, ra |8-bit Count Leading One a|
+....
+rt.B[x] = CLO(ra.B[x]);
+
+(RV32: x=3..0, RV64: x=7..0)
+....
 |11 |SWAP8 rt, ra |Swap Byte within Halfword a|
 ....
 ab0[x] = ra.H[x].B[0];
@@ -3185,7 +3220,20 @@ The instructions in Zp64 are listed in the following table.
 |23 |SMALDA |24 |SMALXDA |25 |SMALDS |26 |SMALDRS |27 |SMALXDS
 |28 |SMSLDA |29 |SMSLXDA |30 |MULR64 |31 |MULSR64
 |32 |UMUL8 |33 |UMULX8 |34 |UMUL16 |35 |UMULX16 |36 |SMUL8 
-|37 |SMULX8 |38 |SMUL16 |39 |SMULX16
+|37 |SMULX8 |38 |SMUL16 |39 |SMULX16 |40 |WEXT |41 |WEXTI
+|===
+
+=== Zpn (for RV32 Only)
+The instructions not in Zp64 extension will be included in this sub-extension.
+This is a required sub-extension for RV32P extension. The legal combinations of
+the sub-extensions of RV32P are listed in the following table.
+
+[cols="^.^,^.^",options="header",]
+|===
+| Legal Sub-extension Combination | Architecture
+| Zpn          |RV32
+| Zpn + Zp64   |RV32
+| Zpn + Zp64   |RV64
 |===
 
 == Instructions Duplicated in Bit Manipulation Extension (v0.92)
@@ -3247,8 +3295,8 @@ the following symbols will be defined and used in the intrinsic function prototy
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ADD8 +
 0100100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3299,8 +3347,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ADD16 +
 0100000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3344,6 +3392,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* 64-bit Profile
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -3351,8 +3401,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ADD64 +
 1100000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3411,8 +3461,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |AVE +
 1110000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3454,8 +3504,8 @@ writes the result to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |BITREV +
 1110011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3495,8 +3545,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    26 l|25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |BITREVI +
 111010 |imm[5] |imm[4:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3543,8 +3593,8 @@ The intrinsic function of this instruction is the same as the intrinsic function
 l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |Rc |BPICK +
 00 |Rs2 |Rs1 |011 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3613,8 +3663,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLRS8 +
 00000 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3675,8 +3725,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLRS16 +
 01000 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3737,8 +3787,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLRS32 +
 11000 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3797,8 +3847,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLO8 +
 00011 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3859,8 +3909,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLO16 +
 01011 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3921,8 +3971,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLO32 +
 11011 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -3981,8 +4031,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLZ8 +
 00001 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4043,8 +4093,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLZ16 +
 01001 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4105,8 +4155,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP2 +
 1010111 |CLZ32 +
 11001 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4164,8 +4214,8 @@ results to the corresponding 32-bit elements of Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |CMPEQ8 +
 0100111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4218,8 +4268,8 @@ results are written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |CMPEQ16 +
 0100110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4272,8 +4322,8 @@ results are written to Rt.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |CRAS16 +
 0100010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4293,8 +4343,8 @@ result to [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = Rs1.W[x][31:16] + Rs2.W[x][15:0];
- Rd.W[x][15:0] = Rs1.W[x][15:0] – Rs2.W[x][31:16];
+ Rd.W[x].H[1] = Rs1.W[x].H[1] + Rs2.W[x].H[0];
+ Rd.W[x].H[0] = Rs1.W[x].H[0] – Rs2.W[x].H[1];
  for RV32, x=0
  for RV64, x=1…0
 
@@ -4331,8 +4381,8 @@ result to [15:0] of 32-bit chunks in Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |CRSA16 +
 0100011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4352,8 +4402,8 @@ writes the result to [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = Rs1.W[x][31:16] - Rs2.W[x][15:0];
- Rd.W[x][15:0] = Rs1.W[x][15:0] + Rs2.W[x][31:16];
+ Rd.W[x].H[1] = Rs1.W[x].H[1] - Rs2.W[x].H[0];
+ Rd.W[x].H[0] = Rs1.W[x].H[0] + Rs2.W[x].H[1];
  for RV32, x=0
  for RV64, x=1…0
 
@@ -4394,8 +4444,8 @@ l|31    25 l|24    23 l|22 l|21    20 l|19    15 l|14    12 l|11    7 l|6    0
 |INSB +
 00
 |imm[2] |imm[1:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4438,8 +4488,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |KABS8 +
 10000 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4497,8 +4547,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |KABS16 +
 10001 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4557,8 +4607,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |KABSW +
 10100 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4609,8 +4659,8 @@ OV flag will be set to 1.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KADD8 +
 0001100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4669,8 +4719,8 @@ the OV bit is set to 1. The saturated results are written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KADD16 +
 0001000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4722,6 +4772,8 @@ and the OV bit is set to 1. The saturated results are written to Rd.
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -4729,8 +4781,8 @@ and the OV bit is set to 1. The saturated results are written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KADD64 +
 1001000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4805,8 +4857,8 @@ The saturated result is written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KADDH +
 0000010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4857,8 +4909,8 @@ saturation happens, this instruction sets the OV flag.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KADDW +
 0000000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4909,8 +4961,8 @@ saturation happens, this instruction sets the OV flag.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KCRAS16 +
 0001010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -4932,8 +4984,8 @@ in Rd for addition and [15:0] of 32-bit chunks in Rd for subtraction.
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] + Rs2.W[x][15:0];
- res2 = Rs1.W[x][15:0] – Rs2.W[x][31:16];
+ res1 = Rs1.W[x].H[1] + Rs2.W[x].H[0];
+ res2 = Rs1.W[x].H[0] – Rs2.W[x].H[1];
  for (res in [res1, res2]) {
    if (res > (2^15)-1) {
      res = (2^15)-1;
@@ -4943,8 +4995,8 @@ in Rd for addition and [15:0] of 32-bit chunks in Rd for subtraction.
      OV = 1;
    }
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -4980,8 +5032,8 @@ in Rd for addition and [15:0] of 32-bit chunks in Rd for subtraction.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KCRSA16 +
 0001011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5003,8 +5055,8 @@ subtraction and [15:0] of 32-bit chunks in Rd for addition.
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] - Rs2.W[x][15:0];
- res2 = Rs1.W[x][15:0] + Rs2.W[x][31:16];
+ res1 = Rs1.W[x].H[1] - Rs2.W[x].H[0];
+ res2 = Rs1.W[x].H[0] + Rs2.W[x].H[1];
  for (res in [res1, res2]) {
    if (res > (2^15)-1) {
      res = (2^15)-1;
@@ -5014,8 +5066,8 @@ subtraction and [15:0] of 32-bit chunks in Rd for addition.
      OV = 1;
    }
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -5058,8 +5110,8 @@ subtraction and [15:0] of 32-bit chunks in Rd for addition.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMBB +
 0000101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMBT*
@@ -5069,8 +5121,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMBT +
 0001101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMTT*
@@ -5080,8 +5132,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMTT +
 0010101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5106,7 +5158,7 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KDMBB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KDMBT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KDMTT
- If (0x8000 != aop | 0x8000 != bop) {
+ If ((0x8000 != aop) || (0x8000 != bop)) {
    Mresult = aop * bop;
    resQ31 = Mresult << 1;
    Rd = resQ31; // RV32
@@ -5185,8 +5237,8 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMABB +
 1101001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMABT*
@@ -5196,8 +5248,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMABT +
 1110001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMATT*
@@ -5207,8 +5259,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMATT +
 1111001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5236,7 +5288,7 @@ flag OV will be set.
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KDMABB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KDMABT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KDMATT
- If (0x8000 != aop | 0x8000 != bop) {
+ If ((0x8000 != aop) || (0x8000 != bop)) {
    Mresult = aop * bop;
    resQ31 = Mresult << 1;
  } else {
@@ -5322,8 +5374,8 @@ flag OV will be set.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHM8 +
 1000111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KHMX8*
@@ -5333,8 +5385,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMX8 +
 1001111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5372,7 +5424,7 @@ to 0x7F and the overflow flag OV will be set.
    op1b = Rs1.H[x]; op2b = Rs2.H[x+1]; // Rs1 bottom
  }
  for ((aop,bop,res) in [(op1t,op2t,rest), (op1b,op2b,resb)]) {
-   if (0x80 != aop | 0x80 != bop) {
+   if ((0x80 != aop) || (0x80 != bop)) {
      res = (aop s* bop) >> 7;
    } else {
      res= 0x7F;
@@ -5435,8 +5487,8 @@ to 0x7F and the overflow flag OV will be set.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHM16 +
 1000011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KHMX16*
@@ -5446,8 +5498,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHM16 +
 1001011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5485,7 +5537,7 @@ to 0x7FFF and the overflow flag OV will be set.
    op1b = Rs1.H[x]; op2b = Rs2.H[x+1]; // Rs1 bottom
  }
  for ((aop,bop,res) in [(op1t,op2t,rest), (op1b,op2b,resb)]) {
-   if (0x8000 != aop | 0x8000 != bop) {
+   if ((0x8000 != aop) || (0x8000 != bop)) {
      res = (aop s* bop) >> 15;
    } else {
      res= 0x7FFF;
@@ -5550,8 +5602,8 @@ to 0x7FFF and the overflow flag OV will be set.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMBB +
 0000110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KHMBT*
@@ -5561,8 +5613,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMBT +
 0001110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KHMTT*
@@ -5572,8 +5624,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMTT +
 0010110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5598,7 +5650,7 @@ saturated to 0x7FFF and the overflow flag OV will be set.
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KHMBB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KHMBT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KHMTT
- If (0x8000 != aop | 0x8000 != bop) {
+ If ((0x8000 != aop) || (0x8000 != bop)) {
    Mresult[31:0] = aop * bop;
    res[15:0] = Mresult[30:15];
  } else {
@@ -5676,8 +5728,8 @@ saturated to 0x7FFF and the overflow flag OV will be set.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMABB +
 0101101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMABT*
@@ -5687,8 +5739,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMABT +
 0110101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMATT*
@@ -5698,8 +5750,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMATT +
 0111101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5818,8 +5870,8 @@ intXLEN_t __rv__kmatt(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMADA +
 0100100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMAXDA*
@@ -5829,8 +5881,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMAXDA +
 0100101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -5935,8 +5987,8 @@ written to Rd. The 16-bit contents of Rs1 and Rs2 are treated as signed integers
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMADS +
 0101110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMADRS*
@@ -5946,8 +5998,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMADRS +
 0110110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMAXDS*
@@ -5957,8 +6009,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMAXDS +
 0111110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6073,6 +6125,8 @@ signed integers.
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -6080,8 +6134,8 @@ signed integers.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMAR64 +
 1001010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6174,8 +6228,8 @@ bit is set to 1. The saturated result is written back to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMDA +
 0011100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMXDA*
@@ -6185,8 +6239,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMXDA +
 0011101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6287,8 +6341,8 @@ for RV64: x=1…0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAC +
 0110000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMAC.u*
@@ -6298,8 +6352,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAC.u +
 0111000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6387,8 +6441,8 @@ form of the instruction additionally rounds up the most significant 32-bit of th
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWB +
 0100011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMAWB.u*
@@ -6398,8 +6452,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWB.u +
 0101011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6485,8 +6539,8 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWB2 +
 1100111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMAWB2.u*
@@ -6496,8 +6550,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWB2.u +
 1101111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6513,7 +6567,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 *Operations:*
 
- if ((Rs1.W[x] == 0x80000000) & (Rs2.W[x].H[0] == 0x8000)) {
+ if ((Rs1.W[x] == 0x80000000) && (Rs2.W[x].H[0] == 0x8000)) {
    addop.W[x] = 0x7fffffff;
    OV = 1;
  } else {
@@ -6587,8 +6641,8 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWT +
 0110011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMAWT.u*
@@ -6598,8 +6652,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWT.u +
 0111011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6685,8 +6739,8 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed to
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWT2 +
 1110111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMAWT2.u*
@@ -6695,9 +6749,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWT2.u +
-1111111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+1110111 |Rs2 |Rs1 |001 |Rd
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6713,7 +6767,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 *Operations:*
 
- if ((Rs1.W[x] == 0x80000000) & (Rs2.W[x].H[1] == 0x8000)) {
+ if ((Rs1.W[x] == 0x80000000) && (Rs2.W[x].H[1] == 0x8000)) {
    addop.W[x] = 0x7fffffff;
    OV = 1;
  } else {
@@ -6787,8 +6841,8 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMSB +
 0100001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMSB.u*
@@ -6798,8 +6852,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMSB.u +
 0101001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6882,8 +6936,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMWB2 +
 1000111
 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMWB2.u*
@@ -6894,8 +6948,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMWB2.u +
 1001111
 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -6911,7 +6965,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 *Operations:*
 
- if ((Rs1.W[x] == 0x80000000) & (Rs2.W[x].H[0] == 0x8000)) {
+ if ((Rs1.W[x] == 0x80000000) && (Rs2.W[x].H[0] == 0x8000)) {
    Rd.W[x] = 0x7fffffff;
    OV = 1;
  } else {
@@ -6980,8 +7034,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMWT2 +
 1010111
 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMMWT2.u*
@@ -6992,8 +7046,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMWT2.u +
 1011111
 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7009,7 +7063,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 *Operations:*
 
- if ((Rs1.W[x] == 0x80000000) & (Rs2.W[x].H[1] == 0x8000)) {
+ if ((Rs1.W[x] == 0x80000000) && (Rs2.W[x].H[1] == 0x8000)) {
    Rd.W[x] = 0x7fffffff;
    OV = 1;
  } else {
@@ -7078,8 +7132,8 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMSDA +
 0100110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMSXDA*
@@ -7089,8 +7143,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMSXDA +
 0100111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7167,6 +7221,8 @@ The two 32-bit multiplication results are then subtracted from the content of th
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -7174,8 +7230,8 @@ The two 32-bit multiplication results are then subtracted from the content of th
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMSR64 +
 1001011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7250,8 +7306,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLLW +
 0010011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7296,8 +7352,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLLIW +
 0011011 |imm5u |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7342,8 +7398,8 @@ intXLEN_t __rv__ksllw(intXLEN_t a, uint32_t b);
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLL8 +
 0110110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7357,7 +7413,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[2:0];
- if (sa != 0) {
+ if (sa u> 0) {
    res[(7+sa):0] = Rs1.B[x] << sa;
    if (res > (2^7)-1) {
      res = 0x7f; OV = 1;
@@ -7402,8 +7458,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |KSLLI8 +
 0111110 |01 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7417,7 +7473,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm3u[2:0];
- if (sa != 0) {
+ if (sa u> 0) {
    res[(7+sa):0] = Rs1.B[x] << sa;
    if (res > (2^7)-1) {
      res = 0x7f; OV = 1;
@@ -7463,8 +7519,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLL16 +
 0110010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7478,7 +7534,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[3:0];
- if (sa != 0) {
+ if (sa u> 0) {
    res[(15+sa):0] = Rs1.H[x] << sa;
    if (res > (2^15)-1) {
      res = 0x7fff; OV = 1;
@@ -7523,8 +7579,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |KSLLI16 +
 0111010 |1 |imm4u[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7538,7 +7594,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm4u[3:0];
- if (sa != 0) {
+ if (sa u> 0) {
    res[(15+sa):0] = Rs1.H[x] << sa;
    if (res > (2^15)-1) {
      res = 0x7fff; OV = 1;
@@ -7589,8 +7645,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRA8 +
 0101111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KSLRA8.u*
@@ -7600,8 +7656,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRA8.u +
 0110111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7692,8 +7748,8 @@ The left-shifted results are saturated to the 8-bit signed integer range of [-2^
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRA16 +
 0101011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KSLRA16.u*
@@ -7703,8 +7759,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRA16.u +
 0110011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7788,8 +7844,8 @@ The left-shifted results are saturated to the 16-bit signed integer range of [-2
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRAW +
 0110111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7846,8 +7902,8 @@ The left-shifted result is saturated to the 32-bit signed integer range of [-2^3
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRAW.u +
 0111111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7905,8 +7961,8 @@ The left-shifted result is saturated to the 32-bit signed integer range of [-2^3
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTAS16 +
 1100010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7919,8 +7975,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] + Rs2.W[x][31:16];
- res2 = Rs1.W[x][15:0] – Rs2.W[x][15:0];
+ res1 = Rs1.W[x].H[1] + Rs2.W[x].H[1];
+ res2 = Rs1.W[x].H[0] – Rs2.W[x].H[0];
  for (res in [res1, res2]) {
    if (res > (2^15)-1) {
      res = (2^15)-1;
@@ -7930,8 +7986,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
      OV = 1;
    }
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -7966,8 +8022,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTSA16 +
 1100011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -7980,8 +8036,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] - Rs2.W[x][31:16];
- res2 = Rs1.W[x][15:0] + Rs2.W[x][15:0];
+ res1 = Rs1.W[x].H[1] - Rs2.W[x].H[1];
+ res2 = Rs1.W[x].H[0] + Rs2.W[x].H[0];
  for (res in [res1, res2]) {
    if (res > (2^15)-1) {
      res = (2^15)-1;
@@ -7991,8 +8047,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
      OV = 1;
    }
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -8027,8 +8083,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSUB8 +
 0001101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8084,8 +8140,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSUB16 +
 0001001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8134,6 +8190,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -8141,8 +8199,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSUB64 +
 1001001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8210,8 +8268,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSUBH +
 0000011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8258,8 +8316,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSUBW +
 0000001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8313,8 +8371,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KWMMUL +
 0110001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KWMMUL.u*
@@ -8324,8 +8382,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KWMMUL.u +
 0111001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8341,7 +8399,7 @@ This instruction multiplies the 32-bit elements of Rs1 with the 32-bit elements 
 
 *Operations:*
 
- if ((0x80000000 != Rs1.W[x]) | (0x80000000 != Rs2.W[x])) {
+ if ((0x80000000 != Rs1.W[x]) || (0x80000000 != Rs2.W[x])) {
    Mres[x][63:0] = Rs1.W[x] * Rs2.W[x];
    if (“.u” form) {
      Round[x][33:0] = Mres[x][63:30] + 1;
@@ -8398,8 +8456,8 @@ This instruction multiplies the 32-bit elements of Rs1 with the 32-bit elements 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |MADDR32 +
 1100010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8446,8 +8504,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |MAXW +
 1111001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8488,8 +8546,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |MINW +
 1111000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8530,8 +8588,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |MSUBR32 +
 1100011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8570,6 +8628,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -8577,8 +8637,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |MULR64 +
 1111000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8634,6 +8694,8 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as unsigned integers.
 
 *Type:* DSP
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -8641,8 +8703,8 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as unsigned integers.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |MULSR64 +
 1110000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8705,8 +8767,8 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as signed integers.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |PBSAD +
 1111110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8754,9 +8816,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |PBSADA +
-1111111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+1110111 |Rs2 |Rs1 |000 |Rd
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8813,8 +8875,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |PK**[.underline]#xy#**16 +
 00 *[.underline]#zz#* 111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 [cols="2*^.^",options="header",]
@@ -8842,21 +8904,21 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Description:*
 
-(PKBB16) moves Rs1.W[x][15:0] to Rd.W[x][31:16] and moves Rs2.W[x] [15:0] to +
-Rd.W[x] [15:0].
+(PKBB16) moves Rs1.W[x].H[0] to Rd.W[x].H[1] and moves Rs2.W[x].H[0] to +
+Rd.W[x].H[0].
 
-(PKBT16) moves Rs1.W[x] [15:0] to Rd.W[x] [31:16] and moves Rs2.W[x] [31:16] to Rd.W[x] [15:0].
+(PKBT16) moves Rs1.W[x].H[0] to Rd.W[x].H[1] and moves Rs2.W[x].H[1] to Rd.W[x].H[0].
 
-(PKTT16) moves Rs1.W[x] [31:16] to Rd.W[x] [31:16] and moves Rs2.W[x] [31:16] to Rd.W[x] [15:0].
+(PKTT16) moves Rs1.W[x].H[1] to Rd.W[x].H[1] and moves Rs2.W[x].H[1] to Rd.W[x].H[0].
 
-(PKTB16) moves Rs1.W[x] [31:16] to Rd.W[x] [31:16] and moves Rs2.W[x] [15:0] to Rd.W[x] [15:0].
+(PKTB16) moves Rs1.W[x].H[1] to Rd.W[x].H[1] and moves Rs2.W[x].H[0] to Rd.W[x].H[0].
 
 *Operations:*
 
- Rd.W[x][31:0] = CONCAT(Rs1.W[x][15:0], Rs2.W[x][15:0]); // PKBB16
- Rd.W[x][31:0] = CONCAT(Rs1.W[x][15:0], Rs2.W[x][31:16]); // PKBT16
- Rd.W[x][31:0] = CONCAT(Rs1.W[x][31:16], Rs2.W[x][15:0]); // PKTB16
- Rd.W[x][31:0] = CONCAT(Rs1.W[x][31:16], Rs2.W[x][31:16]); // PKTT16
+ Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[0], Rs2.W[x].H[0]); // PKBB16
+ Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[0], Rs2.W[x].H[1]); // PKBT16
+ Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[1], Rs2.W[x].H[0]); // PKTB16
+ Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[1], Rs2.W[x].H[1]); // PKTT16
  for RV32: x=0,
  for RV64: x=1…0
 
@@ -8932,8 +8994,8 @@ Rd.W[x] [15:0].
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RADD8 +
 0000100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -8985,8 +9047,8 @@ for RV64: x=7…0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RADD16 +
 0000000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9031,6 +9093,8 @@ for RV64: x=3…0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -9038,8 +9102,8 @@ for RV64: x=3…0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RADD64 +
 1000000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9095,8 +9159,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RADDW +
 0010000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9144,8 +9208,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RCRAS16 +
 0000010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9158,8 +9222,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] + Rs2.W[x][15:0]) s>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] – Rs2.W[x][31:16]) s>> 1;
+ Rd.W[x].H[1] = (Rs1.W[x].H[1] + Rs2.W[x].H[0]) s>> 1;
+ Rd.W[x].H[0] = (Rs1.W[x].H[0] – Rs2.W[x].H[1]) s>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -9194,8 +9258,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RCRSA16 +
 0000011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9208,8 +9272,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] - Rs2.W[x][15:0]) s>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] + Rs2.W[x][31:16]) s>> 1;
+ Rd.W[x].H[1] = (Rs1.W[x].H[1] - Rs2.W[x].H[0]) s>> 1;
+ Rd.W[x].H[0] = (Rs1.W[x].H[0] + Rs2.W[x].H[1]) s>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -9270,8 +9334,8 @@ l|31    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSTAS16 +
 1011010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9284,8 +9348,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] + Rs2.W[x][31:16]) s>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] – Rs2.W[x][15:0]) s>> 1;
+ Rd.W[x].H[1] = (Rs1.W[x].H[1] + Rs2.W[x].H[1]) s>> 1;
+ Rd.W[x].H[0] = (Rs1.W[x].H[0] – Rs2.W[x].H[0]) s>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -9320,8 +9384,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSTSA16 +
 1011011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9334,8 +9398,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x][31:16] = (Rs1.W[x][31:16] - Rs2.W[x][31:16]) s>> 1;
- Rd.W[x][15:0] = (Rs1.W[x][15:0] + Rs2.W[x][15:0]) s>> 1;
+ Rd.W[x].H[1] = (Rs1.W[x].H[1] - Rs2.W[x].H[1]) s>> 1;
+ Rd.W[x].H[0] = (Rs1.W[x].H[0] + Rs2.W[x].H[0]) s>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -9370,8 +9434,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSUB8 +
 0000101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9425,8 +9489,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSUB16 +
 0000001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9471,6 +9535,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -9478,8 +9544,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSUB64 +
 1000001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9535,8 +9601,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSUBW +
 0010001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9584,8 +9650,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCLIP8 +
 1000110 |00 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9641,8 +9707,8 @@ l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCLIP16 +
 1000010 |0 |imm4u[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9698,8 +9764,8 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCLIP32 +
 1110010 |imm5u[4:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9753,8 +9819,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCMPLE8 +
 0001111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9767,7 +9833,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.B[x] = (Rs1.B[x] {le} Rs2.B[x])? 0xff : 0x0;
+ Rd.B[x] = (Rs1.B[x] s<= Rs2.B[x])? 0xff : 0x0;
  for RV32: x=3…0,
  for RV64: x=7…0
 
@@ -9802,8 +9868,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCMPLE16 +
 0001110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9816,7 +9882,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.H[x] = (Rs1.H[x] {le} Rs2.H[x])? 0xffff : 0x0;
+ Rd.H[x] = (Rs1.H[x] s<= Rs2.H[x])? 0xffff : 0x0;
  for RV32: x=1…0,
  for RV64: x=3…0
 
@@ -9851,8 +9917,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCMPLT8 +
 0000111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9900,8 +9966,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCMPLT16 +
 0000110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9949,8 +10015,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLL8 +
 0101110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -9999,8 +10065,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLLI8 +
 0111110 |00 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10049,8 +10115,8 @@ l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLL16 +
 0101010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10099,8 +10165,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLLI16 +
 0111010 |0 |imm4u[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10142,6 +10208,8 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* Partial-SIMD
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -10149,8 +10217,8 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAL +
 0101111 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10220,6 +10288,8 @@ This instruction multiplies the bottom 16-bit content of the 32-bit elements of 
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *SMALBB*
@@ -10229,8 +10299,8 @@ This instruction multiplies the bottom 16-bit content of the 32-bit elements of 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALBB +
 1000100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMALBT*
@@ -10240,8 +10310,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALBT +
 1001100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMALTT*
@@ -10251,8 +10321,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALTT +
 1010100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10380,6 +10450,8 @@ The multiplication results are added with the 64-bit value of Rd. The 64-bit add
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *SMALDA*
@@ -10389,8 +10461,8 @@ The multiplication results are added with the 64-bit value of Rd. The 64-bit add
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALDA +
 1000110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMALXDA*
@@ -10400,8 +10472,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALXDA +
 1001110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10516,6 +10588,8 @@ The results are added to the 64-bit value of Rd. The 64-bit addition result is w
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *SMALDS*
@@ -10525,8 +10599,8 @@ The results are added to the 64-bit value of Rd. The 64-bit addition result is w
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALDS +
 1000101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMALDRS*
@@ -10536,8 +10610,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALDRS +
 1001101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMALXDS*
@@ -10547,8 +10621,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMALXDS +
 1010101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10668,6 +10742,8 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -10675,8 +10751,8 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAR64 +
 1000010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10739,8 +10815,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAQA +
 1100100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10795,8 +10871,8 @@ This instruction multiplies the four signed 8-bit elements of 32-bit chunks of R
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAQA.SU +
 1100101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10849,8 +10925,8 @@ This instruction multiplies the four signed 8-bit elements of 32-bit chunks of R
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAX8 +
 1000101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10898,8 +10974,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAX16 +
 1000001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -10955,8 +11031,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMBB16 +
 0000100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMBT16*
@@ -10966,8 +11042,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMBT16 +
 0001100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMTT16*
@@ -10977,8 +11053,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMTT16 +
 0010100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11078,8 +11154,8 @@ The multiplication results are written to Rd. The 16-bit contents of Rs1 and Rs2
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMDS +
 0101100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMDRS*
@@ -11089,8 +11165,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMDRS +
 0110100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMXDS*
@@ -11100,8 +11176,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMXDS +
 0111100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11201,8 +11277,8 @@ The subtraction result is written to the corresponding 32-bit element of Rd. The
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMIN8 +
 1000100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11250,8 +11326,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMIN16 +
 1000000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11305,8 +11381,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMMUL +
 0100000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMMUL.u*
@@ -11316,8 +11392,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMMUL.u +
 0101000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11393,8 +11469,8 @@ This instruction multiplies the 32-bit elements of Rs1 with the 32-bit elements 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMMWB +
 0100010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMMWB.u*
@@ -11404,8 +11480,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMMWB.u +
 0101010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11483,8 +11559,8 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMMWT +
 0110010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMMWT.u*
@@ -11494,8 +11570,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMMWT.u +
 0111010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11564,6 +11640,8 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *SMSLDA*
@@ -11573,8 +11651,8 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMSLDA +
 1010110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMSLXDA*
@@ -11584,8 +11662,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMSLXDA +
 1011110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11692,6 +11770,8 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -11699,8 +11779,8 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMSR64 +
 1000011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11758,6 +11838,8 @@ contains the low 32-bit of the result.
 
 *Type:* SIMD
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *SMUL8*
@@ -11767,8 +11849,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMUL8 +
 1010100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMULX8*
@@ -11778,8 +11860,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMULX8 +
 1010101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -11895,6 +11977,8 @@ image::smul8-rv64.png[]
 
 *Type:* SIMD
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *SMUL16*
@@ -11904,8 +11988,8 @@ image::smul8-rv64.png[]
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMUL16 +
 1010000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMULX16*
@@ -11915,8 +11999,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMULX16 +
 1010001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12015,8 +12099,8 @@ The two 32-bit Q30 results are then written into Rd. The result calculated from 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA.u +
 0010010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12071,8 +12155,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 26 |25 20 |19 15 |14 12 |11 7 |6 0
 |SRAI.u +
 110101 |imm6u[5:0] |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12134,8 +12218,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA8 +
 0101100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRA8.u*
@@ -12145,8 +12229,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA8.u +
 0110100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12226,8 +12310,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRAI8 +
 0111100 |00 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRAI8.u*
@@ -12237,8 +12321,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRAI8.u +
 0111100 |01 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12320,8 +12404,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA16 +
 0101000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRA16.u*
@@ -12331,8 +12415,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA16.u +
 0110000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12347,7 +12431,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[3:0];
- if (sa != 0) {
+ if (sa u> 0) {
    if (“.u” form) { // SRA16.u
      res[15:-1] = SE17(Rs1.H[x][15:sa-1]) + 1;
      Rd.H[x] = res[15:0];
@@ -12413,8 +12497,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRAI16 +
 0111000 |0 |imm4[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRAI16.u*
@@ -12424,8 +12508,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRAI16.u +
 0111000 |1 |imm4[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12506,8 +12590,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRL8 +
 0101101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRL8.u*
@@ -12517,8 +12601,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRL8.u +
 0110101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12599,8 +12683,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRLI8 +
 0111101 |00 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRLI8.u*
@@ -12610,8 +12694,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRLI8.u +
 0111101 |01 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12692,8 +12776,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRL16 +
 0101001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRL16.u*
@@ -12703,8 +12787,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRL16.u +
 0110001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12784,8 +12868,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRLI16 +
 0111001 |0 |imm4[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRLI16.u*
@@ -12795,8 +12879,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRLI16.u +
 0111001 |1 |imm4[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12870,8 +12954,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STAS16 +
 1111010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12884,8 +12968,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x][31:16] = Rs1.W[x][31:16] + Rs2.W[x][31:16];
- Rd.W[x][15:0] = Rs1.W[x][15:0] – Rs2.W[x][15:0];
+ Rd.W[x].H[1] = Rs1.W[x].H[1] + Rs2.W[x].H[1];
+ Rd.W[x].H[0] = Rs1.W[x].H[0] – Rs2.W[x].H[0];
  for RV32, x=0
  for RV64, x=1…0
 
@@ -12923,8 +13007,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STSA16 +
 1111011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -12937,8 +13021,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x][31:16] = Rs1.W[x][31:16] - Rs2.W[x][31:16];
- Rd.W[x][15:0] = Rs1.W[x][15:0] + Rs2.W[x][15:0];
+ Rd.W[x].H[1] = Rs1.W[x].H[1] - Rs2.W[x].H[1];
+ Rd.W[x].H[0] = Rs1.W[x].H[0] + Rs2.W[x].H[0];
  for RV32, x=0
  for RV64, x=1…0
 
@@ -12976,8 +13060,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SUB8 +
 0100101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13028,8 +13112,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SUB16 +
 0100001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13073,6 +13157,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -13080,8 +13166,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SUB64 +
 1100001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13150,8 +13236,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |SUNPKD8**[.underline]#xy#** +
 *code[4:0]* |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 [cols="2*^.^",options="header",]
@@ -13274,8 +13360,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |SWAP8 +
 11000 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13324,8 +13410,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |SWAP16 +
 11001 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13338,7 +13424,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x] = CONCAT(Rs1.W[x][15:0],Rs1.H[x][31:16]);
+ Rd.W[x] = CONCAT(Rs1.W[x].H[0],Rs1.W[x].H[1]);
  for RV32: x=0,
  for RV64: x=1…0
 
@@ -13373,8 +13459,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |UCLIP8 +
 1000110 |10 |imm3u[2:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13430,8 +13516,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |UCLIP16 +
 1000010 |1 |imm4u[3:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13487,8 +13573,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UCLIP32 +
 1111010 |imm5u[4:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13542,8 +13628,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UCMPLE8 +
 0011111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13591,8 +13677,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UCMPLE16 +
 0011110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13640,8 +13726,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UCMPLT8 +
 0010111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13689,8 +13775,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UCMPLT16 +
 0010110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13738,8 +13824,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKADD8 +
 0011100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13792,8 +13878,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKADD16 +
 0011000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13839,6 +13925,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -13846,8 +13934,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKADD64 +
 1011000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13911,8 +13999,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKADDH +
 0001010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13954,8 +14042,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKADDW +
 0001000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -13998,8 +14086,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKCRAS16 +
 0011010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14012,8 +14100,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] + Rs2.W[x][15:0];
- res2 = Rs1.W[x][15:0] – Rs2.W[x][31:16];
+ res1 = Rs1.W[x].H[1] + Rs2.W[x].H[0];
+ res2 = Rs1.W[x].H[0] – Rs2.W[x].H[1];
  if (res1 > (2^16)-1) {
    res1 = (2^16)-1;
    OV = 1;
@@ -14022,8 +14110,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res2 = 0;
    OV = 1;
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -14058,8 +14146,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKCRSA16 +
 0011011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14072,8 +14160,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] - Rs2.W[x][15:0];
- res2 = Rs1.W[x][15:0] + Rs2.W[x][31:16];
+ res1 = Rs1.W[x].H[1] - Rs2.W[x].H[0];
+ res2 = Rs1.W[x].H[0] + Rs2.W[x].H[1];
  if (res1 < 0) {
    res1 = 0;
    OV = 1;
@@ -14081,8 +14169,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res2 = (2^16)-1;
    OV = 1;
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -14110,6 +14198,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -14117,8 +14207,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKMAR64 +
 1011010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14181,6 +14271,8 @@ contains the low 32-bit of the result.
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -14188,8 +14280,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKMSR64 +
 1011011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14259,8 +14351,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTAS16 +
 1110010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14273,8 +14365,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] + Rs2.W[x][31:16];
- res2 = Rs1.W[x][15:0] – Rs2.W[x][15:0];
+ res1 = Rs1.W[x].H[1] + Rs2.W[x].H[1];
+ res2 = Rs1.W[x].H[0] – Rs2.W[x].H[0];
  if (res1 > (2^16)-1) {
    res1 = (2^16)-1;
    OV = 1;
@@ -14283,8 +14375,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res2 = 0;
    OV = 1;
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -14319,8 +14411,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTSA16 +
 1110011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14333,8 +14425,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[x][31:16] - Rs2.W[x][31:16];
- res2 = Rs1.W[x][15:0] + Rs2.W[x][15:0];
+ res1 = Rs1.W[x].H[1] - Rs2.W[x].H[1];
+ res2 = Rs1.W[x].H[0] + Rs2.W[x].H[0];
  if (res1 < 0) {
    res1 = 0;
    OV = 1;
@@ -14342,8 +14434,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res2 = (2^16)-1;
    OV = 1;
  }
- Rd.W[x][31:16] = res1;
- Rd.W[x][15:0] = res2;
+ Rd.W[x].H[1] = res1;
+ Rd.W[x].H[0] = res2;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -14378,8 +14470,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSUB8 +
 0011101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14432,8 +14524,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSUB16 +
 0011001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14479,6 +14571,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -14486,8 +14580,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSUB64 +
 1011001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14551,8 +14645,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSUBH +
 0001011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14598,8 +14692,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSUBW +
 0001001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14635,6 +14729,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -14642,8 +14738,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMAR64 +
 1010010 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14706,8 +14802,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMAQA +
 1100110 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14760,8 +14856,8 @@ This instruction multiplies the four unsigned 8-bit elements of 32-bit chunks of
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMAX8 +
 1001101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14809,8 +14905,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMAX16 +
 1001001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14858,8 +14954,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMIN8 +
 1001100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14907,8 +15003,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMIN16 +
 1001000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -14949,6 +15045,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -14956,8 +15054,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMSR64 +
 1010011 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15015,6 +15113,8 @@ Rd = Rd - (Rs1.W[0] u* Rs2.W[0]) - (Rs1.W[1] u* Rs2.W[1]);
 
 *Type:* SIMD
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *UMUL8*
@@ -15024,8 +15124,8 @@ Rd = Rd - (Rs1.W[0] u* Rs2.W[0]) - (Rs1.W[1] u* Rs2.W[1]);
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMUL8 +
 1011100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *UMULX8*
@@ -15035,8 +15135,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMULX8 +
 1011101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15132,6 +15232,8 @@ x = 0 and 2
 
 *Type:* SIMD
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 *UMUL16*
@@ -15141,8 +15243,8 @@ x = 0 and 2
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMUL16 +
 1011000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *UMULX16*
@@ -15152,8 +15254,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMULX16 +
 1011001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15250,8 +15352,8 @@ The two 32-bit U32 results are then written into Rd. The result calculated from 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URADD8 +
 0010100 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15305,8 +15407,8 @@ right-shifted by 1 bit and then written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URADD16 +
 0010000 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15353,6 +15455,8 @@ right-shifted by 1 bit and then written to Rd.
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -15360,8 +15464,8 @@ right-shifted by 1 bit and then written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URADD64 +
 1010000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15420,8 +15524,8 @@ contains the low 32-bit of the result.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URADDW +
 0011000 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15471,8 +15575,8 @@ Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) >> 1;
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URCRAS16 +
 0010010 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15490,8 +15594,8 @@ chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) + CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
- Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) – CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) + CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) – CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15526,8 +15630,8 @@ chunks in Rd and [15:0] of 32-bit chunks in Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URCRSA16 +
 0010011 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15545,8 +15649,8 @@ of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) - CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
- Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) + CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) - CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) + CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15581,8 +15685,8 @@ of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSTAS16 +
 1101010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15600,8 +15704,8 @@ element results are first right-shifted by 1 bit and then written to [31:16] of
 
 *Operations:*
 
- Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) + CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
- Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) – CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) + CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) – CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15636,8 +15740,8 @@ element results are first right-shifted by 1 bit and then written to [31:16] of
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSTSA16 +
 1101011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15655,8 +15759,8 @@ of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x][31:16] = (CONCAT(1'b0,Rs1.W[x][31:16]) - CONCAT(1'b0,Rs2.W[x][31:16])) >> 1;
- Rd.W[x][15:0] = (CONCAT(1'b0,Rs1.W[x][15:0]) + CONCAT(1'b0,Rs2.W[x][15:0])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) - CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) + CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15691,8 +15795,8 @@ of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSUB8 +
 0010101 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15747,8 +15851,8 @@ right-shifted by 1 bit and then written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSUB16 +
 0010001 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15796,6 +15900,8 @@ right-shifted by 1 bit and then written to Rd.
 
 *Type:* DSP (64-bit Profile)
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -15803,8 +15909,8 @@ right-shifted by 1 bit and then written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSUB64 +
 1010001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15868,8 +15974,8 @@ first right-shifted by 1 bit and then written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSUBW +
 0011001 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15913,6 +16019,8 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Type:* DSP
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -15920,8 +16028,8 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |WEXTI +
 1101111 |Imm5u[4:0] |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -15972,6 +16080,8 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 
 *Type:* DSP
 
+*Sub-extension:* Zp64
+
 *Format:*
 
 [cols="6*^.^"]
@@ -15979,8 +16089,8 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |WEXT +
 1100111 |Rs2 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16045,8 +16155,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |ZUNPKD8**[.underline]#xy#** +
 *code[4:0]* |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 [cols="2*^.^",options="header",]
@@ -16172,8 +16282,8 @@ The sections in this chapter describe the detailed operations of the P extension
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ADD32 +
 0100000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16218,8 +16328,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |CRAS32 +
 0100010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16264,8 +16374,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |CRSA32 +
 0100011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16313,8 +16423,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |ONEOP +
 1010110 |KABS32 +
 10010 |Rs1 |000 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16368,8 +16478,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KADD32 +
 0001000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16421,8 +16531,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KCRAS32 +
 0001010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16476,8 +16586,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KCRSA32 +
 0001011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16541,8 +16651,8 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMBB16 +
 1101101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMBT16*
@@ -16552,8 +16662,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMBT16 +
 1110101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMTT16*
@@ -16563,8 +16673,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMTT16 +
 1111101 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16581,7 +16691,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  // KDMBT16: (x,y,z)=(0,1,0),(2,3,1)
  // KDMTT16: (x,y,z)=(1,1,0),(3,3,1)
  aop[z] = Rs1.H[x]; bop[z] = Rs2.H[y];
- If (0x8000 != aop[z] | 0x8000 != bop[z]) {
+ If ((0x8000 != aop[z]) || (0x8000 != bop[z])) {
    Mresult[z] = aop[z] * bop[z];
    resQ31[z] = Mresult[z] << 1;
  } else {
@@ -16648,8 +16758,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMABB16 +
 1101100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMABT16*
@@ -16659,8 +16769,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMABT16 +
 1110100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KDMATT16*
@@ -16670,8 +16780,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KDMATT16 +
 1111100 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16690,7 +16800,7 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
  // KDMABT16: (x,y,z)=(0,1,0),(2,3,1)
  // KDMATT16: (x,y,z)=(1,1,0),(3,3,1)
  aop[z] = Rs1.H[x]; bop[z] = Rs2.H[y];
- If (0x8000 != aop[z] | 0x8000 != bop[z]) {
+ If ((0x8000 != aop[z]) || (0x8000 != bop[z])) {
    Mresult[z] = aop[z] * bop[z];
    resQ31[z] = Mresult[z] << 1;
  } else {
@@ -16765,8 +16875,8 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMBB16 +
 1101110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KHMBT16*
@@ -16776,8 +16886,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMBT16 +
 1110110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KHMTT16*
@@ -16787,8 +16897,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KHMTT16 +
 1111110 |Rs2 |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16805,7 +16915,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  // KHMBT16: (x,y,z)=(0,1,0),(2,3,1)
  // KHMTT16: (x,y,z)=(1,1,0),(3,3,1)
  aop = Rs1.H[x]; bop = Rs2.H[y];
- If (0x8000 != aop | 0x8000 != bop) {
+ If ((0x8000 != aop) || (0x8000 != bop)) {
    Mresult[31:0] = aop * bop;
    res[15:0] = Mresult[30:15];
  } else {
@@ -16872,8 +16982,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMABB32 +
 0101101 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMABT32*
@@ -16883,8 +16993,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMABT32 +
 0110101 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMATT32*
@@ -16894,8 +17004,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMATT32 +
 0111101 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -16993,8 +17103,8 @@ No encoding, an alias of “KMAR64” instruction
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMAXDA32 +
 0100101 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17078,8 +17188,8 @@ The result is added to the content of 64-bit data in Rd. If the addition result 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMDA32 +
 0011100 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMXDA32*
@@ -17089,8 +17199,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMXDA32 +
 0011101 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17171,8 +17281,8 @@ The addition result is checked for saturation. If saturation happens, the result
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMADS32 +
 0101110 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMADRS32*
@@ -17182,8 +17292,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMADRS32 +
 0110110 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMAXDS32*
@@ -17193,8 +17303,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMAXDS32 +
 0111110 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17289,8 +17399,8 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMSDA32 +
 0100110 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KMSXDA32*
@@ -17300,8 +17410,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMSXDA32 +
 0100111 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17375,8 +17485,8 @@ The two 64-bit multiplication results are then subtracted from the content of Rd
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLL32 +
 0110010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17390,7 +17500,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[4:0];
- if (sa != 0) {
+ if (sa u> 0) {
    res[(31+sa):0] = Rs1.W[x] << sa;
    if (res > (2^31)-1) {
      res = 0x7fffffff; OV = 1;
@@ -17431,8 +17541,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLLI32 +
 1000010 |Imm5u[4:0] |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17446,7 +17556,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm5u[4:0];
- if (sa != 0) {
+ if (sa u> 0) {
    res[(31+sa):0] = Rs1.W[x] << sa;
    if (res > (2^31)-1) {
      res = 0x7fffffff; OV = 1;
@@ -17493,8 +17603,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRA32 +
 0101011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *KSLRA32.u*
@@ -17504,8 +17614,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLRA32.u +
 0110011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17582,8 +17692,8 @@ The left-shifted results are saturated to the 32-bit signed integer range of [-2
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTAS32 +
 1100000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17637,8 +17747,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSTSA32 +
 1100001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17694,8 +17804,8 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSUB32 +
 0001001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17755,8 +17865,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |PK**[.underline]#xy#**32 +
 00 *[.underline]#zz#* 111 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 [cols="2*^.^",options="header",]
@@ -17859,8 +17969,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RADD32 +
 0000000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17908,8 +18018,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RCRAS32 +
 0000010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17953,8 +18063,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RCRSA32 +
 0000011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -17998,8 +18108,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RCRAS32 +
 1011000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18043,8 +18153,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSTSA32 +
 1011001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18088,8 +18198,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |RSUB32 +
 0000001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18137,8 +18247,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLL32 +
 0101010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18185,8 +18295,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLLI32 +
 0111010 |Imm5u[4:0] |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18231,8 +18341,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMAX32 +
 1001001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18288,8 +18398,8 @@ No encoding, an alias of “MULSR64” instruction
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMBT32 +
 0001100 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMTT32*
@@ -18299,8 +18409,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMTT32 +
 0010100 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18392,8 +18502,8 @@ Rd = res;
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMDS32 +
 0101100 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMDRS32*
@@ -18403,8 +18513,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMDRS32 +
 0110100 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SMXDS32*
@@ -18414,8 +18524,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMXDS32 +
 0111100 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18498,8 +18608,8 @@ The subtraction result is written to Rd. The 32-bit contents of Rs1 and Rs2 are 
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SMIN32 +
 1001000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18549,8 +18659,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA32 +
 0101000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRA32.u*
@@ -18560,8 +18670,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRA32.u +
 0110000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18634,8 +18744,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRAI32 +
 0111000 |Imm5u[4:0] |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRAI32.u*
@@ -18645,8 +18755,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRAI32u +
 1000000 |Imm5u[4:0] |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18714,8 +18824,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRAIW.u +
 0011010 |imm5u[4:0] |Rs1 |001 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18770,8 +18880,8 @@ and written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRL32 +
 0101001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRL32.u*
@@ -18781,8 +18891,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRL32.u +
 0110001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18855,8 +18965,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRLI32 +
 0111001 |Imm5u[4:0] |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *SRLI32.u*
@@ -18866,8 +18976,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRLI32u +
 1000001 |Imm5u[4:0] |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18934,8 +19044,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STAS32 +
 1111000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -18980,8 +19090,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |STSA32 +
 1111001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19028,8 +19138,8 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SUB32 +
 0100001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19074,8 +19184,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKADD32 +
 0011000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19124,8 +19234,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKCRAS32 +
 0011010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19179,8 +19289,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKCRSA32 +
 0011011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19233,8 +19343,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTAS32 +
 1110000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19288,8 +19398,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSTSA32 +
 1110001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19342,8 +19452,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UKSUB32 +
 0011001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19392,8 +19502,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMAX32 +
 1010001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19437,8 +19547,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UMIN32 +
 1010000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19482,8 +19592,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URADD32 +
 0010000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19533,8 +19643,8 @@ right-shifted by 1 bit and then written to Rd.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URCRAS32 +
 0010010 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19583,8 +19693,8 @@ of Rd for subtraction.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URCRSA32 +
 0010011 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19633,8 +19743,8 @@ right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URCRAS32 +
 1101000 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19683,8 +19793,8 @@ of Rd for subtraction.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSTSA32 +
 1101001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
@@ -19733,8 +19843,8 @@ addition.
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |URSUB32 +
 0010001 |Rs2 |Rs1 |010 |Rd
-|GE80B +
-1111111
+|OP-P +
+1110111
 |===
 
 *Syntax:*
