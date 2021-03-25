@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.2-draft-20210202
+Version 0.9.3-draft-20210325
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -17,10 +17,16 @@ Version 0.9.2-draft-20210202
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.3 | 2021/03/25 | Chuanhua Chang
+a|
+* Changed Zp64 name to Zpsfoperand.
+* Added Zprvsfextra for RV64 only instructions.
+* Removed SWAP16 encoding. It is an alias of PKBT16.
+* Fixed few typos and enhanced precision descriptions on imtermediate results.
 | v0.9.2 | 2021/02/02 | Chuanhua Chang
 a|
 * Changed major opcode "GE80B 1111111" to "OP-P 1110111".
-* Added Zpn for instructins not belonging to Zp64.
+* Added Zpn for instructins not belonging to Zpsfoperand.
 * Fixed several typos and inconsistencies. 
 | v0.9.1 | 2021/01/26 | Chuanhua Chang
 | Maintainance update; fixed several format issues and typos.
@@ -77,6 +83,7 @@ power and higher performance.
 * r.B[x]: r[(x*8+7):(x*8+0)]
 * r.H[x]: r[(x*16+15):(x*16+0)]
 * r.W[x]: r[(x*32+31):(x*32+0)]
+* r.D[x]: r[(x*64+63):(x*64+0)]
 * r[xU]: the upper 32-bit of a 64-bit number; xU represents the GPR number that contains this upper part 32-bit value.
 * r[xL]: the lower 32-bit of a 64-bit number; xL represents the GPR number that contains this lower part 32-bit value.
 * r[xU].r[xL]: a 64-bit number that is formed from a pair of GPRs.
@@ -120,31 +127,35 @@ rt.H[x] = ra.H[x] + rb.H[x];
 ....
 |2 |RADD16 rt, ra, rb |16-bit Signed Halving Addition a|
 ....
-t17[x] = ra.H[x] + rb.H[x];
+a17[x] = SE17(ra.H[x]);
+b17[x] = SE17(rb.H[x]);
+t17[x] = a17[x] + b17[x];
 rt.H[x] = t17[x] s>> 1;
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
 |3 |URADD16 rt, ra, rb |16-bit Unsigned Halving Addition a|
 ....
-a17[x] = CONCAT(1'b0,ra.H[x]);
-b17[x] = CONCAT(1'b0,rb.H[x]);
+a17[x] = ZE17(ra.H[x]);
+b17[x] = ZE17(rb.H[x]);
 t17[x] = a17[x] + b17[x];
-rt.H[x] = t17[x] >> 1;
+rt.H[x] = t17[x] u>> 1;
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
 |4 |KADD16 rt, ra, rb |16-bit Signed Saturating Addition a|
 ....
-t17[x] = ra.H[x] + rb.H[x];
+a17[x] = SE17(ra.H[x]);
+b17[x] = SE17(rb.H[x]);
+t17[x] = a17[x] + b17[x];
 rt.H[x] = SAT.Q15(t17[x]);
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
 |5 |UKADD16 rt, ra, rb |16-bit Unsigned Saturating Addition a|
 ....
-a17[x] = CONCAT(1'b0,ra.H[x]);
-b17[x] = CONCAT(1'b0,rb.H[x]);
+a17[x] = ZE17(ra.H[x]);
+b17[x] = ZE17(rb.H[x]);
 t17[x] = a17[x] + b17[x];
 rt.H[x] = SAT.U16(t17[x]);
 
@@ -158,31 +169,35 @@ rt.H[x] = ra.H[x] - rb.H[x];
 ....
 |7 |RSUB16 rt, ra, rb |16-bit Signed Halving Subtraction a|
 ....
-t17[x] = ra.H[x] - rb.H[x];
+a17[x] = SE17(ra.H[x]);
+b17[x] = SE17(rb.H[x]);
+t17[x] = a17[x] - b17[x];
 rt.H[x] = t17[x] s>> 1;
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
 |8 |URSUB16 rt, ra, rb |16-bit Unsigned Halving Subtraction a|
 ....
-a17[x] = CONCAT(1'b0,ra.H[x]);
-b17[x] = CONCAT(1'b0,rb.H[x]);
+a17[x] = ZE17(ra.H[x]);
+b17[x] = ZE17(rb.H[x]);
 t17[x] = a17[x] - b17[x];
-rt.H[x] = t17[x] >> 1;
+rt.H[x] = t17[x] u>> 1;
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
 |9 |KSUB16 rt, ra, rb |16-bit Signed Saturating Subtraction a|
 ....
-t17[x] = ra.H[x] - rb.H[x];
+a17[x] = SE17(ra.H[x]);
+b17[x] = SE17(rb.H[x]);
+t17[x] = a17[x] - b17[x];
 rt.H[x] = SAT.Q15(t17[x]);
 
 (RV32: x=1..0, RV64: x=3..0)
 ....
 |10 |UKSUB16 rt, ra, rb |16-bit Unsigned Saturating Subtraction a|
 ....
-a17[x] = CONCAT(1'b0,ra.H[x]);
-b17[x] = CONCAT(1'b0,rb.H[x]);
+a17[x] = ZE17(ra.H[x]);
+b17[x] = ZE17(rb.H[x]);
 t17[x] = a17[x] - b17[x];
 rt.H[x] = SAT.U16(t17[x]);
 
@@ -197,8 +212,12 @@ rt.H[x-1] = ra.H[x-1] – rb.H[x];
 ....
 |12 |RCRAS16 rt, ra, rb |16-bit Signed Halving Cross Add & Sub a|
 ....
-e17[x] = ra.H[x] + rb.H[x-1];
-f17[x] = ra.H[x-1] – rb.H[x];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+e17[x] = ah17[x] + bl17[x];
+f17[x] = al17[x] – bh17[x];
 rt.H[x]   = e17[x] s>> 1; 
 rt.H[x-1] = f17[x] s>> 1;
 
@@ -206,21 +225,25 @@ rt.H[x-1] = f17[x] s>> 1;
 ....
 |13 |URCRAS16 rt, ra, rb |16-bit Unsigned Halving Cross Add & Sub a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] + bl17[x];
 tl17[x] = al17[x] – bh17[x];
-rt.H[x]   = th17[x] >> 1;
-rt.H[x-1] = tl17[x] >> 1;
+rt.H[x]   = th17[x] u>> 1;
+rt.H[x-1] = tl17[x] u>> 1;
 
 (RV32: x=1, RV64: x=1,3)
 ....
 |14 |KCRAS16 rt, ra, rb |16-bit Signed Saturating Cross Add & Sub a|
 ....
-th17[x] = ra.H[x] + rb.H[x-1];
-tl17[x] = ra.H[x-1] – rb.H[x];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] + bl17[x];
+tl17[x] = al17[x] – bh17[x];
 rt.H[x]   = SAT.Q15(th17[x]);
 rt.H[x-1] = SAT.Q15(tl17[x]);
 
@@ -228,10 +251,10 @@ rt.H[x-1] = SAT.Q15(tl17[x]);
 ....
 |15 |UKCRAS16 rt, ra, rb |16-bit Unsigned Saturating Cross Add & Sub a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] + bl17[x];
 tl17[x] = al17[x] – bh17[x];
 rt.H[x]   = SAT.U16(th17[x]);
@@ -248,8 +271,12 @@ rt.H[x-1] = ra.H[x-1] + rb.H[x];
 ....
 |17 |RCRSA16 rt, ra, rb |16-bit Signed Halving Cross Sub & Add a|
 ....
-th17[x] = ra.H[x] - rb.H[x-1];
-tl17[x] = ra.H[x-1] + rb.H[x];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] - bl17[x];
+tl17[x] = al17[x] + bh17[x];
 rt.H[x]   = th17[x] s>> 1;
 rt.H[x-1] = tl17[x] s>> 1;
 
@@ -257,21 +284,25 @@ rt.H[x-1] = tl17[x] s>> 1;
 ....
 |18 |URCRSA16 rt, ra, rb |16-bit Unsigned Halving Cross Sub & Add a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] - bl17[x];
 tl17[x] = al17[x] + bh17[x];
-rt.H[x]   = th17[x] >> 1;
-rt.H[x-1] = tl17[x] >> 1;
+rt.H[x]   = th17[x] u>> 1;
+rt.H[x-1] = tl17[x] u>> 1;
 
 (RV32: x=1, RV64: x=1,3)
 ....
 |19 |KCRSA16 rt, ra, rb |16-bit Signed Saturating Cross Sub & Add a|
 ....
-th17[x] = ra.H[x] - rb.H[x-1];
-tl17[x] = ra.H[x-1] + rb.H[x];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] - bl17[x];
+tl17[x] = al17[x] + bh17[x];
 rt.H[x]   = SAT.Q15(th17[x]);
 rt.H[x-1] = SAT.Q15(tl17[x]);
 
@@ -279,10 +310,10 @@ rt.H[x-1] = SAT.Q15(tl17[x]);
 ....
 |20 |UKCRSA16 rt, ra, rb |16-bit Unsigned Saturating Cross Sub & Add a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] - bl17[x];
 tl17[x] = al17[x] + bh17[x];
 rt.H[x]   = SAT.U16(th17[x]);
@@ -292,15 +323,19 @@ rt.H[x-1] = SAT.U16(tl17[x]);
 ....
 |21 |STAS16 rt, ra, rb |16-bit Straight Add & Sub a|
 ....
-rt.H[x] = ra.H[x] + rb.H[x]; +
+rt.H[x] = ra.H[x] + rb.H[x];
 rt.H[x-1] = ra.H[x-1] – rb.H[x-1];
 
 (RV32: x=1, RV64: x=1,3)
 ....
 |22 |RSTAS16 rt, ra, rb |16-bit Signed Halving Straight Add & Sub a|
 ....
-th17[x] = ra.H[x] + rb.H[x];
-tl17[x] = ra.H[x-1] – rb.H[x-1];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] + bh17[x];
+tl17[x] = al17[x] - bl17[x];
 rt.H[x]   = th17[x] s>> 1;
 rt.H[x-1] = tl17[x] s>> 1;
 
@@ -308,21 +343,25 @@ rt.H[x-1] = tl17[x] s>> 1;
 ....
 |23 |URSTAS16 rt, ra, rb |16-bit Unsigned Halving Straight Add & Sub a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] + bh17[x];
 tl17[x] = al17[x] – bl17[x];
-rt.H[x]   = th17[x] >> 1;
-rt.H[x-1] = tl17[x] >> 1;
+rt.H[x]   = th17[x] u>> 1;
+rt.H[x-1] = tl17[x] u>> 1;
 
 (RV32: x=1, RV64: x=1,3)
 ....
 |24 |KSTAS16 rt, ra, rb |16-bit Signed Saturating Straight Add & Sub a|
 ....
-th17[x] = ra.H[x] + rb.H[x];
-tl17[x] = ra.H[x-1] – rb.H[x-1];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] + bh17[x];
+tl17[x] = al17[x] - bl17[x];
 rt.H[x]   = SAT.Q15(th17[x]);
 rt.H[x-1] = SAT.Q15(tl17[x]);
 
@@ -330,10 +369,10 @@ rt.H[x-1] = SAT.Q15(tl17[x]);
 ....
 |25 |UKSTAS16 rt, ra, rb |16-bit Unsigned Saturating Straight Add & Sub a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] + bh17[x];
 tl17[x] = al17[x] – bl17[x];
 rt.H[x]   = SAT.U16(th17[x]);
@@ -350,8 +389,12 @@ rt.H[x-1] = ra.H[x-1] + rb.H[x-1];
 ....
 |27 |RSTSA16 rt, ra, rb |16-bit Signed Halving Straight Sub & Add a|
 ....
-th17[x] = ra.H[x] - rb.H[x];
-tl17[x] = ra.H[x-1] + rb.H[x-1];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] - bh17[x];
+tl17[x] = al17[x] + bl17[x];
 rt.H[x]   = th17[x] s>> 1;
 rt.H[x-1] = tl17[x] s>> 1;
 
@@ -359,21 +402,25 @@ rt.H[x-1] = tl17[x] s>> 1;
 ....
 |28 |URSTSA16 rt, ra, rb |16-bit Unsigned Halving Straight Sub & Add a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] - bh17[x];
 tl17[x] = al17[x] + bl17[x];
-rt.H[x]   = th17[x] >> 1;
-rt.H[x-1] = tl17[x] >> 1;
+rt.H[x]   = th17[x] u>> 1;
+rt.H[x-1] = tl17[x] u>> 1;
 
 (RV32: x=1, RV64: x=1,3)
 ....
 |29 |KSTSA16 rt, ra, rb |16-bit Signed Saturating Straight Sub & Add a|
 ....
-th17[x] = ra.H[x] - rb.H[x];
-tl17[x] = ra.H[x-1] + rb.H[x-1];
+ah17[x] = SE17(ra.H[x]);
+bh17[x] = SE17(rb.H[x]);
+al17[x] = SE17(ra.H[x-1]);
+bl17[x] = SE17(rb.H[x-1]);
+th17[x] = ah17[x] - bh17[x];
+tl17[x] = al17[x] + bl17[x];
 rt.H[x]   = SAT.Q15(th17[x]);
 rt.H[x-1] = SAT.Q15(tl17[x]);
 
@@ -381,10 +428,10 @@ rt.H[x-1] = SAT.Q15(tl17[x]);
 ....
 |30 |UKSTSA16 rt, ra, rb |16-bit Unsigned Saturating Straight Sub & Add a|
 ....
-ah17[x] = CONCAT(1'b0,ra.H[x]);
-bh17[x] = CONCAT(1'b0,rb.H[x]);
-al17[x] = CONCAT(1'b0,ra.H[x-1]);
-bl17[x] = CONCAT(1'b0,rb.H[x-1]);
+ah17[x] = ZE17(ra.H[x]);
+bh17[x] = ZE17(rb.H[x]);
+al17[x] = ZE17(ra.H[x-1]);
+bl17[x] = ZE17(rb.H[x-1]);
 th17[x] = ah17[x] - bh17[x];
 tl17[x] = al17[x] + bl17[x];
 rt.H[x]   = SAT.U16(th17[x]);
@@ -415,30 +462,34 @@ rt.B[x] = ra.B[x] + rb.B[x];
 ....
 |2 |RADD8 rt, ra, rb |8-bit Signed Halving Addition a|
 ....
-t9[x] = ra.B[x] + rb.B[x];
+a9[x] = SE9(ra.B[x]);
+b9[x] = SE9(rb.B[x]);
+t9[x] = a9[x] + b9[x];
 rt.B[x] = t9[x] s>> 1;
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
 |3 |URADD8 rt, ra, rb |8-bit Unsigned Halving Addition a|
 ....
-a9[x] = CONCAT(1'b0,ra.B[x]);
-b9[x] = CONCAT(1'b0,rb.B[x]);
-rt.B[x] = (a9[x] + b9[x]) >> 1;
+a9[x] = ZE9(ra.B[x]);
+b9[x] = ZE9(rb.B[x]);
+rt.B[x] = (a9[x] + b9[x]) u>> 1;
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
 |4 |KADD8 rt, ra, rb |8-bit Signed Saturating Addition a|
 ....
-t9[x] = ra.B[x] + rb.B[x];
+a9[x] = SE9(ra.B[x]);
+b9[x] = SE9(rb.B[x]);
+t9[x] = a9[x] + b9[x];
 rt.B[x] = SAT.Q7(t9[x]);
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
 |5 |UKADD8 rt, ra, rb |8-bit Unsigned Saturating Addition a|
 ....
-a9[x] = CONCAT(1'b0,ra.B[x]);
-b9[x] = CONCAT(1'b0,rb.B[x]);
+a9[x] = ZE9(ra.B[x]);
+b9[x] = ZE9(rb.B[x]);
 t9[x] = a9[x] + b9[x];
 rt.H[x] = SAT.U8(t9[x]);
 
@@ -452,30 +503,34 @@ rt.B[x] = ra.B[x] - rb.B[x];
 ....
 |7 |RSUB8 rt, ra, rb |8-bit Signed Halving Subtraction a|
 ....
-t9[x] = ra.B[x] - rb.B[x];
+a9[x] = SE9(ra.B[x]);
+b9[x] = SE9(rb.B[x]);
+t9[x] = a9[x] - b9[x];
 rt.B[x] = t9[x] s>> 1;
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
 |8 |URSUB8 rt, ra, rb |8-bit Unsigned Halving Subtraction a|
 ....
-a9[x] = CONCAT(1'b0,ra.B[x]);
-b9[x] = CONCAT(1'b0,rb.B[x]);
-rt.B[x] = (a9[x] - b9[x]) >> 1;
+a9[x] = ZE9(ra.B[x]);
+b9[x] = ZE9(rb.B[x]);
+rt.B[x] = (a9[x] - b9[x]) u>> 1;
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
 |9 |KSUB8 rt, ra, rb |8-bit Signed Saturating Subtraction a|
 ....
-t9[x] = ra.B[x] - rb.B[x];
+a9[x] = SE9(ra.B[x]);
+b9[x] = SE9(rb.B[x]);
+t9[x] = a9[x] - b9[x];
 rt.B[x] = SAT.Q7(t9[x]);
 
 (RV32: x=3..0, RV64: x=7..0)
 ....
 |10 |UKSUB8 rt, ra, rb |8-bit Unsigned Saturating Subtraction a|
 ....
-a9[x] = CONCAT(1'b0,ra.B[x]);
-b9[x] = CONCAT(1'b0,rb.B[x]);
+a9[x] = ZE9(ra.B[x]);
+b9[x] = ZE9(rb.B[x]);
 t9[x] = a9[x] - b9[x];
 rt.H[x] = SAT.U8(t9[x]);
 
@@ -2481,7 +2536,7 @@ RV32:
 rt = SAT.Q31(ABS(ra));
 
 RV64:
-rt = SE(SAT.Q31(ABS(ra.W[0])));
+rt = SE64(SAT.Q31(ABS(ra.W[0])));
 ....
 |===
 
@@ -2695,24 +2750,30 @@ rt.W[x] = ra.W[x] + rb.W[x];
 (RV64: x=1..0)
 
 |2 |RADD32 rt, ra, rb |SIMD 32-bit Signed Halving Addition l|
-rt.W[x] = (ra.W[x] + rb.W[x]) s>> 1;
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[x] = (a33[x] + b33[x]) s>> 1;
 
 (RV64: x=1..0)
 
 |3 |URADD32 rt, ra, rb |SIMD 32-bit Unsigned Halving Addition l|
-a[x] = CONCAT(1'b0,ra.W[x];
-b[x] = CONCAT(1'b0,rb.W[x];
-rt.W[x] = (a[x] + b[x]) u>> 1;
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[x] = (a33[x] + b33[x]) u>> 1;
 
 (RV64: x=1..0)
 
 |4 |KADD32 rt, ra, rb |SIMD 32-bit Signed Saturating Addition l|
-rt.W[x] = SAT.Q31(ra.W[x] + rb.W[x]);
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[x] = SAT.Q31(a33[x] + b33[x]);
 
 (RV64: x=1..0)
 
 |5 |UKADD32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Addition l|
-rt.W[x] = SAT.U32(ra.W[x] + rb.W[x];
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[x] = SAT.U32(a33[x] + b33[x];
 
 (RV64: x=1..0)
 
@@ -2722,24 +2783,30 @@ rt.W[x] = ra.W[x] - rb.W[x];
 (RV64: x=1..0)
 
 |7 |RSUB32 rt, ra, rb |SIMD 32-bit Signed Halving Subtraction l|
-rt.W[x] = (ra.W[x] - rb.W[x]) s>> 1;
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[x] = (a33[x] - b33[x]) s>> 1;
 
 (RV64: x=1..0)
 
 |8 |URSUB32 rt, ra, rb |SIMD 32-bit Unsigned Halving Subtraction l|
-a[x] = CONCAT(1'b0,ra.W[x];
-b[x] = CONCAT(1'b0,rb.W[x];
-rt.W[x] = (a[x] - b[x]) u>> 1;
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[x] = (a33[x] - b33[x]) u>> 1;
 
 (RV64: =1..0)
 
 |9 |KSUB32 rt, ra, rb |SIMD 32-bit Signed Saturating Subtraction l|
-rt.W[x] = SAT.Q31(ra.W[x] - rb.W[x]);
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[x] = SAT.Q31(a33[x] - b33[x]);
 
 (RV64: x=1..0)
 
 |10 |UKSUB32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Subtraction l|
-rt.W[x] = SAT.U32(ra.W[x] - rb.W[x]);
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[x] = SAT.U32(a33[x] - b33[x]);
 
 (RV64: x=1..0)
 
@@ -2748,100 +2815,112 @@ rt.W[1] = ra.W[1] + rb.W[0];
 rt.W[0] = ra.W[0] – rb.W[1];
 
 |12 |RCRAS32 rt, ra, rb |SIMD 32-bit Signed Halving Cross Add & Sub l|
-rt.W[1] = (ra.W[1] + rb.W[0]) s>> 1;
-rt.W[0] = (ra.W[0] – rb.W[1]) s>> 1;
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = (a33[1] + b33[0]) s>> 1;
+rt.W[0] = (a33[0] – b33[1]) s>> 1;
 
 |13 |URCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Add & Sub l|
-a0 = CONCAT(1'b0,ra.W[0]);
-a1 = CONCAT(1'b0,ra.W[1]);
-b0 = CONCAT(1'b0,rb.W[0]);
-b1 = CONCAT(1'b0,rb.W[1]);
-
-rt.W[1] = (a1 + b0) u>> 1;
-rt.W[0] = (a0 – b1) u>> 1;
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = (a33[1] + b33[0]) u>> 1;
+rt.W[0] = (a33[0] – b33[1]) u>> 1;
 
 |14 |KCRAS32 rt, ra, rb |SIMD 32-bit Signed Saturating Cross Add & Sub l|
-rt.W[1] = SAT.Q31(ra.W[1] + rb.W[0]);
-rt.W[0] = SAT.Q31(ra.W[0] – rb.W[1]);
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = SAT.Q31(a33[1] + b33[0]);
+rt.W[0] = SAT.Q31(a33[0] – b33[1]);
 
 |15 |UKCRAS32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Cross Add & Sub l|
-rt.W[1] = SAT.U32(ra.W[1] + rb.W[0]);
-rt.W[0] = SAT.U32(ra.W[0] – rb.W[1]);
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = SAT.U32(a33[1] + b33[0]);
+rt.W[0] = SAT.U32(a33[0] – b33[1]);
 
 |16 |CRSA32 rt, ra, rb |SIMD 32-bit Cross Sub & Add l|
 rt.W[1] = ra.W[1] - rb.W[0];
 rt.W[0] = ra.W[0] + rb.W[1];
 
 |17 |RCRSA32 rt, ra, rb |SIMD 32-bit Signed Halving Cross Sub & Add l|
-rt.W[1] = (ra.W[1] - rb.W[0]) s>> 1;
-rt.W[0] = (ra.W[0] + rb.W[1]) s>> 1;
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = (a33[1] - b33[0]) s>> 1;
+rt.W[0] = (a33[0] + b33[1]) s>> 1;
 
 |18 |URCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Cross Sub & Add l|
-a0 = CONCAT(1'b0,ra.W[0]);
-a1 = CONCAT(1'b0,ra.W[1]);
-b0 = CONCAT(1'b0,rb.W[0]);
-b1 = CONCAT(1'b0,rb.W[1]);
-
-rt.W[1] = (a1 - b0) u>> 1;
-rt.W[0] = (a0 + b1) u>> 1;
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = (a33[1] - b33[0]) u>> 1;
+rt.W[0] = (a33[0] + b33[1]) u>> 1;
 
 |19 |KCRSA32 rt, ra, rb |SIMD 32-bit Signed Saturating Cross Sub & Add l|
-rt.W[1] = SAT.Q31(ra.W[1] - rb.W[0]);
-rt.W[0] = SAT.Q31(ra.W[0] + rb.W[1]);
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = SAT.Q31(a33[1] - b33[0]);
+rt.W[0] = SAT.Q31(a33[0] + b33[1]);
 
 |20 |UKCRSA32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Cross Sub & Add l|
-rt.W[1 = SAT.U32(ra.W[1] - rb.W[0]);
-rt.W[0] = SAT.U32(ra.W[0] + rb.W[1]);
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = SAT.U32(a33[1] - b33[0]);
+rt.W[0] = SAT.U32(a33[0] + b33[1]);
 
 |21 |STAS32 rt, ra, rb |SIMD 32-bit Straight Add & Sub a|
 rt.W[1] = ra.W[1] + rb.W[1];
 rt.W[0] = ra.W[0] – rb.W[0];
 
 |22 |RSTAS32 rt, ra, rb |SIMD 32-bit Signed Halving Straight Add & Sub l|
-rt.W[1] = (ra.W[1] + rb.W[1]) s>> 1;
-rt.W[0] = (ra.W[0] – rb.W[0]) s>> 1;
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = (a33[1] + b33[1]) s>> 1;
+rt.W[0] = (a33[0] – b33[0]) s>> 1;
 
 |23 |URSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Add & Sub l|
-a0 = CONCAT(1'b0,ra.W[0]);
-a1 = CONCAT(1'b0,ra.W[1]);
-b0 = CONCAT(1'b0,rb.W[0]);
-b1 = CONCAT(1'b0,rb.W[1]);
-
-rt.W[1] = (a1 + b1) u>> 1; 
-rt.W[0] = (a0 – b0) u>> 1;
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = (a33[1] + b33[1]) u>> 1; 
+rt.W[0] = (a33[0] – b33[0]) u>> 1;
 
 |24 |KSTAS32 rt, ra, rb |SIMD 32-bit Signed Saturating Straight Add & Sub l|
-rt.W[1] = SAT.Q31(ra.W[1] + rb.W[1]);
-rt.W[0] = SAT.Q31(ra.W[0] – rb.W[0]);
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = SAT.Q31(a33[1] + b33[1]);
+rt.W[0] = SAT.Q31(a33[0] – b33[0]);
 
 |25 |UKSTAS32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Straight Add & Sub l|
-rt.W[1] = SAT.U32(ra.W[1] + rb.W[1]);
-rt.W[0] = SAT.U32(ra.W[0] – rb.W[0]);
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = SAT.U32(a33[1] + b33[1]);
+rt.W[0] = SAT.U32(a33[0] – b33[0]);
 
 |26 |STSA32 rt, ra, rb |SIMD 32-bit Straight Sub & Add l|
 rt.W[1] = ra.W[1] - rb.W[1];
 rt.W[0] = ra.W[0] + rb.W[0];
 
 |27 |RSTSA32 rt, ra, rb |SIMD 32-bit Signed Halving Straight Sub & Add l|
-rt.W[1] = (ra.W[1] - rb.W[1]) s>> 1;
-rt.W[0] = (ra.W[0] + rb.W[0]) s>> 1;
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = (a33[1] - b33[1]) s>> 1;
+rt.W[0] = (a33[0] + b33[0]) s>> 1;
 
 |28 |URSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Halving Straight Sub & Add l|
-a0 = CONCAT(1'b0,ra.W[0]);
-a1 = CONCAT(1'b0,ra.W[1]);
-b0 = CONCAT(1'b0,rb.W[0]);
-b1 = CONCAT(1'b0,rb.W[1]);
-
-rt.W[1] = (a1 - b1) u>> 1;
-rt.W[0] = (a0 + b0) u>> 1;
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = (a33[1] - b33[1]) u>> 1;
+rt.W[0] = (a33[0] + b33[0]) u>> 1;
 
 |29 |KSTSA32 rt, ra, rb |SIMD 32-bit Signed Saturating Straight Sub & Add l|
-rt.W[1] = SAT.Q31(ra.W[1] - rb.W[1]);
-rt.W[0] = SAT.Q31(ra.W[0] + rb.W[0]);
+a33[x] = SE33(ra.W[x]);
+b33[x] = SE33(rb.W[x]);
+rt.W[1] = SAT.Q31(a33[1] - b33[1]);
+rt.W[0] = SAT.Q31(a33[0] + b33[0]);
 
 |30 |UKSTSA32 rt, ra, rb |SIMD 32-bit Unsigned Saturating Straight Sub & Add l|
-rt.W[1] = SAT.U32(ra.W[1] - rb.W[1]);
-rt.W[0] = SAT.U32(ra.W[0] + rb.W[0]);
+a33[x] = ZE33(ra.W[x]);
+b33[x] = ZE33(rb.W[x]);
+rt.W[1] = SAT.U32(a33[1] - b33[1]);
+rt.W[0] = SAT.U32(a33[0] + b33[0]);
 |===
 
 There are 14 SIMD 32-bit shift instructions.
@@ -3203,12 +3282,12 @@ There are four 32-bit packing instructions here.
 The P extension instructions will be divided into several Z-extension subsets to
 facilitate the trade-off between implementation complexity and application performance.
 
-=== Zp64 (for RV32 Only)
+=== Zpsfoperand (for RV32 Only)
 
-The instructions in Zp64 extension will read or write 64-bit operands using register-pairs
-in RV32. For RV64, the Zp64 instructions will be included in the baseline P extension.
+The instructions in Zpsfoperand extension will read or write 64-bit operands using register-pairs
+in RV32. For RV32P, this is an optional sub-extension. For RV64P, the Zpsfoperand extension is a required extension.
 
-The instructions in Zp64 are listed in the following table.
+The instructions in Zpsfoperand are listed in the following table.
 
 [cols="^.^1,^.^3",options="header",]
 |===
@@ -3223,17 +3302,22 @@ The instructions in Zp64 are listed in the following table.
 |37 |SMULX8 |38 |SMUL16 |39 |SMULX16 |40 |WEXT |41 |WEXTI
 |===
 
-=== Zpn (for RV32 Only)
-The instructions not in Zp64 extension will be included in this sub-extension.
-This is a required sub-extension for RV32P extension. The legal combinations of
-the sub-extensions of RV32P are listed in the following table.
+=== Zpn (for RV32 and above)
+The instructions of RV32P not in Zpsfoperand extension will be included in this sub-extension.
+This is a required sub-extension for RV32P extension.
+
+=== Zprvsfextra (for RV64 and above)
+The instructions added for RV64 in Chapter 6 are in this Zprvsfextra sub-extension.
+
+=== Legal Sub-extension Combinations
+The legal combinations of the sub-extensions for RV32P and RV64P are listed in the following table.
 
 [cols="^.^,^.^",options="header",]
 |===
-| Legal Sub-extension Combination | Architecture
-| Zpn          |RV32
-| Zpn + Zp64   |RV32
-| Zpn + Zp64   |RV64
+| Legal Sub-extension Combination  | Architecture
+| Zpn                              |RV32
+| Zpn + Zpsfoperand                |RV32
+| Zpn + Zpsfoperand + Zprvsfextra  |RV64
 |===
 
 == Instructions Duplicated in Bit Manipulation Extension (v0.92)
@@ -3392,7 +3476,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* 64-bit Profile
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -4635,7 +4719,8 @@ OV flag will be set to 1.
      res = -Rs1.W[0];
    }
  }
- Rd = SE32(res);
+ Rd = res;        // RV32
+ Rd = SE64(res);  // RV64
 
 *Exceptions:* None
 
@@ -4645,7 +4730,7 @@ OV flag will be set to 1.
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv__kabsw(intXLEN_t a);
+ intXLEN_t __rv__kabsw(intXLEN_t a);
 
 <<<
 ===  KADD8 (SIMD 8-bit Signed Saturating Addition)
@@ -4772,7 +4857,7 @@ and the OV bit is set to 1. The saturated results are written to Rd.
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -4926,18 +5011,20 @@ saturation happens, this instruction sets the OV flag.
 
 *Operations:*
 
- tmp = Rs1.W[0] + Rs2.W[0];
- if (tmp > (2^31)-1) {
-   res = (2^31)-1;
+ a33 = SE33(Rs1.W[0]);
+ b33 = SE33(Rs2.W[0]);
+ tmp33 = a33 + b33;
+ if (tmp33 > (2^31)-1) {
+   res32 = (2^31)-1;
    OV = 1;
- } else if (tmp < -2^31) {
-   res = -2^31;
+ } else if (tmp33 < -2^31) {
+   re32 = -2^31;
    OV = 1
  } else {
-   res = tmp;
+   res32 = tmp.W[0];
  }
- Rd = res[31:0]; // RV32
- Rd = SE(res[31:0]) // RV64
+ Rd = res32;       // RV32
+ Rd = SE64(res32); // RV64
 
 *Exceptions:* None
 
@@ -5158,15 +5245,16 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KDMBB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KDMBT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KDMTT
+
  If ((0x8000 != aop) || (0x8000 != bop)) {
-   Mresult = aop * bop;
+   Mresult = aop s* bop;
    resQ31 = Mresult << 1;
-   Rd = resQ31; // RV32
-   Rd = SE(resQ31); // RV64
+   Rd = resQ31;       // RV32
+   Rd = SE64(resQ31); // RV64
  } else {
    resQ31 = 0x7FFFFFFF;
-   Rd = resQ31; // RV32
-   Rd = SE(resQ31); // RV64
+   Rd = resQ31;       // RV32
+   Rd = SE64(resQ31); // RV64
    OV = 1;
  }
 
@@ -5288,24 +5376,28 @@ flag OV will be set.
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KDMABB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KDMABT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KDMATT
+
  If ((0x8000 != aop) || (0x8000 != bop)) {
-   Mresult = aop * bop;
+   Mresult = aop s* bop;
    resQ31 = Mresult << 1;
  } else {
    resQ31 = 0x7FFFFFFF;
    OV = 1;
  }
- resadd = Rd + resQ31; // RV32
- resadd = Rd.W[0] + resQ31; // RV64
- if (resadd > (2^31)-1) {
-   resadd = (2^31)-1;
+ c33 = SE33(Rd.W[0]);
+ d33 = SE33(resQ31);
+ tmp33 = c33 + d33;
+ if (tmp33 > (2^31)-1) {
+   resadd32 = (2^31)-1;
    OV = 1;
- } else if (resadd < -2^31) {
-   resadd = -2^31;
+ } else if (tmp33 < -2^31) {
+   resadd32 = -2^31;
    OV = 1;
+ } else {
+   resadd32 = tmp33.W[0];
  }
- Rd = resadd; // RV32
- Rd = SE(resadd); // RV64
+ Rd = resadd32;       // RV32
+ Rd = SE64(resadd32); // RV64
 
 
 *Exceptions:* None
@@ -5418,20 +5510,21 @@ to 0x7F and the overflow flag OV will be set.
 
  if (is “KHM8”) {
    op1t = Rs1.B[x+1]; op2t = Rs2.B[x+1]; // top
-   op1b = Rs1.B[x]; op2b = Rs2.B[x]; // bottom
+   op1b = Rs1.B[x];   op2b = Rs2.B[x];   // bottom
  } else if (is “KHMX8”) {
-   op1t = Rs1.H[x+1]; op2t = Rs2.H[x]; // Rs1 top
-   op1b = Rs1.H[x]; op2b = Rs2.H[x+1]; // Rs1 bottom
+   op1t = Rs1.H[x+1]; op2t = Rs2.H[x];   // Rs1 top
+   op1b = Rs1.H[x];   op2b = Rs2.H[x+1]; // Rs1 bottom
  }
- for ((aop,bop,res) in [(op1t,op2t,rest), (op1b,op2b,resb)]) {
+ for ((aop,bop,res16) in [(op1t,op2t,rest), (op1b,op2b,resb)]) {
    if ((0x80 != aop) || (0x80 != bop)) {
-     res = (aop s* bop) >> 7;
+     res16 = (aop s* bop) s>> 7;
    } else {
-     res= 0x7F;
+     res16= 0x007F;
      OV = 1;
    }
  }
- Rd.H[x/2] = concat(rest, resb);
+ Rd.H[x/2] = concat(rest.B[0], resb.B[0]);
+
  for RV32, x=0,2
  for RV64, x=0,2,4,6
 
@@ -5531,20 +5624,21 @@ to 0x7FFF and the overflow flag OV will be set.
 
  if (is “KHM16”) {
    op1t = Rs1.H[x+1]; op2t = Rs2.H[x+1]; // top
-   op1b = Rs1.H[x]; op2b = Rs2.H[x]; // bottom
+   op1b = Rs1.H[x];   op2b = Rs2.H[x];   // bottom
  } else if (is “KHMX16”) {
-   op1t = Rs1.H[x+1]; op2t = Rs2.H[x]; // Rs1 top
-   op1b = Rs1.H[x]; op2b = Rs2.H[x+1]; // Rs1 bottom
+   op1t = Rs1.H[x+1]; op2t = Rs2.H[x];   // Rs1 top
+   op1b = Rs1.H[x];   op2b = Rs2.H[x+1]; // Rs1 bottom
  }
- for ((aop,bop,res) in [(op1t,op2t,rest), (op1b,op2b,resb)]) {
+ for ((aop,bop,res32) in [(op1t,op2t,rest), (op1b,op2b,resb)]) {
    if ((0x8000 != aop) || (0x8000 != bop)) {
-     res = (aop s* bop) >> 15;
+     res32 = (aop s* bop) s>> 15;
    } else {
-     res= 0x7FFF;
+     res32= 0x00007FFF;
      OV = 1;
    }
  }
- Rd.W[x/2] = concat(rest, resb);
+ Rd.W[x/2] = concat(rest.H[0], resb.H[0]);
+
  for RV32: x=0
  for RV64: x=0,2
 
@@ -5650,15 +5744,15 @@ saturated to 0x7FFF and the overflow flag OV will be set.
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KHMBB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KHMBT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KHMTT
+
  If ((0x8000 != aop) || (0x8000 != bop)) {
-   Mresult[31:0] = aop * bop;
-   res[15:0] = Mresult[30:15];
+   Mres32 = (aop s* bop) s>> 15;
  } else {
-   res[15:0] = 0x7FFF;
+   Mres32 = 0x00007FFF;
    OV = 1;
  }
- Rd = SE32(res[15:0]); // Rv32
- Rd = SE64(res[15:0]); // RV64
+ Rd = SE32(Mres32.H[0]); // Rv32
+ Rd = SE64(Mres32.H[0]); // RV64
 
 *Exceptions:* None
 
@@ -5790,18 +5884,19 @@ saturation are written to Rd. The 16-bit contents of Rs1 and Rs2 are treated as
 signed integers.
 
 *Operations:*
+ mul32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[0]; // KMABB
+ mul32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[1]; // KMABT
+ mul32[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[1]; // KMATT
 
- res[x] = Rd.W[x] + (Rs1.W[x].H[0] * Rs2.W[x].H[0]); // KMABB
- res[x] = Rd.W[x] + (Rs1.W[x].H[0] * Rs2.W[x].H[1]); // KMABT
- res[x] = Rd.W[x] + (Rs1.W[x].H[1] * Rs2.W[x].H[1]); // KMATT
- if (res[x] > (2^31)-1) {
-   res[x] = (2^31)-1;
+ res33[x] = SE33(Rd.W[x]) + SE33(mul32[x]);
+ if (res33[x] > (2^31)-1) {
+   res33[x] = (2^31)-1;
    OV = 1;
- } else if (res[x] < -2^31) {
-   res[x] = -2^31;
+ } else if (res33[x] < -2^31) {
+   res33[x] = -2^31;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res33[x].W[0];
  for RV32: x=0
  for RV64: x=1…0
 
@@ -5918,18 +6013,20 @@ written to Rd. The 16-bit contents of Rs1 and Rs2 are treated as signed integers
 
 *Operations:*
 
- // KMADA
- res[x] = Rd.W[x] + (Rs1.W[x].H[1] * Rs2.W[x].H[1]) + (Rs1.W[x].H[0] * Rs2.W[x].H[0]);
- // KMAXDA
- res[x] = Rd.W[x] + (Rs1.W[x].H[1] * Rs2.W[x].H[0]) + (Rs1.W[x].H[0] * Rs2.W[x].H[1]);
- if (res[x] > (2^31)-1) {
-   res[x] = (2^31)-1;
+ mula32[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[1]; // KMADA
+ mulb32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[0]; //
+ mula32[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[0]; // KMAXDA
+ mulb32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[1]; //
+
+ res34[x] = SE34(Rd.W[x]) + SE34(mula32[x]) + SE34(mulb32[x]);
+ if (res34[x] > (2^31)-1) {
+   res34[x] = (2^31)-1;
    OV = 1;
- } else if (res[x] < -2^31) {
-   res[x] = -2^31;
+ } else if (res34[x] < -2^31) {
+   res34[x] = -2^31;
  OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res34[x].W[0];
  for RV32: x=0
  for RV64: x=1…0
 
@@ -6055,21 +6152,23 @@ saturation are written to Rd. The 16-bit contents of Rs1 and Rs2 are treated as
 signed integers.
 
 *Operations:*
+ 
+ mula32[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[1]; // KMADS
+ mulb32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[0]; //
+ mula32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[0]; // KMADRS
+ mulb32[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[1]; //
+ mula32[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[0]; // KMAXDS
+ mulb32[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[1]; //
 
- // KMADS
- res[x] = Rd.W[x] + (Rs1.W[x].H[1] * Rs2.W[x].H[1]) - (Rs1.W[x].H[0] * Rs2.W[x].H[0]);
- // KMADRS
- res[x] = Rd.W[x] + (Rs1.W[x].H[0] * Rs2.W[x].H[0]) - (Rs1.W[x].H[1] * Rs2.W[x].H[1]);
- // KMAXDS
- res[x] = Rd.W[x] + (Rs1.W[x].H[1] * Rs2.W[x].H[0]) - (Rs1.W[x].H[0] * Rs2.W[x].H[1]);
- if (res[x] > (2^31)-1) {
-   res[x] = (2^31)-1;
+ res34[x] = SE34(Rd.W[x]) + SE34(mula32[x]) - SE34(mulb32[x]);
+ if (res34[x] > (2^31)-1) {
+   res34[x] = (2^31)-1;
    OV = 1;
- } else if (res[x] < -2^31) {
-   res[x] = -2^31;
+ } else if (res34[x] < -2^31) {
+   res34[x] = -2^31;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res34[x].W[0];
  for RV32: x=0
  for RV64: x=1…0
 
@@ -6125,7 +6224,7 @@ signed integers.
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -6174,24 +6273,31 @@ bit is set to 1. The saturated result is written back to Rd.
 *RV32:*
 
  t_L = CONCAT(Rd(4,1),1’b0); t_H = CONCAT(Rd(4,1),1’b1);
- result = R[t_H].R[t_L] + (Rs1 * Rs2);
- if (result > (2^63)-1) {
-   result = (2^63)-1; OV = 1;
- } else if (result < -2^63) {
-   result = -2^63; OV = 1;
+ mul65 = SE65(Rs1 s* Rs2);
+ top65 = SE65(R[t_H].R[t_L]);
+ res65 = top65 + mul65;
+ if (res65 > (2^63)-1) {
+   res65 = (2^63)-1;
+   OV = 1;
+ } else if (res65 < -2^63) {
+   res65 = -2^63;
+   OV = 1;
  }
- R[t_H].R[t_L] = result;
+ R[t_H].R[t_L] = res65.D[0];
 
 *RV64:*
 
- // “result” has unlimited precision
- result = Rd + (Rs1.W[0] * Rs2.W[0]) + (Rs1.W[1] * Rs2.W[1]);
- if (result > (2^63)-1) {
-   result = (2^63)-1; OV = 1;
- } else if (result < -2^63) {
-   result = -2^63; OV = 1;
+ mula66 = SE66(Rs1.W[0] s* Rs2.W[0]);
+ mulb66 = SE66(Rs1.W[1] s* Rs2.W[1]);
+ res66 = SE66(Rd) + mula66 + mulb66;
+ if (res66 > (2^63)-1) {
+   res66 = (2^63)-1;
+   OV = 1;
+ } else if (res66 < -2^63) {
+   res66 = -2^63;
+   OV = 1;
  }
- Rd = result;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -6277,9 +6383,9 @@ are treated as signed integers.
 
 if ((Rs1.W[x] != 0x80008000) or (Rs2.W[x] != 0x80008000)) {
   // KMDA
-  Rd.W[x] = Rs1.W[x].H[1] * Rs2.W[x].H[1]) + (Rs1.W[x].H[0] * Rs2.W[x].H[0];
+  Rd.W[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[1]) + (Rs1.W[x].H[0] s* Rs2.W[x].H[0];
   // KMXDA
-  Rd.W[x] = Rs1.W[x].H[1] * Rs2.W[x].H[0]) + (Rs1.W[x].H[0] * Rs2.W[x].H[1];
+  Rd.W[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[0]) + (Rs1.W[x].H[0] s* Rs2.W[x].H[1];
 } else {
   Rd.W[x] = 0x7fffffff;
   OV = 1;
@@ -7167,18 +7273,20 @@ The two 32-bit multiplication results are then subtracted from the content of th
 
 *Operations:*
 
- // KMSDA
- res[x] = Rd.W[x] - (Rs1.W[x].H[1] * Rs2.W[x].H[1]) - (Rs1.W[x].H[0] * Rs2.W[x].H[0]);
- // KMSXDA
- res[x] = Rd.W[x] - (Rs1.W[x].H[1] * Rs2.W[x].H[0]) - (Rs1.W[x].H[0] * Rs2.W[x].H[1]);
- if (res[x] > (2^31)-1) {
-   res[x] = (2^31)-1;
+ mula34[x] = SE34(Rs1.W[x].H[1] s* Rs2.W[x].H[1]); // KMSDA
+ mulb34[x] = SE34(Rs1.W[x].H[0] s* Rs2.W[x].H[0]); //
+ mula34[x] = SE34(Rs1.W[x].H[1] s* Rs2.W[x].H[0]); // KMSXDA
+ mulb34[x] = SE34(Rs1.W[x].H[0] s* Rs2.W[x].H[1]); //
+ 
+ res34[x] = SE34(Rd.W[x]) - mula34[x] - mulb34[x];
+ if (res34[x] > (2^31)-1) {
+   res34[x] = (2^31)-1;
    OV = 1;
- } else if (res[x] < -2^31) {
-   res[x] = -2^31;
+ } else if (res34[x] < -2^31) {
+   res34[x] = -2^31;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res34[x].W[0];
  for RV32: x=0
  for RV64: x=1…0
 
@@ -7221,7 +7329,7 @@ The two 32-bit multiplication results are then subtracted from the content of th
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -7257,25 +7365,32 @@ contains the low 32-bit of the result.
 *RV32:*
 
  t_L = CONCAT(Rd(4,1),1’b0); t_H = CONCAT(Rd(4,1),1’b1);
- result = R[t_H].R[t_L] - (Rs1 * Rs2);
- if (result > (2^63)-1) {
-   result = (2^63)-1; OV = 1;
- } else if (result < -2^63) {
-   result = -2^63; OV = 1;
+ mul65 = SE65(Rs1 s* Rs2);
+ top65 = SE65(R[t_H].R[t_L]);
+ res65 = top65 - mul65;
+ if (res65 > (2^63)-1) {
+   res65 = (2^63)-1; 
+   OV = 1;
+ } else if (res65 < -2^63) {
+   res65 = -2^63;
+   OV = 1;
  }
- R[t_H].R[t_L] = result;
+ R[t_H].R[t_L] = res65.D[0];
 
 
 *RV64:*
 
- // “result” has unlimited precision
- result = Rd - (Rs1.W[0] * Rs2.W[0]) - (Rs1.W[1] * Rs2.W[1]);
- if (result > (2^63)-1) {
-   result = (2^63)-1; OV = 1;
- } else if (result < -2^63) {
-   result = -2^63; OV = 1;
+ mula66 = SE66(Rs1.W[0] s* Rs2.W[0]);
+ mulb66 = SE66(Rs1.W[1] s* Rs2.W[1]);
+ res66 = SE66(Rd) - mula66 - mulb66;
+ if (res66 > (2^63)-1) {
+   res66 = (2^63)-1;
+   OV = 1;
+ } else if (res66 < -2^63) {
+   res66 = -2^63;
+   OV = 1;
  }
- Rd = result;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -7863,7 +7978,7 @@ The left-shifted result is saturated to the 32-bit signed integer range of [-2^3
  if (Rs2[5:0] < 0) {
    sa = -Rs2[5:0];
    sa = (sa == 32)? 31 : sa;
-   res[31:0] = Rs1.W[0] >>(arith) sa;
+   res[31:0] = Rs1.W[0] s>> sa;
  } else {
    sa = Rs2[5:0];
    tmp = Rs1.W[0] <<(logic) sa;
@@ -8190,7 +8305,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -8628,7 +8743,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -8694,7 +8809,7 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as unsigned integers.
 
 *Type:* DSP
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -8898,14 +9013,13 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Purpose:* Pack 16-bit data from 32-bit chunks in two registers.
 
 * PKBB16: bottom.bottom
-* PKBT16 bottom.top
-* PKTT16 top.top
-* PKTB16 top.bottom
+* PKBT16: bottom.top
+* PKTT16: top.top
+* PKTB16: top.bottom
 
 *Description:*
 
-(PKBB16) moves Rs1.W[x].H[0] to Rd.W[x].H[1] and moves Rs2.W[x].H[0] to +
-Rd.W[x].H[0].
+(PKBB16) moves Rs1.W[x].H[0] to Rd.W[x].H[1] and moves Rs2.W[x].H[0] to Rd.W[x].H[0].
 
 (PKBT16) moves Rs1.W[x].H[0] to Rd.W[x].H[1] and moves Rs2.W[x].H[1] to Rd.W[x].H[0].
 
@@ -8915,10 +9029,10 @@ Rd.W[x].H[0].
 
 *Operations:*
 
- Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[0], Rs2.W[x].H[0]); // PKBB16
- Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[0], Rs2.W[x].H[1]); // PKBT16
- Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[1], Rs2.W[x].H[0]); // PKTB16
- Rd.W[x][31:0] = CONCAT(Rs1.W[x].H[1], Rs2.W[x].H[1]); // PKTT16
+ Rd.W[x] = CONCAT(Rs1.W[x].H[0], Rs2.W[x].H[0]); // PKBB16
+ Rd.W[x] = CONCAT(Rs1.W[x].H[0], Rs2.W[x].H[1]); // PKBT16
+ Rd.W[x] = CONCAT(Rs1.W[x].H[1], Rs2.W[x].H[0]); // PKTB16
+ Rd.W[x] = CONCAT(Rs1.W[x].H[1], Rs2.W[x].H[1]); // PKTT16
  for RV32: x=0,
  for RV64: x=1…0
 
@@ -9008,9 +9122,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
-Rd.B[x] = (Rs1.B[x] + Rs2.B[x]) s>> 1;
-for RV32: x=3…0,
-for RV64: x=7…0
+ Rd.B[x] = (Rs1.B[x] + Rs2.B[x]) s>> 1;
+ for RV32: x=3..0,
+ for RV64: x=7..0
 
 *Exceptions:* None
 
@@ -9093,7 +9207,7 @@ for RV64: x=3…0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -9535,7 +9649,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -10208,7 +10322,7 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* Partial-SIMD
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -10288,7 +10402,7 @@ This instruction multiplies the bottom 16-bit content of the 32-bit elements of 
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -10450,7 +10564,7 @@ The multiplication results are added with the 64-bit value of Rd. The 64-bit add
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -10516,12 +10630,12 @@ The results are added to the 64-bit value of Rd. The 64-bit addition result is w
 *RV32:*
 
  // SMALDA
- Mres0[31:0] = (Rs1.H[0] * Rs2.H[0]);
- Mres1[31:0] = (Rs1.H[1] * Rs2.H[1]);
+ Mres0[31:0] = (Rs1.H[0] s* Rs2.H[0]);
+ Mres1[31:0] = (Rs1.H[1] s* Rs2.H[1]);
 
  // SMALXDA
- Mres0[31:0] = (Rs1.H[0] * Rs2.H[1]);
- Mres1[31:0] = (Rs1.H[1] * Rs2.H[0]);
+ Mres0[31:0] = (Rs1.H[0] s* Rs2.H[1]);
+ Mres1[31:0] = (Rs1.H[1] s* Rs2.H[0]);
  Idx0 = CONCAT(Rd(4,1),1’b0); Idx1 = CONCAT(Rd(4,1),1’b1);
  R[Idx1].R[Idx0] = R[Idx1].R[Idx0] + SE64(Mres0[31:0]) + SE64(Mres1[31:0]);
 
@@ -10529,16 +10643,16 @@ The results are added to the 64-bit value of Rd. The 64-bit addition result is w
 *RV64:*
 
  // SMALDA
- Mres0[0][31:0] = (Rs1.W[0].H[0] * Rs2.W[0].H[0]);
- Mres1[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[1]);
- Mres0[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[1].H[0]);
- Mres1[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[1]);
+ Mres0[0][31:0] = (Rs1.W[0].H[0] s* Rs2.W[0].H[0]);
+ Mres1[0][31:0] = (Rs1.W[0].H[1] s* Rs2.W[0].H[1]);
+ Mres0[1][31:0] = (Rs1.W[1].H[0] s* Rs2.W[1].H[0]);
+ Mres1[1][31:0] = (Rs1.W[1].H[1] s* Rs2.W[1].H[1]);
 
  // SMALXDA
- Mres0[0][31:0] = (Rs1.W[0].H[0] * Rs2.W[0].H[1]);
- Mres1[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[0]);
- Mres0[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[1].H[1]);
- Mres1[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[0]);
+ Mres0[0][31:0] = (Rs1.W[0].H[0] s* Rs2.W[0].H[1]);
+ Mres1[0][31:0] = (Rs1.W[0].H[1] s* Rs2.W[0].H[0]);
+ Mres0[1][31:0] = (Rs1.W[1].H[0] s* Rs2.W[1].H[1]);
+ Mres1[1][31:0] = (Rs1.W[1].H[1] s* Rs2.W[1].H[0]);
  Rd = Rd + SE64(Mres0[0][31:0]) + SE64(Mres1[0][31:0]) + SE64(Mres0[1][31:0]) + SE64(Mres1[1][31:0]);
 
 
@@ -10588,7 +10702,7 @@ The results are added to the 64-bit value of Rd. The 64-bit addition result is w
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -10669,25 +10783,27 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 
 * RV32:
 
- Mres[31:0] = (Rs1.H[1] * Rs2.H[1]) - (Rs1.H[0] * Rs2.H[0]); // SMALDS
- Mres[31:0] = (Rs1.H[0] * Rs2.H[0]) - (Rs1.H[1] * Rs2.H[1]); // SMALDRS
- Mres[31:0] = (Rs1.H[1] * Rs2.H[0]) - (Rs1.H[0] * Rs2.H[1]); // SMALXDS
+ Mres[31:0] = (Rs1.H[1] s* Rs2.H[1]) - (Rs1.H[0] s* Rs2.H[0]); // SMALDS
+ Mres[31:0] = (Rs1.H[0] s* Rs2.H[0]) - (Rs1.H[1] s* Rs2.H[1]); // SMALDRS
+ Mres[31:0] = (Rs1.H[1] s* Rs2.H[0]) - (Rs1.H[0] s* Rs2.H[1]); // SMALXDS
+
  Idx0 = CONCAT(Rd(4,1),1’b0); Idx1 = CONCAT(Rd(4,1),1’b1);
  R[Idx1].R[Idx0] = R[Idx1].R[Idx0] + SE64(Mres[31:0]);
 
 * RV64:
 
  // SMALDS
- Mres[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[1]) - (Rs1.W[0].H[0] * Rs2.W[0].H[0]);
- Mres[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[1]) - (Rs1.W[1].H[0] * Rs2.W[1].H[0]);
+ Mres[0][31:0] = (Rs1.W[0].H[1] s* Rs2.W[0].H[1]) - (Rs1.W[0].H[0] s* Rs2.W[0].H[0]);
+ Mres[1][31:0] = (Rs1.W[1].H[1] s* Rs2.W[1].H[1]) - (Rs1.W[1].H[0] s* Rs2.W[1].H[0]);
 
  // SMALDRS
- Mres[0][31:0] = (Rs1.W[0].H[0] * Rs2.W[0].H[0]) - (Rs1.W[0].H[1] * Rs2.W[0].H[1]);
- Mres[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[1].H[0]) - (Rs1.W[1].H[1] * Rs2.W[1].H[1]);
+ Mres[0][31:0] = (Rs1.W[0].H[0] s* Rs2.W[0].H[0]) - (Rs1.W[0].H[1] s* Rs2.W[0].H[1]);
+ Mres[1][31:0] = (Rs1.W[1].H[0] s* Rs2.W[1].H[0]) - (Rs1.W[1].H[1] s* Rs2.W[1].H[1]);
 
  // SMALXDS
- Mres[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[0]) - (Rs1.W[0].H[0] * Rs2.W[0].H[1]);
- Mres[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[0]) - (Rs1.W[1].H[0] * Rs2.W[1].H[1]);
+ Mres[0][31:0] = (Rs1.W[0].H[1] s* Rs2.W[0].H[0]) - (Rs1.W[0].H[0] s* Rs2.W[0].H[1]);
+ Mres[1][31:0] = (Rs1.W[1].H[1] s* Rs2.W[1].H[0]) - (Rs1.W[1].H[0] s* Rs2.W[1].H[1]);
+
  Rd = Rd + SE64(Mres[0][31:0]) + SE64(Mres[1][31:0]);
 
 *Exceptions:* None
@@ -10742,7 +10858,7 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -11081,9 +11197,9 @@ The multiplication results are written to Rd. The 16-bit contents of Rs1 and Rs2
 
 *Operations:*
 
- Rd.W[x] = Rs1.W[x].H[0] * Rs2.W[x].H[0]; // SMBB16
- Rd.W[x] = Rs1.W[x].H[0] * Rs2.W[x].H[1]; // SMBT16
- Rd.W[x] = Rs1.W[x].H[1] * Rs2.W[x].H[1]; // SMTT16
+ Rd.W[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[0]; // SMBB16
+ Rd.W[x] = Rs1.W[x].H[0] s* Rs2.W[x].H[1]; // SMBT16
+ Rd.W[x] = Rs1.W[x].H[1] s* Rs2.W[x].H[1]; // SMTT16
  for RV32: x=0,
  for RV64: x=1…0
 
@@ -11640,7 +11756,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -11707,11 +11823,12 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 * RV32:
 
  // SMSLDA
- Mres0[31:0] = (Rs1.H[0] * Rs2.H[0]);
- Mres1[31:0] = (Rs1.H[1] * Rs2.H[1]);
+ Mres0[31:0] = (Rs1.H[0] s* Rs2.H[0]);
+ Mres1[31:0] = (Rs1.H[1] s* Rs2.H[1]);
  // SMSLXDA
- Mres0[31:0] = (Rs1.H[0] * Rs2.H[1]);
- Mres1[31:0] = (Rs1.H[1] * Rs2.H[0]);
+ Mres0[31:0] = (Rs1.H[0] s* Rs2.H[1]);
+ Mres1[31:0] = (Rs1.H[1] s* Rs2.H[0]);
+
  Idx0 = CONCAT(Rd(4,1),1’b0); Idx1 = CONCAT(Rd(4,1),1’b1);
  R[Idx1].R[Idx0] = R[Idx1].R[Idx0] - SE64(Mres0[31:0]) - SE64(Mres1[31:0]);
 
@@ -11719,15 +11836,16 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 * RV64:
 
  // SMSLDA
- Mres0[0][31:0] = (Rs1.W[0].H[0] * Rs2.W[0].H[0]);
- Mres1[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[1]);
- Mres0[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[1].H[0]);
- Mres1[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[1]);
+ Mres0[0][31:0] = (Rs1.W[0].H[0] s* Rs2.W[0].H[0]);
+ Mres1[0][31:0] = (Rs1.W[0].H[1] s* Rs2.W[0].H[1]);
+ Mres0[1][31:0] = (Rs1.W[1].H[0] s* Rs2.W[1].H[0]);
+ Mres1[1][31:0] = (Rs1.W[1].H[1] s* Rs2.W[1].H[1]);
  // SMSLXDA
- Mres0[0][31:0] = (Rs1.W[0].H[0] * Rs2.W[0].H[1]);
- Mres1[0][31:0] = (Rs1.W[0].H[1] * Rs2.W[0].H[0]);
- Mres0[1][31:0] = (Rs1.W[1].H[0] * Rs2.W[1].H[1]);
- Mres1[1][31:0] = (Rs1.W[1].H[1] * Rs2.W[1].H[0]);
+ Mres0[0][31:0] = (Rs1.W[0].H[0] s* Rs2.W[0].H[1]);
+ Mres1[0][31:0] = (Rs1.W[0].H[1] s* Rs2.W[0].H[0]);
+ Mres0[1][31:0] = (Rs1.W[1].H[0] s* Rs2.W[1].H[1]);
+ Mres1[1][31:0] = (Rs1.W[1].H[1] s* Rs2.W[1].H[0]);
+
  Rd = Rd - SE64(Mres0[0][31:0]) - SE64(Mres1[0][31:0]) - SE64(Mres0[1][31:0]) - SE64(Mres1[1][31:0]);
 
 *Exceptions:* None
@@ -11770,7 +11888,7 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -11838,7 +11956,7 @@ contains the low 32-bit of the result.
 
 *Type:* SIMD
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -11977,7 +12095,7 @@ image::smul8-rv64.png[]
 
 *Type:* SIMD
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -13157,7 +13275,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -13404,21 +13522,14 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
-[cols="6*^.^"]
-|===
-l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|ONEOP +
-1010110 |SWAP16 +
-11001 |Rs1 |000 |Rd
-|OP-P +
-1110111
-|===
+No encoding, an alias of "PKBT16 Rd, Rs1, Rs1" instruction
 
 *Syntax:*
 
  SWAP16 Rd, Rs1
 
-*Purpose:* Swap the 16-bit halfwords within each word of a register.
+*Purpose:* Swap the 16-bit halfwords within each word of a register. This pseudo instruction is an alias of 
+"PKBT16 Rd, Rs1, Rs1" instruction.
 
 *Description:* This instruction swaps the 16-bit halfwords within each word of Rs1 and writes the result to Rd.
 
@@ -13925,7 +14036,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -14198,7 +14309,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -14234,20 +14345,25 @@ contains the low 32-bit of the result.
 * RV32:
 
  t_L = CONCAT(Rd(4,1),1’b0); t_H = CONCAT(Rd(4,1),1’b1);
- result = R[t_H].R[t_L] + (Rs1 * Rs2);
- if (result > (2^64)-1) {
-   result = (2^64)-1; OV = 1;
+ mul65 = ZE65(Rs1 u* Rs2);
+ top65 = ZE65(R[t_H].R[t_L]);
+ res65 = top65 + mul65;
+ if (res65 > (2^64)-1) {
+   res65 = (2^64)-1;
+   OV = 1;
  }
- R[t_H].R[t_L] = result;
+ R[t_H].R[t_L] = res65.D[0];
 
 * RV64:
 
- // “result” has unlimited precision
- result = Rd + (Rs1.W[0] u* Rs2.W[0]) + (Rs1.W[1] u* Rs2.W[1]);
- if (result > (2^64)-1) {
-   result = (2^64)-1; OV = 1;
+ mula66 = ZE66(Rs1.W[0] u* Rs2.W[0]);
+ mulb66 = ZE66(Rs1.W[1] u* Rs2.W[1]);
+ res66 = ZE66(Rd) + mula66 + mulb66;
+ if (res66 > (2^64)-1) {
+   res66 = (2^64)-1;
+   OV = 1;
  }
- Rd = result;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -14271,7 +14387,7 @@ contains the low 32-bit of the result.
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -14307,20 +14423,25 @@ contains the low 32-bit of the result.
 * RV32:
 
  t_L = CONCAT(Rd(4,1),1’b0); t_H = CONCAT(Rd(4,1),1’b1);
- result = R[t_H].R[t_L] - (Rs1 u* Rs2);
- if (result < 0) {
-   result = 0; OV = 1;
+ mul65 = ZE65(Rs1 u* Rs2);
+ top65 = ZE65(R[t_H].R[t_L]);
+ res65 = top65 - mul65;
+ if (res65 < 0) {
+   res65 = 0;
+   OV = 1;
  }
- R[t_H].R[t_L] = result;
+ R[t_H].R[t_L] = res65.D[0];
 
 * RV64:
 
- // “result” has unlimited precision
- result = Rd - (Rs1.W[0] u* Rs2.W[0]) - (Rs1.W[1] u* Rs2.W[1]);
- if (result < 0) {
-   result = 0; OV = 1;
+ mula66 = ZE66(Rs1.W[0] u* Rs2.W[0]);
+ mulb66 = ZE66(Rs1.W[1] u* Rs2.W[1]);
+ res66 = ZE66(Rd) - mula66 - mulb66;
+ if (res66 < 0) {
+   res66 = 0;
+   OV = 1;
  }
- Rd = result;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -14571,7 +14692,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -14706,13 +14827,15 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- tmp = Rs1.W[0] – Rs2.W[0];
- if (tmp < 0) {
-   tmp[31:0] = 0;
+ aop33 = ZE33(Rs1.W[0]);
+ bop33 = ZE33(Rs2.W[0]);
+ res33 = aop33 – bop33;
+ if (res33 < 0) {
+   res33 = 0;
    OV = 1;
  }
- Rd = tmp[31:0]; // RV32
- Rd = SE(tmp[31:0]); // RV64
+ Rd = res33.W[0];       // RV32
+ Rd = SE64(res33.W[0]); // RV64
 
 *Exceptions:* None
 
@@ -14729,7 +14852,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -15045,7 +15168,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -15113,7 +15236,7 @@ Rd = Rd - (Rs1.W[0] u* Rs2.W[0]) - (Rs1.W[1] u* Rs2.W[1]);
 
 *Type:* SIMD
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -15232,7 +15355,7 @@ x = 0 and 2
 
 *Type:* SIMD
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -15368,7 +15491,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.B[x] = (CONCAT(1'b0,Rs1.B[x]) + CONCAT(1'b0,Rs2.B[x])) >> 1;
+ Rd.B[x] = (CONCAT(1'b0,Rs1.B[x]) + CONCAT(1'b0,Rs2.B[x])) u>> 1;
  for RV32: x=3…0,
  for RV64: x=7…0
 
@@ -15423,7 +15546,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.H[x] = (CONCAT(1'b0,Rs1.H[x]) + CONCAT(1'b0,Rs2.H[x])) >> 1;
+ Rd.H[x] = (CONCAT(1'b0,Rs1.H[x]) + CONCAT(1'b0,Rs2.H[x])) u>> 1;
  for RV32: x=1…0,
  for RV64: x=3…0
 
@@ -15455,7 +15578,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -15496,11 +15619,11 @@ contains the low 32-bit of the result.
  t_L = CONCAT(Rt(4,1),1’b0); t_H = CONCAT(Rt(4,1),1’b1);
  a_L = CONCAT(Ra(4,1),1’b0); a_H = CONCAT(Ra(4,1),1’b1);
  b_L = CONCAT(Rb(4,1),1’b0); b_H = CONCAT(Rb(4,1),1’b1);
- R[t_H].R[t_L] = (CONCAT(1'b0,R[a_H].R[a_L]) + CONCAT(1'b0,R[b_H].R[b_L])) >> 1;
+ R[t_H].R[t_L] = (CONCAT(1'b0,R[a_H].R[a_L]) + CONCAT(1'b0,R[b_H].R[b_L])) u>> 1;
 
 * RV64:
 
- Rd = (CONCAT(1'b0,Rs1) + CONCAT(1'b0,Rs2)) >> 1;
+ Rd = (CONCAT(1'b0,Rs1) + CONCAT(1'b0,Rs2)) u>> 1;
 
 *Exceptions:* None
 
@@ -15542,11 +15665,11 @@ by 1 bit and then sign-extended and written to Rd.
 
 * RV32:
 
-Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) >> 1;
+Rd[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) u>> 1;
 
 * RV64:
 
- resw[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) >> 1;
+ resw[31:0] = (CONCAT(1'b0,Rs1[31:0]) + CONCAT(1'b0,Rs2[31:0])) u>> 1;
  Rd[63:0] = SE(resw[31:0]);
 
 *Exceptions:* None
@@ -15594,8 +15717,8 @@ chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) + CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
- Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) – CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) + CONCAT(1'b0,Rs2.W[x].H[0])) u>> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) – CONCAT(1'b0,Rs2.W[x].H[1])) u>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15649,8 +15772,8 @@ of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) - CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
- Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) + CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) - CONCAT(1'b0,Rs2.W[x].H[0])) u>> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) + CONCAT(1'b0,Rs2.W[x].H[1])) u>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15704,8 +15827,8 @@ element results are first right-shifted by 1 bit and then written to [31:16] of
 
 *Operations:*
 
- Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) + CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
- Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) – CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) + CONCAT(1'b0,Rs2.W[x].H[1])) u>> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) – CONCAT(1'b0,Rs2.W[x].H[0])) u>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15759,8 +15882,8 @@ of 32-bit chunks in Rd and [15:0] of 32-bit chunks in Rd.
 
 *Operations:*
 
- Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) - CONCAT(1'b0,Rs2.W[x].H[1])) >> 1;
- Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) + CONCAT(1'b0,Rs2.W[x].H[0])) >> 1;
+ Rd.W[x].H[1] = (CONCAT(1'b0,Rs1.W[x].H[1]) - CONCAT(1'b0,Rs2.W[x].H[1])) u>> 1;
+ Rd.W[x].H[0] = (CONCAT(1'b0,Rs1.W[x].H[0]) + CONCAT(1'b0,Rs2.W[x].H[0])) u>> 1;
  for RV32, x=0
  for RV64, x=1…0
 
@@ -15811,7 +15934,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.B[x] = (CONCAT(1'b0,Rs1.B[x]) - CONCAT(1'b0,Rs2.B[x])) >> 1;
+ Rd.B[x] = (CONCAT(1'b0,Rs1.B[x]) - CONCAT(1'b0,Rs2.B[x])) u>> 1;
  for RV32: x=3…0,
  for RV64: x=7…0
 
@@ -15867,7 +15990,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.H[x] = (CONCAT(1'b0,Rs1.H[x]) - CONCAT(1'b0,Rs2.H[x])) >> 1;
+ Rd.H[x] = (CONCAT(1'b0,Rs1.H[x]) - CONCAT(1'b0,Rs2.H[x])) u>> 1;
  for RV32: x=1…0,
  for RV64: x=3…0
 
@@ -15900,7 +16023,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Type:* DSP (64-bit Profile)
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -15945,12 +16068,12 @@ first right-shifted by 1 bit and then written to Rd.
  t_L = CONCAT(Rt(4,1),1’b0); t_H = CONCAT(Rt(4,1),1’b1);
  a_L = CONCAT(Ra(4,1),1’b0); a_H = CONCAT(Ra(4,1),1’b1);
  b_L = CONCAT(Rb(4,1),1’b0); b_H = CONCAT(Rb(4,1),1’b1);
- R[t_H].R[t_L] = (CONCAT(1'b0,R[a_H].R[a_L]) - CONCAT(1'b0,R[b_H].R[b_L])) >> 1;
+ R[t_H].R[t_L] = (CONCAT(1'b0,R[a_H].R[a_L]) - CONCAT(1'b0,R[b_H].R[b_L])) u>> 1;
 
 
 * RV64:
 
- Rd = (CONCAT(1'b0,Rs1) - CONCAT(1'b0,Rs2)) >> 1;
+ Rd = (CONCAT(1'b0,Rs1) - CONCAT(1'b0,Rs2)) u>> 1;
 
 *Exceptions:* None
 
@@ -16019,7 +16142,7 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Type:* DSP
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -16080,7 +16203,7 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 
 *Type:* DSP
 
-*Sub-extension:* Zp64
+*Sub-extension:* Zpsfoperand
 
 *Format:*
 
@@ -17433,17 +17556,17 @@ For the “KMSXDA32” instruction, it multiplies the _[.underline]#bottom#_ 32-
 The two 64-bit multiplication results are then subtracted from the content of Rd. If the subtraction result is beyond the Q63 number range (-2^63^ {le} Q63 {le} 2^63^-1), it is saturated to the range and the OV bit is set to 1. The result after saturation is written to Rd. The 32-bit contents are treated as signed integers.
 
 *Operations:*
-
- res = Rd - (Rs1.W[1] * Rs2.W[1]) - (Rs1.W[0] * Rs2.W[0]); // KMSDA32
- res = Rd - (Rs1.W[1] * Rs2.W[0]) - (Rs1.W[0] * Rs2.W[1]); // KMSXDA32
- if (res > (2^63)-1) {
-   res = (2^63)-1;
+ mula64 = Rs1.W[1] s* Rs2.W[1]; mulb64 = Rs1.W[0] s* Rs2.W[0]; // KMSDA32
+ mula64 = Rs1.W[1] s* Rs2.W[0]; mulb64 = Rs1.W[0] s* Rs2.W[1]; // KMSXDA32
+ res66 = Rd - mula64 - mulb64;
+ if (res66 > (2^63)-1) {
+   res66 = (2^63)-1;
    OV = 1;
- } else if (res < -2^63) {
-   res = -2^63;
+ } else if (res66 < -2^63) {
+   res66 = -2^63;
    OV = 1;
  }
- Rd = res;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -19608,7 +19731,7 @@ right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) + CONCAT(1'b0,Rs2.W[x])) >> 1;
+ Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) + CONCAT(1'b0,Rs2.W[x])) u>> 1;
  for RV64: x=1…0
 
 *Exceptions:* None
@@ -19662,8 +19785,8 @@ of Rd for subtraction.
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[0])) >> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[1])) >> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[0])) u>> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[1])) u>> 1;
 
 *Exceptions:* None
 
@@ -19712,8 +19835,8 @@ right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[0])) >> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[1])) >> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[0])) u>> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[1])) u>> 1;
 
 *Exceptions:* None
 
@@ -19762,8 +19885,8 @@ of Rd for subtraction.
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[1])) >> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[0])) >> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[1])) u>> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[0])) u>> 1;
 
 *Exceptions:* None
 
@@ -19812,8 +19935,8 @@ addition.
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[1])) >> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[0])) >> 1;
+ Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[1])) u>> 1;
+ Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[0])) u>> 1;
 
 *Exceptions:* None
 
@@ -19859,7 +19982,7 @@ first right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) - CONCAT(1'b0,Rs2.W[x])) >> 1;
+ Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) - CONCAT(1'b0,Rs2.W[x])) u>> 1;
  for RV64: x=1…0
 
 *Exceptions:* None
@@ -19999,7 +20122,7 @@ l|XLEN-1                                     1 |0
 
 |*10* |kabs8 |kabs16 |kabs32 |sunpkd832 |kabsw | | |zunpkd832
 
-|*11* |swap8 |swap16 | | | | | |
+|*11* |swap8 | | | | | | |
 |===
 
 .Instruction Encoding for funct3[14:12]==0b000 and funct7[31:25]==0b1010111 (oneop2).
