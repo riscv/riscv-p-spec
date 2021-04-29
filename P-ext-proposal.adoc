@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.3-draft-20210325
+Version 0.9.4-draft-20210429
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -10,6 +10,8 @@ Version 0.9.3-draft-20210325
 :xrefstyle: short
 :le: &#8804;
 :rarr: &#8658;
+:imagesdir: images
+:title-logo-image: image:risc-v_logo.png[pdfwidth=3.25in,align=center]
 
 [preface]
 == Revision History
@@ -17,6 +19,11 @@ Version 0.9.3-draft-20210325
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.4 | 2021/04/29 | Chuanhua Chang
+a|
+* Fixed few typos and enhanced precision descriptions on imtermediate results.
+* Fixed/Changed data types for some intrinsic functions.
+* Removed "RV32 Only" for Zpsfoperand.
 | v0.9.3 | 2021/03/25 | Chuanhua Chang
 a|
 * Changed Zp64 name to Zpsfoperand.
@@ -3282,10 +3289,10 @@ There are four 32-bit packing instructions here.
 The P extension instructions will be divided into several Z-extension subsets to
 facilitate the trade-off between implementation complexity and application performance.
 
-=== Zpsfoperand (for RV32 Only)
+=== Zpsfoperand
 
 The instructions in Zpsfoperand extension will read or write 64-bit operands using register-pairs
-in RV32. For RV32P, this is an optional sub-extension. For RV64P, the Zpsfoperand extension is a required extension.
+in RV32P. For RV32P, this is an optional sub-extension. For RV64P, the Zpsfoperand extension is a required extension.
 
 The instructions in Zpsfoperand are listed in the following table.
 
@@ -3302,12 +3309,12 @@ The instructions in Zpsfoperand are listed in the following table.
 |37 |SMULX8 |38 |SMUL16 |39 |SMULX16 |40 |WEXT |41 |WEXTI
 |===
 
-=== Zpn (for RV32 and above)
-The instructions of RV32P not in Zpsfoperand extension will be included in this sub-extension.
-This is a required sub-extension for RV32P extension.
-
 === Zprvsfextra (for RV64 and above)
 The instructions added for RV64 in Chapter 6 are in this Zprvsfextra sub-extension.
+
+=== Zpn
+The instructions of RV32P and RV64P not in Zpsfoperand and Zprvsfextra extensions will be included in this sub-extension.
+This is a required sub-extension for RV32P and RV64P extension.
 
 === Legal Sub-extension Combinations
 The legal combinations of the sub-extensions for RV32P and RV64P are listed in the following table.
@@ -3333,6 +3340,9 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 |PKTT16 |PACKU |RV32
 |PKBB32 |PACK |RV64
 |PKTT32 |PACKU |RV64
+|WEXT   |FSR   |RV32
+|WEXT   |FSRW  |RV64
+|SWAP8  |REV8.H |RV32, RV64
 |===
 
 
@@ -4730,7 +4740,7 @@ OV flag will be set to 1.
 
 *Intrinsic functions:*
 
- intXLEN_t __rv__kabsw(intXLEN_t a);
+ int32_t __rv__kabsw(int32_t a);
 
 <<<
 ===  KADD8 (SIMD 8-bit Signed Saturating Addition)
@@ -5270,40 +5280,40 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
 
 * Required:
 
- intXLEN_t __rv__kdmbb(uint32_t a, uint32_t b);
+ int32_t __rv__kdmbb(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv__v_kdmbb(int16x2_t a, int16x2_t b);
+   int32_t __rv__v_kdmbb(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_kdmbb(int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmbb(int16x4_t a, int16x4_t b);
 
 * *KDMBT*
 
 * Required:
 
- intXLEN_t __rv__kdmbt(uint32_t a, uint32_t b);
+ int32_t __rv__kdmbt(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv__v_kdmbt(int16x2_t a, int16x2_t b);
+   int32_t __rv__v_kdmbt(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_kdmbt(int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmbt(int16x4_t a, int16x4_t b);
 
 * *KDMTT*
 
 * Required:
 
- intXLEN_t __rv__kdmtt(uint32_t a, uint32_t b);
+ int32_t __rv__kdmtt(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv__v_kdmtt(int16x2_t a, int16x2_t b);
+   int32_t __rv__v_kdmtt(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_kdmtt(int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmtt(int16x4_t a, int16x4_t b);
 
 <<<
 === KDMABB, KDMABT, KDMATT
@@ -5357,16 +5367,16 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Multiply the signed Q15 integer contents of two 16-bit data in the
 corresponding portion of the lower 32-bit chunk in registers and then double and
-saturate the Q31 result, add the result with the sign-extended lower 32-bit chunk
-destination register and write the saturated addition result into the destination
+saturate the Q31 result, add the result with the signed lower 32-bit word of the
+destination register and write the signed 32-bit saturated addition result into the destination
 register. If saturation happens, an overflow flag OV will be set.
 
 *Description:* Multiply the top or bottom 16-bit Q15 content of the lower 32-bit
 portion in Rs1 with the top or bottom 16-bit Q15 content of the lower 32-bit
 portion in Rs2. The Q30 result is then doubled and saturated into a Q31 value.
-The Q31 value is then added with the content of Rd. If the addition result is
+The Q31 value is then added with the signed lower 32-bit word of Rd. If the addition result is
 beyond the Q31 number range (-2^31^ {le} Q31 {le} 2^31^-1), it is saturated to the
-range and the OV flag is set to 1. The result after saturation is written to Rd.
+range and the OV flag is set to 1. The result after saturation is sign-extended (for RV64) and written to Rd.
 
 When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 flag OV will be set.
@@ -5376,10 +5386,10 @@ flag OV will be set.
  aop = Rs1.H[0]; bop = Rs2.H[0]; // KDMABB
  aop = Rs1.H[0]; bop = Rs2.H[1]; // KDMABT
  aop = Rs1.H[1]; bop = Rs2.H[1]; // KDMATT
-
+ 
  If ((0x8000 != aop) || (0x8000 != bop)) {
-   Mresult = aop s* bop;
-   resQ31 = Mresult << 1;
+   MresQ30 = aop s* bop;
+   resQ31 = MresQ30 << 1;
  } else {
    resQ31 = 0x7FFFFFFF;
    OV = 1;
@@ -5412,41 +5422,41 @@ flag OV will be set.
 
 * Required:
 
- intXLEN_t __rv__kdmabb(intXLEN_t t, uint32_t a, uint32_t b);
+ int32_t __rv__kdmabb(int32_t t, uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv__v_kdmabb(intXLEN_t t, int16x2_t a, int16x2_t b);
+   int32_t __rv__v_kdmabb(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_kdmabb(intXLEN_t t, int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmabb(int32_t t, int16x2_t a, int16x2_t b);
 
 
 * *KDMABT*
 
 * Required:
 
- intXLEN_t __rv__kdmabt(intXLEN_t t, uint32_t a, uint32_t b);
+ int32_t __rv__kdmabt(int32_t t, uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv__v_kdmabt(intXLEN_t t, int16x2_t a, int16x2_t b);
+   int32_t __rv__v_kdmabt(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_kdmabt(intXLEN_t t, int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmabt(int32_t t, int16x2_t a, int16x2_t b);
 
 * *KDMATT*
 
 * Required:
 
- intXLEN_t __rv__kdmatt(intXLEN_t t, uint32_t a, uint32_t b);
+ int32_t __rv__kdmatt(int32_t t, uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv__v_kdmatt(intXLEN_t t, int16x2_t a, int16x2_t b);
+   int32_t __rv__v_kdmatt(int32_t t, int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_kdmatt(intXLEN_t t, int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmatt(int32_t t, int16x2_t a, int16x2_t b);
 
 <<<
 === KHM8, KHMX8
@@ -7442,8 +7452,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  } else if (res < -2^31) {
    res = 0x80000000; OV = 1;
  }
- Rd[31:0] = res[31:0]; // RV32
- Rd[63:0] = SE(res[31:0]); // RV64
+ Rd = res.W[0]; // RV32
+ Rd = SE64(res.W[0]); // RV64
 
 *Exceptions:* None
 
@@ -7453,7 +7463,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv__ksllw(intXLEN_t a, uint32_t b);
+ int32_t __rv__ksllw(int32_t a, uint32_t b);
 
 <<<
 ===  KSLLIW (Saturating Shift Left Logical Immediate for Word)
@@ -7499,7 +7509,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
-intXLEN_t __rv__ksllw(intXLEN_t a, uint32_t b);
+ int32_t __rv__ksllw(int32_t a, uint32_t b);
 
 <<<
 === KSLL8 (SIMD 8-bit Saturating Shift Left Logical)
@@ -8600,11 +8610,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Privilege level:* All
 
-*Note:*
+*Note:* This instruction can be easily generated by a compiler without using the intrinsic function.
 
 *Intrinsic functions:*
 
- int32_t __rv__maddr32(int32_t a, int32_t b);
+ int32_t __rv__maddr32(int32_t t, int32_t a, int32_t b);
 
 
 <<<
@@ -8732,11 +8742,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Privilege level:* All
 
-*Note:*
+*Note:* This instruction can be easily generated by a compiler without using the intrinsic function.
 
 *Intrinsic functions:*
 
- int32_t __rv__msubr32(int32_t a, int32_t b);
+ int32_t __rv__msubr32(int32_t t, int32_t a, int32_t b);
 
 <<<
 === MULR64 (Multiply Word Unsigned to 64-bit Data)
@@ -8797,7 +8807,7 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as unsigned integers.
 
 *Privilege level:* All
 
-*Note:*
+*Note:* This instruction can be easily generated by a compiler without using the intrinsic function.
 
 *Intrinsic functions:*
 
@@ -8863,7 +8873,7 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as signed integers.
 
 *Privilege level:* All
 
-*Note:*
+*Note:* This instruction can be easily generated by a compiler without using the intrinsic function.
 
 *Intrinsic functions:*
 
@@ -13492,9 +13502,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.H[x] = CONCAT(Rs1.H[x][7:0],Rs1.H[x][15:8]);
- for RV32: x=1…0,
- for RV64: x=3…0
+ Rd.H[x] = CONCAT(Rs1.H[x].B[0],Rs1.H[x].B[1]);
+ for RV32: x=1..0,
+ for RV64: x=3..0
 
 *Exceptions:* None
 
@@ -18983,7 +18993,7 @@ and written to Rd.
 
 *Intrinsic functions:*
 
- intXLEN_t __rv__sraw_u(intXLEN_t a, uint32_t b);
+ int32_t __rv__sraw_u(int32_t a, uint32_t b);
 
 <<<
 === SRL32, SRL32.u
