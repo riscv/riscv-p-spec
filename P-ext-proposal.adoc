@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.4-draft-20210429
+Version 0.9.5-draft-20210617
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -19,6 +19,9 @@ Version 0.9.4-draft-20210429
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.5 | 2021/06/17 | Chuanhua Chang
+a|
+* Synced RV32 paired register scheme with Zdinx.
 | v0.9.4 | 2021/04/29 | Chuanhua Chang
 a|
 * Fixed few typos and enhanced precision descriptions on imtermediate results.
@@ -2663,23 +2666,23 @@ rt = RUND(ra s>> imm6u);
 RV32:
 msb = rb[4:0];
 rev[0:msb] = ra[msb:0];
-rt = ZE(rev[msb:0]);
+rt = ZE32(rev[msb:0]);
 
 RV64:
 msb = rb[5:0];
 rev[0:msb] = ra[msb:0];
-rt = ZE(rev[msb:0]);
+rt = ZE64(rev[msb:0]);
 
 |5 |BITREVI rt, ra, imm5u |Bit Reverse Immediate l|
 RV32:
 msb = imm5u;
 rev[0:msb] = ra[msb:0];
-rt = ZE(rev[msb:0]);
+rt = ZE32(rev[msb:0]);
 
 RV64:
 msb = imm6u;
 rev[0:msb] = ra[msb:0];
-rt = ZE(rev[msb:0]);
+rt = ZE64(rev[msb:0]);
 
 |6 |WEXT rt, ra, rb |Extract 32-bit from a 64-bit value l|
 RV32:
@@ -3351,13 +3354,22 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 The sections in this chapter describe the detailed operations of the P extension
 instructions for both RV32 and RV64 in alphabetical order.
 
-Some RV32 instructions reading or writing paired 32-bit registers and the pairing is
-constrained to a pair of { Rn, Rn+1 } registers with “n” being an even number. Based
-on this constraint, since R0 is X0, i.e., 0, a constant, the pair of { R0, R1 } cannot
-be used in these instructions. Also, although the instruction encodings of these
-instructions allow a software developer to specify the pair number of an operand
-using either an even or an odd number of register index, an assembler or instruction geneator
-may choose to block the use of an odd number as a register index for the paired-register operand.
+*Processing of 64-bit Values in RV32*
+
+Some RV32 instructions reading or writing 64-bit operands with paired 32-bit registers and the pairing is
+constrained to a pair of aligned { Rn, Rn+1 } registers with “n” being an even number. Use of misaligned 
+(odd-numbered) registers for 64-bit operands is _reserved_.
+
+Regardless of endianness, the lower-numbered register holds the low-order bits, and the higher-
+numbered register holds the high-order bits: e.g., bits 31:0 of a 64-bit operand
+might be held in register x14, with bits 63:32 of that operand held in x15.
+
+When a 64-bit result is written to x0, the entire write takes no effect: i.e.,
+writing a 64-bit result to x0 does not cause x1 to be written.
+
+When x0 is used as a 64-bit operand, the entire operand is zero—i.e., x1 is
+not accessed.
+
 
 *Intrinsic Function Data Type Definition:*
 
@@ -3513,11 +3525,6 @@ pair of registers specified by Rd(4,1).
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers.
 Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction has the same behavior as the ADD instruction in RV64I.
 
@@ -3612,10 +3619,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- msb = Rs2[4:0]; (for RV32)
- msb = Rs2[5:0]; (for RV64)
+ msb = Rs2[4:0]; // RV32
+ msb = Rs2[5:0]; // RV64
  rev[0:msb] = Rs1[msb:0];
- Rd = ZE(rev[msb:0]);
+ Rd = ZE32(rev[msb:0]);   // RV32
+ Rd = ZE64(rev[msb:0]);   // RV64
 
 *Exceptions:* None
 
@@ -3658,10 +3666,11 @@ operation, the result is written to Rd.
 
 *Operations:*
 
- msb = imm[4:0]; (RV32)
- msb = imm[5:0]; (RV64)
+ msb = imm[4:0]; // RV32
+ msb = imm[5:0]; // RV64
  rev[0:msb] = Rs1[msb:0];
- Rd = ZE(rev[msb:0]);
+ Rd = ZE32(rev[msb:0]);   // RV32
+ Rd = ZE64(rev[msb:0]);   // RV64
 
 *Exceptions:* None
 
@@ -4896,11 +4905,6 @@ specified by Rd(4,1).
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers.
 Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction adds the 64-bit signed integer in Rs1 with
 the 64-bit signed integer in Rs2. If the result is beyond the Q63 number range
@@ -6268,11 +6272,6 @@ written back to the even/odd pair of registers specified by Rd(4,1).
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers.
 Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit signed elements of Rs1
 with that of Rs2. It adds the 64-bit multiplication results to the 64-bit signed
@@ -7364,11 +7363,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit signed elements of Rs1 with that of Rs2. It subtracts the 64-bit multiplication results from the 64-bit signed data in Rd with unlimited precision. If the 64-bit subtraction result is beyond the Q63 number range (-2^63^ {le} Q63 {le} 2^63^-1), it is saturated to the range and the OV bit is set to 1. The saturated result is written back to Rd.
 
@@ -8340,11 +8334,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction subtracts the 64-bit signed integer of Rs2 from the 64-bit signed integer of Rs1. If the 64-bit result is beyond the Q63 number range (-2^63^ {le} Q63 {le} 2^63^-1), it is saturated to the range and the OV bit is set to 1. The saturated result is then written to Rd.
 
@@ -8781,11 +8770,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 This instruction multiplies the 32-bit content of Rs1 with that of Rs2 and writes the 64-bit multiplication result to an even/odd pair of registers containing Rd. Rd(4,1) index _d_ determines the even/odd pair group of the two registers. Specifically, the register pair includes register _2d_ and _2d+1_.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 The lower 32-bit contents of Rs1 and Rs2 are treated as unsigned integers.
 
@@ -8847,11 +8831,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 This instruction multiplies the lower 32-bit content of Rs1 with the lower 32-bit content of Rs2 and writes the 64-bit multiplication result to an even/odd pair of registers containing Rd. Rd(4,1) index _d_ determines the even/odd pair group of the two registers. Specifically, the register pair includes register _2d_ and _2d+1_.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 The lower 32-bit contents of Rs1 and Rs2 are treated as signed integers.
 
@@ -9245,11 +9224,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction adds the 64-bit signed integer in Rs1 with the 64-bit signed integer in Rs2. The 64-bit addition result is first arithmetically right-shifted by 1 bit and then written to Rd.
 
@@ -9683,11 +9657,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction subtracts the 64-bit signed integer in Rs2 from the 64-bit signed integer in Rs1. The 64-bit subtraction result is first arithmetically right-shifted by 1 bit and then written to Rd.
 
@@ -10354,11 +10323,6 @@ This instruction multiplies the bottom 16-bit content of the lower 32-bit of Rs2
 
 Rx(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:*
 
@@ -10472,11 +10436,6 @@ The multiplication result is added with the 64-bit value of an even/odd pair of 
 
 Rd(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:*
 
@@ -10618,11 +10577,6 @@ The result is added to the 64-bit value of an even/odd pair of registers specifi
 
 Rd(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:*
 
@@ -10770,11 +10724,6 @@ The subtraction result is then added to the 64-bit value of an even/odd pair of 
 
 Rd(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:*
 
@@ -10888,11 +10837,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit signed elements of Rs1 with that of Rs2. It adds the 64-bit multiplication results to the 64-bit signed data of Rd. The addition result is written back to Rd.
 
@@ -11811,11 +11755,6 @@ The two multiplication results are subtracted from the 64-bit value of an even/o
 
 Rd(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:*
 
@@ -11918,11 +11857,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit signed elements of Rs1 with that of Rs2. It subtracts the 64-bit multiplication results from the 64-bit signed data of Rd. The subtraction result is written back to Rd.
 
@@ -13306,11 +13240,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction subtracts the 64-bit integer of Rs2 from the 64-bit integer of Rs1, and then writes the 64-bit result to Rd.
 
@@ -13381,11 +13310,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  SUNPKD8xy Rd, Rs1
  xy = {10, 20, 30, 31, 32}
 
-*Purpose:* Unpack byte _*[.underline]#x#*_ and byte _*[.underline]#y#*_ of 32-bit chunks in a register into two 16-bit signed halfwords of 32-bit chunks in a register.
+*Purpose:* Unpack byte _x_ and byte _y_ of 32-bit chunks in a register into two 16-bit signed halfwords of 32-bit chunks in a register.
 
 *Description:*
 
-For the “SUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.underline]#x#*_ and byte _*[.underline]#y#*_ of 32-bit chunks in Rs1 into two 16-bit signed halfwords and writes the results to the top part and the bottom part of 32-bit chunks in Rd.
+For the “SUNPKD8(__x__)(__y__)” instruction, it unpacks byte _x_ and byte _y_ of 32-bit chunks in Rs1 into two 16-bit signed 
+halfwords and writes the results to the top part and the bottom part of 32-bit chunks in Rd.
 
 *Operations:*
 
@@ -14067,11 +13997,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction adds the 64-bit unsigned integer in Rs1 with the 64-bit unsigned integer in Rs2. If the 64-bit result is beyond the U64 number range (0 {le} U64 {le} 2^64^-1), it is saturated to the range and the OV bit is set to 1. The saturated result is written to Rd.
 
@@ -14341,11 +14266,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit unsigned elements of Rs1 with that of Rs2. It adds the 64-bit multiplication results to the 64-bit unsigned data in Rd with unlimited precision. If the 64-bit addition result is beyond the U64 number range (0 {le} U64 {le} 2^64^-1), it is saturated to the range and the OV bit is set to 1. The saturated result is written back to Rd.
 
@@ -14419,11 +14339,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit unsigned elements of Rs1 with that of Rs2. It subtracts the 64-bit multiplication results from the 64-bit unsigned data of Rd with unlimited precision. If the 64-bit subtraction result is beyond the U64 number range (0 {le} U64 {le} 2^64^-1), it is saturated to the range and the OV bit is set to 1. The saturated result is written back to Rd.
 
@@ -14724,11 +14639,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction subtracts the 64-bit unsigned integer of Rs2 from the 64-bit unsigned integer of an even/odd pair of Rs1. If the 64-bit result is beyond the U64 number range (0 {le} U64 {le} 2^64^-1), it is saturated to the range and the OV bit is set to 1. The saturated result is then written to Rd.
 
@@ -14885,11 +14795,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit unsigned elements of Rs1 with that of Rs2. It adds the 64-bit multiplication results to the 64-bit unsigned data of Rd. The addition result is written back to Rd.
 
@@ -15201,11 +15106,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction multiplies the 32-bit unsigned elements of Rs1 with that of Rs2. It subtracts the 64-bit multiplication results from the 64-bit unsigned data of Rd. The subtraction result is written back to Rd.
 
@@ -15614,11 +15514,6 @@ right-shifted by 1 bit and then written to an even/odd pair of registers specifi
 
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction adds the 64-bit unsigned integer in Rs1 with the 64-bit unsigned integer Rs2. The 64-bit addition result is first logically right-shifted by 1 bit and then written to Rd.
 
@@ -16057,11 +15952,6 @@ registers specified by Rd(4,1).
 R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers.
 Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-How the register pair contains the 64-bit value depends on the current data endian represented in `mstatus.MBE/SBE/UBE`. When the
-data endian is __big__, the even “2__d__” register of the pair contains the high 32-bit of the value and the odd “2__d__+1”
-register of the pair contains the low 32-bit of the result. In contrast, when the data endian is __little__,
-the odd register of the pair contains the high 32-bit of the result and the even register of the pair
-contains the low 32-bit of the result.
 
 *RV64 Description:* This instruction subtracts the 64-bit unsigned integer in
 Rs2 from the 64-bit unsigned integer in Rs1. The 65-bit subtraction result is
@@ -16299,11 +16189,11 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  ZUNPKD8xy Rd, Rs1
  xy = {10, 20, 30, 31, 32}
 
-*Purpose:* Unpack byte *[.underline]#x#* and byte *[.underline]#y#* of 32-bit chunks in a register into two 16-bit unsigned halfwords of 32-bit chunks in a register.
+*Purpose:* Unpack byte _x_ and byte _y_ of 32-bit chunks in a register into two 16-bit unsigned halfwords of 32-bit chunks in a register.
 
 *Description:*
 
-For the “ZUNPKD8([.underline]#x)(_*y*_)#” instruction, it unpacks byte _*[.underline]#x#*_ and byte _*[.underline]#y#*_ of 32-bit chunks in Rs1 into two 16-bit unsigned halfwords and writes the results to the top part and the bottom part of 32-bit chunks in Rd.
+For the “ZUNPKD8(__x__)(__y__)” instruction, it unpacks byte _x_ and byte _y_ of 32-bit chunks in Rs1 into two 16-bit unsigned halfwords and writes the results to the top part and the bottom part of 32-bit chunks in Rd.
 
 *Operations:*
 
@@ -20105,7 +19995,7 @@ l|XLEN-1                                     1 |0
 
 |*1101* | | | | | | | |wexti
 
-|*1110* |ave | |sclip32 |bitrev |bitrevi | | |
+|*1110* |ave | |sclip32 |bitrev |bitrevi |bitrevi | |
 
 |*1111* |minw |maxw |uclip32 | | | |pbsad |pbsada
 |===
