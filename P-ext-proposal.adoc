@@ -1,5 +1,6 @@
 = RISC-V "P" Extension Proposal
 Version 0.9.5-draft-20210617
+This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
 :lang: en
@@ -5649,7 +5650,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 [cols="6*^.^"]
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|KHM16 +
+|KHMX16 +
 1001011 |Rs2 |Rs1 |000 |Rd
 |OP-P +
 1110111
@@ -6923,7 +6924,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KMMAWT2.u +
-1110111 |Rs2 |Rs1 |001 |Rd
+1111111 |Rs2 |Rs1 |001 |Rd
 |OP-P +
 1110111
 |===
@@ -8982,7 +8983,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |PBSADA +
-1110111 |Rs2 |Rs1 |000 |Rd
+1111111 |Rs2 |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
