@@ -16686,15 +16686,15 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res[x] = Rs1.W[x] + Rs2.W[x];
- if (res[x] > (2^31)-1) {
-   res[x] = (2^31)-1;
+ res33[x] = SE33(Rs1.W[x]) + SE33(Rs2.W[x]);
+ if (res33[x] > (2^31)-1) {
+   res33[x] = (2^31)-1;
    OV = 1;
- } else if (res[x] < -2^31) {
-   res[x] = -2^31;
+ } else if (res33[x] < -2^31) {
+   res33[x] = -2^31;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res33[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -16739,8 +16739,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res[1] = Rs1.W[1] + Rs2.W[0];
- res[0] = Rs1.W[0] – Rs2.W[1];
+ res[1] = SE33(Rs1.W[1]) + SE33(Rs2.W[0]);
+ res[0] = SE33(Rs1.W[0]) – SE33(Rs2.W[1]);
  if (res[x] > (2^31)-1) {
    res[x] = (2^31)-1;
    OV = 1;
@@ -16748,8 +16748,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res[x] = -2^31;
    OV = 1;
  }
- Rd.W[1] = res[1];
- Rd.W[0] = res[0];
+ Rd.W[1] = res[1].W[0];
+ Rd.W[0] = res[0].W[0];
  for RV64, x=1..0
 
 *Exceptions:* None
@@ -16796,8 +16796,8 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 
 *Operations:*
 
- res[1] = Rs1.W[1] - Rs2.W[0];
- res[0] = Rs1.W[0] + Rs2.W[1];
+ res[1] = SE33(Rs1.W[1]) - SE33(Rs2.W[0]);
+ res[0] = SE33(Rs1.W[0]) + SE33(Rs2.W[1]);
  if (res[x] > (2^31)-1) {
    res[x] = (2^31)-1;
    OV = 1;
@@ -16805,8 +16805,8 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
    res[x] = -2^31;
    OV = 1;
  }
- Rd.W[1] = res[1];
- Rd.W[0] = res[0];
+ Rd.W[1] = res[1].W[0];
+ Rd.W[0] = res[0].W[0];
  for RV64, x=1..0
 
 *Exceptions:* None
@@ -16838,6 +16838,7 @@ This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 
 
 *Format:*
 
+[.text-center]
 *KDMBB16*
 
 [cols="6*^.^"]
@@ -16849,6 +16850,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KDMBT16*
 
 [cols="6*^.^"]
@@ -16860,6 +16862,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KDMTT16*
 
 [cols="6*^.^"]
@@ -16886,8 +16889,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  // KDMTT16: (x,y,z)=(1,1,0),(3,3,1)
  aop[z] = Rs1.H[x]; bop[z] = Rs2.H[y];
  If ((0x8000 != aop[z]) || (0x8000 != bop[z])) {
-   Mresult[z] = aop[z] * bop[z];
-   resQ31[z] = Mresult[z] << 1;
+   Mres32[z] = aop[z] * bop[z];
+   shifted33[z] = SE33(Mres32[z]) << 1;
+   resQ31[z] =  shifted33[z].W[0];
  } else {
    resQ31[z] = 0x7FFFFFFF;
    OV = 1;
@@ -16945,6 +16949,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *KDMABB16*
 
 [cols="6*^.^"]
@@ -16956,6 +16961,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KDMABT16*
 
 [cols="6*^.^"]
@@ -16967,6 +16973,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KDMATT16*
 
 [cols="6*^.^"]
@@ -16995,13 +17002,14 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
  // KDMATT16: (x,y,z)=(1,1,0),(3,3,1)
  aop[z] = Rs1.H[x]; bop[z] = Rs2.H[y];
  If ((0x8000 != aop[z]) || (0x8000 != bop[z])) {
-   Mresult[z] = aop[z] * bop[z];
-   resQ31[z] = Mresult[z] << 1;
+   Mres32[z] = aop[z] * bop[z];
+   shifted33[z] = SE33(Mres32[z]) << 1;
+   resQ31[z] = shifted33[z].W[0];
  } else {
    resQ31[z] = 0x7FFFFFFF;
    OV = 1;
  }
- resadd[z] = Rd.W[z] + resQ31[z];
+ resadd[z] = SE33(Rd.W[z]) + SE33(resQ31[z]);
  if (resadd[z] > (2^31)-1) {
    resadd[z] = (2^31)-1;
    OV = 1;
@@ -17009,7 +17017,7 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
    resadd[z] = -2^31;
    OV = 1;
  }
- Rd.W[z] = resadd[z];
+ Rd.W[z] = resadd[z].W[0];
 
 *Exceptions:* None
 
@@ -17062,6 +17070,7 @@ When both the two Q15 inputs are 0x8000, saturation will happen and the overflow
 
 *Format:*
 
+[.text-center]
 *KHMBB16*
 
 [cols="6*^.^"]
@@ -17073,6 +17082,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KHMBT16*
 
 [cols="6*^.^"]
@@ -17084,6 +17094,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KHMTT16*
 
 [cols="6*^.^"]
@@ -17169,6 +17180,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *KMABB32*
 
 [cols="6*^.^"]
@@ -17180,6 +17192,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KMABT32*
 
 [cols="6*^.^"]
@@ -17191,6 +17204,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KMATT32*
 
 [cols="6*^.^"]
@@ -17287,10 +17301,12 @@ The multiplication result is added to the content of 64-bit data in Rd. If the a
 
 *Format:*
 
+[.text-center]
 *KMADA32*
 
 No encoding, an alias of “KMAR64” instruction
 
+[.text-center]
 *KMAXDA32*
 
 [cols="6*^.^"]
@@ -17326,16 +17342,16 @@ The result is added to the content of 64-bit data in Rd. If the addition result 
 
 *Operations:*
 
- res = Rd + (Rs1.W[1] * Rs2.w[1]) + (Rs1.W[0] * Rs2.W[0]); // KMADA32
- res = Rd + (Rs1.W[1] * Rs2.W[0]) + (Rs1.W[0] * Rs2.W[1]); // KMAXDA32
- if (res > (2^63)-1) {
-   res = (2^63)-1;
+ res66 = SE66(Rd) + SE66(Rs1.W[1] * Rs2.w[1]) + SE66(Rs1.W[0] * Rs2.W[0]); // KMADA32
+ res66 = SE66(Rd) + SE66(Rs1.W[1] * Rs2.W[0]) + SE66(Rs1.W[0] * Rs2.W[1]); // KMAXDA32
+ if (res66 > (2^63)-1) {
+   res66 = (2^63)-1;
    OV = 1;
- } else if (res < -2^63) {
-   res = -2^63;
+ } else if (res66 < -2^63) {
+   res66 = -2^63;
    OV = 1;
  }
- Rd = res;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -17376,6 +17392,7 @@ The result is added to the content of 64-bit data in Rd. If the addition result 
 
 *Format:*
 
+[.text-center]
 *KMDA32*
 
 [cols="6*^.^"]
@@ -17387,6 +17404,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KMXDA32*
 
 [cols="6*^.^"]
@@ -17469,6 +17487,7 @@ The addition result is checked for saturation. If saturation happens, the result
 
 *Format:*
 
+[.text-center]
 *KMADS32*
 
 [cols="6*^.^"]
@@ -17480,6 +17499,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KMADRS32*
 
 [cols="6*^.^"]
@@ -17491,6 +17511,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KMAXDS32*
 
 [cols="6*^.^"]
@@ -17526,17 +17547,17 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 
 *Operations:*
 
- res = Rd + (Rs1.W[1] * Rs2.W[1]) - (Rs1.W[0] * Rs2.W[0]); // KMADS32
- res = Rd + (Rs1.W[0] * Rs2.W[0]) - (Rs1.W[1] * Rs2.W[1]); // KMADRS32
- res = Rd + (Rs1.W[1] * Rs2.W[0]) - (Rs1.W[0] * Rs2.W[1]); // KMAXDS32
- if (res > (2^63)-1) {
-   res = (2^63)-1;
+ res66 = SE66(Rd) + SE66(Rs1.W[1] * Rs2.W[1]) - SE66(Rs1.W[0] * Rs2.W[0]); // KMADS32
+ res66 = SE66(Rd) + SE66(Rs1.W[0] * Rs2.W[0]) - SE66(Rs1.W[1] * Rs2.W[1]); // KMADRS32
+ res66 = SE66(Rd) + SE66(Rs1.W[1] * Rs2.W[0]) - SE66(Rs1.W[0] * Rs2.W[1]); // KMAXDS32
+ if (res66 > (2^63)-1) {
+   res66 = (2^63)-1;
    OV = 1;
- } else if (res < -2^63) {
-   res = -2^63;
+ } else if (res66 < -2^63) {
+   res66 = -2^63;
    OV = 1;
  }
- Rd = res;
+ Rd = res66.D[0];
 
 *Exceptions:* None
 
@@ -17587,6 +17608,7 @@ The subtraction result is then added to the content of 64-bit data in Rd. If the
 
 *Format:*
 
+[.text-center]
 *KMSDA32*
 
 [cols="6*^.^"]
@@ -17598,6 +17620,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KMSXDA32*
 
 [cols="6*^.^"]
@@ -17631,7 +17654,7 @@ The two 64-bit multiplication results are then subtracted from the content of Rd
 
  mula64 = Rs1.W[1] s* Rs2.W[1]; mulb64 = Rs1.W[0] s* Rs2.W[0]; // KMSDA32
  mula64 = Rs1.W[1] s* Rs2.W[0]; mulb64 = Rs1.W[0] s* Rs2.W[1]; // KMSXDA32
- res66 = Rd - mula64 - mulb64;
+ res66 = SE66(Rd) - SE66(mula64) - SE66(mulb64);
  if (res66 > (2^63)-1) {
    res66 = (2^63)-1;
    OV = 1;
@@ -17703,7 +17726,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    } else if (res < -2^31) {
      res = 0x80000000; OV = 1;
    }
-   Rd.W[x] = res[31:0];
+   Rd.W[x] = res.W[0];
  } else {
    Rd = Rs1;
  }
@@ -17759,7 +17782,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    } else if (res < -2^31) {
      res = 0x80000000; OV = 1;
    }
-   Rd.W[x] = res[31:0];
+   Rd.W[x] = res.W[0];
  } else {
    Rd = Rs1;
  }
@@ -17792,6 +17815,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *KSLRA32*
 
 [cols="6*^.^"]
@@ -17803,6 +17827,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *KSLRA32.u*
 
 [cols="6*^.^"]
@@ -17844,7 +17869,7 @@ The left-shifted results are saturated to the 32-bit signed integer range of [-2
    } else if (res < -2^31) {
      res[31:0] = 0x80000000; OV = 1;
    }
-   Rd.W[x] = res[31:0];
+   Rd.W[x] = res.W[0];
  }
  for RV64: x=1..0
 
@@ -17902,17 +17927,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res[1] = Rs1.W[1] + Rs2.W[1];
- res[0] = Rs1.W[0] – Rs2.W[0];
+ res[1] = SE33(Rs1.W[1]) + SE33(Rs2.W[1]);
+ res[0] = SE33(Rs1.W[0]) – SE33(Rs2.W[0]);
  if (res[x] > (2^31)-1) {
    res[x] = (2^31)-1;
    OV = 1;
- } else if (res < -2^31) {
+ } else if (res[x] < -2^31) {
    res[x] = -2^31;
    OV = 1;
  }
- Rd.W[1] = res[1];
- Rd.W[0] = res[0];
+ Rd.W[1] = res[1].W[0];
+ Rd.W[0] = res[0].W[0];
  for RV64, x=1..0
 
 *Exceptions:* None
@@ -17959,17 +17984,17 @@ This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the
 
 *Operations:*
 
- res[1] = Rs1.W[1] - Rs2.W[1];
- res[0] = Rs1.W[0] + Rs2.W[0];
+ res[1] = SE33(Rs1.W[1]) - SE33(Rs2.W[1]);
+ res[0] = SE33(Rs1.W[0]) + SE33(Rs2.W[0]);
  if (res[x] > (2^31)-1) {
    res[x] = (2^31)-1;
    OV = 1;
- } else if (res < -2^31) {
+ } else if (res[x] < -2^31) {
    res[x] = -2^31;
    OV = 1;
  }
- Rd.W[1] = res[1];
- Rd.W[0] = res[0];
+ Rd.W[1] = res[1].W[0];
+ Rd.W[0] = res[0].W[0];
  for RV64, x=1..0
 
 *Exceptions:* None
@@ -18014,7 +18039,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res[x] = Rs1.W[x] - Rs2.W[x];
+ res[x] = SE33(Rs1.W[x]) - SE33(Rs2.W[x]);
  if (res[x] > (2^31)-1) {
    res[x] = (2^31)-1;
    OV = 1;
@@ -18022,7 +18047,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res[x] = -2^31;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -18179,7 +18204,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x] = (Rs1.W[x] + Rs2.W[x]) s>> 1;
+ res33[x] = (SE33(Rs1.W[x]) + SE33(Rs2.W[x])) s>> 1;
+ Rd.W[x] = res33[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -18228,8 +18254,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] + Rs2.W[0]) s>> 1;
- Rd.W[0] = (Rs1.W[0] – Rs2.W[1]) s>> 1;
+ res_add33 = (SE33(Rs1.W[1]) + SE33(Rs2.W[0])) s>> 1;
+ res_sub33 = (SE33(Rs1.W[0]) – SE33(Rs2.W[1])) s>> 1;
+ Rd.W[1] = res_add33.W[0];
+ Rd.W[0] = res_sub33.W[0];
 
 *Exceptions:* None
 
@@ -18273,8 +18301,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] - Rs2.W[0]) s>> 1;
- Rd.W[0] = (Rs1.W[0] + Rs2.W[1]) s>> 1;
+ res_sub33 = (SE33(Rs1.W[1]) - SE33(Rs2.W[0])) s>> 1;
+ res_add33 = (SE33(Rs1.W[0]) + SE33(Rs2.W[1])) s>> 1;
+ Rd.W[1] = res_sub33.W[0];
+ Rd.W[0] = res_add33.W[0];
 
 *Exceptions:* None
 
@@ -18318,8 +18348,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] + Rs2.W[1]) s>> 1;
- Rd.W[0] = (Rs1.W[0] – Rs2.W[0]) s>> 1;
+ res_add33 = (SE33(Rs1.W[1]) + SE33(Rs2.W[1])) s>> 1;
+ res_sub33 = (SE33(Rs1.W[0]) - SE33(Rs2.W[0])) s>> 1;
+ Rd.W[1] = res_add33.W[0];
+ Rd.W[0] = res_sub33.W[0];
 
 *Exceptions:* None
 
@@ -18363,8 +18395,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[1] = (Rs1.W[1] - Rs2.W[1]) s>> 1;
- Rd.W[0] = (Rs1.W[0] + Rs2.W[0]) s>> 1;
+ res_sub33 = (SE33(Rs1.W[1]) - SE33(Rs2.W[1])) s>> 1;
+ res_add33 = (SE33(Rs1.W[0]) + SE33(Rs2.W[0])) s>> 1;
+ Rd.W[1] = res_sub33.W[0];
+ Rd.W[0] = res_add33.W[0];
 
 *Exceptions:* None
 
@@ -18408,7 +18442,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.W[x] = (Rs1.W[x] - Rs2.W[x]) s>> 1;
+ res33[x] = (SE33(Rs1.W[x]) - SE33(Rs2.W[x])) s>> 1;
+ Rd.W[x] = res33[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -18583,10 +18618,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *SMBB32*
 
 No encoding, an alias of “MULSR64” instruction
 
+[.text-center]
 *SMBT32*
 
 [cols="6*^.^"]
@@ -18598,6 +18635,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SMTT32*
 
 [cols="6*^.^"]
@@ -18691,6 +18729,7 @@ Rd = res;
 
 *Format:*
 
+[.text-center]
 *SMDS32*
 
 [cols="6*^.^"]
@@ -18702,6 +18741,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SMDRS32*
 
 [cols="6*^.^"]
@@ -18713,6 +18753,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SMXDS32*
 
 [cols="6*^.^"]
@@ -18848,6 +18889,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *SRA32*
 
 [cols="6*^.^"]
@@ -18859,6 +18901,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SRA32.u*
 
 [cols="6*^.^"]
@@ -18933,6 +18976,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *SRAI32*
 
 [cols="6*^.^"]
@@ -18944,6 +18988,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SRAI32.u*
 
 [cols="6*^.^"]
@@ -19069,6 +19114,7 @@ and written to Rd.
 
 *Format:*
 
+[.text-center]
 *SRL32*
 
 [cols="6*^.^"]
@@ -19080,6 +19126,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SRL32.u*
 
 [cols="6*^.^"]
@@ -19154,6 +19201,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
+[.text-center]
 *SRLI32*
 
 [cols="6*^.^"]
@@ -19165,6 +19213,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
+[.text-center]
 *SRLI32.u*
 
 [cols="6*^.^"]
@@ -19394,12 +19443,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res[x] = Rs1.W[x] + Rs2.W[x];
- if (res[x] > (2^32)-1) {
-   res[x] = (2^32)-1;
+ res33[x] = ZE33(Rs1.W[x]) + ZE33(Rs2.W[x]);
+ if (res33[x] > (2^32)-1) {
+   res33[x] = (2^32)-1;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res33[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -19444,8 +19493,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[1] + Rs2.W[0];
- res2 = Rs1.W[0] – Rs2.W[1];
+ res1 = ZE33(Rs1.W[1]) + ZE33(Rs2.W[0]);
+ res2 = ZE33(Rs1.W[0]) – ZE33(Rs2.W[1]);
  if (res1 > (2^32)-1) {
    res1 = (2^32)-1;
    OV = 1;
@@ -19454,8 +19503,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res2 = 0;
    OV = 1;
  }
- Rd.W[1] = res1;
- Rd.W[0] = res2;
+ Rd.W[1] = res1.W[0];
+ Rd.W[0] = res2.W[0];
 
 *Exceptions:* None
 
@@ -19499,17 +19548,18 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[1] - Rs2.W[0];
- res2 = Rs1.W[0] + Rs2.W[1];
+ res1 = ZE33(Rs1.W[1]) - ZE33(Rs2.W[0]);
+ res2 = ZE33(Rs1.W[0]) + ZE33(Rs2.W[1]);
  if (res1 < 0) {
    res1 = 0;
    OV = 1;
- } else if (res2 > (2^32)-1) {
+ }
+ if (res2 > (2^32)-1) {
    res2 = (2^32)-1;
    OV = 1;
  }
- Rd.W[1] = res1;
- Rd.W[0] = res2;
+ Rd.W[1] = res1.W[0];
+ Rd.W[0] = res2.W[0];
 
 *Exceptions:* None
 
@@ -19553,8 +19603,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[1] + Rs2.W[1];
- res2 = Rs1.W[0] – Rs2.W[0];
+ res1 = ZE33(Rs1.W[1]) + ZE33(Rs2.W[1]);
+ res2 = ZE33(Rs1.W[0]) – ZE33(Rs2.W[0]);
  if (res1 > (2^32)-1) {
    res1 = (2^32)-1;
    OV = 1;
@@ -19563,8 +19613,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    res2 = 0;
    OV = 1;
  }
- Rd.W[1] = res1;
- Rd.W[0] = res2;
+ Rd.W[1] = res1.W[0];
+ Rd.W[0] = res2.W[0];
 
 *Exceptions:* None
 
@@ -19608,17 +19658,18 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res1 = Rs1.W[1] - Rs2.W[1];
- res2 = Rs1.W[0] + Rs2.W[0];
+ res1 = ZE33(Rs1.W[1]) - ZE33(Rs2.W[1]);
+ res2 = ZE33(Rs1.W[0]) + ZE33(Rs2.W[0]);
  if (res1 < 0) {
    res1 = 0;
    OV = 1;
- } else if (res2 > (2^32)-1) {
+ }
+ if (res2 > (2^32)-1) {
    res2 = (2^32)-1;
    OV = 1;
  }
- Rd.W[1] = res1;
- Rd.W[0] = res2;
+ Rd.W[1] = res1.W[0];
+ Rd.W[0] = res2.W[0];
 
 *Exceptions:* None
 
@@ -19662,12 +19713,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- res[x] = Rs1.W[x] - Rs2.W[x];
+ res[x] = ZE33(Rs1.W[x]) - ZE33(Rs2.W[x]);
  if (res[x] < 0) {
    res[x] = 0;
    OV = 1;
  }
- Rd.W[x] = res[x];
+ Rd.W[x] = res[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -19804,7 +19855,8 @@ right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) + CONCAT(1'b0,Rs2.W[x])) u>> 1;
+ res33[x] = (ZE33(Rs1.W[x]) + ZE33(Rs2.W[x])) u>> 1;
+ Rd.W[x] = res33[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
@@ -19858,8 +19910,10 @@ of Rd for subtraction.
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[0])) u>> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[1])) u>> 1;
+ res_add33 = (ZE33(Rs1.W[1]) + ZE33(Rs2.W[0])) u>> 1;
+ res_sub33 = (ZE33(Rs1.W[0]) – ZE33(Rs2.W[1])) u>> 1;
+ Rd.W[1] = res_add33.W[0];
+ Rd.W[0] = res_sub33.W[0];
 
 *Exceptions:* None
 
@@ -19908,8 +19962,10 @@ right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[0])) u>> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[1])) u>> 1;
+ res_sub33 = (ZE33(Rs1.W[1]) - ZE33(Rs2.W[0])) u>> 1;
+ res_add33 = (ZE33(Rs1.W[0]) + ZE33(Rs2.W[1])) u>> 1;
+ Rd.W[1] = res_sub33.W[0];
+ Rd.W[0] = res_add33.W[0];
 
 *Exceptions:* None
 
@@ -19958,8 +20014,10 @@ of Rd for subtraction.
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) + CONCAT(1'b0,Rs2.W[1])) u>> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) – CONCAT(1'b0,Rs2.W[0])) u>> 1;
+ res_add33 = (ZE33(Rs1.W[1]) + ZE33(Rs2.W[1])) u>> 1;
+ res_sub33 = (ZE33(Rs1.W[0]) – ZE33(Rs2.W[0])) u>> 1;
+ Rd.W[1] = res_add33.W[0];
+ Rd.W[0] = res_sub33.W[0];
 
 *Exceptions:* None
 
@@ -20008,8 +20066,10 @@ addition.
 
 *Operations:*
 
- Rd.W[1] = (CONCAT(1'b0,Rs1.W[1]) - CONCAT(1'b0,Rs2.W[1])) u>> 1;
- Rd.W[0] = (CONCAT(1'b0,Rs1.W[0]) + CONCAT(1'b0,Rs2.W[0])) u>> 1;
+ res_sub33 = (ZE33(Rs1.W[1]) - ZE33(Rs2.W[1])) u>> 1;
+ res_add33 = (ZE33(Rs1.W[0]) + ZE33(Rs2.W[0])) u>> 1;
+ Rd.W[1] = res_sub33.W[0];
+ Rd.W[0] = res_add33.W[0];
 
 *Exceptions:* None
 
@@ -20055,7 +20115,8 @@ first right-shifted by 1 bit and then written to Rd.
 
 *Operations:*
 
- Rd.W[x] = (CONCAT(1'b0,Rs1.W[x]) - CONCAT(1'b0,Rs2.W[x])) u>> 1;
+ res33[x] = (ZE33(Rs1.W[x]) - ZE33(Rs2.W[x])) u>> 1;
+ Rd.W[x] = res33[x].W[0];
  for RV64: x=1..0
 
 *Exceptions:* None
