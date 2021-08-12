@@ -2396,47 +2396,47 @@ The following table lists non-SIMD instructions related to Q15 arithmetic.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KADDH Rt, Ra, Rb |Add with Q15 saturation a|
+|1 |KADDH rt, ra, rb |Add with Q15 saturation a|
 ....
-a0 = Ra.W[0];
-b0 = Rb.W[0];
-Rt = SE(SAT.Q15(a0 + b0));
+a0 = ra.W[0];
+b0 = rb.W[0];
+rt = SE_XLEN(SAT.Q15(a0 + b0));
 ....
-|2 |KSUBH Rt, Ra, Rb |Subtract with Q15 saturation a|
+|2 |KSUBH rt, ra, rb |Subtract with Q15 saturation a|
 ....
-a0 = Ra.W[0];
-b0 = Rb.W[0];
-Rt = SE(SAT.Q15(a0 – b0));
+a0 = ra.W[0];
+b0 = rb.W[0];
+rt = SE_XLEN(SAT.Q15(a0 – b0));
 ....
-|3 |KHMBB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
+|3 |KHMBB rt, ra, rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
 ....
-a0 = Ra.H[0];
-b0 = Rb.H[0];
-Rt = SAT.Q15((a0 s* b0) s>> 15);
+a0 = ra.H[0];
+b0 = rb.H[0];
+rt = SAT.Q15((a0 s* b0) s>> 15);
 ....
-|4 |KHMBT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q15 number. a|
+|4 |KHMBT rt, ra, rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q15 number. a|
 ....
-a0 = Ra.H[0];
-b1 = Rb.H[1];
-Rt = SAT.Q15((a0 * b1) s>> 15);
+a0 = ra.H[0];
+b1 = rb.H[1];
+rt = SAT.Q15((a0 * b1) s>> 15);
 ....
-|5 |KHMTT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
+|5 |KHMTT rt, ra, rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
 ....
-a1 = Ra.H[1];
-b1 = Rb.H[1];
-Rt = SAT.Q15((a1 * b1) s>> 15);
+a1 = ra.H[1];
+b1 = rb.H[1];
+rt = SAT.Q15((a1 * b1) s>> 15);
 ....
-|6 |UKADDH Rt, Ra, Rb |Add with I16 saturation a|
+|6 |UKADDH rt, ra, rb |Add with I16 saturation a|
 ....
-a0 = ZE33(Ra.W[0]);
-b0 = ZE33(Rb.W[0]);
-Rt = SE_XLEN(SAT.U16(a0 + b0))
+a0 = ZE33(ra.W[0]);
+b0 = ZE33(rb.W[0]);
+rt = SE_XLEN(SAT.U16(a0 + b0))
 ....
-|7 |UKSUBH Rt, Ra, Rb |Subtract with I16 saturation a|
+|7 |UKSUBH rt, ra, rb |Subtract with I16 saturation a|
 ....
-a0 = ZE33(Ra.W[0]);
-b0 = ZE33(Rb.W[0]);
-Rt = SE_XLEN(SAT.U16(a0 - b0))
+a0 = ZE33(ra.W[0]);
+b0 = ZE33(rb.W[0]);
+rt = SE_XLEN(SAT.U16(a0 - b0))
 ....
 |===
 
@@ -2449,114 +2449,114 @@ The following table lists non-SIMD instructions related to Q31 arithmetic.
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KADDW Rt, Ra, Rb |Add with Q31 saturation a|
+|1 |KADDW rt, ra, rb |Add with Q31 saturation a|
 ....
 RV32:
-Rt = SAT.Q31(Ra + Rb);
+rt = SAT.Q31(ra + rb);
 
 RV64:
-a0 = Ra.W[0];
-b0 = Rb.W[0];
-Rt = SE(SAT.Q31(a0 + b0);
+a0 = ra.W[0];
+b0 = rb.W[0];
+rt = SE_XLEN(SAT.Q31(a0 + b0);
 ....
-|2 |UKADDW Rt, Ra, Rb |Unsigned Add with U32 saturation a|
+|2 |UKADDW rt, ra, rb |Unsigned Add with U32 saturation a|
 ....
 RV32:
-a0 = CONCAT(1'b0,Ra);
-b0 = CONCAT(1'b0,Rb);
-Rt = SAT.U32(a0 + b0);
+a0 = CONCAT(1'b0,ra);
+b0 = CONCAT(1'b0,rb);
+rt = SAT.U32(a0 + b0);
 
 RV64:
-a0 = CONCAT(1'b0,Ra.W[0]);
-b0 = CONCAT(1'b0,Rb.W[0]);
-Rt = ZE(SAT.U32(a0 + b0);
+a0 = CONCAT(1'b0,ra.W[0]);
+b0 = CONCAT(1'b0,rb.W[0]);
+rt = ZE(SAT.U32(a0 + b0);
 ....
-|3 |KSUBW Rt, Ra, Rb |Subtract with Q31 saturation a|
+|3 |KSUBW rt, ra, rb |Subtract with Q31 saturation a|
 ....
 RV32:
-Rt = SAT.Q31(Ra - Rb);
+rt = SAT.Q31(ra - rb);
 
 RV64:
-a0 = Ra.W[0];
-b0 = Rb.W[0];
-Rt = SE(SAT.Q31(a0 - b0);
+a0 = ra.W[0];
+b0 = rb.W[0];
+rt = SE_XLEN(SAT.Q31(a0 - b0);
 ....
-|4 |UKSUBW Rt, Ra, Rb |Unsigned Subtract with U32 saturation a|
+|4 |UKSUBW rt, ra, rb |Unsigned Subtract with U32 saturation a|
 ....
 RV32:
-a0 = CONCAT(1'b0,Ra);
-b0 = CONCAT(1'b0,Rb);
-Rt = SAT.U32(a0 - b0);
+a0 = CONCAT(1'b0,ra);
+b0 = CONCAT(1'b0,rb);
+rt = SAT.U32(a0 - b0);
 
 RV64:
-a0 = CONCAT(1'b0,Ra.W[0]);
-b0 = CONCAT(1'b0,Rb.W[0]);
-Rt = ZE(SAT.U32(a0 - b0);
+a0 = CONCAT(1'b0,ra.W[0]);
+b0 = CONCAT(1'b0,rb.W[0]);
+rt = ZE(SAT.U32(a0 - b0);
 ....
-|5 |KDMBB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. a|
+|5 |KDMBB rt, ra, rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. a|
 ....
-a0 = Ra.H[0];
-b0 = Rb.H[0];
+a0 = ra.H[0];
+b0 = rb.H[0];
 m0 = (a0 s* b0) << 1;
-Rt = SAT.Q31(m0);
+rt = SAT.Q31(m0);
 ....
-|6 |KDMBT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. a|
+|6 |KDMBT rt, ra, rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. a|
 ....
-a0 = Ra.H[0];
-b1 = Rb.H[1];
+a0 = ra.H[0];
+b1 = rb.H[1];
 m0 = (a0 s* b1) << 1;
-Rt = SAT.Q31(m0);
+rt = SAT.Q31(m0);
 ....
-|7 |KDMTT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. a|
+|7 |KDMTT rt, ra, rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. a|
 ....
-a1 = Ra.H[1];
-b1 = Rb.H[1];
+a1 = ra.H[1];
+b1 = rb.H[1];
 m0 = (a1 s* b1) << 1;
-Rt = SAT.Q31(m0);
+rt = SAT.Q31(m0);
 ....
-|8 |KSLRAW Rt, Ra, Rb |Shift Left Logical with Q31 Saturation or Shift Right Arithmetic a|
+|8 |KSLRAW rt, ra, rb |Shift Left Logical with Q31 Saturation or Shift Right Arithmetic a|
 ....
-if (Rb[5:0] >=0) {
-  Rt = SAT.Q31(Ra << Rb[5:0]);
+if (rb[5:0] >=0) {
+  rt = SAT.Q31(ra << rb[5:0]);
 } else {
-  Rt = (Ra s>> -Rb[5:0]);
+  rt = (ra s>> -rb[5:0]);
 }
 ....
-|9 |KSLRAW.u Rt, Ra, Rb |Shift Left Logical with Q31 Saturation or Rounding Shift Right Arithmetic a|
+|9 |KSLRAW.u rt, ra, rb |Shift Left Logical with Q31 Saturation or Rounding Shift Right Arithmetic a|
 ....
-if (Rb[5:0] >=0) {
-  Rt = SAT.Q31(Ra << Rb[5:0]);
+if (rb[5:0] >=0) {
+  rt = SAT.Q31(ra << rb[5:0]);
 } else {
-  Rt = ROUND(Ra s>> -Rb[5:0]);
+  rt = ROUND(ra s>> -rb[5:0]);
 }
 ....
 |10 |KSLLW rt, ra, rb |Saturating Shift Left Logical for 32-bit Word a|
 ....
 w0 = ra.W[0];
-rt = SE(SAT.Q31(w0 << rb[4:0]));
+rt = SE_XLEN(SAT.Q31(w0 << rb[4:0]));
 ....
 |11 |KSLLIW rt, ra, imm5u |Saturating Shift Left Logical Immediate for 32-bit Word a|
 ....
 w0 = ra.W[0];
-rt = SE(SAT.Q31(w0 << imm5u));
+rt = SE_XLEN(SAT.Q31(w0 << imm5u));
 ....
-|12 |KDMABB Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
+|12 |KDMABB rt, ra, rb |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
 ....
-m0 = (Ra.H[0] s* Rb.H[0]) << 1;
-res = Rt.W[0] + SAT.Q31(m0);
-Rt = SE(SAT.Q31(res));
+m0 = (ra.H[0] s* rb.H[0]) << 1;
+res = rt.W[0] + SAT.Q31(m0);
+rt = SE_XLEN(SAT.Q31(res));
 ....
-|13 |KDMABT Rt, Ra, Rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
+|13 |KDMABT rt, ra, rb |Multiply the first 16-bit Q15 element of one register with the second 16-bit Q15 element of another register and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
 ....
-m0 = (Ra.H[0] * Rb.H[1]) << 1;
-res = Rt.W[0] + SAT.Q31(m0);
-Rt = SE(SAT.Q31(res));
+m0 = (ra.H[0] * rb.H[1]) << 1;
+res = rt.W[0] + SAT.Q31(m0);
+rt = SE_XLEN(SAT.Q31(res));
 ....
-|14 |KDMATT Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
+|14 |KDMATT rt, ra, rb |Multiply the second 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q31 number. Add the Q31 number with a 32-bit accumulator. a|
 ....
-m0 = (Ra.H[1] * Rb.H[1]) << 1;
-res = Rt.W[0] + SAT.Q31(m0);
-Rt = SE(SAT.Q31(res));
+m0 = (ra.H[1] * rb.H[1]) << 1;
+res = rt.W[0] + SAT.Q31(m0);
+rt = SE_XLEN(SAT.Q31(res));
 ....
 |15 |KABSW rt, ra |32-bit Absolute Value (scalar version) a|
 ....
@@ -2579,36 +2579,36 @@ There are 9 instructions here.
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |RADDW rt, ra, rb |32-bit Signed Halving Addition l|
 res = (ra.W[0] + rb.W[0]) s>> 1;
-rt = SE(res);
+rt = SE_XLEN(res);
 
 |2 |URADDW rt, ra, rb |32-bit Unsigned Halving Addition l|
 a0 = CONCAT(1'b0, ra.W[0]);
 b0 = CONCAT(1'b0, rb.W[0]);
 res = (a0 + b0) u>> 1;
-rt = SE(res);
+rt = SE_XLEN(res);
 
 |3 |RSUBW rt, ra, rb |32-bit Signed Halving Subtraction l|
 res = (ra.W[0] - rb.W[0]) s>> 1;
-rt = SE(res);
+rt = SE_XLEN(res);
 
 |4 |URSUBW rt, ra, rb |32-bit Unsigned Halving Subtraction l|
 a0 = CONCAT(1'b0, ra.W[0]);
 b0 = CONCAT(1'b0, rb.W[0]);
 res = (a0 - b0) u>> 1;
-rt = SE(res);
+rt = SE_XLEN(res);
 
 |5 |MAXW rt, ra, rb |32-bit Signed Word Maximum l|
 if (ra.W[0] s>= rb.W[0]) {
-   rt = SE(ra.W[0]);
+   rt = SE_XLEN(ra.W[0]);
 else {
-   rt = SE(rb.W[0]);
+   rt = SE_XLEN(rb.W[0]);
 }
 
 |6 |MINW rt, ra, rb |32-bit Signed Word Minimum l|
 if (ra.W[0] s>= rb.W[0]) {
-   rt = SE(rb.W[0]);
+   rt = SE_XLEN(rb.W[0]);
 else {
-   rt = SE(ra.W[0]);
+   rt = SE_XLEN(ra.W[0]);
 }
 
 |7 |MULR64 rt, ra, rb |Multiply Word Unsigned to 64-bit data l|
@@ -2650,8 +2650,8 @@ The following table lists the user instructions related to Overflow (OV) flag ma
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |RDOV Rt |Read vxsat.OV to Rt. l|
-Rt = ZE(vxsat.OV);
+|1 |RDOV rt |Read vxsat.OV to rt. l|
+rt = ZE(vxsat.OV);
 |2 |CLROV |Clear vsat.OV flag l|
 vxsat.OV = 0;
 |===
@@ -2707,32 +2707,32 @@ RV32:
 a64 = r[aU].r[aL];
 lsb = rb[4:0];
 exword = a64[(31+lsb):lsb];
-rt = SE(exword);
+rt = SE32(exword);
 
 RV64:
 a64 = ra;
 lsb = rb[4:0];
 exword = a64[(31+lsb):lsb];
-rt = SE(exword);
+rt = SE64(exword);
 
 |7 |WEXTI rt, ra, imm5u |Extract 32-bit from a 64-bit value Immediate l|
 RV32:
 a64 = r[aU].r[aL];
 lsb = imm5u;
 exword = a64[(31+lsb):lsb];
-rt = SE(exword);
+rt = SE32(exword);
 
-RV64
+RV64:
 a64 = ra;
 lsb = imm5u;
 exword = a64[(31+lsb):lsb];
-rt = SE(exword);
+rt = SE64(exword);
 
 |8 |BPICK rt, ra, rb, rc |Bit-wise Pick l|
 rt[i] = rc[i]? ra[i] : rb[i];
 (RV32: i=31..0, RV64: i=63..0)
-|9 |INSB rt, ra, imm3u |Insert Byte l|
-RV32
+|9 |INSB rt, ra, imm2u/imm3u |Insert Byte l|
+RV32:
 byte_idx = imm2u;
 rt.B[byte_idx] = ra.B[0];
 
@@ -2742,23 +2742,23 @@ rt.B[byte_idx] = ra.B[0];
 
 |10 |MADDR32 rt, ra, tb |Multiply and Add to 32-bit Word l|
 RV32:
-Mresult = Ra * Rb;
-Rd = Rd + Mresult.W[0];
+Mresult = ra * rb;
+rt = rt + Mresult.W[0];
 
 RV64:
-Mresult = Ra.W[0] * Rb.W[0];
-tresult[31:0] = Rd.W[0] + Mresult.W[0];
-Rd = SE64(tresult[31:0]);
+Mresult = ra.W[0] * rb.W[0];
+tresult[31:0] = rt.W[0] + Mresult.W[0];
+rt = SE64(tresult[31:0]);
 
 |11 |MSUBR32 rt, ra, tb |Multiply and Subtract from 32-bit Word l|
 RV32:
-Mresult = Ra * Rb;
-Rd = Rd - Mresult.W[0];
+Mresult = ra * rb;
+rt = rt - Mresult.W[0];
 
 RV64:
-Mresult = Ra.W[0] * Rb.W[0];
-tresult[31:0] = Rd.W[0] - Mresult.W[0];
-Rd = SE64(tresult[31:0]);
+Mresult = ra.W[0] * rb.W[0];
+tresult[31:0] = rt.W[0] - Mresult.W[0];
+rt = SE64(tresult[31:0]);
 |===
 
 <<<
@@ -3076,60 +3076,60 @@ rt.W[x] = SAT.Q31(ABS(ra.W[x]));
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KHMBB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. l|
-t[x] = Ra.W[x].H[0] s* Rb.W[x].H[0];
-Rt.W[x] = SAT.Q15(t[x] s>> 15);
+|1 |KHMBB16 rt, ra, rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. l|
+t[x] = ra.W[x].H[0] s* rb.W[x].H[0];
+rt.W[x] = SAT.Q15(t[x] s>> 15);
 
 (RV64: x=1..0)
 
-|2 |KHMBT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q15 numbers. l|
-t[x] = Ra.W[x].H[0] s* Rb.W[x].H[1];
-Rt.W[x] = SAT.Q15(t[x] s>> 15);
+|2 |KHMBT16 rt, ra, rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q15 numbers. l|
+t[x] = ra.W[x].H[0] s* rb.W[x].H[1];
+rt.W[x] = SAT.Q15(t[x] s>> 15);
 
 (RV64: x=1..0)
 
-|3 |KHMTT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. l|
-t[x] = Ra.W[x].H[1] s* Rb.W[x].H[1];
-Rt.W[x] = SAT.Q15(t[x] s>> 15);
+|3 |KHMTT16 rt, ra, rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q15 numbers. l|
+t[x] = ra.W[x].H[1] s* rb.W[x].H[1];
+rt.W[x] = SAT.Q15(t[x] s>> 15);
 
 (RV64: x=1..0)
 
-|4 |KDMBB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. l|
-t[x] = Ra.W[x].H[0] s* Rb.W[x].H[0];
-Rt.W[x] = SAT.Q31(t[x] << 1);
+|4 |KDMBB16 rt, ra, rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. l|
+t[x] = ra.W[x].H[0] s* rb.W[x].H[0];
+rt.W[x] = SAT.Q31(t[x] << 1);
 
 (RV64: x=1..0)
 
-|5 |KDMBT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. l|
-t[x] = Ra.W[x].H[0] s* Rb.W[x].H[1];
-Rt.W[x] = SAT.Q31(t[x] << 1);
+|5 |KDMBT16 rt, ra, rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. l|
+t[x] = ra.W[x].H[0] s* rb.W[x].H[1];
+rt.W[x] = SAT.Q31(t[x] << 1);
 
 (RV64: x=1..0)
 
-|6 |KDMTT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. l|
-t[x] = Ra.W[x].H[1] s* Rb.W[x].H[1];
-Rt.W[x] = SAT.Q31(t[x] << 1);
+|6 |KDMTT16 rt, ra, rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. l|
+t[x] = ra.W[x].H[1] s* rb.W[x].H[1];
+rt.W[x] = SAT.Q31(t[x] << 1);
 
 (RV64: x=1..0)
 
-|7 |KDMABB16 Rt, Ra, Rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
-t[x] = Ra.W[x].H[0] s* Rb.W[x].H[0];
+|7 |KDMABB16 rt, ra, rb |Multiply the first 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
+t[x] = ra.W[x].H[0] s* rb.W[x].H[0];
 res[x] = SAT.Q31(t[x] << 1);
-Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
+rt.W[x] = SAT.Q31(rt.W[x] + res[x]);
 
 (RV64: x=1..0)
 
-|8 |KDMABT16 Rt, Ra, Rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
-t[x] = Ra.W[x].H[0] s* Rb.W[x].H[1];
+|8 |KDMABT16 rt, ra, rb |Multiply the first 16-bit Q15 element of 32-bit chunks in one register with the second 16-bit Q15 element of 32-bit chunks in another register and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
+t[x] = ra.W[x].H[0] s* rb.W[x].H[1];
 res[x] = SAT.Q31(t[x] << 1);
-Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
+rt.W[x] = SAT.Q31(rt.W[x] + res[x]);
 
 (RV64: x=1..0)
 
-|9 |KDMATT16 Rt, Ra, Rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
-t[x] = Ra.W[x].H[1] s* Rb.W[x].H[1];
+|9 |KDMATT16 rt, ra, rb |Multiply the second 16-bit Q15 elements of 32-bit chunks in two registers and transform the Q30 results into saturated Q31 numbers. Add the Q31 numbers with 32-bit accumulator values. l|
+t[x] = ra.W[x].H[1] s* rb.W[x].H[1];
 res[x] = SAT.Q31(t[x] << 1);
-Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
+rt.W[x] = SAT.Q31(rt.W[x] + res[x]);
 
 (RV64: x=1..0)
 |===
@@ -3138,158 +3138,158 @@ Rt.W[x] = SAT.Q31(Rt.W[x] + res[x]);
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SMBB32 Rt, Ra, Rb |Multiply the first 32-bit elements of two registers. l|
-Rt = Ra.W[0] s* Rb.W[0];
-|2 |SMBT32 Rt, Ra, Rb |Multiply the first 32-bit element of one register with the second 32-bit element of another register. l|
-Rt = Ra.W[0] s* Rb.W[1];
-|3 |SMTT32 Rt, Ra, Rb |Multiply the second 32-bit elements of two registers. l|
-Rt = Ra.W[1] s* Rb.W[1];
+|1 |SMBB32 rt, ra, rb |Multiply the first 32-bit elements of two registers. l|
+rt = ra.W[0] s* rb.W[0];
+|2 |SMBT32 rt, ra, rb |Multiply the first 32-bit element of one register with the second 32-bit element of another register. l|
+rt = ra.W[0] s* rb.W[1];
+|3 |SMTT32 rt, ra, rb |Multiply the second 32-bit elements of two registers. l|
+rt = ra.W[1] s* rb.W[1];
 |===
 
 .(RV64 Only) 32-bit Multiply & Add Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KMABB32 Rt, Ra, Rb a|
+|1 |KMABB32 rt, ra, rb a|
 Multiply the first 32-bit elements of two registers and the signed multiplication result is added to a third register with Q63 saturation.
 
 (64 = 64 + 32x32)
 
 l|
-Rt = SAT.Q63(Rt + Ra.W[0] * Rb.W[0]);
-|2 |KMABT32 Rt, Ra, Rb a|
+rt = SAT.Q63(rt + ra.W[0] * rb.W[0]);
+|2 |KMABT32 rt, ra, rb a|
 Multiply the first 32-bit element of one register with the second 32-bit element of another register and the signed multiplication result is added to a third register with Q63 saturation.
 
 (64 = 64 + 32x32)
 
-l|Rt = SAT.Q63(Rt + Ra.W[0] s* Rb.W[1]);
-|3 |KMATT32 Rt, Ra, Rb a|
+l|rt = SAT.Q63(rt + ra.W[0] s* rb.W[1]);
+|3 |KMATT32 rt, ra, rb a|
 Multiply the second 32-bit elements of two registers and the signed multiplication result is added to a third register with Q63 saturation.
 
 (64 = 64 + 32x32)
 
-l|Rt = SAT.Q63(Rt + Ra.W[1] s* Rb.W[1]);
+l|rt = SAT.Q63(rt + ra.W[1] s* rb.W[1]);
 |===
 
 .(RV64 Only) 32-bit Parallel Multiply & Add Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |KMDA32 Rt, Ra, Rb a|
+|1 |KMDA32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and add the signed multiplication results with Q63 saturation.
 
 (64 = 32x32 + 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = SAT.Q63(t1 + t0);
-|2 |KMXDA32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(t1 + t0);
+|2 |KMXDA32 rt, ra, rb a|
 Multiply the cross-positioned 32-bit elements of two registers and add the signed multiplication results with Q63 saturation.
 
 (64 = 32x32 + 32x32)
 
 l|
-t01 = Ra.W[0] s* Rb.W[1];
-t10 = Ra.W[1] s* Rb.W[0];
-Rt = SAT.Q63(t10 + t01);
-|3 |KMADA32 Rt, Ra, Rb a|
+t01 = ra.W[0] s* rb.W[1];
+t10 = ra.W[1] s* rb.W[0];
+rt = SAT.Q63(t10 + t01);
+|3 |KMADA32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and add the signed multiplication results and a third register with Q63 saturation.
 
 (64 = 64+ 32x32 + 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = SAT.Q63(Rt + t1 + t0);
-|4 |KMAXDA32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(rt + t1 + t0);
+|4 |KMAXDA32 rt, ra, rb a|
 Multiply the cross-positioned 32-bit elements of two registers and add the signed multiplication results and a third register with Q63 saturation.
 
 (64 = 64+ 32x32 + 32x32)
 
 l|
-t01 = Ra.W[0] s* Rb.W[1];
-t10 = Ra.W[1] s* Rb.W[0];
-Rt = SAT.Q63(Rt + t10 + t01);
-|5 |KMADS32 Rt, Ra, Rb a|
+t01 = ra.W[0] s* rb.W[1];
+t10 = ra.W[1] s* rb.W[0];
+rt = SAT.Q63(rt + t10 + t01);
+|5 |KMADS32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and add the top signed multiplication result with a third register and subtract the bottom signed multiplication result with Q63 saturation.
 
 (64 = 64+ 32x32 - 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = SAT.Q63(Rt + t1 - t0);
-|6 |KMADRS32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(rt + t1 - t0);
+|6 |KMADRS32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and add the bottom signed multiplication result with a third register and subtract the top signed multiplication result with Q63 saturation.
 
 (64 = 64 + 32x32 - 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = SAT.Q63(Rt + t0 - t1);
-|7 |KMAXDS32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(rt + t0 - t1);
+|7 |KMAXDS32 rt, ra, rb a|
 Multiply the cross-positioned 32-bit elements of two registers and add the top signed multiplication result with a third register and subtract the bottom signed multiplication result with Q63 saturation.
 
 (64 = 64 + 32x32 - 32x32)
 
 l|
-t01 = Ra.W[0] s* Rb.W[1];
-t10 = Ra.W[1] s* Rb.W[0];
-Rt = SAT.Q63(Rt + t10 - t01);
-|8 |KMSDA32 Rt, Ra, Rb a|
+t01 = ra.W[0] s* rb.W[1];
+t10 = ra.W[1] s* rb.W[0];
+rt = SAT.Q63(rt + t10 - t01);
+|8 |KMSDA32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and subtract the signed multiplication results from a third register with Q63 saturation.
 
 (64 = 64 - 32x32 - 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = SAT.Q63(Rt - t1 - t0);
-|9 |KMSXDA32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = SAT.Q63(rt - t1 - t0);
+|9 |KMSXDA32 rt, ra, rb a|
 Multiply the cross-positioned 32-bit elements of two registers and subtract the signed multiplication results from a third register with Q63 saturation.
 
 (64 = 64 - 32x32 - 32x32)
 
 l|
-t01 = Ra.W[0] s* Rb.W[1];
-t10 = Ra.W[1] s* Rb.W[0];
-Rt = SAT.Q63(Rt - t10 - t01);
-|10 |SMDS32 Rt, Ra, Rb a|
+t01 = ra.W[0] s* rb.W[1];
+t10 = ra.W[1] s* rb.W[0];
+rt = SAT.Q63(rt - t10 - t01);
+|10 |SMDS32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and subtract the bottom signed multiplication result from the top result.
 
 (64 = 32x32 - 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = t1 - t0;
-|11 |SMDRS32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = t1 - t0;
+|11 |SMDRS32 rt, ra, rb a|
 Multiply the corresponding 32-bit elements of two registers and subtract the top signed multiplication result from the bottom result.
 
 (64 = 32x32 - 32x32)
 
 l|
-t0 = Ra.W[0] s* Rb.W[0];
-t1 = Ra.W[1] s* Rb.W[1];
-Rt = t0 - t1;
-|12 |SMXDS32 Rt, Ra, Rb a|
+t0 = ra.W[0] s* rb.W[0];
+t1 = ra.W[1] s* rb.W[1];
+rt = t0 - t1;
+|12 |SMXDS32 rt, ra, rb a|
 Multiply the cross-positioned 32-bit elements of two registers and subtract the bottom signed multiplication result from the top result.
 
 (64 = 32x32 - 32x32)
 
 l|
-t01 = Ra.W[0] s* Rb.W[1];
-t10 = Ra.W[1] s* Rb.W[0];
-Rt = t10 - t01;
+t01 = ra.W[0] s* rb.W[1];
+t10 = ra.W[1] s* rb.W[0];
+rt = t10 - t01;
 |===
 
 .(RV64 Only) Non-SIMD 32-bit Shift Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
 |===
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
-|1 |SRAIW.u Rt, Ra, imm5u |32-bit Rounding arithmetic shift right immediate l|Rt = SE64(ROUND(Ra.W[0] s>> imm5u));
+|1 |SRAIW.u rt, ra, imm5u |32-bit Rounding arithmetic shift right immediate l|rt = SE64(ROUND(ra.W[0] s>> imm5u));
 |===
 
 There are four 32-bit packing instructions here.
@@ -3331,7 +3331,7 @@ The instructions in Zpsfoperand are listed in the following table.
 |===
 
 === Zprvsfextra (for RV64 and above)
-The instructions added for RV64 in Chapter 6 are in this Zprvsfextra sub-extension.
+The instructions added for RV64 in <<rv64_extra>> are in this Zprvsfextra sub-extension.
 
 === Zpn
 The instructions of RV32P and RV64P not in Zpsfoperand and Zprvsfextra extensions will be included in this sub-extension.
@@ -3671,7 +3671,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |BITREVI +
-1110100 |imm5u[4:0] |Rs1 |000 |Rd
+1110100 |imm5u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -3683,28 +3683,28 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
 |BITREVI +
-111010 |imm6u[5:0] |Rs1 |000 |Rd
+111010 |imm6u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- BITREVI Rd, Rs1, imm5u[4:0] (RV32)
- BITREVI Rd, Rs1, imm6u[5:0] (RV64)
+ BITREVI Rd, Rs1, imm5u (RV32)
+ BITREVI Rd, Rs1, imm6u (RV64)
 
 *Purpose:* Reverse the bits of the source operand within a specified width
 starting from bit 0. The reversed width is an immediate value.
 
 *Description:* This instruction reverses the bits of the content of Rs1.
-The reversed bit width is calculated as imm[4:0]+1 (RV32) or imm[5:0]+1 (RV64).
+The reversed bit width is calculated as imm5u+1 (RV32) or imm6u+1 (RV64).
 The upper bits beyond the reversed width are filled with zeros. After the bit reverse
 operation, the result is written to Rd.
 
 *Operations:*
 
- msb = imm5u[4:0]; // RV32
- msb = imm6u[5:0]; // RV64
+ msb = imm5u; // RV32
+ msb = imm6u; // RV64
  rev[0:msb] = Rs1[msb:0];
  Rd = ZE32(rev[msb:0]);   // RV32
  Rd = ZE64(rev[msb:0]);   // RV64
@@ -4421,7 +4421,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Description:* This instruction compares the 16-bit integer elements in Rs1 with
 the 16-bit integer elements in Rs2 to see if they are equal. If they are equal,
 the result is 0xFFFF; otherwise, the result is 0x0. The 16-bit element comparison
-results are written to Rt.
+results are written to Rd.
 
 *Operations:*
 
@@ -4576,6 +4576,9 @@ writes the result to [15:0] of 32-bit chunks in Rd.
 
 *Format:*
 
+[.text-center]
+*RV32*
+
 [cols="8*^.^"]
 |===
 l|31    25 l|24    23 l|22 l|21    20 l|19    15 l|14    12 l|11    7 l|6    0
@@ -4583,26 +4586,41 @@ l|31    25 l|24    23 l|22 l|21    20 l|19    15 l|14    12 l|11    7 l|6    0
 1010110
 |INSB +
 00
-|imm[2] |imm[1:0] |Rs1 |000 |Rd
+|0 |imm2u |Rs1 |000 |Rd
+|OP-P +
+1110111
+|===
+
+[.text-center]
+*RV64*
+
+[cols="7*^.^"]
+|===
+l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
+|ONEOP +
+1010110
+|INSB +
+00
+|imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- (RV32) INSB Rd, Rs1, imm[1:0]
- (RV64) INSB Rd, Rs1, imm[2:0]
+ (RV32) INSB Rd, Rs1, imm2u
+ (RV64) INSB Rd, Rs1, imm3u
 
 *Purpose:* Insert byte 0 of a 32-bit or 64-bit register into one of the byte
 elements of another register.
 
-*Description:* This instruction inserts byte 0 of Rs1 into byte “imm[1:0]” (RV32)
-or “imm[2:0]” (RV64) of Rd.
+*Description:* This instruction inserts byte 0 of Rs1 into byte “imm2u” (RV32)
+or “imm3u” (RV64) of Rd.
 
 *Operations:*
 
- bpos = imm[1:0]; (RV32)
- bpos = imm[2:0]; (RV64)
+ bpos = imm2u;  // RV32
+ bpos = imm3u;  // RV64
  Rd.B[bpos] = Rs1.B[0]
 
 *Exceptions:* None
@@ -7679,7 +7697,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |KSLLI8 +
-0111110 |01 |imm3u[2:0] |Rs1 |000 |Rd
+0111110 |01 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -7694,7 +7712,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm3u[2:0];
+ sa = imm3u;
  if (sa u> 0) {
    res[(7+sa):0] = Rs1.B[x] << sa;
    if (res s> (2^7)-1) {
@@ -7800,7 +7818,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |KSLLI16 +
-0111010 |1 |imm4u[3:0] |Rs1 |000 |Rd
+0111010 |1 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -7815,7 +7833,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm4u[3:0];
+ sa = imm4u;
  if (sa u> 0) {
    res[(15+sa):0] = Rs1.H[x] << sa;
    if (res s> (2^15)-1) {
@@ -8951,13 +8969,13 @@ The lower 32-bit contents of Rs1 and Rs2 are treated as signed integers.
 
 *RV32:*
 
- Mresult = Ra s* Rb;
+ Mresult = Rs1 s* Rs2;
  R[Rd(4,1).1(0)][31:0] = Mresult[63:32];
  R[Rd(4,1).0(0)][31:0] = Mresult[31:0];
 
 *RV64:*
 
- Mresult = Ra.W[0] s* Rb.W[0];
+ Mresult = Rs1.W[0] s* Rs2.W[0];
  Rd = Mresult[63:0];
 
 *Exceptions:* None
@@ -9733,9 +9751,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Examples:*
 
-* Ra = 0x7FFF, Rb = 0x8000, Rt = 0x7FFF
-* Ra = 0x8000, Rb = 0x7FFF, Rt = 0x8000
-* Ra = 0x8000, Rb = 0x4000, Rt = 0xA000
+* Rs1 = 0x7FFF, Rs2 = 0x8000, Rd = 0x7FFF
+* Rs1 = 0x8000, Rs2 = 0x7FFF, Rd = 0x8000
+* Rs1 = 0x8000, Rs2 = 0x4000, Rd = 0xA000
 
 *Intrinsic functions:*
 
@@ -9774,7 +9792,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform a 64-bit signed integer subtraction. The result is halved to avoid overflow or saturation.
 
-*RV32 Description:* This instruction subtracts the 64-bit signed integer of an even/odd pair of registers specified by Rb(4,1) from the 64-bit signed integer of an even/odd pair of registers specified by Ra(4,1). The subtraction result is first arithmetically right-shifted by 1 bit and then written to an even/odd pair of registers specified by Rt(4,1).
+*RV32 Description:* This instruction subtracts the 64-bit signed integer of an even/odd pair of registers specified by Rs2(4,1) from the 64-bit signed integer of an even/odd pair of registers specified by Rs1(4,1). The subtraction result is first arithmetically right-shifted by 1 bit and then written to an even/odd pair of registers specified by Rd(4,1).
 
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
@@ -9861,14 +9879,14 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCLIP8 +
-1000110 |00 |imm3u[2:0] |Rs1 |000 |Rd
+1000110 |00 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SCLIP8 Rd, Rs1, imm3u[2:0]
+ SCLIP8 Rd, Rs1, imm3u
 
 *Purpose:* Limit the 8-bit signed integer elements of a register to a signed range in parallel.
 
@@ -9918,14 +9936,14 @@ l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCLIP16 +
-1000010 |0 |imm4u[3:0] |Rs1 |000 |Rd
+1000010 |0 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SCLIP16 Rd, Rs1, imm4u[3:0]
+ SCLIP16 Rd, Rs1, imm4u
 
 *Purpose:* Limit the 16-bit signed integer elements of a register to a signed range in parallel.
 
@@ -9975,14 +9993,14 @@ l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SCLIP32 +
-1110010 |imm5u[4:0] |Rs1 |000 |Rd
+1110010 |imm5u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SCLIP32 Rd, Rs1, imm5u[4:0]
+ SCLIP32 Rd, Rs1, imm5u
 
 *Purpose:* Limit the 32-bit signed integer elements of a register to a signed range in parallel.
 
@@ -10276,7 +10294,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLLI8 +
-0111110 |00 |imm3u[2:0] |Rs1 |000 |Rd
+0111110 |00 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -10291,7 +10309,7 @@ l|31    25 l|24    23 l|22    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm3u[2:0];
+ sa = imm3u;
  Rd.B[x] = Rs1.B[x] << sa;
  for RV32: x=3..0,
  for RV64: x=7..0
@@ -10376,22 +10394,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24 l|23    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLLI16 +
-0111010 |0 |imm4u[3:0] |Rs1 |000 |Rd
+0111010 |0 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SLLI16 Rd, Rs1, imm4[3:0]
+ SLLI16 Rd, Rs1, imm4u
 
 *Purpose:* Perform 16-bit element logical left shift operations in parallel. The shift amount is an immediate value.
 
-*Description:* The 16-bit elements in Rs1 are left-shifted logically. The shifted out bits are filled with zero and the shift amount is specified by the imm4[3:0] constant. And the results are written to Rd.
+*Description:* The 16-bit elements in Rs1 are left-shifted logically. The shifted out bits are filled with zero and the shift amount is specified by the imm4u constant. And the results are written to Rd.
 
 *Operations:*
 
- sa = imm4[3:0];
+ sa = imm4u;
  Rd.H[x] = Rs1.H[x] << sa;
  for RV32: x=1..0,
  for RV64: x=3..0
@@ -12376,7 +12394,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 20 |19 15 |14 12 |11 7 |6 0
 |SRAI.u +
-1101010 |imm5u[4:0] |Rs1 |001 |Rd
+1101010 |imm5u |Rs1 |001 |Rd
 |OP-P +
 1110111
 |===
@@ -12388,25 +12406,25 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 26 |25 20 |19 15 |14 12 |11 7 |6 0
 |SRAI.u +
-110101 |imm6u[5:0] |Rs1 |001 |Rd
+110101 |imm6u |Rs1 |001 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SRAI.u Rd, Rs1, imm5u[4:0] (RV32)
- SRAI.u Rd, Rs1, imm6u[5:0] (RV64)
+ SRAI.u Rd, Rs1, imm5u (RV32)
+ SRAI.u Rd, Rs1, imm6u (RV64)
 
 *Purpose:* Perform an arithmetic right shift operation with rounding. The shift amount is an immediate value.
 
-*Description:* This instruction right-shifts the content of Rs1 arithmetically. The shifted out bits are filled with the sign-bit and the shift amount is specified by the imm6u[4:0] (RV32) or imm6u[5:0] (RV64) constant . For the rounding operation, a value of 1 is added to the most significant discarded bit of the data to calculate the final result. And the result is written to Rd.
+*Description:* This instruction right-shifts the content of Rs1 arithmetically. The shifted out bits are filled with the sign-bit and the shift amount is specified by the imm5u (RV32) or imm6u (RV64) constant . For the rounding operation, a value of 1 is added to the most significant discarded bit of the data to calculate the final result. And the result is written to Rd.
 
 *Operations:*
 
 * RV32:
 
- sa = imm5u[4:0];
+ sa = imm5u;
  if (sa u> 0) {
    res[31:-1] = SE33(Rs1[31:(sa-1)]) + 1;
    Rd = res[31:0];
@@ -12416,7 +12434,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * RV64:
 
- sa = imm6u[5:0];
+ sa = imm6u;
  if (sa u> 0) {
    res[63:-1] = SE65(Rs1[63:(sa-1)]) + 1;
    Rd = res[63:0];
@@ -12546,7 +12564,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRAI8 +
-0111100 |00 |imm3u[2:0] |Rs1 |000 |Rd
+0111100 |00 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -12558,7 +12576,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRAI8.u +
-0111100 |01 |imm3u[2:0] |Rs1 |000 |Rd
+0111100 |01 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -12575,7 +12593,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm3u[2:0];
+ sa = imm3u;
  if (sa u> 0) {
    if ('.u' form) { // SRAI8.u
      res[7:-1] = SE9(Rs1.B[x][7:sa-1]) + 1;
@@ -12737,7 +12755,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRAI16 +
-0111000 |0 |imm4[3:0] |Rs1 |000 |Rd
+0111000 |0 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -12749,7 +12767,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRAI16.u +
-0111000 |1 |imm4[3:0] |Rs1 |000 |Rd
+0111000 |1 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -12765,7 +12783,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm4u[3:0];
+ sa = imm4u;
  if (sa u> 0) {
    if (“.u” form) { // SRAI16.u
      res[15:-1] = SE17(Rs1.H[x][15:sa-1]) + 1;
@@ -12851,8 +12869,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- SRL8 Rt, Ra, Rb
- SRL8.u Rt, Ra, Rb
+ SRL8 Rd, Rs1, Rs2
+ SRL8.u Rd, Rs1, Rs2
 
 *Purpose:* Perform 8-bit elements logical right shift operations in parallel. The shift amount is a variable from a GPR. The “.u” form performs additional rounding up operations on the shifted results.
 
@@ -12927,7 +12945,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRLI8 +
-0111101 |00 |imm3u[2:0] |Rs1 |000 |Rd
+0111101 |00 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -12939,15 +12957,15 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |SRLI8.u +
-0111101 |01 |imm3u[2:0] |Rs1 |000 |Rd
+0111101 |01 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SRLI8 Rt, Ra, imm3u
- SRLI8.u Rt, Ra, imm3u
+ SRLI8 Rd, Rs1, imm3u
+ SRLI8.u Rd, Rs1, imm3u
 
 *Purpose:* Perform 8-bit elements logical right shift operations in parallel. The shift amount is an immediate value. The “.u” form performs additional rounding up operations on the shifted results.
 
@@ -12955,7 +12973,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm3u[2:0];
+ sa = imm3u;
  if (sa u> 0) {
    if (“.u” form) { // SRLI8.u
      res[8:0] = ZE9(Rs1.B[x][7:sa-1]) + 1;
@@ -13041,8 +13059,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- SRL16 Rt, Ra, Rb
- SRL16.u Rt, Ra, Rb
+ SRL16 Rd, Rs1, Rs2
+ SRL16.u Rd, Rs1, Rs2
 
 *Purpose:* Perform 16-bit elements logical right shift operations in parallel. The shift amount is a variable from a GPR. The “.u” form performs additional rounding up operations on the shifted results.
 
@@ -13117,7 +13135,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRLI16 +
-0111001 |0 |imm4[3:0] |Rs1 |000 |Rd
+0111001 |0 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
@@ -13129,15 +13147,15 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |SRLI16.u +
-0111001 |1 |imm4[3:0] |Rs1 |000 |Rd
+0111001 |1 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SRLI16 Rt, Ra, imm4u
- SRLI16.u Rt, Ra, imm4u
+ SRLI16 Rd, Rs1, imm4u
+ SRLI16.u Rd, Rs1, imm4u
 
 *Purpose:* Perform 16-bit elements logical right shift operations in parallel. The shift amount is an immediate value. The “.u” form performs additional rounding up operations on the shifted results.
 
@@ -13700,14 +13718,14 @@ No encoding, an alias for "PKBT16 Rd, Rs1, Rs1" instruction
 |===
 |31 25 |24 23 |22 20 |19 15 |14 12 |11 7 |6 0
 |UCLIP8 +
-1000110 |10 |imm3u[2:0] |Rs1 |000 |Rd
+1000110 |10 |imm3u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- UCLIP8 Rt, Ra, imm3u
+ UCLIP8 Rd, Rs1, imm3u
 
 *Purpose:* Limit the 8-bit signed elements of a register to an unsigned range in parallel.
 
@@ -13757,14 +13775,14 @@ No encoding, an alias for "PKBT16 Rd, Rs1, Rs1" instruction
 |===
 |31 25 |24 |23 20 |19 15 |14 12 |11 7 |6 0
 |UCLIP16 +
-1000010 |1 |imm4u[3:0] |Rs1 |000 |Rd
+1000010 |1 |imm4u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- UCLIP16 Rt, Ra, imm4u
+ UCLIP16 Rd, Rs1, imm4u
 
 *Purpose:* Limit the 16-bit signed elements of a register to an unsigned range in parallel.
 
@@ -13814,14 +13832,14 @@ No encoding, an alias for "PKBT16 Rd, Rs1, Rs1" instruction
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |UCLIP32 +
-1111010 |imm5u[4:0] |Rs1 |000 |Rd
+1111010 |imm5u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- UCLIP32 Rd, Rs1, imm5u[4:0]
+ UCLIP32 Rd, Rs1, imm5u
 
 *Purpose:* Limit the 32-bit signed integer elements of a register to an unsigned range in parallel.
 
@@ -14198,8 +14216,8 @@ R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Spe
 * RV32:
 
  d_L = CONCAT(Rd(4,1),1'b0); d_H = CONCAT(Rd(4,1),1'b1);
- a_L = CONCAT(Ra(4,1),1'b0); a_H = CONCAT(Ra(4,1),1'b1);
- b_L = CONCAT(Rb(4,1),1'b0); b_H = CONCAT(Rb(4,1),1'b1);
+ a_L = CONCAT(Rs1(4,1),1'b0); a_H = CONCAT(Rs1(4,1),1'b1);
+ b_L = CONCAT(Rs2(4,1),1'b0); b_H = CONCAT(Rs2(4,1),1'b1);
  res65 = ZE65(R[a_H].R[a_L]) + ZE65(R[b_H].R[b_L]);
  if (res65 u> (2^64)-1) {
    res65 = (2^64)-1; OV = 1;
@@ -15594,9 +15612,9 @@ right-shifted by 1 bit and then written to Rd.
 
 *Examples:*
 
-* Ra = 0x7F, Rb = 0x7F, Rt = 0x7F
-* Ra = 0x80, Rb = 0x80, Rt = 0x80
-* Ra = 0x40, Rb = 0x80, Rt = 0x60
+* Rs1 = 0x7F, Rs2 = 0x7F, Rd = 0x7F
+* Rs1 = 0x80, Rs2 = 0x80, Rd = 0x80
+* Rs1 = 0x40, Rs2 = 0x80, Rd = 0x60
 
 *Intrinsic functions:*
 
@@ -15650,9 +15668,9 @@ right-shifted by 1 bit and then written to Rd.
 
 *Examples:*
 
-* Ra = 0x7FFF, Rb = 0x7FFF Rt = 0x7FFF
-* Ra = 0x8000, Rb = 0x8000 Rt = 0x8000
-* Ra = 0x4000, Rb = 0x8000 Rt = 0x6000
+* Rs1 = 0x7FFF, Rs2 = 0x7FFF Rd = 0x7FFF
+* Rs1 = 0x8000, Rs2 = 0x8000 Rd = 0x8000
+* Rs1 = 0x4000, Rs2 = 0x8000 Rd = 0x6000
 
 *Intrinsic functions:*
 
@@ -15706,8 +15724,8 @@ R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Spe
 * RV32:
 
  d_L = CONCAT(Rd(4,1),1'b0); d_H = CONCAT(Rd(4,1),1'b1);
- a_L = CONCAT(Ra(4,1),1'b0); a_H = CONCAT(Ra(4,1),1'b1);
- b_L = CONCAT(Rb(4,1),1'b0); b_H = CONCAT(Rb(4,1),1'b1);
+ a_L = CONCAT(Rs1(4,1),1'b0); a_H = CONCAT(Rs1(4,1),1'b1);
+ b_L = CONCAT(Rs2(4,1),1'b0); b_H = CONCAT(Rs2(4,1),1'b1);
  res65 = (ZE65(R[a_H].R[a_L]) + ZE65(R[b_H].R[b_L])) u>> 1;
  R[d_H].R[d_L] = res65.D[0];
 
@@ -15765,9 +15783,9 @@ by 1 bit and then sign-extended and written to Rd.
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x7FFFFFFF Rt = 0x7FFFFFFF
-* Ra = 0x80000000, Rb = 0x80000000 Rt = 0x80000000
-* Ra = 0x40000000, Rb = 0x80000000 Rt = 0x60000000
+* Rs1 = 0x7FFFFFFF, Rs2 = 0x7FFFFFFF Rd = 0x7FFFFFFF
+* Rs1 = 0x80000000, Rs2 = 0x80000000 Rd = 0x80000000
+* Rs1 = 0x40000000, Rs2 = 0x80000000 Rd = 0x60000000
 
 *Intrinsic functions:*
 
@@ -16040,10 +16058,10 @@ right-shifted by 1 bit and then written to Rd.
 
 *Examples:*
 
-* Ra = 0x7F, Rb = 0x80, Rt = 0xFF
-* Ra = 0x80, Rb = 0x7F, Rt = 0x00
-* Ra = 0x80, Rb = 0x40, Rt = 0x20
-* Ra = 0x81, Rb = 0x01, Rt = 0x40
+* Rs1 = 0x7F, Rs2 = 0x80, Rd = 0xFF
+* Rs1 = 0x80, Rs2 = 0x7F, Rd = 0x00
+* Rs1 = 0x80, Rs2 = 0x40, Rd = 0x20
+* Rs1 = 0x81, Rs2 = 0x01, Rd = 0x40
 
 *Intrinsic functions:*
 
@@ -16097,10 +16115,10 @@ right-shifted by 1 bit and then written to Rd.
 
 *Examples:*
 
-* Ra = 0x7FFF, Rb = 0x8000, Rt = 0xFFFF
-* Ra = 0x8000, Rb = 0x7FFF, Rt = 0x0000
-* Ra = 0x8000, Rb = 0x4000, Rt = 0x2000
-* Ra = 0x8001, Rb = 0x0001, Rt = 0x4000
+* Rs1 = 0x7FFF, Rs2 = 0x8000, Rd = 0xFFFF
+* Rs1 = 0x8000, Rs2 = 0x7FFF, Rd = 0x0000
+* Rs1 = 0x8000, Rs2 = 0x4000, Rd = 0x2000
+* Rs1 = 0x8001, Rs2 = 0x0001, Rd = 0x4000
 
 *Intrinsic functions:*
 
@@ -16158,8 +16176,8 @@ first right-shifted by 1 bit and then written to Rd.
 * RV32:
 
  d_L = CONCAT(Rd(4,1),1'b0); d_H = CONCAT(Rd(4,1),1'b1);
- a_L = CONCAT(Ra(4,1),1'b0); a_H = CONCAT(Ra(4,1),1'b1);
- b_L = CONCAT(Rb(4,1),1'b0); b_H = CONCAT(Rb(4,1),1'b1);
+ a_L = CONCAT(Rs1(4,1),1'b0); a_H = CONCAT(Rs1(4,1),1'b1);
+ b_L = CONCAT(Rs2(4,1),1'b0); b_H = CONCAT(Rs2(4,1),1'b1);
  res65 = (ZE65(R[a_H].R[a_L]) - ZE65(R[b_H].R[b_L])) u>> 1;
  R[d_H].R[d_L] = res65.D[0];
 
@@ -16218,10 +16236,10 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x80000000, Rt = 0xFFFFFFFF
-* Ra = 0x80000000, Rb = 0x7FFFFFFF, Rt = 0x00000000
-* Ra = 0x80000000, Rb = 0x40000000, Rt = 0x20000000
-* Ra = 0x80000001, Rb = 0x00000001, Rt = 0x40000000
+* Rs1 = 0x7FFFFFFF, Rs2 = 0x80000000, Rd = 0xFFFFFFFF
+* Rs1 = 0x80000000, Rs2 = 0x7FFFFFFF, Rd = 0x00000000
+* Rs1 = 0x80000000, Rs2 = 0x40000000, Rd = 0x20000000
+* Rs1 = 0x80000001, Rs2 = 0x00000001, Rd = 0x40000000
 
 *Intrinsic functions:*
 
@@ -16240,20 +16258,20 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |WEXTI +
-1101111 |Imm5u[4:0] |Rs1 |000 |Rd
+1101111 |imm5u |Rs1 |000 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- WEXTI Rd, Rs1, Imm5u
+ WEXTI Rd, Rs1, imm5u
 
 *Purpose:* Extract a 32-bit word from a 64-bit value stored in an even/odd pair of registers (RV32) or a register (RV64) starting from a specified immediate LSB bit position.
 
 *RV32 Description:*
 
-This instruction extracts a 32-bit word from a 64-bit value of an even/odd pair of registers specified by Rs1(4,1) starting from a specified immediate LSB bit position, Imm5u. The extracted word is written to Rd.
+This instruction extracts a 32-bit word from a 64-bit value of an even/odd pair of registers specified by Rs1(4,1) starting from a specified immediate LSB bit position, imm5u. The extracted word is written to Rd.
 
 Rs1(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
@@ -16261,7 +16279,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the 64-b
 
 *RV64 Description:*
 
-This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified immediate LSB bit position, Imm5u. The extracted word is sign-extended and written to lower 32-bit of Rd.
+This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified immediate LSB bit position, imm5u. The extracted word is sign-extended and written to lower 32-bit of Rd.
 
 *Operations:*
 
@@ -16269,12 +16287,12 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 
  Idx0 = CONCAT(Rs1(4,1),1'b0); Idx1 = CONCAT(Rs1(4,1),1'b1);
  src[63:0] = Concat(R[Idx1], R[Idx0]);
- LSB = Imm5u;
+ LSB = imm5u;
  Rd = src[31+LSB:LSB];
 
 * RV64:
 
- LSB = Imm5u;
+ LSB = imm5u;
  ExtractW = Rs1[31+LSB:LSB];
  Rd = SE64(ExtractW)
 
@@ -16479,6 +16497,7 @@ For the “ZUNPKD8(__x__)(__y__)” instruction, it unpacks byte _x_ and byte _y
    uint16x4_t __rv__v_zunpkd832(uint8x8_t a);
 
 <<<
+[#rv64_extra]  
 == Detailed Instruction Descriptions (RV64 Only)
 
 The sections in this chapter describe the detailed operations of the P extension instructions for RV64 only in alphabetical order.
@@ -17778,7 +17797,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |KSLLI32 +
-1000010 |Imm5u[4:0] |Rs1 |010 |Rd
+1000010 |imm5u |Rs1 |010 |Rd
 |OP-P +
 1110111
 |===
@@ -17793,7 +17812,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm5u[4:0];
+ sa = imm5u;
  if (sa u> 0) {
    res[(31+sa):0] = Rs1.W[x] << sa;
    if (res s> (2^31)-1) {
@@ -18471,9 +18490,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x80000000 Rt = 0x7FFFFFFF
-* Ra = 0x80000000, Rb = 0x7FFFFFFF Rt = 0x80000000
-* Ra = 0x80000000, Rb = 0x40000000 Rt = 0xA0000000
+* Rs1 = 0x7FFFFFFF, Rs2 = 0x80000000, Rd = 0x7FFFFFFF
+* Rs1 = 0x80000000, Rs2 = 0x7FFFFFFF, Rd = 0x80000000
+* Rs1 = 0x80000000, Rs2 = 0x40000000, Rd = 0xA0000000
 
 *Intrinsic functions:*
 
@@ -18544,22 +18563,22 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SLLI32 +
-0111010 |Imm5u[4:0] |Rs1 |010 |Rd
+0111010 |imm5u |Rs1 |010 |Rd
 |OP-P +
 1110111
 |===
 
 *Syntax:*
 
- SLLI32 Rd, Rs1, imm5u[4:0]
+ SLLI32 Rd, Rs1, imm5u
 
 *Purpose:* Perform 32-bit element logical left shift operations in parallel. The shift amount is an immediate value.
 
-*Description:* The 32-bit elements in Rs1 are left-shifted logically. The shifted out bits are filled with zero and the shift amount is specified by the imm5u[4:0] constant. And the results are written to Rd.
+*Description:* The 32-bit elements in Rs1 are left-shifted logically. The shifted out bits are filled with zero and the shift amount is specified by the imm5u constant. And the results are written to Rd.
 
 *Operations:*
 
- sa = imm5u[4:0];
+ sa = imm5u;
  Rd.W[x] = Rs1.W[x] << sa;
  for RV64: x=1..0
 
@@ -18808,9 +18827,9 @@ The subtraction result is written to Rd. The 32-bit contents of Rs1 and Rs2 are 
 
 *Operations:*
 
- Rt = (Rs1.W[1] s* Rs2.W[1]) - (Rs1.W[0] s* Rs2.W[0]); // SMDS32
- Rt = (Rs1.W[0] s* Rs2.W[0]) - (Rs1.W[1] s* Rs2.W[1]); // SMDRS32
- Rt = (Rs1.W[1] s* Rs2.W[0]) - (Rs1.W[0] s* Rs2.W[1]); // SMXDS32
+ Rd = (Rs1.W[1] s* Rs2.W[1]) - (Rs1.W[0] s* Rs2.W[0]); // SMDS32
+ Rd = (Rs1.W[0] s* Rs2.W[0]) - (Rs1.W[1] s* Rs2.W[1]); // SMDRS32
+ Rd = (Rs1.W[1] s* Rs2.W[0]) - (Rs1.W[0] s* Rs2.W[1]); // SMXDS32
 
 *Exceptions:* None
 
@@ -19002,7 +19021,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRAI32 +
-0111000 |Imm5u[4:0] |Rs1 |010 |Rd
+0111000 |imm5u |Rs1 |010 |Rd
 |OP-P +
 1110111
 |===
@@ -19014,7 +19033,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRAI32u +
-1000000 |Imm5u[4:0] |Rs1 |010 |Rd
+1000000 |imm5u |Rs1 |010 |Rd
 |OP-P +
 1110111
 |===
@@ -19030,7 +19049,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm5u[4:0];
+ sa = imm5u;
    if (sa u> 0) {
    if (“.u” form) { // SRAI32.u
      res[31:-1] = SE33(Rs1.W[x][31:sa-1]) + 1;
@@ -19083,7 +19102,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRAIW.u +
-0011010 |imm5u[4:0] |Rs1 |001 |Rd
+0011010 |imm5u |Rs1 |001 |Rd
 |OP-P +
 1110111
 |===
@@ -19227,7 +19246,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRLI32 +
-0111001 |Imm5u[4:0] |Rs1 |010 |Rd
+0111001 |imm5u |Rs1 |010 |Rd
 |OP-P +
 1110111
 |===
@@ -19239,7 +19258,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 |SRLI32u +
-1000001 |Imm5u[4:0] |Rs1 |010 |Rd
+1000001 |imm5u |Rs1 |010 |Rd
 |OP-P +
 1110111
 |===
@@ -19255,7 +19274,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- sa = imm5u[4:0];
+ sa = imm5u;
  if (sa u> 0) {
    if (“.u” form) { // SRLI32.u
      res[31:-1] = ZE33(Rs1.W[x][31:sa-1]) + 1;
@@ -19884,9 +19903,9 @@ right-shifted by 1 bit and then written to Rd.
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x7FFFFFFF, Rt = 0x7FFFFFFF
-* Ra = 0x80000000, Rb = 0x80000000, Rt = 0x80000000
-* Ra = 0x40000000, Rb = 0x80000000, Rt = 0x60000000
+* Rs1 = 0x7FFFFFFF, Rs2 = 0x7FFFFFFF, Rd = 0x7FFFFFFF
+* Rs1 = 0x80000000, Rs2 = 0x80000000, Rd = 0x80000000
+* Rs1 = 0x40000000, Rs2 = 0x80000000, Rd = 0x60000000
 
 *Intrinsic functions:*
 
@@ -20144,10 +20163,10 @@ first right-shifted by 1 bit and then written to Rd.
 
 *Examples:*
 
-* Ra = 0x7FFFFFFF, Rb = 0x80000000, Rt = 0xFFFFFFFF
-* Ra = 0x80000000, Rb = 0x7FFFFFFF, Rt = 0x00000000
-* Ra = 0x80000000, Rb = 0x40000000, Rt = 0x20000000
-* Ra = 0x80000001, Rb = 0x00000001, Rt = 0x40000000
+* Rs1 = 0x7FFFFFFF, Rs2 = 0x80000000, Rd = 0xFFFFFFFF
+* Rs1 = 0x80000000, Rs2 = 0x7FFFFFFF, Rd = 0x00000000
+* Rs1 = 0x80000000, Rs2 = 0x40000000, Rd = 0x20000000
+* Rs1 = 0x80000001, Rs2 = 0x00000001, Rd = 0x40000000
 
 *Intrinsic functions:*
 
@@ -20268,7 +20287,7 @@ l|XLEN-1                                     1 |0
 |*[4:3]* |*000* |*001* |*010* |*011* |*100* |*101*
 |*110* |*111*
 
-|*00* 8+|insb
+|*00* 4+|insb (RV32/RV64) 4+|insb (RV64)
 
 |*01* |sunpkd810 |sunpkd820 |sunpkd830 |sunpkd831 |zunpkd810
 |zunpkd820 |zunpkd830 |zunpkd831
