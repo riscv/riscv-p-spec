@@ -20031,7 +20031,7 @@ right-shifted by 1 bit and then written to [63:32] of Rd for subtraction and
 [cols="6*^.^"]
 |===
 l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|URCRAS32 +
+|URSTAS32 +
 1101000 |Rs2 |Rs1 |010 |Rd
 |OP-P +
 1110111
