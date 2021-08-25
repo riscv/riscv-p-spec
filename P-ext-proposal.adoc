@@ -5366,7 +5366,7 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
  RV32:
    int32_t __rv__v_kdmbb(int16x2_t a, int16x2_t b);
  RV64:
-   int32_t __rv__v_kdmbb(int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmbb(int16x2_t a, int16x2_t b);
 
 * *KDMBT*
 
@@ -5379,7 +5379,7 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
  RV32:
    int32_t __rv__v_kdmbt(int16x2_t a, int16x2_t b);
  RV64:
-   int32_t __rv__v_kdmbt(int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmbt(int16x2_t a, int16x2_t b);
 
 * *KDMTT*
 
@@ -5392,7 +5392,7 @@ Q15 inputs are 0x8000, saturation will happen. The result will be saturated to
  RV32:
    int32_t __rv__v_kdmtt(int16x2_t a, int16x2_t b);
  RV64:
-   int32_t __rv__v_kdmtt(int16x4_t a, int16x4_t b);
+   int32_t __rv__v_kdmtt(int16x2_t a, int16x2_t b);
 
 <<<
 === KDMABB, KDMABT, KDMATT
@@ -5879,7 +5879,7 @@ saturated to 0x7FFF and the overflow flag OV will be set.
  RV32:
    intXLEN_t __rv__v_khmbb(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_khmbb(int16x4_t a, int16x4_t b);
+   intXLEN_t __rv__v_khmbb(int16x2_t a, int16x2_t b);
 
 
 * *KHMBT*
@@ -5893,7 +5893,7 @@ saturated to 0x7FFF and the overflow flag OV will be set.
  RV32:
    intXLEN_t __rv__v_khmbt(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_khmbt(int16x4_t a, int16x4_t b);
+   intXLEN_t __rv__v_khmbt(int16x2_t a, int16x2_t b);
 
 * *KHMTT*
 
@@ -5906,7 +5906,7 @@ saturated to 0x7FFF and the overflow flag OV will be set.
  RV32:
    intXLEN_t __rv__v_khmtt(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv__v_khmtt(int16x4_t a, int16x4_t b);
+   intXLEN_t __rv__v_khmtt(int16x2_t a, int16x2_t b);
 
 <<<
 === KMABB, KMABT, KMATT
