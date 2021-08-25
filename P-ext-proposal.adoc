@@ -3655,7 +3655,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv__bitrev(uintXLEN_t a, uintXLEN_t msb);
+ uintXLEN_t __rv__bitrev(uintXLEN_t a, uint32_t msb);
 
 <<<
 ===  BITREVI (Bit Reverse Immediate)
@@ -7950,27 +7950,27 @@ The left-shifted results are saturated to the 8-bit signed integer range of [-2^
 
 * Required:
 
- uintXLEN_t __rv__kslra8(uintXLEN_t a, int b);
+ uintXLEN_t __rv__kslra8(uintXLEN_t a, int32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int8x4_t __rv__v_kslra8(int8x4_t a, int b);
+   int8x4_t __rv__v_kslra8(int8x4_t a, int32_t b);
  RV64:
-   int8x8_t __rv__v_kslra8(int8x8_t a, int b);
+   int8x8_t __rv__v_kslra8(int8x8_t a, int32_t b);
 
 * *KSLRA8.u*
 
 * Required:
 
- uintXLEN_t __rv__kslra8_u(uintXLEN_t a, int b);
+ uintXLEN_t __rv__kslra8_u(uintXLEN_t a, int32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int8x4_t __rv__v_kslra8_u(int8x4_t a, int b);
+   int8x4_t __rv__v_kslra8_u(int8x4_t a, int32_t b);
  RV64:
-   int8x8_t __rv__v_kslra8_u(int8x8_t a, int b);
+   int8x8_t __rv__v_kslra8_u(int8x8_t a, int32_t b);
 
 <<<
 ===  KSLRA16, KSLRA16.u
@@ -8054,27 +8054,27 @@ The left-shifted results are saturated to the 16-bit signed integer range of [-2
 
 * Required:
 
- uintXLEN_t __rv__kslra16(uintXLEN_t a, int b);
+ uintXLEN_t __rv__kslra16(uintXLEN_t a, int32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int16x2_t __rv__v_kslra16(int16x2_t a, int b);
+   int16x2_t __rv__v_kslra16(int16x2_t a, int32_t b);
  RV64:
-   int16x4_t __rv__v_kslra16(int16x4_t a, int b);
+   int16x4_t __rv__v_kslra16(int16x4_t a, int32_t b);
 
 * *KSLRA16.u*
 
 * Required:
 
- uintXLEN_t __rv__kslra16_u(uintXLEN_t a, int b);
+ uintXLEN_t __rv__kslra16_u(uintXLEN_t a, int32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int16x2_t __rv__v_kslra16_u(int16x2_t a, int b);
+   int16x2_t __rv__v_kslra16_u(int16x2_t a, int32_t b);
  RV64:
-   int16x4_t __rv__v_kslra16_u(int16x4_t a, int b);
+   int16x4_t __rv__v_kslra16_u(int16x4_t a, int32_t b);
 
 <<<
 === KSLRAW (Shift Left Logical with Q31 Saturation or Shift Right Arithmetic)
@@ -11869,7 +11869,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int __rv__v_smmwt(int a, int16x2_t b);
+   int32_t __rv__v_smmwt(int32_t a, int16x2_t b);
  RV64:
    int32x2_t __rv__v_smmwt(int32x2_t a, int16x4_t b);
 
@@ -12197,7 +12197,7 @@ image::smul8-rv64.png[]
 
 * Required:
 
- uint64_t __rv__smul8(unsigned int a, unsigned int b);
+ uint64_t __rv__smul8(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -12208,7 +12208,7 @@ image::smul8-rv64.png[]
 
 * Required:
 
- uint64_t __rv__smulx8(unsigned int a, unsigned int b);
+ uint64_t __rv__smulx8(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -15447,7 +15447,7 @@ The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 1
 
 * Required:
 
- uint64_t __rv__umul8(unsigned int a, unsigned int b);
+ uint64_t __rv__umul8(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -15458,7 +15458,7 @@ The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 1
 
 * Required:
 
- uint64_t __rv__umulx8(unsigned int a, unsigned int b);
+ uint64_t __rv__umulx8(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -15557,7 +15557,7 @@ The two 32-bit U32 results are then written into Rd. The result calculated from 
 
 * Required:
 
- uint64_t __rv__umul16(unsigned int a, unsigned int b);
+ uint64_t __rv__umul16(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -15567,7 +15567,7 @@ The two 32-bit U32 results are then written into Rd. The result calculated from 
 
 * Required:
 
- uint64_t __rv__umulx16(unsigned int a, unsigned int b);
+ uint64_t __rv__umulx16(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
