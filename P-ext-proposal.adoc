@@ -3967,7 +3967,7 @@ result to the corresponding 32-bit elements of Rd.
 
 * Required:
 
- uintXLEN_t __rv__clrs32(uintXLEN_t a);
+ uintXLEN_t __rv__clrs32(intXLEN_t a);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -6721,7 +6721,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
 
 * Required:
 
- intXLEN_t __rv__kmmawb(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawb(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -6734,7 +6734,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed bo
 
 * Required:
 
- intXLEN_t __rv__kmmawb_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawb_u(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -6825,7 +6825,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * Required:
 
- intXLEN_t __rv__kmmawb2(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawb2(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -6838,7 +6838,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * Required:
 
- intXLEN_t __rv__kmmawb2_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawb2_u(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -6925,7 +6925,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed to
 
 * Required:
 
- intXLEN_t __rv__kmmawt(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawt(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -6938,7 +6938,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the signed to
 
 * Required:
 
- intXLEN_t __rv__kmmawt_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawt_u(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -7029,7 +7029,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * Required:
 
- intXLEN_t __rv__kmmawt2(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawt2(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
@@ -7042,7 +7042,7 @@ This instruction multiplies the signed 32-bit Q31 elements of Rs1 with the signe
 
 * Required:
 
- intXLEN_t __rv__kmmawt2_u(intXLEN_t t, uintXLEN_t a, uintXLEN_t b);
+ intXLEN_t __rv__kmmawt2_u(intXLEN_t t, intXLEN_t a, uintXLEN_t b);
 
 * Optional (e.g., GCC vector extensions):
 
