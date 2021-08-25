@@ -11152,9 +11152,9 @@ For this instruction, any potential overflow bits beyond 32-bit are discarded an
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   int32_t __rv__v_smaqa_su(int32_t t, int8x4_t a, int8x4_t b);
+   int32_t __rv__v_smaqa_su(int32_t t, int8x4_t a, uint8x4_t b);
  RV64:
-   int32x2_t __rv__v_smaqa_su(int32x2_t t, int8x8_t a, int8x8_t b);
+   int32x2_t __rv__v_smaqa_su(int32x2_t t, int8x8_t a, uint8x8_t b);
 
 <<<
 === SMAX8 (SIMD 8-bit Signed Maximum)
@@ -13760,9 +13760,9 @@ No encoding, an alias for "PKBT16 Rd, Rs1, Rs1" instruction
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   uint8x4_t __rv__v_uclip8(uint8x4_t a, uint32_t b);
+   uint8x4_t __rv__v_uclip8(int8x4_t a, uint32_t b);
  RV64:
-   uint8x8_t __rv__v_uclip8(uint8x8_t a, uint32_t b);
+   uint8x8_t __rv__v_uclip8(int8x8_t a, uint32_t b);
 
 <<<
 === UCLIP16 (SIMD 16-bit Unsigned Clip Value)
@@ -13817,9 +13817,9 @@ No encoding, an alias for "PKBT16 Rd, Rs1, Rs1" instruction
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   uint16x2_t __rv__v_uclip16(uint16x2_t a, uint32_t b);
+   uint16x2_t __rv__v_uclip16(int16x2_t a, uint32_t b);
  RV64:
-   uint16x4_t __rv__v_uclip16(uint16x4_t a, uint32_t b);
+   uint16x4_t __rv__v_uclip16(int16x4_t a, uint32_t b);
 
 <<<
 === UCLIP32 (SIMD 32-bit Unsigned Clip Value)
@@ -13869,12 +13869,12 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- uintXLEN_t __rv__uclip32(uintXLEN_t a, uint32_t b);
+ uintXLEN_t __rv__uclip32(intXLEN_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV64:
-   uint32x2_t __rv__v_uclip32(uint32x2_t a, uint32_t b);
+   uint32x2_t __rv__v_uclip32(int32x2_t a, uint32_t b);
 
 <<<
 === UCMPLE8 (SIMD 8-bit Unsigned Compare Less Than & Equal)
@@ -16304,7 +16304,7 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv__wext(int64_t a, uint32_t b);
+ intXLEN_t __rv__wext(uint64_t a, uint32_t b);
 
 <<<
 === WEXT (Extract Word from 64-bit)
@@ -16361,7 +16361,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the 64-b
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv__wext(int64_t a, uint32_t b);
+ intXLEN_t __rv__wext(uint64_t a, uint32_t b);
 
 <<<
 === ZUNPKD810, ZUNPKD820, ZUNPKD830, ZUNPKD831, ZUNPKD832
