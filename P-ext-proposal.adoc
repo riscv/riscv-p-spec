@@ -3348,22 +3348,25 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 | Zpn + Zpsfoperand + Zprvsfextra  |RV64
 |===
 
-== Instructions Duplicated in Bit Manipulation Extension (v0.92)
+== Instructions Duplicated in Bit Manipulation Extension (v0.93)
 
-[cols="^.^,^.^,^.^",options="header",]
+[cols="6*^.^",options="header",]
 |===
-|P Instruction |B Instruction |Architecture
-|CLZ32 |CLZ |RV32
-|MAXW |MAX |RV32
-|MINW |MIN |RV32
-|BPICK |CMIX |RV32, RV64
-|PKBB16 |PACK |RV32
-|PKTT16 |PACKU |RV32
-|PKBB32 |PACK |RV64
-|PKTT32 |PACKU |RV64
-|WEXT   |FSR   |RV32
-|WEXT   |FSRW  |RV64
-|SWAP8  |REV8.H |RV32, RV64
+|P Instruction |B Instruction |B Extension |Partial |RV32 | RV64
+|CLZ32   |CLZ    |Zbb |         |&#10003; |
+|PKBB16  |PACK   |Zbp |         |&#10003; |
+|PKTT16  |PACKU  |Zbp |         |&#10003; |
+|PKBB32  |PACK   |Zbp |         |         |&#10003;
+|PKTT32  |PACKU  |Zbp |         |         |&#10003;
+|WEXT    |FSR    |Zbt |         |&#10003; |
+|WEXTI   |FSRI   |Zbt |         |&#10003; |
+|WEXT    |FSRW   |Zbt |         |         |&#10003;
+|MAXW    |MAX    |Zbb |         |&#10003; |&#10003;
+|MINW    |MIN    |Zbb |         |&#10003; |&#10003;
+|SWAP8   |REV8.H |Zbp |         |&#10003; |&#10003;
+|BPICK   |CMIX   |Zbt |         |&#10003; |&#10003;
+|BITREV  |REV    |Zbp |&#10003; |&#10003; |&#10003;
+|BITREVI |REV    |Zbp |&#10003; |&#10003; |&#10003;
 |===
 
 
@@ -12280,7 +12283,6 @@ The two 32-bit Q30 results are then written into Rd. The result calculated from 
  // SMUL16
  R[d_H] = Rs1.H[1] s* Rs2.H[1];
  R[d_L] = Rs1.H[0] s* Rs2.H[0];
-  
  // SMULX16
  R[d_H] = Rs1.H[1] s* Rs2.H[0];
  R[d_L] = Rs1.H[0] s* Rs2.H[1];
@@ -12289,8 +12291,7 @@ The two 32-bit Q30 results are then written into Rd. The result calculated from 
 
  // SMUL16
  Rd.W[1] = Rs1.H[1] s* Rs2.H[1];
- Rd.W[0] = Rs1.H[0] s* Rs2.H[0];
-   
+ Rd.W[0] = Rs1.H[0] s* Rs2.H[0];   
  // SMULX16
  Rd.W[1] = Rs1.H[1] s* Rs2.H[0];
  Rd.W[0] = Rs1.H[0] s* Rs2.H[1];
@@ -15529,8 +15530,7 @@ The two 32-bit U32 results are then written into Rd. The result calculated from 
  d_L = CONCAT(Rd(4,1),1'b0); d_H = CONCAT(Rd(4,1),1'b1);
  // UMUL16
  R[d_H] = Rs1.H[1] u* Rs2.H[1];
- R[d_L] = Rs1.H[0] u* Rs2.H[0];
-  
+ R[d_L] = Rs1.H[0] u* Rs2.H[0]; 
  // UMULX16
  R[d_H] = Rs1.H[1] u* Rs2.H[0];
  R[d_L] = Rs1.H[0] u* Rs2.H[1];
@@ -15540,7 +15540,6 @@ The two 32-bit U32 results are then written into Rd. The result calculated from 
  // UMUL16
  Rd.W[1] = Rs1.H[1] u* Rs2.H[1];
  Rd.W[0] = Rs1.H[0] u* Rs2.H[0];
-   
  // UMULX16
  Rd.W[1] = Rs1.H[1] u* Rs2.H[0];
  Rd.W[0] = Rs1.H[0] u* Rs2.H[1];
@@ -16279,7 +16278,7 @@ The odd “2__d__+1” register of the pair contains the high 32-bit of the 64-b
 
 *RV64 Description:*
 
-This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified immediate LSB bit position, imm5u. The extracted word is sign-extended and written to lower 32-bit of Rd.
+This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified immediate LSB bit position, imm5u. The extracted word is sign-extended to 64-bits and written to Rd.
 
 *Operations:*
 
@@ -16338,12 +16337,17 @@ Rs1(4,1), i.e., _d_, determines the even/odd pair group of the two registers. Sp
 
 The odd “2__d__+1” register of the pair contains the high 32-bit of the 64-bit value and the even “2__d__” register of the pair contains the low 32-bit of the 64-bit value.
 
+*RV64 Description:*
+
+This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from a specified LSB bit position, specified in Rs2[4:0]. The extracted word is sign-extended to 64-bits and written to Rd.
+
+
 *Operations:*
 
 * RV32:
 
  Idx0 = CONCAT(Rs1(4,1),1'b0); Idx1 = CONCAT(Rs1(4,1),1'b1);
- src[63:0] = Concat(R[Idx1], R[Idx0]);
+ src[63:0] = CONCAT(R[Idx1], R[Idx0]);
  LSBloc = Rs2[4:0];
  Rd = src[31+LSBloc:LSBloc];
 
