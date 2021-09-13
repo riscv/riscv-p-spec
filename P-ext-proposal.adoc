@@ -16557,7 +16557,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 === KCRAS32 (SIMD 32-bit Signed Saturating Cross Addition & Subtraction)
 
-*Type:* SIM (RV64 Only)
+*Type:* SIMD (RV64 Only)
 
 *Format:*
 
@@ -17800,7 +17800,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 === KSTSA32 (SIMD 32-bit Signed Saturating Straight Subtraction & Addition)
 
-*Type:* SIM (RV64 Only)
+*Type:* SIMD (RV64 Only)
 
 *Format:*
 
