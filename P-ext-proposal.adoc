@@ -13471,11 +13471,20 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Format:*
 
-No encoding, an alias for "PKBT16 Rd, Rs1, Rs1" instruction
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|PKBT16 +
+0001111 |Rs1 |Rs1 |001 |Rd
+|OP-P +
+1110111
+|===
+
+* An alias for "PKBT16 Rd, Rs1, Rs1"
 
 *Syntax:*
 
- SWAP16 Rd, Rs1
+ SWAP16 Rd, Rs1 # pseudo mnemonic
 
 *Purpose:* Swap the 16-bit halfwords within each word of a register. This pseudo instruction is an alias for 
 "PKBT16 Rd, Rs1, Rs1" instruction.
@@ -17145,7 +17154,16 @@ The multiplication result is added to the content of 64-bit data in Rd. If the a
 [.text-center]
 *KMADA32*
 
-No encoding, an alias for “KMAR64” instruction
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|KMAR64 +
+1001010 |Rs2 |Rs1 |001 |Rd
+|OP-P +
+1110111
+|===
+
+* An alias for “KMAR64” instruction
 
 [.text-center]
 *KMAXDA32*
@@ -17161,7 +17179,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- KMADA32 Rd, Rs1, Rs2
+ KMADA32 Rd, Rs1, Rs2    # pseudo mnemonic
  KMAXDA32 Rd, Rs1, Rs2
 
 *Purpose:* Perform two signed 32-bit multiplications from 32-bit data in two registers, and then adds the two 64-bit results and 64-bit data in a third register together. The addition result may be saturated.
@@ -18462,7 +18480,16 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 [.text-center]
 *SMBB32*
 
-No encoding, an alias for “MULSR64” instruction
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MULSR64 +
+1110000 |Rs2 |Rs1 |001 |Rd
+|OP-P +
+1110111
+|===
+
+* An alias for “MULSR64” instruction
 
 [.text-center]
 *SMBT32*
@@ -18490,7 +18517,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- SMBB32 Rd, Rs1, Rs2
+ SMBB32 Rd, Rs1, Rs2   # pseudo mnemonic
  SMBT32 Rd, Rs1, Rs2
  SMTT32 Rd, Rs1, Rs2
 
