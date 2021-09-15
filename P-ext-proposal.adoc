@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.6-draft-20210908
+Version 0.9.7-draft-20210915
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,10 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.7 | 2021/09/15 | Chuanhua Chang
+a|
+* Added Zbpbo extension for RVB overlaps.
+* Added notes for Zbpbo-replaced instructions.
 | v0.9.6 | 2021/09/08 | Chuanhua Chang
 a|
 * Merged Zprvsfextra into Zpn
@@ -3297,6 +3301,35 @@ There are four 32-bit packing instructions here.
 The P extension instructions will be divided into several Z-extension subsets to
 facilitate the trade-off between implementation complexity and application performance.
 
+
+=== Zbpbo
+
+The instructions in Zbpbo extension are a subset of Bitmanipulation extension instructions which
+are needed in the application domains covered by P extension.
+
+The instructions in this extension are listed in the following table.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; |          |  CLZ         | Count leading zero
+| &#10003; | &#10003; |  PACK        | Pack
+| &#10003; | &#10003; |  PACKU       | Pack unsigned
+| &#10003; |          |  FSR         | Funnel shift right
+| &#10003; |          |  FSRI        | Funnel shift right immediate
+|          | &#10003; |  FSRW        | Funnel shift right word
+| &#10003; | &#10003; |  MAX         | Maximum
+| &#10003; | &#10003; |  MIN         | Minimum
+| &#10003; | &#10003; |  REV8.H      | Swap byte within halfword
+| &#10003; | &#10003; |  CMIX        | Conditional bit selection
+| &#10003; | &#10003; |  REV         | Bit reverse
+|===
+
+
 === Zpsfoperand
 
 The instructions in Zpsfoperand extension will read or write 64-bit operands using register-pairs
@@ -3318,7 +3351,7 @@ The instructions in Zpsfoperand are listed in the following table.
 |===
 
 === Zpn
-The instructions of RV32P and RV64P not in Zpsfoperand extensions will be included in this sub-extension.
+The instructions of RV32P and RV64P not in Zbpbo and Zpsfoperand extensions will be included in this sub-extension.
 This is a required sub-extension for RV32P and RV64P extension.
 
 === Legal Sub-extension Combinations
@@ -3327,8 +3360,8 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 [cols="^.^,^.^",options="header",]
 |===
 | Legal Sub-extension Combination  | Architecture
-| Zpn                              |RV32, RV64
-| Zpn + Zpsfoperand                |RV32, RV64
+| Zpn + Zbpbo                      |RV32, RV64
+| Zpn + Zpsfoperand + Zbpbo        |RV32, RV64
 |===
 
 == Instructions Duplicated in Bit Manipulation Extension (v0.93)
@@ -3351,6 +3384,550 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 |BITREV  |REV    |Zbp |&#10003; |&#10003; |&#10003;
 |BITREVI |REV    |Zbp |&#10003; |&#10003; |&#10003;
 |===
+
+== Detailed Instruction Descriptions for Zbpbo Extension
+
+The sections in this chapter describe the detailed operations of the Zbpbo extension
+instructions in alphabetical order.
+
+<<<
+=== CLZ (Count Leading Zero)
+
+*Extension:* Zbpbo (RV32)
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|0110000 |CLZ +
+00000 |Rs1 |001 |Rd
+|OP-IMM +
+0010011
+|===
+
+*Syntax:*
+
+ CLZ Rd, Rs1
+
+*Purpose:* Count the number of zero bits at the MSB end of a 32-bit 
+general purpose register.
+
+*Description:* Starting from the most significant bits of the Rs1 register, this instruction counts the number of leading zero bits and writes the results to Rd. If the content of Rs1 is 0, the result is 32. If the content of Rs1 is -1, the result is 0.
+
+*Operations:*
+
+ cnt = 0;
+ for (i = 31 to 0) {
+   if (Rs1[i] == 0) {
+     cnt = cnt + 1;
+   } else {
+     break;
+   }
+ }
+ Rd = cnt;
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ uint32_t __rv_clz(uint32_t a);
+
+<<<
+=== CMIX (Conditional Mix or Bit-wise Pick)
+
+*Extension:* Zbpbo (RV32 and RV64)
+
+*Format:*
+
+[cols="7*^.^"]
+|===
+l|31    27 l|26  25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|Rs3 |CMIX +
+11 |Rs2 |Rs1 |CMIX +
+001 |Rd
+|OP +
+0110011
+|===
+
+*Syntax:*
+
+ CMIX  Rd, Rs2, Rs1, Rs3
+
+*Alias:*
+
+ BPICK Rd, Rs1, Rs3, Rs2
+
+*Purpose:* Select from two source operands based on a bit mask in the third operand.
+
+*Description:* This instruction selects individual bits from Rs1 or Rs3, based on
+the bit mask value in Rs2. If a bit in Rs2 is 1, the corresponding bit is from Rs1;
+otherwise, the corresponding bit is from Rs3. The selection results are written to Rd.
+
+*Operations:*
+
+ Rd[x] = Rs2[x]? Rs1[x] : Rs3[x];
+ for RV32, x=31..0
+ for RV64, x=63..0
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ uintXLEN_t __rv_cmix(uintXLEN_t Rs1, uintXLEN_t Rs2, uintXLEN_t Rs3);
+
+<<<
+=== FSR, FSRI
+
+==== FSR (Funnel Shift Right / Extract Word from 64-bit)
+
+==== FSRI (Funnel Shift Right Immediate/ Extract Word from 64-bit Immediate)
+
+*Extension:* Zbpbo (RV32)
+
+*Format:*
+
+[.text-center]
+*FSR*
+
+[cols="7*^.^"]
+|===
+l|31    27 l|26  25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|Rs3 |FSR +
+10 |Rs2 |Rs1 |FSR +
+101 |Rd
+|OP +
+0110011
+|===
+
+[.text-center]
+*FSRI*
+
+[cols="7*^.^"]
+|===
+l|31    27 l|26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
+|Rs3 |FSRI +
+1 |imm6u |Rs1 |FSRI +
+101 |Rd
+|OP-IMM +
+0010011
+|===
+
+
+*Syntax:*
+
+ FSR  Rd, Rs1, Rs3, Rs2
+ FSRI Rd, Rs1, Rs3, imm6u
+
+*Alias:*
+
+ "WEXT Rd, Rs1, Rs2" == "FSR Rd, Rs1, Rs3, Rs2"
+
+where Rs1 is an even register, Rs3 is an even+1 register, and Rs2[5] == 0.
+
+ "WEXTI Rd, Rs1, imm5u" == "FSRI Rd, Rs1, Rs3, imm5u"
+
+where Rs1 is an even register, Rs3 is an even+1 register.
+
+*Purpose:* Extract a 32-bit word from a 64-bit value stored in two registers by doing a right rotation.
+
+*Description:* The FSR instruction creates a 64-bit word by concatenating Rs1 and
+Rs3 (with Rs1 in the LSB half), rotate-right-shifts that word by the amount indicated in Rs2[5:0], and then writes the LSB half of the result to Rd.
+
+The FSRI instruction creates a 64-bit word by concatenating Rs1 and
+Rs3 (with Rs1 in the LSB half), rotate-right-shifts that word by the amount indicated in
+imm6u, and then writes the LSB half of the result to Rd.
+
+*Operations:*
+
+ shamt = Rs2[5:0];  // FSR
+ shamt = imm6u;     // FSRI
+
+ lowpt = Rs1;
+ highpt = Rs3;
+ if (shamt u>= 32) {
+   shamt = shamt - 32;
+   lowpt = Rs3;
+   highpt = Rs1;
+ }
+ src[63:0] = CONCAT(highpt, lowpt);
+ Rd = src[31+shamt:shamt];
+ 
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+For RV32, wext/wexti functionality is a subset of
+
+ fsr/fsri
+
+*Intrinsic functions:*
+
+* Required:
+
+ uint32_t __rv_fsr(uint32_t Rs1, uint32_t Rs2, uint32_t Rs3);
+ 
+<<<
+
+=== FSRW (Funnel Shift Right Word)
+
+*Extension:* Zbpbo (RV64)
+
+*Format:*
+
+[cols="7*^.^"]
+|===
+l|31    27 l|26  25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|Rs3 |FSRW +
+10 |Rs2 |Rs1 |FSRW +
+101 |Rd
+|OP-32 +
+0111011
+|===
+
+*Syntax:*
+
+ FSRW  Rd, Rs1, Rs3, Rs2
+
+*Purpose:* Extract a 32-bit word from a 64-bit value stored in two registers by doing a right rotation.
+
+*Description:* The FSRW instruction creates a 64-bit word by concatenating the lower 32-bits of Rs1 and
+Rs3 (with Rs1 in the LSB half), rotate-right-shifts that word by the amount indicated in Rs2[5:0], and then sign-extends the 32-bit LSB half of the result and writes to Rd.
+
+*Operations:*
+
+ shamt = Rs2[5:0];  // FSRW
+ lowpt = Rs1.W[0];
+ highpt = Rs3.W[0];
+ if (shamt u>= 32) {
+   shamt = shamt - 32;
+   lowpt = Rs3.W[0];
+   highpt = Rs1.W[0];
+ }
+ src[63:0] = CONCAT(highpt, lowpt);
+ wres = src[31+shamt:shamt];
+ Rd = SE64(wres);
+ 
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+For RV64, wext functionality is a subset of
+
+ srai r3, rs1, 32
+ fsrw rd, rs1, rs3, rs2
+
+*Intrinsic functions:*
+
+* Required:
+
+ uint32_t __rv_fsrw(uint32_t Rs1, uint32_t Rs2, uint32_t Rs3);
+
+<<<
+=== MAX (Maximum)
+
+*Extension:* Zbpbo (RV32 and RV64)
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|0000101 |Rs2 |Rs1 |MAX +
+110 |Rd
+|OP +
+0110011
+|===
+
+*Syntax:*
+
+ MAX Rd, Rs1, Rs2
+
+*Purpose:* Select the larger value from the contents of two general purpose registers.
+
+*Description:* This instruction compares two signed integers stored in Rs1 and Rs2, picks the larger value as the result, and writes the result to Rd.
+
+*Operations:*
+
+ if (Rs1 s>= Rs2) {
+   res = Rs1;
+ } else {
+   res = Rs2;
+ }
+ Rd = res;
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ int32_t __rv_max(int32_t a, int32_t b);
+
+<<<
+=== MIN (Minimum)
+
+*Extension:* Zbpbo (RV32 and RV64)
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|0000101 |Rs2 |Rs1 |MIN +
+100 |Rd
+|OP +
+0110011
+|===
+
+*Syntax:*
+
+ MIN Rd, Rs1, Rs2
+
+*Purpose:* Select the smaller value from the contents of two general purpose registers.
+
+*Description:* This instruction compares two signed integers stored in Rs1 and Rs2, picks the smaller value as the result, and writes the result to Rd.
+
+*Operations:*
+
+ if (Rs1 s>= Rs2) {
+   res = Rs2;
+ } else {
+   res = Rs1;
+ }
+ Rd = res;
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ int32_t __rv_min(int32_t a, int32_t b);
+
+<<<
+=== PACK, PACKU
+
+==== PACK (Pack from Both Bottom Halves)
+
+==== PACKU (Pack from Both Top Halves)
+
+*Extension:* Zbpbo (RV32/RV64)
+
+*Format:*
+
+[.text-center]
+*PACK*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|PACK +
+0000100 |Rs2 |Rs1 |100 |Rd
+|OP +
+0110011
+|===
+
+[.text-center]
+*PACKU*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|PACKU +
+0100100 |Rs2 |Rs1 |100 |Rd
+|OP +
+0110011
+|===
+
+*Syntax:*
+
+ PACK  Rd, Rs1, Rs2
+ PACKU Rd, Rs1, Rs2
+
+*Alias:*
+
+ PKBB16R == PACK, PKTT16R == PACKU  // RV32
+ PKBB32R == PACK, PKTT32R == PACKU  // RV64
+
+*Purpose:* Pack the bottom or top halves of two registers.
+
+* PACK: bottom.bottom
+* PACKU: top.top
+
+*Description:*
+
+(PACK) The PACK instruction packs the XLEN/2-bit lower halves of rs1 and rs2 into rd, with rs1 in the lower half and rs2 in the upper half.
+
+(PACKU) The PACKU instruction packs the XLEN/2-bit upper halves of rs1 and rs2 into rd, with rs1 in the lower half and rs2 in the upper half.
+
+*Operations:*
+
+*RV32*
+
+ Rd = CONCAT(Rs2.H[0], Rs1.H[0]); // PACK
+ Rd = CONCAT(Rs2.H[1], Rs1.H[1]); // PACKU
+
+*RV64*
+
+ Rd = CONCAT(Rs2.W[0], Rs1.W[0]); // PACK
+ Rd = CONCAT(Rs2.W[1], Rs1.W[1]); // PACKU
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* *PACK*
+
+* Required:
+
+ uintXLEN_t __rv_pack(uintXLEN_t a, uintXLEN_t b);
+
+* *PACKU*
+
+* Required:
+
+ uintXLEN_t __rv_packu(uintXLEN_t a, uintXLEN_t b);
+
+<<<
+=== REV (Bit Reverse XLEN bits)
+
+*Extension:* Zbpbo (RV32 and RV64)
+
+*Format:*
+
+[.text-center]
+*RV32*
+
+[cols="6*^.^"]
+|===
+l|31    26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
+|GREVI +
+011010 |REV +
+011111 |Rs1 |101 |Rd
+|OP-IMM +
+0010011
+|===
+
+[.text-center]
+*RV64*
+
+[cols="6*^.^"]
+|===
+l|31    26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
+|GREVI +
+011010 |REV +
+111111 |Rs1 |101 |Rd
+|OP-IMM +
+0010011
+|===
+
+*Syntax:*
+
+ REV  Rd, Rs1
+
+*Purpose:* Reverse the bits of a register.
+
+*Description:* This instruction reverses the XLEN bits of Rs1.
+
+*Operations:*
+
+ rev[0:(XLEN-1)] = Rs1[(XLEN-1):0];
+ Rd = rev[(XLEN-1):0];
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ uintXLEN_t __rv_rev(uintXLEN_t a);
+
+<<<
+=== REV8.H (Swap Byte within Halfword)
+
+*Extension:* Zbpbo (RV32 and RV64)
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
+|GREVI +
+011010 |REV8H +
+001000 |Rs1 |101 |Rd
+|OP-IMM +
+0010011
+|===
+
+*Syntax:*
+
+ REV8.H  Rd, Rs1
+
+*Alias:*
+
+ SWAP8
+
+*Purpose:* Swap the bytes within each halfword of a register.
+
+*Description:* This instruction swaps the bytes within each halfword of Rs1 and writes the result to Rd.
+
+*Operations:*
+
+ Rd.H[x] = CONCAT(Rs1.H[x].B[0],Rs1.H[x].B[1]);
+ for RV32: x=1..0,
+ for RV64: x=3..0
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ uintXLEN_t __rv_rev8h(uintXLEN_t a);
+
+* Optional (e.g., GCC vector extensions):
+
+ RV32:
+   uint8x4_t __rv_v_rev8h(uint8x4_t a);
+ RV64:
+   uint8x8_t __rv_v_rev8h(uint8x8_t a);
 
 
 == Detailed Instruction Descriptions (both RV32 & RV64)
@@ -3606,6 +4183,8 @@ writes the result to Rd.
 
 *Type:* DSP
 
+Replaced with REV in Zbpbo extension.
+
 *Format:*
 
 [cols="6*^.^"]
@@ -3647,6 +4226,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 ===  BITREVI (Bit Reverse Immediate)
 
 *Type:* DSP
+
+Replaced with REV in Zbpbo extension.
 
 *Format:*
 
@@ -3711,6 +4292,8 @@ The intrinsic function of this instruction is the same as the intrinsic function
 === BPICK (Bit-wise Pick)
 
 *Type:* DSP
+
+Replaced with CMIX in Zbpbo extension.
 
 *Format:*
 
@@ -4088,6 +4671,9 @@ results to the corresponding 16-bit elements of Rd.
 === CLZ32 (SIMD 32-bit Count Leading Zero)
 
 *Type:* SIMD
+
+RV32: Replaced with CLZ in Zbpbo.
+RV64: Zpn
 
 *Format:*
 
@@ -8539,6 +9125,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP
 
+Replaced with MAX in Zbpbo extension.
+
 *Format:*
 
 [cols="6*^.^"]
@@ -8582,6 +9170,8 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 === MINW (32-bit Signed Word Minimum)
 
 *Type:* DSP
+
+Replaced with MIN in Zbpbo extension.
 
 *Format:*
 
@@ -8903,6 +9493,9 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 ==== PKTB16 (Pack Two 16-bit Data from Top and Bottom Half)
 
 *Type:* DSP
+
+* PKBB16: RV32: Replaced with PACK in Zbpbo, RV64: Zpn
+* PKTT16: RV32: Replaced with PACKU in Zbpbo, RV64: Zpn
 
 *Format:*
 
@@ -13419,6 +14012,8 @@ halfwords and writes the results to the top part and the bottom part of 32-bit c
 
 *Type:* DSP
 
+Replaced with REV8.H in Zbpbo extension.
+
 *Format:*
 
 [cols="6*^.^"]
@@ -16057,6 +16652,8 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Type:* DSP
 
+RV32: Replaced with FSRI in Zbpbo extension.
+
 *Sub-extension:* Zpsfoperand
 
 *Format:*
@@ -16117,6 +16714,9 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 === WEXT (Extract Word from 64-bit)
 
 *Type:* DSP
+
+RV32: Replaced with FSRI in Zbpbo extension.
+RV64: Replaced with FSRW in Zbpbo extension.
 
 *Sub-extension:* Zpsfoperand
 
@@ -17937,6 +18537,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 ==== PKTB32 (Pack Two 32-bit Data from Top and Bottom Half)
 
 *Type:* DSP (RV64 Only)
+
+* PKBB32: RV64: Replaced with PACK in Zbpbo
+* PKTT32: RV64: Replaced with PACKU in Zbpbo
+
 
 *Format:*
 
