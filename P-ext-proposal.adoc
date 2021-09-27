@@ -3430,9 +3430,8 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 |===
 | Legal Sub-extension Combination     |Architecture
 | Zpn + Zbpbo                         |RV32
-| Zpn + Zpsfoperand + Zbpbo           |RV32
-| Zpn + Zbpbo                         |RV64
-| Zpn + Zpsfoperand + Zbpbo           |RV64
+| Zpn + Zbpbo + Zpsfoperand           |RV32
+| Zpn + Zbpbo + Zpsfoperand           |RV64
 |===
 
 
