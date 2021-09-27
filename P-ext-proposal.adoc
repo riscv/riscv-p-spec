@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.7-draft-20210915
+Version 0.9.8-draft-20210927
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,9 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.8 | 2021/09/27 | Chuanhua Chang
+a|
+* Added Zmpmo extension for RVM overlaps.
 | v0.9.7 | 2021/09/15 | Chuanhua Chang
 a|
 * Added Zbpbo extension for RVB overlaps.
@@ -28,7 +31,7 @@ a|
 a|
 * Merged Zprvsfextra into Zpn
 * Removed CLO* instructions based on github issue #60
-* Changed intrinsic prefix from __rv__ to __rv_
+* Changed intrinsic prefix from \\__rv__ to \__rv_
 | v0.9.5 | 2021/06/17 | Chuanhua Chang
 a|
 * Synced RV32 paired register scheme with Zdinx.
@@ -55,7 +58,7 @@ a|
 | v0.8   | 2020/08/07 | Chuanhua Chang
 a|
 * Changed ucode (0x801) CSR to vxsat CSR (0x009)
-* Changed intrinsic prefix from __nds__ to __rv__
+* Changed intrinsic prefix from \\__nds__ to \\__rv__
 | v0.7   | 2020/07/14 | Chuanhua Chang
 a|
 * Added endian-related data layout descriptions for RV32 register pair of 64-bit operand.
@@ -3329,6 +3332,23 @@ The instructions in this extension are listed in the following table.
 | &#10003; | &#10003; |  REV         | Bit reverse
 |===
 
+=== Zmpmo
+
+The instructions in Zmpmo extension are a subset of RV32M extension instructions which
+are needed in the application domains covered by RV32 P extension.
+
+The instructions in this extension are listed in the following table.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; |          |  MULH        | Multiplication High Part
+|===
+
 
 === Zpsfoperand
 
@@ -3351,7 +3371,7 @@ The instructions in Zpsfoperand are listed in the following table.
 |===
 
 === Zpn
-The instructions of RV32P and RV64P not in Zbpbo and Zpsfoperand extensions will be included in this sub-extension.
+The instructions of RV32P and RV64P not in Zbpbo, Zmbmo, and Zpsfoperand extensions will be included in this sub-extension.
 This is a required sub-extension for RV32P and RV64P extension.
 
 === Legal Sub-extension Combinations
@@ -3359,12 +3379,16 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 
 [cols="^.^,^.^",options="header",]
 |===
-| Legal Sub-extension Combination  | Architecture
-| Zpn + Zbpbo                      |RV32, RV64
-| Zpn + Zpsfoperand + Zbpbo        |RV32, RV64
+| Legal Sub-extension Combination     | Architecture
+| Zpn + Zbpbo + Zmpmo                 |RV32
+| Zpn + Zpsfoperand + Zbpbo + Zmpmo   |RV32
+| Zpn + Zbpbo                         |RV64
+| Zpn + Zpsfoperand + Zbpbo           |RV64
 |===
 
-== Instructions Duplicated in Bit Manipulation Extension (v0.93)
+== Instructions Duplicated with Other Extensions 
+
+=== Bit Manipulation Extension (v0.93)
 
 [cols="6*^.^",options="header",]
 |===
@@ -3383,6 +3407,14 @@ The legal combinations of the sub-extensions for RV32P and RV64P are listed in t
 |BPICK   |CMIX   |Zbt |         |&#10003; |&#10003;
 |BITREV  |REV    |Zbp |&#10003; |&#10003; |&#10003;
 |BITREVI |REV    |Zbp |&#10003; |&#10003; |&#10003;
+|===
+
+=== RV32M Extension
+
+[cols="6*^.^",options="header",]
+|===
+|P Instruction |M Instruction |M Extension |Partial |RV32 | RV64
+|SMMUL   |MULH    |RVM |         |&#10003; |
 |===
 
 == Detailed Instruction Descriptions for Zbpbo Extension
@@ -3929,8 +3961,56 @@ l|31    26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
  RV64:
    uint8x8_t __rv_v_rev8h(uint8x8_t a);
 
+== Detailed Instruction Descriptions for Zmpmo Extension
 
-== Detailed Instruction Descriptions (both RV32 & RV64)
+The sections in this chapter describe the detailed operations of the Zmpmo extension
+instructions in alphabetical order.
+
+<<<
+=== MULH (Signed Multiplication and Get High Part)
+
+*Extension:* Zmpmo (RV32)
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MULH +
+0000001 |Rs2 |Rs1 |MULH +
+001 |Rd
+|OP +
+0110011
+|===
+
+*Syntax:*
+
+ MULH Rd, Rs1, Rs2
+
+*Purpose:* Performs the signed × signed multiplication and return the upper 32 bits of the full 64-bit product,.
+
+*Description:* Performs a signed 32-bit × 32-bit multiplication of Rs1 by Rs2 and places the upper 32 bits
+in the destination register, Rd.
+
+*Operations:*
+
+ mres64 = Rs1 s* Rs2;
+ Rd = mres64.W[1];
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+* Required:
+
+ int32_t __rv_mulh(int32_t a, int32_t b);
+
+
+== Detailed Instruction Descriptions for Zpn Extension (both RV32 & RV64)
 
 The sections in this chapter describe the detailed operations of the P extension
 instructions for both RV32 and RV64 in alphabetical order.
@@ -12016,10 +12096,24 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* SIMD
 
+* SMMUL: RV32: Replaced with MULH in RV32M.
+
 *Format:*
 
 [.text-center]
-*SMMUL*
+*SMMUL (RV32)*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MULH +
+0000001 |Rs2 |Rs1 |001 |Rd
+|OP +
+0110011
+|===
+
+[.text-center]
+*SMMUL (RV64)*
 
 [cols="6*^.^"]
 |===
