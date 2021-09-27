@@ -23,6 +23,7 @@ This document is in the Development state. Assume anything can change.
 | v0.9.8 | 2021/09/27 | Chuanhua Chang
 a|
 * Added Zmpmo extension for RVM overlaps.
+* Removed ADD64 and SUB64 from RV64 Zpsfoperand
 | v0.9.7 | 2021/09/15 | Chuanhua Chang
 a|
 * Added Zbpbo extension for RVB overlaps.
@@ -1970,7 +1971,7 @@ rd.W[x] = rd.W[x] + m3[x] + m2[x]
 |===
 
 <<<
-=== 64-bit Profile Instructions
+=== 64-bit Data Computation Instructions
 
 ==== 64-bit Addition & Subtraction Instructions
 
@@ -1986,8 +1987,7 @@ b64 = r[rs2U].r[rs2L];
 t64 = a64 + b64;
 r[dU].r[dL] = t64;
 
-RV64:
-rd = rs1 + rs2
+(RV32 Only)
 ....
 |2 |RADD64 rd, rs1, rs2 |64-bit Signed Halving Addition a|
 ....
@@ -2045,8 +2045,7 @@ b64 = r[rs2U].r[rs2L];
 t64 = a64 - b64;
 r[dU].r[dL] = t64;
 
-RV64:
-rd = rs1 - rs2
+(RV32 Only)
 ....
 |7 |RSUB64 rd, rs1, rs2 |64-bit Signed Halving Subtraction a|
 ....
@@ -2565,7 +2564,7 @@ rd = SE64(SAT.Q31(ABS(rs1.W[0])));
 <<<
 ==== 32-bit Computation Instructions
 
-There are 9 instructions here.
+There are 7 instructions here.
 
 .32-bit Computation Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
@@ -2591,21 +2590,7 @@ b0 = CONCAT(1'b0, rs2.W[0]);
 res = (a0 - b0) u>> 1;
 rd = SE_XLEN(res);
 
-|5 |MAXW rd, rs1, rs2 |32-bit Signed Word Maximum l|
-if (rs1.W[0] s>= rs2.W[0]) {
-   rd = SE_XLEN(rs1.W[0]);
-else {
-   rd = SE_XLEN(rs2.W[0]);
-}
-
-|6 |MINW rd, rs1, rs2 |32-bit Signed Word Minimum l|
-if (rs1.W[0] s>= rs2.W[0]) {
-   rd = SE_XLEN(rs2.W[0]);
-else {
-   rd = SE_XLEN(rs1.W[0]);
-}
-
-|7 |MULR64 rd, rs1, rs2 |Multiply Word Unsigned to 64-bit data l|
+|5 |MULR64 rd, rs1, rs2 |Multiply Word Unsigned to 64-bit data l|
 RV32:
 mres[63:0] = rs1 u* rs2;
 r[dU] = mres.W[1];
@@ -2614,7 +2599,7 @@ r[dL] = mres.W[0];
 RV64:
 rd = rs1.W[0] u* rs2.W[0];
 
-|8 |MULSR64 rd, rs1, rs2 |Multiply Word Signed to 64-bit data l|
+|6 |MULSR64 rd, rs1, rs2 |Multiply Word Signed to 64-bit data l|
 RV32:
 mres[63:0] = rs1 s* rs2;
 r[dU] = mres.W[1];
@@ -2623,7 +2608,7 @@ r[dL] = mres.W[0];
 RV64:
 rd = rs1.W[0] s* rs2.W[0];
 
-|9 |MSUBR32 rd, rs1, rs2 |Multiply and Subtract from 32-bit Word l|
+|7 |MSUBR32 rd, rs1, rs2 |Multiply and Subtract from 32-bit Word l|
 RV32:
 mres = rs1 * rs2;
 rd = rd - mres.W[0];
@@ -2653,7 +2638,7 @@ vxsat.OV = 0;
 <<<
 ==== Miscellaneous Instructions
 
-There are 11 instructions here.
+There are 13 instructions here.
 
 .Non-SIMD Miscellaneous Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
@@ -2722,8 +2707,8 @@ lsb = imm5u;
 exword = a64[(31+lsb):lsb];
 rd = SE64(exword);
 
-|8 |BPICK rd, rs1, rs2, rc |Bit-wise Pick l|
-rd[i] = rc[i]? rs1[i] : rs2[i];
+|8 |CMIX rd, rs2, rs1, rs3 |Conditional Mix l|
+rd[i] = rs2[i]? rs1[i] : rs3[i];
 (RV32: i=31..0, RV64: i=63..0)
 |9 |INSB rd, rs1, imm2u/imm3u |Insert Byte l|
 RV32:
@@ -2753,6 +2738,21 @@ RV64:
 Mresult = rs1.W[0] * rs2.W[0];
 tresult[31:0] = rd.W[0] - Mresult.W[0];
 rd = SE64(tresult[31:0]);
+
+|12 |MAX rd, rs1, rs2 |Signed Word Maximum l|
+if (rs1 s>= rs2) {
+   rd = rs1;
+else {
+   rd = rs2;
+}
+
+|13 |MIN rd, rs1, rs2 |Signed Word Minimum l|
+if (rs1 s>= rs2) {
+   rd = rs2;
+else {
+   rd = rs1;
+}
+
 |===
 
 <<<
@@ -3357,17 +3357,49 @@ in RV32P. For RV32P, this is an optional sub-extension. For RV64P, the Zpsfopera
 
 The instructions in Zpsfoperand are listed in the following table.
 
-[cols="^.^1,^.^3",options="header",]
+[cols="^.^1,^.^1,^.^1,^.^3",options="header",]
 |===
-|No. |Instruction
-|1 |SMAL |2 |ADD64 |3 |RADD64 |4 |URADD64 |5 |KADD64 |6 |UKADD64
-|7 |SUB64 |8 |RSUB64 |9 |URSUB64 |10 |KSUB64 |11 |UKSUB64
-|12 |SMAR64 |13 |SMSR64 |14 |UMAR64 |15 |UMSR64 |16 |KMAR64 |17 |KMSR64
-|18 |UKMAR64 |19 |UKMSR64 |20 |SMALBB |21 |SMALBT |22 |SMALTT
-|23 |SMALDA |24 |SMALXDA |25 |SMALDS |26 |SMALDRS |27 |SMALXDS
-|28 |SMSLDA |29 |SMSLXDA |30 |MULR64 |31 |MULSR64
-|32 |UMUL8 |33 |UMULX8 |34 |UMUL16 |35 |UMULX16 |36 |SMUL8 
-|37 |SMULX8 |38 |SMUL16 |39 |SMULX16 |40 |WEXT |41 |WEXTI
+|No. |RV32 |RV64 |Instruction
+|1  |&#10003; |&#10003; |SMAL 
+|2  |&#10003; |         |ADD64 
+|3  |&#10003; |&#10003; |RADD64 
+|4  |&#10003; |&#10003; |URADD64 
+|5  |&#10003; |&#10003; |KADD64 
+|6  |&#10003; |&#10003; |UKADD64
+|7  |&#10003; |         |SUB64 
+|8  |&#10003; |&#10003; |RSUB64 
+|9  |&#10003; |&#10003; |URSUB64 
+|10 |&#10003; |&#10003; |KSUB64 
+|11 |&#10003; |&#10003; |UKSUB64
+|12 |&#10003; |&#10003; |SMAR64 
+|13 |&#10003; |&#10003; |SMSR64 
+|14 |&#10003; |&#10003; |UMAR64 
+|15 |&#10003; |&#10003; |UMSR64 
+|16 |&#10003; |&#10003; |KMAR64 
+|17 |&#10003; |&#10003; |KMSR64
+|18 |&#10003; |&#10003; |UKMAR64 
+|19 |&#10003; |&#10003; |UKMSR64 
+|20 |&#10003; |&#10003; |SMALBB 
+|21 |&#10003; |&#10003; |SMALBT 
+|22 |&#10003; |&#10003; |SMALTT
+|23 |&#10003; |&#10003; |SMALDA 
+|24 |&#10003; |&#10003; |SMALXDA 
+|25 |&#10003; |&#10003; |SMALDS 
+|26 |&#10003; |&#10003; |SMALDRS 
+|27 |&#10003; |&#10003; |SMALXDS
+|28 |&#10003; |&#10003; |SMSLDA 
+|29 |&#10003; |&#10003; |SMSLXDA 
+|30 |&#10003; |&#10003; |MULR64 
+|31 |&#10003; |&#10003; |MULSR64
+|32 |&#10003; |&#10003; |UMUL8 
+|33 |&#10003; |&#10003; |UMULX8 
+|34 |&#10003; |&#10003; |UMUL16 
+|35 |&#10003; |&#10003; |UMULX16 
+|36 |&#10003; |&#10003; |SMUL8 
+|37 |&#10003; |&#10003; |SMULX8 
+|38 |&#10003; |&#10003; |SMUL16 
+|39 |&#10003; |&#10003; |SMULX16 
+|40 |         |&#10003; |WEXTI
 |===
 
 === Zpn
@@ -4156,7 +4188,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 ===  ADD64 (64-bit Addition)
 
-*Type:* 64-bit Profile
+*Type:* RV32 Only
 
 *Sub-extension:* Zpsfoperand
 
@@ -4185,19 +4217,6 @@ pair of registers specified by Rd(4,1).
 R__x__(4,1), i.e., value _d_, determines the even/odd pair group of two registers.
 Specifically, the register pair includes register 2__d__ and 2__d__+1.
 
-
-*RV64 Description:* This instruction has the same behavior as the ADD instruction in RV64I.
-
-*Operations:*
-
- RV32:
-  t_L = CONCAT(Rd(4,1),1'b0); t_H = CONCAT(Rd(4,1),1'b1);
-  a_L = CONCAT(Rs1(4,1),1'b0); a_H = CONCAT(Rs1(4,1),1'b1);
-  b_L = CONCAT(Rs2(4,1),1'b0); b_H = CONCAT(Rs2(4,1),1'b1);
-  R[t_H].R[t_L] = R[a_H].R[a_L] + R[b_H].R[b_L];
-
- RV64:
-  Rd = Rs1 + Rs2;
 
 *Exceptions:* None
 
@@ -4368,49 +4387,6 @@ The intrinsic function of this instruction is the same as the intrinsic function
 
  uintXLEN_t __rv_bitrev(uintXLEN_t a, uintXLEN_t msb);
 
-<<<
-=== BPICK (Bit-wise Pick)
-
-*Type:* DSP
-
-Replaced with CMIX in Zbpbo extension.
-
-*Format:*
-
-[cols="7*^.^"]
-|===
-l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|Rc |BPICK +
-00 |Rs2 |Rs1 |011 |Rd
-|OP-P +
-1110111
-|===
-
-*Syntax:*
-
- BPICK Rd, Rs1, Rs2, Rc
-
-*Purpose:* Select from two source operands based on a bit mask in the third operand.
-
-*Description:* This instruction selects individual bits from Rs1 or Rs2, based on
-the bit mask value in Rc. If a bit in Rc is 1, the corresponding bit is from Rs1;
-otherwise, the corresponding bit is from Rs2. The selection results are written to Rd.
-
-*Operations:*
-
- Rd[x] = Rc[x]? Rs1[x] : Rs2[x];
- for RV32, x=31..0
- for RV64, x=63..0
-
-*Exceptions:* None
-
-*Privilege level:* All
-
-*Note:*
-
-*Intrinsic functions:*
-
- uintXLEN_t __rv_bpick(uintXLEN_t a, uintXLEN_t b, uintXLEN_t c);
 
 <<<
 === CLROV (Clear OV flag)
@@ -5400,7 +5376,7 @@ and the OV bit is set to 1. The saturated results are written to Rd.
 <<<
 ===  KADD64 (64-bit Signed Saturating Addition)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -6805,7 +6781,7 @@ signed integers.
 <<<
 === KMAR64 (Signed Multiply and Saturating Add to 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -7925,7 +7901,7 @@ The two 32-bit multiplication results are then subtracted from the content of th
 <<<
 === KMSR64 (Signed Multiply and Saturating Subtract from 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -8900,7 +8876,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 === KSUB64 (64-bit Signed Saturating Subtraction)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -9198,99 +9174,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Intrinsic functions:*
 
  int32_t __rv_maddr32(int32_t t, int32_t a, int32_t b);
-
-
-<<<
-=== MAXW (32-bit Signed Word Maximum)
-
-*Type:* DSP
-
-Replaced with MAX in Zbpbo extension.
-
-*Format:*
-
-[cols="6*^.^"]
-|===
-l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|MAXW +
-1111001 |Rs2 |Rs1 |000 |Rd
-|OP-P +
-1110111
-|===
-
-*Syntax:*
-
- MAXW Rd, Rs1, Rs2
-
-*Purpose:* Select the larger value from the 32-bit contents of two general purpose registers.
-
-*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the larger value as the result, and writes the result to Rd.
-
-*Operations:*
-
- if (Rs1.W[0] s>= Rs2.W[0]) {
-   res = Rs1.W[0];
- } else {
-   res = Rs2.W[0];
- }
- Rd = res;       // RV32
- Rd = SE64(res); // RV64 
-
-*Exceptions:* None
-
-*Privilege level:* All
-
-*Note:*
-
-*Intrinsic functions:*
-
- intXLEN_t __rv_maxw(int32_t a, int32_t b);
-
-<<<
-=== MINW (32-bit Signed Word Minimum)
-
-*Type:* DSP
-
-Replaced with MIN in Zbpbo extension.
-
-*Format:*
-
-[cols="6*^.^"]
-|===
-l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|MINW +
-1111000 |Rs2 |Rs1 |000 |Rd
-|OP-P +
-1110111
-|===
-
-*Syntax:*
-
- MINW Rd, Rs1, Rs2
-
-*Purpose:* Select the smaller value from the 32-bit contents of two general purpose registers.
-
-*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the smaller value as the result, and writes the result to Rd.
-
-*Operations:*
-
- if (Rs1.W[0] s>= Rs2.W[0]) {
-   res = Rs2.W[0];
- } else {
-   res = Rs1.W[0];
- }
- Rd = res;       // RV32
- Rd = SE64(res); // RV64
-
-*Exceptions:* None
-
-*Privilege level:* All
-
-*Note:*
-
-*Intrinsic functions:*
-
- intXLEN_t __rv_minw(int32_t a, int32_t b);
 
 <<<
 === MSUBR32 (Multiply and Subtract from 32-Bit Word)
@@ -9801,7 +9684,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 ===  RADD64 (64-bit Signed Halving Addition)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -10246,7 +10129,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 ===  RSUB64 (64-bit Signed Halving Subtraction)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -10992,7 +10875,7 @@ For this instruction, any potential overflow bit beyond 64-bit is discarded and 
 
 ==== SMALTT (Signed Multiply Top Halfs & Add 64-bit)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -11158,7 +11041,7 @@ For this instruction, any potential overflow bit beyond 64-bit is discarded and 
 
 ==== SMALXDA (Signed Crossed Multiply Two Halfs and Two Adds 64-bit)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -11299,7 +11182,7 @@ For this instruction, any potential overflow bits beyond 64-bit are discarded an
 
 ==== SMALXDS (Signed Crossed Multiply Two Halfs & Subtract & Add 64-bit)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -11455,7 +11338,7 @@ The subtraction results are then added to the 64-bit value of Rd. The 64-bit add
 <<<
 === SMAR64 (Signed Multiply and Add to 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -12382,7 +12265,7 @@ This instruction multiplies the signed 32-bit elements of Rs1 with the top signe
 
 ==== SMSLXDA (Signed Crossed Multiply Two Halfs & Add & Subtract 64-bit)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -12511,7 +12394,7 @@ The four multiplication results are subtracted from the 64-bit value of Rd. The 
 <<<
 === SMSR64 (Signed Multiply and Subtract from 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -13913,7 +13796,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 === SUB64 (64-bit Subtraction)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 Only
 
 *Sub-extension:* Zpsfoperand
 
@@ -13950,9 +13833,6 @@ R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Spe
  b_L = CONCAT(Rs2(4,1),1'b0); b_H = CONCAT(Rs2(4,1),1'b1);
  R[t_H].R[t_L] = R[a_H].R[a_L] - R[b_H].R[b_L];
 
-* RV64:
-
- Rd = Rs1 – Rs2;
 
 *Exceptions:* None
 
@@ -14681,7 +14561,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 ===  UKADD64 (64-bit Unsigned Saturating Addition)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -14950,7 +14830,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 === UKMAR64 (Unsigned Multiply and Saturating Add to 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -15023,7 +14903,7 @@ R__x__(4,1), i.e., _d_, determines the even/odd pair group of two registers. Spe
 <<<
 === UKMSR64 (Unsigned Multiply and Saturating Subtract from 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -15323,7 +15203,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 ===  UKSUB64 (64-bit Unsigned Saturating Subtraction)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -15479,7 +15359,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 === UMAR64 (Unsigned Multiply and Add to 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -15790,7 +15670,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 <<<
 ===  UMSR64 (Unsigned Multiply and Subtract from 64-Bit Data)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -16184,7 +16064,7 @@ right-shifted by 1 bit and then written to Rd.
 <<<
 === URADD64 (64-bit Unsigned Halving Addition)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -16632,7 +16512,7 @@ right-shifted by 1 bit and then written to Rd.
 <<<
 === URSUB64 (64-bit Unsigned Halving Subtraction)
 
-*Type:* DSP (64-bit Profile)
+*Type:* RV32 and RV64
 
 *Sub-extension:* Zpsfoperand
 
@@ -20803,7 +20683,7 @@ l|XLEN-1                                     1 |0
 
 |*1110* |ave | |sclip32 |bitrev |bitrevi (RV32/RV64) |bitrevi (RV64) | |
 
-|*1111* |minw |maxw |uclip32 | | | |pbsad |pbsada
+|*1111* | | |uclip32 | | | |pbsad |pbsada
 |===
 
 .Instruction Encoding for funct3[14:12]==0b000 and funct7[31:25]==0b1010110 (oneop).
@@ -20949,37 +20829,37 @@ l|XLEN-1                                     1 |0
 |*[6:3]* |*000* |*001* |*010* |*011* |*100* |*101*
 |*110* |*111*
 
-|*0000* .16+|bpick | | | .16+|bpick | | |
+|*0000* | | | | | | | | 
 
-|*0001* | | | | | |
+|*0001* | | | | | | | |
 
-|*0010* | | | | | |
+|*0010* | | | | | | | |
 
-|*0011* | | | | | |
+|*0011* | | | | | | | |
 
-|*0100* | | | | | |
+|*0100* | | | | | | | |
 
-|*0101* | | | | | |
+|*0101* | | | | | | | |
 
-|*0110* | | | | | |
+|*0110* | | | | | | | |
 
-|*0111* | | | | | |
+|*0111* | | | | | | | |
 
-|*1000* | | | | | |
+|*1000* | | | | | | | |
 
-|*1001* | | | | | |
+|*1001* | | | | | | | |
 
-|*1010* | | | | | |
+|*1010* | | | | | | | |
 
-|*1011* | | | | | |
+|*1011* | | | | | | | |
 
-|*1100* | | | | | |
+|*1100* | | | | | | | |
 
-|*1101* | | | | | |
+|*1101* | | | | | | | |
 
-|*1110* | | | | | |
+|*1110* | | | | | | | |
 
-|*1111* | | | | | |
+|*1111* | | | | | | | |
 |===
 
 <<<
@@ -21333,3 +21213,141 @@ l|XLEN-1                                     1 |0
 |80 |URSTSA32 |1 |1
 |81 |URSUB32 |1 |1
 |===
+
+== Removed Instructions Due to RVB overlaps
+
+<<<
+=== BPICK (Bit-wise Pick)
+
+*Type:* RV32 and RV64
+
+Replaced with CMIX in Zbpbo extension.
+
+*Format:*
+
+[cols="7*^.^"]
+|===
+l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|Rc |BPICK +
+00 |Rs2 |Rs1 |011 |Rd
+|OP-P +
+1110111
+|===
+
+*Syntax:*
+
+ BPICK Rd, Rs1, Rs2, Rc
+
+*Purpose:* Select from two source operands based on a bit mask in the third operand.
+
+*Description:* This instruction selects individual bits from Rs1 or Rs2, based on
+the bit mask value in Rc. If a bit in Rc is 1, the corresponding bit is from Rs1;
+otherwise, the corresponding bit is from Rs2. The selection results are written to Rd.
+
+*Operations:*
+
+ Rd[x] = Rc[x]? Rs1[x] : Rs2[x];
+ for RV32, x=31..0
+ for RV64, x=63..0
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+ uintXLEN_t __rv_bpick(uintXLEN_t a, uintXLEN_t b, uintXLEN_t c);
+
+<<<
+=== MAXW (32-bit Signed Word Maximum)
+
+*Type:* DSP
+
+Replaced with MAX in Zbpbo extension.
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MAXW +
+1111001 |Rs2 |Rs1 |000 |Rd
+|OP-P +
+1110111
+|===
+
+*Syntax:*
+
+ MAXW Rd, Rs1, Rs2
+
+*Purpose:* Select the larger value from the 32-bit contents of two general purpose registers.
+
+*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the larger value as the result, and writes the result to Rd.
+
+*Operations:*
+
+ if (Rs1.W[0] s>= Rs2.W[0]) {
+   res = Rs1.W[0];
+ } else {
+   res = Rs2.W[0];
+ }
+ Rd = res;       // RV32
+ Rd = SE64(res); // RV64 
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+ intXLEN_t __rv_maxw(int32_t a, int32_t b);
+
+<<<
+=== MINW (32-bit Signed Word Minimum)
+
+*Type:* DSP
+
+Replaced with MIN in Zbpbo extension.
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MINW +
+1111000 |Rs2 |Rs1 |000 |Rd
+|OP-P +
+1110111
+|===
+
+*Syntax:*
+
+ MINW Rd, Rs1, Rs2
+
+*Purpose:* Select the smaller value from the 32-bit contents of two general purpose registers.
+
+*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the smaller value as the result, and writes the result to Rd.
+
+*Operations:*
+
+ if (Rs1.W[0] s>= Rs2.W[0]) {
+   res = Rs2.W[0];
+ } else {
+   res = Rs1.W[0];
+ }
+ Rd = res;       // RV32
+ Rd = SE64(res); // RV64
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+ intXLEN_t __rv_minw(int32_t a, int32_t b);
