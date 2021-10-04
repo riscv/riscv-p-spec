@@ -5439,7 +5439,7 @@ saturation happens, this instruction sets the OV flag.
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_kaddh(int32_t a, int32_t b);
+ int32_t __rv_kaddh(int32_t a, int32_t b);
 
 <<<
 === KADDW (Signed Addition with Q31 Saturation)
@@ -5493,7 +5493,7 @@ saturation happens, this instruction sets the OV flag.
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_kaddw(int32_t a, int32_t b);
+ int32_t __rv_kaddw(int32_t a, int32_t b);
 
 <<<
 === KCRAS16 (SIMD 16-bit Signed Saturating Cross Addition & Subtraction)
@@ -6254,41 +6254,41 @@ saturated to 0x7FFF and the overflow flag OV will be set.
 
 * Required:
 
- intXLEN_t __rv_khmbb(uint32_t a, uint32_t b);
+ int32_t __rv_khmbb(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv_v_khmbb(int16x2_t a, int16x2_t b);
+   int32_t __rv_v_khmbb(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv_v_khmbb(int16x2_t a, int16x2_t b);
+   int32_t __rv_v_khmbb(int16x2_t a, int16x2_t b);
 
 
 * *KHMBT*
 
 * Required:
 
- intXLEN_t __rv_khmbt(uint32_t a, uint32_t b);
+ int32_t __rv_khmbt(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv_v_khmbt(int16x2_t a, int16x2_t b);
+   int32_t __rv_v_khmbt(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv_v_khmbt(int16x2_t a, int16x2_t b);
+   int32_t __rv_v_khmbt(int16x2_t a, int16x2_t b);
 
 * *KHMTT*
 
 * Required:
 
- intXLEN_t __rv_khmtt(uint32_t a, uint32_t b);
+ int32_t __rv_khmtt(uint32_t a, uint32_t b);
 
 * Optional (e.g., GCC vector extensions):
 
  RV32:
-   intXLEN_t __rv_v_khmtt(int16x2_t a, int16x2_t b);
+   int32_t __rv_v_khmtt(int16x2_t a, int16x2_t b);
  RV64:
-   intXLEN_t __rv_v_khmtt(int16x2_t a, int16x2_t b);
+   int32_t __rv_v_khmtt(int16x2_t a, int16x2_t b);
 
 <<<
 === KMABB, KMABT, KMATT
@@ -8924,7 +8924,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_ksubh(int32_t a, int32_t b);
+ int32_t __rv_ksubh(int32_t a, int32_t b);
 
 <<<
 === KSUBW (Signed Subtraction with Q31 Saturation)
@@ -8971,7 +8971,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_ksubw(int32_t a, int32_t b);
+ int32_t __rv_ksubw(int32_t a, int32_t b);
 
 <<<
 === KWMMUL, KWMMUL.u
@@ -9718,7 +9718,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_raddw(int32_t a, int32_t b);
+ int32_t __rv_raddw(int32_t a, int32_t b);
 
 <<<
 ===  RCRAS16 (SIMD 16-bit Signed Halving Cross Addition & Subtraction)
@@ -10162,7 +10162,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_rsubw(int32_t a, int32_t b);
+ int32_t __rv_rsubw(int32_t a, int32_t b);
 
 <<<
 === SCLIP8 (SIMD 8-bit Signed Clip Value)
@@ -14600,7 +14600,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv_ukaddh(uint32_t a, uint32_t b);
+ uint32_t __rv_ukaddh(uint32_t a, uint32_t b);
 
 <<<
 === UKADDW (Unsigned Addition with U32 Saturation)
@@ -14644,7 +14644,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv_ukaddw(uint32_t a, uint32_t b);
+ uint32_t __rv_ukaddw(uint32_t a, uint32_t b);
 
 <<<
 === UKCRAS16 (SIMD 16-bit Unsigned Saturating Cross Addition & Subtraction)
@@ -15246,7 +15246,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv_uksubh(uint32_t a, uint32_t b);
+ uint32_t __rv_uksubh(uint32_t a, uint32_t b);
 
 <<<
 === UKSUBW (Unigned Subtraction with U32 Saturation)
@@ -15292,7 +15292,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv_uksubw(uint32_t a, uint32_t b);
+ uint32_t __rv_uksubw(uint32_t a, uint32_t b);
 
 <<<
 === UMAR64 (Unsigned Multiply and Add to 64-Bit Data)
@@ -16103,7 +16103,7 @@ by 1 bit and then sign-extended and written to Rd.
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv_uraddw(uint32_t a, uint32_t b);
+ uint32_t __rv_uraddw(uint32_t a, uint32_t b);
 
 <<<
 ===  URCRAS16 (SIMD 16-bit Unsigned Halving Cross Addition & Subtraction)
@@ -16557,7 +16557,7 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
 
 *Intrinsic functions:*
 
- uintXLEN_t __rv_ursubw(uint32_t a, uint32_t b);
+ uint32_t __rv_ursubw(uint32_t a, uint32_t b);
 
 <<<
 === WEXTI (Extract Word from 64-bit Immediate)
