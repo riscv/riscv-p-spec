@@ -8035,7 +8035,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[2:0];
- if (sa u> 0) {
+ if (sa != 0) {
    res[(7+sa):0] = Rs1.B[x] << sa;
    if (res s> (2^7)-1) {
      res = 0x7f; OV = 1;
@@ -8095,7 +8095,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm3u;
- if (sa u> 0) {
+ if (sa != 0) {
    res[(7+sa):0] = Rs1.B[x] << sa;
    if (res s> (2^7)-1) {
      res = 0x7f; OV = 1;
@@ -8156,7 +8156,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[3:0];
- if (sa u> 0) {
+ if (sa != 0) {
    res[(15+sa):0] = Rs1.H[x] << sa;
    if (res s> (2^15)-1) {
      res = 0x7fff; OV = 1;
@@ -8216,7 +8216,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm4u;
- if (sa u> 0) {
+ if (sa != 0) {
    res[(15+sa):0] = Rs1.H[x] << sa;
    if (res s> (2^15)-1) {
      res = 0x7fff; OV = 1;
@@ -12661,7 +12661,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 * RV32:
 
  sa = Rs2[4:0];
- if (sa u> 0) {
+ if (sa != 0) {
    res[31:-1] = SE33(Rs1[31:(sa-1)]) + 1;
    Rd = res[31:0];
  } else {
@@ -12671,7 +12671,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 * RV64:
 
  sa = Rs2[5:0];
- if (sa u> 0) {
+ if (sa != 0) {
    res[63:-1] = SE65(Rs1[63:(sa-1)]) + 1;
    Rd = res[63:0];
  } else {
@@ -12733,7 +12733,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 * RV32:
 
  sa = imm5u;
- if (sa u> 0) {
+ if (sa != 0) {
    res[31:-1] = SE33(Rs1[31:(sa-1)]) + 1;
    Rd = res[31:0];
  } else {
@@ -12743,7 +12743,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 * RV64:
 
  sa = imm6u;
- if (sa u> 0) {
+ if (sa != 0) {
    res[63:-1] = SE65(Rs1[63:(sa-1)]) + 1;
    Rd = res[63:0];
  } else {
@@ -12807,7 +12807,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[2:0];
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRA8.u
      res[7:-1] = SE9(Rs1.B[x][7:sa-1]) + 1;
      Rd.B[x] = res[7:0];
@@ -12902,7 +12902,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm3u;
- if (sa u> 0) {
+ if (sa != 0) {
    if ('.u' form) { // SRAI8.u
      res[7:-1] = SE9(Rs1.B[x][7:sa-1]) + 1;
      Rd.B[x] = res[7:0];
@@ -12997,7 +12997,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[3:0];
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRA16.u
      res[15:-1] = SE17(Rs1.H[x][15:sa-1]) + 1;
      Rd.H[x] = res[15:0];
@@ -13092,7 +13092,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm4u;
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRAI16.u
      res[15:-1] = SE17(Rs1.H[x][15:sa-1]) + 1;
      Rd.H[x] = res[15:0];
@@ -13187,7 +13187,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[2:0];
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRL8.u
      res[8:0] = ZE9(Rs1.B[x][7:sa-1]) + 1;
      Rd.B[x] = res[8:1];
@@ -13282,7 +13282,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm3u;
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRLI8.u
      res[8:0] = ZE9(Rs1.B[x][7:sa-1]) + 1;
      Rd.B[x] = res[8:1];
@@ -13377,7 +13377,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[3:0];
- if (sa u> 0) {
+ if (sa != 0) {
    if ('.u' form) { // SRL16.u
      res[16:0] = ZE17(Rs1.H[x][15:sa-1]) + 1;
      Rd.H[x] = res[16:1];
@@ -13472,7 +13472,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm4u;
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRLI16.u
      res[16:0] = ZE17(Rs1.H[x][15:sa-1]) + 1;
      Rd.H[x] = res[16:1];
@@ -15732,7 +15732,7 @@ The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 1
  R[d_L].H[1] = Rs1.B[1] u* Rs2.B[1];
  R[d_H].H[0] = Rs1.B[2] u* Rs2.B[2];
  R[d_H].H[1] = Rs1.B[3] u* Rs2.B[3];
- // SMULX8
+ // UMULX8
  R[d_L].H[0] = Rs1.B[0] u* Rs2.B[1];
  R[d_L].H[1] = Rs1.B[1] u* Rs2.B[0];
  R[d_H].H[0] = Rs1.B[2] u* Rs2.B[3];
@@ -15740,12 +15740,12 @@ The four 16-bit results are then written into Rd. The Rd.W[1] contains the two 1
 
 * RV64:
 
- // SMUL8
+ // UMUL8
  Rd.W[0].H[0] = Rs1.B[0] u* Rs2.B[0];
  Rd.W[0].H[1] = Rs1.B[1] u* Rs2.B[1];
  Rd.W[1].H[0] = Rs1.B[2] u* Rs2.B[2];
  Rd.W[1].H[1] = Rs1.B[3] u* Rs2.B[3];
- // SMULX8
+ // UMULX8
  Rd.W[0].H[0] = Rs1.B[0] u* Rs2.B[1];
  Rd.W[0].H[1] = Rs1.B[1] u* Rs2.B[0];
  Rd.W[1].H[0] = Rs1.B[2] u* Rs2.B[3];
@@ -18090,7 +18090,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[4:0];
- if (sa u> 0) {
+ if (sa != 0) {
    res[(31+sa):0] = Rs1.W[x] << sa;
    if (res s> (2^31)-1) {
      res = 0x7fffffff; OV = 1;
@@ -18146,7 +18146,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm5u;
- if (sa u> 0) {
+ if (sa != 0) {
    res[(31+sa):0] = Rs1.W[x] << sa;
    if (res s> (2^31)-1) {
      res = 0x7fffffff; OV = 1;
@@ -19309,7 +19309,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[4:0];
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRA32.u
      res[31:-1] = SE33(Rs1.W[x][31:sa-1]) + 1;
      Rd.W[x] = res[31:0];
@@ -19396,7 +19396,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm5u;
-   if (sa u> 0) {
+   if (sa != 0) {
    if (“.u” form) { // SRAI32.u
      res[31:-1] = SE33(Rs1.W[x][31:sa-1]) + 1;
      Rd.W[x] = res[31:0];
@@ -19534,7 +19534,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = Rs2[4:0];
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRL32.u
      res[31:-1] = ZE33(Rs1.W[x][31:sa-1]) + 1;
      Rd.W[x] = res[31:0];
@@ -19621,7 +19621,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Operations:*
 
  sa = imm5u;
- if (sa u> 0) {
+ if (sa != 0) {
    if (“.u” form) { // SRLI32.u
      res[31:-1] = ZE33(Rs1.W[x][31:sa-1]) + 1;
      Rd.W[x] = res[31:0];
