@@ -2630,7 +2630,7 @@ The following table lists the user instructions related to Overflow (OV) flag ma
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |RDOV rd |Read vxsat.OV to rd. l|
 rd = ZE(vxsat.OV);
-|2 |CLROV |Clear vsat.OV flag l|
+|2 |CLROV |Clear vxsat.OV flag l|
 vxsat.OV = 0;
 |===
 
