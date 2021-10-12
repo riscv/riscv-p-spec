@@ -20,6 +20,9 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.9 | 2021/10/08 | Chuanhua Chang
+a|
+* Added implementation and access rules for vxsat CSR. (<<vxsat>>)
 | v0.9.8 | 2021/09/27 | Chuanhua Chang
 a|
 * Removed ADD64 and SUB64 from RV64 Zpsfoperand
@@ -14218,7 +14221,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.B[x] = (Rs1.B[x] <=u Rs2.B[x])? 0xff : 0x0;
+ Rd.B[x] = (Rs1.B[x] u<= Rs2.B[x])? 0xff : 0x0;
  for RV32: x=3..0,
  for RV64: x=7..0
 
@@ -14267,7 +14270,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.H[x] = (Rs1.H[x] <=u Rs2.H[x])? 0xffff : 0x0;
+ Rd.H[x] = (Rs1.H[x] u<= Rs2.H[x])? 0xffff : 0x0;
  for RV32: x=1..0,
  for RV64: x=3..0
 
@@ -14316,7 +14319,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.B[x] = (Rs1.B[x] <u Rs2.B[x])? 0xff : 0x0;
+ Rd.B[x] = (Rs1.B[x] u< Rs2.B[x])? 0xff : 0x0;
  for RV32: x=3..0,
  for RV64: x=7..0
 
@@ -14365,7 +14368,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Operations:*
 
- Rd.H[x] = (Rs1.H[x] <u Rs2.H[x])? 0xffff : 0x0;
+ Rd.H[x] = (Rs1.H[x] u< Rs2.H[x])? 0xffff : 0x0;
  for RV32: x=1..0,
  for RV64: x=3..0
 
@@ -20544,11 +20547,19 @@ Mnemonics
 |===
 
 <<<
+[#vxsat]  
 === Fixed-point Saturation Flag Register
 
 *Mnemonic Name:* vxsat
 
-*IM Requirement:* P extension
+*IM Requirement:* misa.P == 1
+
+*Access Rules:*
+
+This specification does not require that the mstatus.VS field be implemented.  However, if the mstatus.VS field _is_ implemented (e.g., because the V extension is implemented), then instructions in this specification that access the vxsat register raise illegal-instruction exceptions when mstatus.VS=Off.  Furthermore, if mstatus.VS=Initial or Clean, instructions in this specification that write vxsat cause mstatus.VS to be set to Dirty.
+
+Similarly, this specification does not require that the vsstatus.VS field be implemented.  However, if the vsstatus.VS field _is_ implemented and the current virtualization mode, V, is 1, the same rules additionally apply to vsstatus.VS field.
+
 
 *Access Mode:* User
 
