@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.8-draft-20210927
+Version 0.9.9-draft-20211012
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
