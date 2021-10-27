@@ -20,6 +20,12 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.10 | 2021/10/27 | Chuanhua Chang
+a|
+* Removed RV32 PKBB16/PKTT16 encoding and Replaced them with PACK/PACKU encoding.
+* Removed RV64 PKBB32/PKTT32 encoding and Replaced them with PACK/PACKU encoding.
+* Enhanced PKBB*/PKTT* syntax description in relation to PACK/PACKU syntax.
+(<<pkxx16>> and <<pkxx32>>)
 | v0.9.9 | 2021/10/08 | Chuanhua Chang
 a|
 * Added implementation and access rules for vxsat CSR. (<<vxsat>>)
@@ -152,7 +158,7 @@ power and higher performance.
 
 ==== 16-bit Addition & Subtraction Instructions
 
-Based on the combination of the types of the two 16-bit arithmetic operations, the SIMD 16-bit add/subtract instructions can be classified into 6 main categories: Addition (two 16-bit addition), Subtraction (two 16-bit subtraction), Crossed Add & Sub (one addition and one subtraction), and Crossed Sub & Add (one subtraction and one addition), Straight Add & Sub (one addition and one subtraction), and Straight Sub & Add (one subtraction and one addition).
+Based on the combination of the types of the two 16-bit arithmetic operations within a 32-bit word element, the SIMD 16-bit add/subtract instructions can be classified into 6 main categories: Addition (two 16-bit addition), Subtraction (two 16-bit subtraction), Crossed Add & Sub (one addition and one subtraction), and Crossed Sub & Add (one subtraction and one addition), Straight Add & Sub (one addition and one subtraction), and Straight Sub & Add (one subtraction and one addition).
 
 Based on the way of how an overflow condition is handled, the SIMD 16-bit add/subtract instructions can be classified into 5 groups: Wrap-around (dropping overflow), Signed Halving (keeping overflow by dropping 1 LSB bit), Unsigned Halving, Signed Saturation (clipping overflow), and Unsigned Saturation.
 
@@ -487,7 +493,7 @@ rd.H[x-1] = SAT.U16(tl17[x]);
 <<<
 ==== 8-bit Addition & Subtraction Instructions
 
-Based on the types of the four 8-bit arithmetic operations, the SIMD 8-bit add/subtract instructions can be classified into 2 main categories: Addition (four 8-bit addition), and Subtraction (four 8-bit subtraction).
+Based on the types of the four 8-bit arithmetic operations within a 32-bit word element, the SIMD 8-bit add/subtract instructions can be classified into 2 main categories: Addition (four 8-bit addition), and Subtraction (four 8-bit subtraction).
 
 Based on the way of how an overflow condition is handled for singed or unsigned operation, the SIMD 8-bit add/subtract instructions can be classified into 5 groups: Wrap-around (dropping overflow), Signed Halving (keeping overflow by dropping 1 LSB bit), Unsigned Halving, Signed Saturation (clipping overflow), and Unsigned Saturation.
 
@@ -3423,7 +3429,7 @@ The instructions in Zpsfoperand are listed in the following table.
 |===
 
 === Zpn
-The instructions of RV32P and RV64P not in Zbpbo, Zmbmo, and Zpsfoperand extensions will be included in this sub-extension.
+The instructions of RV32P and RV64P not in Zbpbo, and Zpsfoperand extensions will be included in this sub-extension.
 This is a required sub-extension for RV32P and RV64P extension.
 
 === Legal Sub-extension Combinations
@@ -3783,6 +3789,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  int32_t __rv_min(int32_t a, int32_t b);
 
 <<<
+[#pack_packu]  
 === PACK, PACKU
 
 ==== PACK (Pack from Both Bottom Halves)
@@ -9355,7 +9362,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  PBSADA Rd, Rs1, Rs2
 
-*Purpose:* Calculate the sum of absolute difference of four unsigned 8-bit data elements and accumulate it into a register.
+*Purpose:* Calculate the sum of absolute difference of unsigned 8-bit data elements and accumulate it into a register.
 
 *Description:* This instruction subtracts the un-signed 8-bit elements of Rs2 from those of Rs1. It then adds the absolute value of each difference together along with the content of Rd and writes the accumulated result back to Rd.
 
@@ -9386,6 +9393,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
    uint64_t __rv_v_pbsada(uint64_t t, uint8x8_t a, uint8x8_t b);
 
 <<<
+[#pkxx16]  
 === PKBB16, PKBT16, PKTT16, PKTB16
 
 ==== PKBB16 (Pack Two 16-bit Data from Both Bottom Half)
@@ -9412,17 +9420,26 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 1110111
 |===
 
-[cols="2*^.^",options="header",]
+[cols="4*^.^",options="header",]
 |===
-|*[.underline]#xy#* |*[.underline]#zz#*
-|BB |00
-|BT |01
-|TT |10
-|TB |11
+|*[.underline]#xy#* |*[.underline]#zz#* |RV32 |RV64
+|BB |00 |         |&#10003;
+|BT |01 |&#10003; |&#10003;
+|TT |10 |         |&#10003;
+|TB |11 |&#10003; |&#10003;
 |===
+
+For RV32 PACK/PACKU encoding format, please see <<pack_packu>>.
 
 *Syntax:*
 
+ RV32:
+ PKBB16 Rd, Rs1, Rs2 == PACK Rd, Rs2, Rs1
+ PKBT16 Rd, Rs1, Rs2
+ PKTT16 Rd, Rs1, Rs2 == PACKU Rd, Rs2, Rs1
+ PKTB16 Rd, Rs1, Rs2
+
+ RV64:
  PKBB16 Rd, Rs1, Rs2
  PKBT16 Rd, Rs1, Rs2
  PKTT16 Rd, Rs1, Rs2
@@ -14217,7 +14234,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform 8-bit unsigned integer elements less than & equal comparisons in parallel.
 
-*Description:* This instruction compares the 8-bit unsigned integer elements in Rs1 with the 8-bit unsigned integer elements in Rs2 to see if the one in Rs1 is less than or equal to the one in Rs2. If it is true, the result is 0xFF; otherwise, the result is 0x0. The four comparison results are written to Rd.
+*Description:* This instruction compares the 8-bit unsigned integer elements in Rs1 with the 8-bit unsigned integer elements in Rs2 to see if the one in Rs1 is less than or equal to the one in Rs2. If it is true, the result is 0xFF; otherwise, the result is 0x0. The element comparison results are written to Rd.
 
 *Operations:*
 
@@ -18441,6 +18458,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  int32x2_t __rv_v_ksub32(int32x2_t a, int32x2_t b);
 
 <<<
+[#pkxx32]  
 === PKBB32, PKBT32, PKTT32, PKTB32
 
 ==== PKBB32 (Pack Two 32-bit Data from Both Bottom Half)
@@ -18471,17 +18489,17 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 [cols="2*^.^",options="header",]
 |===
 |*[.underline]#xy#* |*[.underline]#zz#*
-|BB |00
 |BT |01
-|TT |10
 |TB |11
 |===
 
+For RV64 PACK/PACKU encoding format, please see <<pack_packu>>.
+
 *Syntax:*
 
- PKBB32 Rd, Rs1, Rs2
+ PKBB32 Rd, Rs1, Rs2 == PACK Rd, Rs2, Rs1
  PKBT32 Rd, Rs1, Rs2
- PKTT32 Rd, Rs1, Rs2
+ PKTT32 Rd, Rs1, Rs2 == PACKU Rd, Rs2, Rs1
  PKTB32 Rd, Rs1, Rs2
 
 *Purpose:* Pack 32-bit data from 64-bit chunks in two registers.
@@ -20532,17 +20550,17 @@ first right-shifted by 1 bit and then written to Rd.
 
 *Brief Summary*
 
-[cols="6*^.^"]
+[cols="7*^.^"]
 |===
 
 .2+|
-Symbolic
-Mnemonics
+*Symbolic
+Mnemonics*
 
-4+|CSR Address
-.2+|Hex
-.2+|Privilege
-|[11:10] |[9:8] |[7:6] |[5:0]
+4+|*CSR Address*
+.2+|*Hex*
+.2+|*Privilege*
+|*[11:10]* |*[9:8]* |*[7:6]* |*[5:0]*
 |vxsat |00 |00 |00 |001001 |0x009 |URW
 |===
 
@@ -20682,11 +20700,11 @@ l|XLEN-1                                     1 |0
 |*[6:3]* |*000* |*001* |*010* |*011* |*100* |*101*
 |*110* |*111*
 
-|*0000* |kaddw |ksubw |kaddh |ksubh |smbb16 |kdmbb |khmbb |pkbb16
+|*0000* |kaddw |ksubw |kaddh |ksubh |smbb16 |kdmbb |khmbb |pkbb16 (RV64)
 
 |*0001* |ukaddw |uksubw |ukaddh |uksubh |smbt16 |kdmbt |khmbt |pkbt16
 
-|*0010* |raddw |rsubw |sra.u |ksllw |smtt16 |kdmtt |khmtt |pktt16
+|*0010* |raddw |rsubw |sra.u |ksllw |smtt16 |kdmtt |khmtt |pktt16 (RV64)
 
 |*0011* |uraddw |ursubw |sraiw.u |kslliw |kmda |kmxda | |pktb16
 
@@ -20729,13 +20747,13 @@ l|XLEN-1                                     1 |0
 |*110* |*111*
 
 |*0000* |radd32 |rsub32 |rcras32 |rcrsa32 | | |
-|pkbb32
+|
 
 |*0001* |kadd32 |ksub32 |kcras32 |kcrsa32 |smbt32 | |
 |pkbt32
 
 |*0010* |uradd32 |ursub32 |urcras32 |urcrsa32 |smtt32 | |
-|pktt32
+|
 
 |*0011* |ukadd32 |uksub32 |ukcras32 |ukcrsa32 |kmda32
 |kmxda32 | |pktb32
