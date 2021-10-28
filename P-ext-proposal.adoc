@@ -16647,7 +16647,7 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
 
 *Type:* DSP
 
-RV32: Replaced with FSRI in Zbpbo extension.
+RV32: Replaced with FSR in Zbpbo extension.
 RV64: Replaced with FSRW in Zbpbo extension.
 
 *Sub-extension:* Zpsfoperand
@@ -21271,7 +21271,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_maxw(int32_t a, int32_t b);
+ int32_t __rv_maxw(int32_t a, int32_t b);
 
 <<<
 === MINW (32-bit Signed Word Minimum)
@@ -21317,4 +21317,4 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- intXLEN_t __rv_minw(int32_t a, int32_t b);
+ int32_t __rv_minw(int32_t a, int32_t b);
