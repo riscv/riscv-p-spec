@@ -4333,7 +4333,7 @@ operation, the result is written to Rd.
 
 The intrinsic function of this instruction is the same as the intrinsic function of "BITREV" instruction. A compiler can detect constant value in the function msb argument and use this instruction.
 
- uintXLEN_t __rv_bitrev(uintXLEN_t a, uintXLEN_t msb);
+ uintXLEN_t __rv_bitrev(uintXLEN_t a, uint32_t msb);
 
 
 <<<
