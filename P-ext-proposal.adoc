@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.9-draft-20211012
+Version 0.9.11-draft-20211209
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,10 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.11 | 2021/12/09 | Chuanhua Chang
+a|
+* Changed source operand data type of KADDH/UKADDH/KSUBH/UKSUBH from 32-bit to 16-bit.
+* Changed intrinsic data type of MAX/MIN from int32_t to intXLEN_t.
 | v0.9.10 | 2021/10/27 | Chuanhua Chang
 a|
 * Removed RV32 PKBB16/PKTT16 encoding and Replaced them with PACK/PACKU encoding.
@@ -2399,15 +2403,19 @@ The following table lists non-SIMD instructions related to Q15 arithmetic.
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |KADDH rd, rs1, rs2 |Add with Q15 saturation a|
 ....
-a0 = rs1.W[0];
-b0 = rs2.W[0];
-rd = SE_XLEN(SAT.Q15(a0 + b0));
+a17 = SE17(rs1.H[0]);
+b17 = SE17(rs2.H[0]);
+t17 = a17 + b17;
+k16 = SAT.Q15(t17);
+rd = SE_XLEN(k16);
 ....
 |2 |KSUBH rd, rs1, rs2 |Subtract with Q15 saturation a|
 ....
-a0 = rs1.W[0];
-b0 = rs2.W[0];
-rd = SE_XLEN(SAT.Q15(a0 – b0));
+a17 = SE17(rs1.H[0]);
+b17 = SE17(rs2.H[0]);
+t17 = a17 - b17;
+k16 = SAT.Q15(t17);
+rd = SE_XLEN(k16);
 ....
 |3 |KHMBB rd, rs1, rs2 |Multiply the first 16-bit Q15 elements of two registers and transform the Q30 result into a saturated Q15 number. a|
 ....
@@ -2429,15 +2437,19 @@ rd = SAT.Q15((a1 * b1) s>> 15);
 ....
 |6 |UKADDH rd, rs1, rs2 |Add with I16 saturation a|
 ....
-a0 = ZE33(rs1.W[0]);
-b0 = ZE33(rs2.W[0]);
-rd = SE_XLEN(SAT.U16(a0 + b0))
+a17 = ZE17(rs1.H[0]);
+b17 = ZE17(rs2.H[0]);
+t17 = a17 + b17;
+uk16 = SAT.U16(t17);
+rd = SE_XLEN(uk16);
 ....
 |7 |UKSUBH rd, rs1, rs2 |Subtract with I16 saturation a|
 ....
-a0 = ZE33(rs1.W[0]);
-b0 = ZE33(rs2.W[0]);
-rd = SE_XLEN(SAT.U16(a0 - b0))
+a17 = ZE17(rs1.H[0]);
+b17 = ZE17(rs2.H[0]);
+t17 = a17 - b17;
+uk16 = SAT.U16(t17);
+rd = SE_XLEN(uk16);
 ....
 |===
 
@@ -3741,7 +3753,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- int32_t __rv_max(int32_t a, int32_t b);
+ intXLEN_t __rv_max(intXLEN_t a, intXLEN_t b);
 
 <<<
 === MIN (Minimum)
@@ -3786,7 +3798,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 * Required:
 
- int32_t __rv_min(int32_t a, int32_t b);
+ intXLEN_t __rv_min(intXLEN_t a, intXLEN_t b);
 
 <<<
 [#pack_packu]  
@@ -5418,27 +5430,27 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  KADDH Rd, Rs1, Rs2
 
-*Purpose:* Add the signed lower 32-bit content of two registers with Q15 saturation.
+*Purpose:* Add the signed lower 16-bit content of two registers with Q15 saturation.
 
-*Description:* The signed lower 32-bit content of Rs1 is added with the signed
-lower 32-bit content of Rs2. And the result is saturated to the 16-bit signed
+*Description:* The signed lower 16-bit content of Rs1 is added with the signed
+lower 16-bit content of Rs2. And the result is saturated to the 16-bit signed
 integer range of [-2^15^, 2^15^-1] and then sign-extended and written to Rd. If
 saturation happens, this instruction sets the OV flag.
 
 *Operations:*
 
- tmp = Rs1.W[0] + Rs2.W[0];
- if (tmp s> (2^15)-1) {
-   res = 32767;
+ a17 = SE17(Rs1.H[0]);
+ b17 = SE17(Rs2.H[0]);
+ res17 = a17 + b17;
+ if (res17 s> (2^15)-1) {
+   res17 = (2^15)-1;
    OV = 1;
- } else if (tmp s< -2^15) {
-   res = -32768;
+ } else (res17 s< -2^15) {
+   res17 = -2^15;
    OV = 1
- } else {
-   res = tmp;
  }
- Rd = SE32(tmp.H[0]); // RV32
- Rd = SE64(tmp.H[0]); // RV64
+ Rd = SE32(res17.H[0]); // RV32
+ Rd = SE64(res17.H[0]); // RV64
 
 
 *Exceptions:* None
@@ -5449,7 +5461,7 @@ saturation happens, this instruction sets the OV flag.
 
 *Intrinsic functions:*
 
- int32_t __rv_kaddh(int32_t a, int32_t b);
+ int32_t __rv_kaddh(int16_t a, int16_t b);
 
 <<<
 === KADDW (Signed Addition with Q31 Saturation)
@@ -8907,24 +8919,24 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  KSUBH Rd, Rs1, Rs2
 
-*Purpose:* Subtract the signed lower 32-bit content of two registers with Q15 saturation.
+*Purpose:* Subtract the signed lower 16-bit content of two registers with Q15 saturation.
 
-*Description:* The signed lower 32-bit content of Rs2 is subtracted from the signed lower 32-bit content of Rs1. And the result is saturated to the 16-bit signed integer range of [-2^15^, 2^15^-1] and then sign-extended and written to Rd. If saturation happens, this instruction sets the OV flag.
+*Description:* The signed lower 16-bit content of Rs2 is subtracted from the signed lower 16-bit content of Rs1. And the result is saturated to the 16-bit signed integer range of [-2^15^, 2^15^-1] and then sign-extended and written to Rd. If saturation happens, this instruction sets the OV flag.
 
 *Operations:*
 
- tmp = SE33(Rs1.W[0]) - SE33(Rs2.W[0]);
- if (tmp s> (2^15)-1) {
-   res = (2^15)-1;
+ a17 = SE17(Rs1.H[0]);
+ b17 = SE17(Rs2.H[0]);
+ t17 = a17 - b17;
+ if (t17 s> (2^15)-1) {
+   t17 = (2^15)-1;
    OV = 1;
- } else if (tmp s< -2^15) {
-   res = -2^15;
+ } else (t17 s< -2^15) {
+   t17 = -2^15;
    OV = 1
- } else {
-   res = tmp;
  }
- Rd = SE32(res.H[0]);  // RV32
- Rd = SE64(res.H[0]);  // RV64
+ Rd = SE32(t17.H[0]);  // RV32
+ Rd = SE64(t17.H[0]);  // RV64
 
 *Exceptions:* None
 
@@ -8934,7 +8946,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- int32_t __rv_ksubh(int32_t a, int32_t b);
+ int32_t __rv_ksubh(int16_t a, int16_t b);
 
 <<<
 === KSUBW (Signed Subtraction with Q31 Saturation)
@@ -14598,19 +14610,21 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  UKADDH Rd, Rs1, Rs2
 
-*Purpose:* Add the unsigned lower 32-bit content of two registers with U16 saturation.
+*Purpose:* Add the unsigned lower 16-bit content of two registers with U16 saturation.
 
-*Description:* The unsigned lower 32-bit content of Rs1 is added with the unsigned lower 32-bit content of Rs2. And the result is saturated to the 16-bit unsigned integer range of [0, 2^16^-1] and then sign-extended and written to Rd. If saturation happens, this instruction sets the OV flag.
+*Description:* The unsigned lower 16-bit content of Rs1 is added with the unsigned lower 16-bit content of Rs2. And the result is saturated to the 16-bit unsigned integer range of [0, 2^16^-1] and then sign-extended and written to Rd. If saturation happens, this instruction sets the OV flag.
 
 *Operations:*
 
- tmp = ZE33(Rs1.W[0]) + ZE33(Rs2.W[0]);
- if (tmp u> (2^16)-1) {
-   tmp = (2^16)-1;
+ a17 = ZE17(Rs1.H[0]);
+ b17 = ZE17(Rs2.H[0]);
+ t17 = a17 + b17;
+ if (t17 u> (2^16)-1) {
+   t17 = (2^16)-1;
    OV = 1;
  }
- Rd = SE32(tmp.H[0]); // RV32
- Rd = SE64(tmp.H[0]); // RV64
+ Rd = SE32(t17.H[0]); // RV32
+ Rd = SE64(t17.H[0]); // RV64
 
 *Exceptions:* None
 
@@ -14620,7 +14634,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uint32_t __rv_ukaddh(uint32_t a, uint32_t b);
+ uint32_t __rv_ukaddh(uint16_t a, uint16_t b);
 
 <<<
 === UKADDW (Unsigned Addition with U32 Saturation)
@@ -15240,23 +15254,25 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  UKSUBH Rd, Rs1, Rs2
 
-*Purpose:* Subtract the unsigned lower 32-bit content of two registers with U16 saturation.
+*Purpose:* Subtract the unsigned lower 16-bit content of two registers with U16 saturation.
 
-*Description:* The unsigned lower 32-bit content of Rs2 is subtracted from the unsigned lower 32-bit content of Rs1. And the result is saturated to the 16-bit unsigned integer range of [0, 2^16^-1] and then sign-extended and written to Rd. If saturation happens, this instruction sets the OV flag.
+*Description:* The unsigned lower 16-bit content of Rs2 is subtracted from the unsigned lower 16-bit content of Rs1. And the result is saturated to the 16-bit unsigned integer range of [0, 2^16^-1] and then sign-extended and written to Rd. If saturation happens, this instruction sets the OV flag.
 
 *Operations:*
 
- tmp = ZE33(Rs1.W[0]) – ZE33(Rs2.W[0]);
- if (tmp s> (2^16)-1) {
-   tmp = (2^16)-1;
+ a17 = ZE17(Rs1.H[0]);
+ b17 = ZE17(Rs2.H[0]);
+ t17 = a17 - b17;
+ if (t17 s> (2^16)-1) {
+   t17 = (2^16)-1;
    OV = 1;
  }
- else if (tmp s< 0) {
-   tmp = 0;
+ else if (t17 s< 0) {
+   t17 = 0;
    OV = 1;
  }
- Rd = SE32(tmp.H[0]); // RV32
- Rd = SE64(tmp.H[0]); // RV64
+ Rd = SE32(t17.H[0]); // RV32
+ Rd = SE64(t17.H[0]); // RV64
 
 *Exceptions:* None
 
@@ -15266,7 +15282,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Intrinsic functions:*
 
- uint32_t __rv_uksubh(uint32_t a, uint32_t b);
+ uint32_t __rv_uksubh(uint16_t a, uint16_t b);
 
 <<<
 === UKSUBW (Unigned Subtraction with U32 Saturation)
