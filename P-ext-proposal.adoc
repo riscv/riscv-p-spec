@@ -2651,7 +2651,7 @@ The following table lists the user instructions related to Overflow (OV) flag ma
 ^.^|No. ^.^|Mnemonic ^.^|Instruction ^.^|Operation
 |1 |RDOV rd |Read vxsat.OV to rd. l|
 rd = ZE(vxsat.OV);
-|2 |CLROV |Clear vsat.OV flag l|
+|2 |CLROV |Clear vxsat.OV flag l|
 vxsat.OV = 0;
 |===
 
@@ -16976,7 +16976,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform 32-bit integer element subtraction and 32-bit integer element addition in a 64-bit chunk in parallel. Operands are from crossed 32-bit elements.
 
-*Description: *
+*Description:*
 
 This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 32-bit integer element in [63:32] of Rs1, and writes the result to [63:32] of Rd; at the same time, it adds the 32-bit integer element in [31:0] of Rs1 with the 32-bit integer element in [63:32] of Rs2, and writes the result to [31:0] of Rd
 
@@ -17188,7 +17188,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform 32-bit signed integer element saturating subtraction and 32-bit signed integer element saturating addition in a 64-bit chunk in parallel. Operands are from crossed 32-bit elements.
 
-*Description: *
+*Description:*
 
 This instruction subtracts the 32-bit integer element in [31:0] of Rs2 from the 32-bit integer element in [63:32] of Rs1; at the same time, it adds the 32-bit integer element in [31:0] of Rs1 with the 32-bit integer element in [63:32] of Rs2. If any of the results exceed the Q31 number range (-2^31^ {le} Q31 {le} 2^31^-1), they are saturated to the range and the OV bit is set to 1. The saturated results are written to [63:32] of Rd for subtraction and [31:0] of Rd for addition.
 
@@ -18385,7 +18385,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform 32-bit signed integer element saturating subtraction and 32-bit signed integer element saturating addition in a 64-bit chunk in parallel. Operands are from corresponding 32-bit elements.
 
-*Description: *
+*Description:*
 
 This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the 32-bit integer element in [63:32] of Rs1; at the same time, it adds the 32-bit integer element in [31:0] of Rs1 with the 32-bit integer element in [31:0] of Rs2. If any of the results exceed the Q31 number range (-2^31^ {le} Q31 {le} 2^31^-1), they are saturated to the range and the OV bit is set to 1. The saturated results are written to [63:32] of Rd for subtraction and [31:0] of Rd for addition.
 
@@ -19766,7 +19766,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Purpose:* Perform 32-bit integer element subtraction and 32-bit integer element addition in a 64-bit chunk in parallel. Operands are from corresponding 32-bit elements.
 
-*Description: *
+*Description:*
 
 This instruction subtracts the 32-bit integer element in [63:32] of Rs2 from the 32-bit integer element in [63:32] of Rs1, and writes the result to [63:32] of Rd; at the same time, it adds the 32-bit integer element in [31:0] of Rs1 with the 32-bit integer element in [31:0] of Rs2, and writes the result to [31:0] of Rd
 
