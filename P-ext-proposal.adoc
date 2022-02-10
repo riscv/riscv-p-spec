@@ -6261,7 +6261,7 @@ saturated to 0x7FFF and the overflow flag OV will be set.
    Mres32 = 0x00007FFF;
    OV = 1;
  }
- Rd = SE32(Mres32.H[0]); // Rv32
+ Rd = SE32(Mres32.H[0]); // RV32
  Rd = SE64(Mres32.H[0]); // RV64
 
 *Exceptions:* None
