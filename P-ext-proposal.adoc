@@ -3970,7 +3970,7 @@ l|31    26 l|25    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Alias:*
 
- SWAP8
+ SWAP8  Rd, Rs1
 
 *Purpose:* Swap the bytes within each halfword of a register.
 
