@@ -3377,7 +3377,7 @@ The instructions in this extension are listed in the following table.
 
 | &#10003; |          |  CLZ         | Count leading zero
 | &#10003; | &#10003; |  PACK        | Pack
-| &#10003; | &#10003; |  PACKU       | Pack unsigned
+| &#10003; | &#10003; |  PACKU       | Pack upper
 | &#10003; |          |  FSR         | Funnel shift right
 | &#10003; |          |  FSRI        | Funnel shift right immediate
 |          | &#10003; |  FSRW        | Funnel shift right word
