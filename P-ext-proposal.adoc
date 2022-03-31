@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.15-draft-20220331
+Version 0.9.16-draft-20220331
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,11 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.16 | 2022/03/31 | Harry Lin
+a|
+* Moved detailed description of BPICK, MAXW and MINW instructions that are not 
+overlapped by Bit-Manipulation Extension version 1.0.0 to <<Detailed_Instruction_Descriptions_for_Zpn>> 
+(<<bpick>>, <<maxw>> and <<minw>>) from <<Removed_Instructions_Due_to_RVB_overlaps>>.
 | v0.9.15 | 2022/03/31 | Harry Lin
 a|
 For instruction summary in <<RISC-V_P_Extension_Instruction_Summary>>, 
@@ -35,7 +40,9 @@ a|
 * Replaced RVM with Zmmul extension in <<Zmmul_Extension>>.
 | v0.9.12 | 2022/03/30 | Harry Lin
 a|
-* Removed B instructions, PACK, PACKU, FSR, FSRI, FSRW, REV8.H, CMIX and REV that are not overlapped by Bit-Manipulation Extension version 1.0.0. (<<Bit_Manipulation_Extension>>, <<Zbpbo>> and <<Detailed_Instruction_Descriptions_for_Zbpbo_Extension>>)
+* Removed B instructions, PACK, PACKU, FSR, FSRI, FSRW, REV8.H, CMIX and REV that are not 
+overlapped by Bit-Manipulation Extension version 1.0.0. (<<Bit_Manipulation_Extension>>, 
+<<Zbpbo>> and <<Detailed_Instruction_Descriptions_for_Zbpbo_Extension>>)
 | v0.9.11 | 2021/12/09 | Chuanhua Chang
 a|
 * Changed source operand data type of KADDH/UKADDH/KSUBH/UKSUBH from 32-bit to 16-bit.
@@ -3619,6 +3626,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
  int32_t __rv_min(int32_t a, int32_t b);
 
+[#Detailed_Instruction_Descriptions_for_Zpn]
 == Detailed Instruction Descriptions for Zpn Extension (both RV32 & RV64)
 
 The sections in this chapter describe the detailed operations of the P extension
@@ -3964,6 +3972,48 @@ The intrinsic function of this instruction is the same as the intrinsic function
 
  uintXLEN_t __rv_bitrev(uintXLEN_t a, uint32_t msb);
 
+<<<
+[#bpick]
+=== BPICK (Bit-wise Pick)
+
+*Type:* DSP
+
+*Format:*
+
+[cols="7*^.^"]
+|===
+l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|Rc |BPICK +
+00 |Rs2 |Rs1 |011 |Rd
+|OP-P +
+1110111
+|===
+
+*Syntax:*
+
+ BPICK Rd, Rs1, Rs2, Rc
+
+*Purpose:* Select from two source operands based on a bit mask in the third operand.
+
+*Description:* This instruction selects individual bits from Rs1 or Rs2, based on
+the bit mask value in Rc. If a bit in Rc is 1, the corresponding bit is from Rs1;
+otherwise, the corresponding bit is from Rs2. The selection results are written to Rd.
+
+*Operations:*
+
+ Rd[x] = Rc[x]? Rs1[x] : Rs2[x];
+ for RV32, x=31..0
+ for RV64, x=63..0
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+ uintXLEN_t __rv_bpick(uintXLEN_t a, uintXLEN_t b, uintXLEN_t c);
 
 <<<
 === CLROV (Clear OV flag)
@@ -8751,6 +8801,96 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 *Intrinsic functions:*
 
  int32_t __rv_maddr32(int32_t t, int32_t a, int32_t b);
+
+<<<
+[#maxw]
+=== MAXW (32-bit Signed Word Maximum)
+
+*Type:* DSP
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MAXW +
+1111001 |Rs2 |Rs1 |000 |Rd
+|OP-P +
+1110111
+|===
+
+*Syntax:*
+
+ MAXW Rd, Rs1, Rs2
+
+*Purpose:* Select the larger value from the 32-bit contents of two general purpose registers.
+
+*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the larger value as the result, and writes the result to Rd.
+
+*Operations:*
+
+ if (Rs1.W[0] s>= Rs2.W[0]) {
+   res = Rs1.W[0];
+ } else {
+   res = Rs2.W[0];
+ }
+ Rd = res;       // RV32
+ Rd = SE64(res); // RV64 
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+ int32_t __rv_maxw(int32_t a, int32_t b);
+
+<<<
+[#minw]
+=== MINW (32-bit Signed Word Minimum)
+
+*Type:* DSP
+
+*Format:*
+
+[cols="6*^.^"]
+|===
+l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
+|MINW +
+1111000 |Rs2 |Rs1 |000 |Rd
+|OP-P +
+1110111
+|===
+
+*Syntax:*
+
+ MINW Rd, Rs1, Rs2
+
+*Purpose:* Select the smaller value from the 32-bit contents of two general purpose registers.
+
+*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the smaller value as the result, and writes the result to Rd.
+
+*Operations:*
+
+ if (Rs1.W[0] s>= Rs2.W[0]) {
+   res = Rs2.W[0];
+ } else {
+   res = Rs1.W[0];
+ }
+ Rd = res;       // RV32
+ Rd = SE64(res); // RV64
+
+*Exceptions:* None
+
+*Privilege level:* All
+
+*Note:*
+
+*Intrinsic functions:*
+
+ int32_t __rv_minw(int32_t a, int32_t b);
 
 <<<
 === MSUBR32 (Multiply and Subtract from 32-Bit Word)
@@ -20814,140 +20954,6 @@ l|XLEN-1                                     1 |0
 |81 |URSUB32 |1 |1
 |===
 
+[#Removed_Instructions_Due_to_RVB_overlaps]
 == Removed Instructions Due to RVB overlaps
 
-<<<
-=== BPICK (Bit-wise Pick)
-
-*Type:* RV32 and RV64
-
-Replaced with CMIX in Zbpbo extension.
-
-*Format:*
-
-[cols="7*^.^"]
-|===
-l|31    27 l|26    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|Rc |BPICK +
-00 |Rs2 |Rs1 |011 |Rd
-|OP-P +
-1110111
-|===
-
-*Syntax:*
-
- BPICK Rd, Rs1, Rs2, Rc
-
-*Purpose:* Select from two source operands based on a bit mask in the third operand.
-
-*Description:* This instruction selects individual bits from Rs1 or Rs2, based on
-the bit mask value in Rc. If a bit in Rc is 1, the corresponding bit is from Rs1;
-otherwise, the corresponding bit is from Rs2. The selection results are written to Rd.
-
-*Operations:*
-
- Rd[x] = Rc[x]? Rs1[x] : Rs2[x];
- for RV32, x=31..0
- for RV64, x=63..0
-
-*Exceptions:* None
-
-*Privilege level:* All
-
-*Note:*
-
-*Intrinsic functions:*
-
- uintXLEN_t __rv_bpick(uintXLEN_t a, uintXLEN_t b, uintXLEN_t c);
-
-<<<
-=== MAXW (32-bit Signed Word Maximum)
-
-*Type:* DSP
-
-Replaced with MAX in Zbpbo extension.
-
-*Format:*
-
-[cols="6*^.^"]
-|===
-l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|MAXW +
-1111001 |Rs2 |Rs1 |000 |Rd
-|OP-P +
-1110111
-|===
-
-*Syntax:*
-
- MAXW Rd, Rs1, Rs2
-
-*Purpose:* Select the larger value from the 32-bit contents of two general purpose registers.
-
-*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the larger value as the result, and writes the result to Rd.
-
-*Operations:*
-
- if (Rs1.W[0] s>= Rs2.W[0]) {
-   res = Rs1.W[0];
- } else {
-   res = Rs2.W[0];
- }
- Rd = res;       // RV32
- Rd = SE64(res); // RV64 
-
-*Exceptions:* None
-
-*Privilege level:* All
-
-*Note:*
-
-*Intrinsic functions:*
-
- int32_t __rv_maxw(int32_t a, int32_t b);
-
-<<<
-=== MINW (32-bit Signed Word Minimum)
-
-*Type:* DSP
-
-Replaced with MIN in Zbpbo extension.
-
-*Format:*
-
-[cols="6*^.^"]
-|===
-l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
-|MINW +
-1111000 |Rs2 |Rs1 |000 |Rd
-|OP-P +
-1110111
-|===
-
-*Syntax:*
-
- MINW Rd, Rs1, Rs2
-
-*Purpose:* Select the smaller value from the 32-bit contents of two general purpose registers.
-
-*Description:* This instruction compares two signed 32-bit integers stored in Rs1 and Rs2, picks the smaller value as the result, and writes the result to Rd.
-
-*Operations:*
-
- if (Rs1.W[0] s>= Rs2.W[0]) {
-   res = Rs2.W[0];
- } else {
-   res = Rs1.W[0];
- }
- Rd = res;       // RV32
- Rd = SE64(res); // RV64
-
-*Exceptions:* None
-
-*Privilege level:* All
-
-*Note:*
-
-*Intrinsic functions:*
-
- int32_t __rv_minw(int32_t a, int32_t b);
