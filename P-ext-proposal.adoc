@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.16-draft-20220331
+Version 0.9.17-draft-20220331
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,10 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.17 | 2022/03/31 | Harry Lin
+a|
+* Removed "Replaced with ..." in detailed description of BITREV, BITREVI, PKBB16, PKTT16, SWAP8, WEXTI and WEXT. 
+(<<bitrev>>, <<bitrevi>>, <<pkxx16>>, <<swap8>>, <<wexti>> and <<wext>>)
 | v0.9.16 | 2022/03/31 | Harry Lin
 a|
 * Moved detailed description of BPICK, MAXW and MINW instructions that are not 
@@ -3863,11 +3867,10 @@ writes the result to Rd.
  intXLEN_t __rv_ave(intXLEN_t a, intXLEN_t b);
 
 <<<
+[#bitrev]
 === BITREV (Bit Reverse)
 
 *Type:* DSP
-
-Replaced with REV in Zbpbo extension.
 
 *Format:*
 
@@ -3907,11 +3910,10 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
  uintXLEN_t __rv_bitrev(uintXLEN_t a, uint32_t msb);
 
 <<<
+[#bitrevi]
 ===  BITREVI (Bit Reverse Immediate)
 
 *Type:* DSP
-
-Replaced with REV in Zbpbo extension.
 
 *Format:*
 
@@ -9175,9 +9177,6 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Type:* DSP
 
-* PKBB16: RV32: Replaced with PACK in Zbpbo, RV64: Zpn
-* PKTT16: RV32: Replaced with PACKU in Zbpbo, RV64: Zpn
-
 *Format:*
 
 [cols="6*^.^"]
@@ -9192,23 +9191,15 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 [cols="4*^.^",options="header",]
 |===
 |*[.underline]#xy#* |*[.underline]#zz#* |RV32 |RV64
-|BB |00 |         |&#10003;
+|BB |00 |&#10003; |&#10003;
 |BT |01 |&#10003; |&#10003;
-|TT |10 |         |&#10003;
+|TT |10 |&#10003; |&#10003;
 |TB |11 |&#10003; |&#10003;
 |===
 
-For RV32 PACK/PACKU encoding format, please see <<pack_packu>>.
 
 *Syntax:*
 
- RV32:
- PKBB16 Rd, Rs1, Rs2 == PACK Rd, Rs2, Rs1
- PKBT16 Rd, Rs1, Rs2
- PKTT16 Rd, Rs1, Rs2 == PACKU Rd, Rs2, Rs1
- PKTB16 Rd, Rs1, Rs2
-
- RV64:
  PKBB16 Rd, Rs1, Rs2
  PKBT16 Rd, Rs1, Rs2
  PKTT16 Rd, Rs1, Rs2
@@ -13709,11 +13700,10 @@ halfwords and writes the results to the top part and the bottom part of 32-bit c
    int16x4_t __rv_v_sunpkd832(int8x8_t a);
 
 <<<
+[#swap8]
 === SWAP8 (Swap Byte within Halfword)
 
 *Type:* DSP
-
-Replaced with REV8.H in Zbpbo extension.
 
 *Format:*
 
@@ -16353,11 +16343,10 @@ right-shifted by 1 bit and then sign-extended and written to Rd.
  uint32_t __rv_ursubw(uint32_t a, uint32_t b);
 
 <<<
+[#wexti]
 === WEXTI (Extract Word from 64-bit Immediate)
 
 *Type:* DSP
-
-RV32: Replaced with FSRI in Zbpbo extension.
 
 *Sub-extension:* Zpsfoperand
 
@@ -16416,12 +16405,10 @@ This instruction extracts a 32-bit word from a 64-bit value in Rs1 starting from
  intXLEN_t __rv_wext(uint64_t a, uint32_t b);
 
 <<<
+[#wext]
 === WEXT (Extract Word from 64-bit)
 
 *Type:* DSP
-
-RV32: Replaced with FSR in Zbpbo extension.
-RV64: Replaced with FSRW in Zbpbo extension.
 
 *Sub-extension:* Zpsfoperand
 
