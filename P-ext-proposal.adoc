@@ -22,7 +22,8 @@ This document is in the Development state. Assume anything can change.
 |Rev.|Revision Date|Author|Revised Content
 | v0.9.13 | 2022/03/31 | Harry Lin
 a|
-* Changed Zmmul is required by RVP (not whole RVM) in <<Zmmul_Extension>>.| v0.9.12 | 2022/03/30 | Harry Lin
+* Replaced RVM with Zmmul extension in <<Zmmul_Extension>>.
+| v0.9.12 | 2022/03/30 | Harry Lin
 a|
 * Removed B instructions, PACK, PACKU, FSR, FSRI, FSRW, REV8.H, CMIX and REV that are not overlapped by Bit-Manipulation Extension version 1.0.0. (<<Bit_Manipulation_Extension>>, <<Zbpbo>> and <<Detailed_Instruction_Descriptions_for_Zbpbo_Extension>>)
 | v0.9.11 | 2021/12/09 | Chuanhua Chang
