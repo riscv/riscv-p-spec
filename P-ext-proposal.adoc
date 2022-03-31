@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.13-draft-20220331
+Version 0.9.14-draft-20220331
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,9 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.14 | 2022/03/31 | Harry Lin
+a|
+* Changed legal sub-extension combinations in <<Legal_Sub-extension_Combinations>>.
 | v0.9.13 | 2022/03/31 | Harry Lin
 a|
 * Replaced RVM with Zmmul extension in <<Zmmul_Extension>>.
@@ -3434,15 +3437,16 @@ The instructions in Zpsfoperand are listed in the following table.
 The instructions of RV32P and RV64P not in Zbpbo, and Zpsfoperand extensions will be included in this sub-extension.
 This is a required sub-extension for RV32P and RV64P extension.
 
+[#Legal_Sub-extension_Combinations]
 === Legal Sub-extension Combinations
 The legal combinations of the sub-extensions for RV32P and RV64P are listed in the following table.
 
 [cols="^.^,^.^",options="header",]
 |===
-| Legal Sub-extension Combination     |Architecture
-| Zpn + Zbpbo                         |RV32
-| Zpn + Zbpbo + Zpsfoperand           |RV32
-| Zpn + Zbpbo + Zpsfoperand           |RV64
+| Legal Sub-extension Combination      |Architecture
+| Zmmul + Zbpbo + Zpn                  |RV32
+| Zmmul + Zbpbo + Zpn + Zpsfoperand   |RV32
+| Zpn + Zpsfoperand                    |RV64
 |===
 
 [#Detailed_Instruction_Descriptions_for_Zbpbo_Extension]
