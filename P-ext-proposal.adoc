@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.14-draft-20220331
+Version 0.9.15-draft-20220331
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,6 +20,13 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
+| v0.9.15 | 2022/03/31 | Harry Lin
+a|
+For instruction summary in <<RISC-V_P_Extension_Instruction_Summary>>, 
+
+* Added MAXW and MINW instructions to <<32-bit_Computation_Instructions>>.
+* Added BPICK instruction to <<Miscellaneous_Instructions>>.
+* Removed CMIX instruction from <<Miscellaneous_Instructions>>.
 | v0.9.14 | 2022/03/31 | Harry Lin
 a|
 * Changed legal sub-extension combinations in <<Legal_Sub-extension_Combinations>>.
@@ -165,6 +172,7 @@ power and higher performance.
 
 
 <<<
+[#RISC-V_P_Extension_Instruction_Summary] 
 == RISC-V P Extension Instruction Summary
 
 === SIMD Data Processing Instructions
@@ -2591,9 +2599,10 @@ rd = SE64(SAT.Q31(ABS(rs1.W[0])));
 |===
 
 <<<
+[#32-bit_Computation_Instructions]
 ==== 32-bit Computation Instructions
 
-There are 7 instructions here.
+There are 9 instructions here.
 
 .32-bit Computation Instructions
 [cols="^.^1,<.^2,<.^2,<.^4",options="header",]
@@ -2619,7 +2628,21 @@ b0 = CONCAT(1'b0, rs2.W[0]);
 res = (a0 - b0) u>> 1;
 rd = SE_XLEN(res);
 
-|5 |MULR64 rd, rs1, rs2 |Multiply Word Unsigned to 64-bit data l|
+|5 |MAXW rd, rs1, rs2 |32-bit Signed Word Maximum l|
+if (rs1.W[0] s>= rs2.W[0]) {
+   rd = SE_XLEN(rs1.W[0]);
+else {
+   rd = SE_XLEN(rs2.W[0]);
+}
+
+|6 |MINW rd, rs1, rs2 |32-bit Signed Word Minimum l|
+if (rs1.W[0] s>= rs2.W[0]) {
+   rd = SE_XLEN(rs2.W[0]);
+else {
+   rd = SE_XLEN(rs1.W[0]);
+}
+
+|7 |MULR64 rd, rs1, rs2 |Multiply Word Unsigned to 64-bit data l|
 RV32:
 mres[63:0] = rs1 u* rs2;
 r[dU] = mres.W[1];
@@ -2628,7 +2651,7 @@ r[dL] = mres.W[0];
 RV64:
 rd = rs1.W[0] u* rs2.W[0];
 
-|6 |MULSR64 rd, rs1, rs2 |Multiply Word Signed to 64-bit data l|
+|8 |MULSR64 rd, rs1, rs2 |Multiply Word Signed to 64-bit data l|
 RV32:
 mres[63:0] = rs1 s* rs2;
 r[dU] = mres.W[1];
@@ -2637,7 +2660,7 @@ r[dL] = mres.W[0];
 RV64:
 rd = rs1.W[0] s* rs2.W[0];
 
-|7 |MSUBR32 rd, rs1, rs2 |Multiply and Subtract from 32-bit Word l|
+|9 |MSUBR32 rd, rs1, rs2 |Multiply and Subtract from 32-bit Word l|
 RV32:
 mres = rs1 * rs2;
 rd = rd - mres.W[0];
@@ -2665,6 +2688,7 @@ vxsat.OV = 0;
 |===
 
 <<<
+[#Miscellaneous_Instructions]
 ==== Miscellaneous Instructions
 
 There are 13 instructions here.
@@ -2736,9 +2760,10 @@ lsb = imm5u;
 exword = a64[(31+lsb):lsb];
 rd = SE64(exword);
 
-|8 |CMIX rd, rs2, rs1, rs3 |Conditional Mix l|
-rd[i] = rs2[i]? rs1[i] : rs3[i];
+|8 |BPICK rd, rs1, rs2, rc |Bit-wise Pick l|
+rd[i] = rc[i]? rs1[i] : rs2[i];
 (RV32: i=31..0, RV64: i=63..0)
+
 |9 |INSB rd, rs1, imm2u/imm3u |Insert Byte l|
 RV32:
 byte_idx = imm2u;
