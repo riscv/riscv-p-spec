@@ -1,5 +1,5 @@
 = RISC-V "P" Extension Proposal
-Version 0.9.12-draft-20220330
+Version 0.9.13-draft-20220331
 This document is in the Development state. Assume anything can change.
 :doctype: book
 :encoding: utf-8
@@ -20,7 +20,9 @@ This document is in the Development state. Assume anything can change.
 [cols="^.^10,^.^15,^.^15,<.^60", options="header"]
 |===
 |Rev.|Revision Date|Author|Revised Content
-| v0.9.12 | 2022/03/30 | Harry Lin
+| v0.9.13 | 2022/03/31 | Harry Lin
+a|
+* Changed Zmmul is required by RVP (not whole RVM) in <<Zmmul_Extension>>.| v0.9.12 | 2022/03/30 | Harry Lin
 a|
 * Removed B instructions, PACK, PACKU, FSR, FSRI, FSRW, REV8.H, CMIX and REV that are not overlapped by Bit-Manipulation Extension version 1.0.0. (<<Bit_Manipulation_Extension>>, <<Zbpbo>> and <<Detailed_Instruction_Descriptions_for_Zbpbo_Extension>>)
 | v0.9.11 | 2021/12/09 | Chuanhua Chang
@@ -3336,15 +3338,17 @@ There are four 32-bit packing instructions here.
 
 A RVB extension, Zbpbo, is created to include these overlapped instructions.
 
-=== RV32M Extension
+[#Zmmul_Extension]
+=== Zmmul Extension (Version 0.1) of M Extension
 
-[cols="6*^.^",options="header",]
+[cols="5*^.^",options="header",]
 |===
-|P Instruction |M Instruction |M Extension |Partial |RV32 | RV64
-|SMMUL   |MULH    |RVM |         |&#10003; |
+|P Instruction |M Instruction |M Extension |RV32 | RV64
+|SMMUL   |MULH    |Zmmul |&#10003; |
 |===
 
-Because regular RVM multiplication instructions are required for RVP extension. No special RVM extension needs to be created to include MULH instruction.
+Because regular multiplication instructions are required for RVP extension. No special Zmmul extension needs to be created to include MULH instruction.
+
 
 
 [#pext_subset]
