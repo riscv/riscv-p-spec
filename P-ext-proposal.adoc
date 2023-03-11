@@ -16330,7 +16330,7 @@ l|31    25 l|24    20 l|19    15 l|14    12 l|11    7 l|6    0
 
 *Syntax:*
 
- URCRSA16 Rd, Rs1, Rs2
+ URSTSA16 Rd, Rs1, Rs2
 
 *Purpose:* Perform 16-bit unsigned integer element subtraction and 16-bit unsigned integer element addition in a 32-bit chunk in parallel. Operands are from corresponding positions in 32-bit chunks. The results are halved to avoid overflow or saturation.
 
