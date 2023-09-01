@@ -1,6 +1,4 @@
 # riscv-p-spec
-This repository contains the working draft of RISC-V P Packed SIMD Extension.
+This repository contains a very preliminary working draft for RISC-V Packed SIMD Extension (P-ext).
 
-The top level file is P-ext-proposal.adoc.
-
-Simply clicking on the file to render a formatted version of the document.
+Please do NOT try to implement this draft yet as more major changes and revisions are expected.
