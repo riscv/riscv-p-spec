@@ -4359,7 +4359,7 @@ The intrinsic function of this instruction is the same as the intrinsic function
 |===
 l|31    20 l|19    15 l|14    12 l|11    7 l|6    0
 |vxsat (ox009) +
-000000001001 |00001 |111 |Rd
+000000001001 |00001 |111 |00000
 |SYSTEM +
 1110011
 |===
