@@ -33211,3 +33211,305 @@ extension that adds double-wide multiply instructions:
     { bits: 1, name: 0x1 },
 ]}
 ....
+
+<<<
+== Data-Independent Execution Latency
+
+If the Zkt extension is implemented, these instruction's timing is independent
+of the data values in _rs1_ and _rs2_.
+
+This section is still in progress.
+
+[%header,cols="^1,^1,4"]
+|===
+|RV32
+|RV64
+|Mnemonic
+
+| &#10003; |          | addd _rd_p_, _rs1__, _rs2_p_
+| &#10003; |          | macc.h00 _rd_, _rs1_, _rs2_
+| &#10003; |          | macc.h01 _rd_, _rs1_, _rs2_
+| &#10003; |          | macc.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | macc.w00 _rd_, _rs1_, _rs2_
+|          | &#10003; | macc.w01 _rd_, _rs1_, _rs2_
+|          | &#10003; | macc.w11 _rd_, _rs1_, _rs2_
+| &#10003; |          | maccsu.h00 _rd_, _rs1_, _rs2_
+| &#10003; |          | maccsu.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | maccsu.w00 _rd_, _rs1_, _rs2_
+|          | &#10003; | maccsu.w11 _rd_, _rs1_, _rs2_
+| &#10003; |          | maccu.h00 _rd_, _rs1_, _rs2_
+| &#10003; |          | maccu.h01 _rd_, _rs1_, _rs2_
+| &#10003; |          | maccu.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | maccu.w00 _rd_, _rs1_, _rs2_
+|          | &#10003; | maccu.w01 _rd_, _rs1_, _rs2_
+|          | &#10003; | maccu.w11 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | merge _rd_, _rs1_, _rs2_
+| &#10003; |          | mhacc _rd_, _rs1_, _rs2_
+| &#10003; |          | mhacc.h0 _rd_, _rs1_, _rs2_
+| &#10003; |          | mhacc.h1 _rd_, _rs1_, _rs2_
+| &#10003; |          | mhaccsu _rd_, _rs1_, _rs2_
+| &#10003; |          | mhaccsu.h0 _rd_, _rs1_, _rs2_
+| &#10003; |          | mhaccsu.h1 _rd_, _rs1_, _rs2_
+| &#10003; |          | mhaccu _rd_, _rs1_, _rs2_
+| &#10003; |          | mseq _rd_, _rs1_, _rs2_
+| &#10003; |          | mslt _rd_, _rs1_, _rs2_
+| &#10003; |          | msltu _rd_, _rs1_, _rs2_
+| &#10003; |          | mul.h00 _rd_, _rs1_, _rs2_
+| &#10003; |          | mul.h01 _rd_, _rs1_, _rs2_
+| &#10003; |          | mul.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | mul.w00 _rd_, _rs1_, _rs2_
+|          | &#10003; | mul.w01 _rd_, _rs1_, _rs2_
+|          | &#10003; | mul.w11 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulh.h0 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulh.h1 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulhsu.h0 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulhsu.h1 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulsu.h00 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulsu.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | mulsu.w00 _rd_, _rs1_, _rs2_
+|          | &#10003; | mulsu.w11 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulu.h00 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulu.h01 _rd_, _rs1_, _rs2_
+| &#10003; |          | mulu.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | mulu.w00 _rd_, _rs1_, _rs2_
+|          | &#10003; | mulu.w01 _rd_, _rs1_, _rs2_
+|          | &#10003; | mulu.w11 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | mvm _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | mvmn _rd_, _rs1_, _rs2_
+| &#10003; |          | nsra _rd_, _rs1_p_, _rs2_
+| &#10003; |          | nsrai _rd_, _rs1_p_, _imm_
+| &#10003; |          | nsrl _rd_, _rs1_p_, _rs2_
+| &#10003; |          | nsrli _rd_, _rs1_p_, _imm_
+| &#10003; | &#10003; | pack _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | padd.b _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | padd.bs _rd_, _rs1_, _rs2_
+| &#10003; |          | padd.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | padd.dbs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | padd.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | padd.dhs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | padd.dw _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | padd.dws _rd_p_, _rs1_p_, _rs2_
+| &#10003; | &#10003; | padd.h _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | padd.hs _rd_, _rs1_, _rs2_
+|          | &#10003; | padd.w _rd_, _rs1_, _rs2_
+|          | &#10003; | padd.ws _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pli.b _rd_, _imm_
+| &#10003; |          | pli.db _rd_p_, _imm_
+| &#10003; |          | pli.dh _rd_p_, _imm_
+| &#10003; | &#10003; | pli.h _rd_, _imm_
+|          | &#10003; | pli.w _rd_, _imm_
+| &#10003; |          | plui.dh _rd_p_, _imm_
+| &#10003; | &#10003; | plui.h _rd_, _imm_
+|          | &#10003; | plui.w _rd_, _imm_
+| &#10003; | &#10003; | pmhacc.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhacc.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmhaccsu.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhaccsu.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmhaccu.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhaccu.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmseq.b _rd_, _rs1_, _rs2_
+| &#10003; |          | pmseq.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | pmseq.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | pmseq.dw _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | pmseq.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmseq.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmslt.b _rd_, _rs1_, _rs2_
+| &#10003; |          | pmslt.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | pmslt.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | pmslt.dw _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | pmslt.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmslt.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmsltu.b _rd_, _rs1_, _rs2_
+| &#10003; |          | pmsltu.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | pmsltu.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | pmsltu.dw _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | pmsltu.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmsltu.w _rd_, _rs1_, _rs2_
+|          | &#10003; | pmacc.w.h00 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmacc.w.h01 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmacc.w.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmaccsu.w.h00 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmaccsu.w.h11 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmaccu.w.h00 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmaccu.w.h01 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmaccu.w.h11 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmhacc.h.b0 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmhacc.h.b1 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhacc.w.h0 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhacc.w.h1 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmhaccsu.h.b0 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmhaccsu.h.b1 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhaccsu.w.h0 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmhaccsu.w.h1 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmul.h.b00 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmul.h.b01 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmul.h.b11 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmul.w.h00 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmul.w.h01 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmul.w.h11 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulh.h _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulh.h.b0 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulh.h.b1 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulh.w _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulh.w.h0 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulh.w.h1 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulhsu.h _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulhsu.h.b0 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulhsu.h.b1 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulhsu.w _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulhsu.w.h0 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulhsu.w.h1 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulhu.h _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulhu.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulsu.h.b00 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulsu.h.b11 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulsu.w.h00 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulsu.w.h11 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulu.h.b00 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulu.h.b01 _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pmulu.h.b11 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulu.w.h00 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulu.w.h01 _rd_, _rs1_, _rs2_
+|          | &#10003; | pmulu.w.h11 _rd_, _rs1_, _rs2_
+| &#10003; |          | pnsra.bs _rd_, _rs1_p_, _rs2_
+| &#10003; |          | pnsra.hs _rd_, _rs1_p_, _rs2_
+| &#10003; |          | pnsrai.b _rd_, _rs1_p_, _imm_
+| &#10003; |          | pnsrai.h _rd_, _rs1_p_, _imm_
+| &#10003; |          | pnsrl.bs _rd_, _rs1_p_, _rs2_
+| &#10003; |          | pnsrl.hs _rd_, _rs1_p_, _rs2_
+| &#10003; |          | pnsrli.b _rd_, _rs1_p_, _imm_
+| &#10003; |          | pnsrli.h _rd_, _rs1_p_, _imm_
+| &#10003; | &#10003; | ppaire.b _rd_, _rs1_, _rs2_
+| &#10003; |          | ppaire.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | ppaire.dh _rd_p_, _rs1_p_, _rs2_p_
+|          | &#10003; | ppaire.h _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | ppaireo.b _rd_, _rs1_, _rs2_
+| &#10003; |          | ppaireo.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | ppaireo.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | ppaireo.h _rd_, _rs1_, _rs2_
+|          | &#10003; | ppaireo.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | ppairo.b _rd_, _rs1_, _rs2_
+| &#10003; |          | ppairo.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | ppairo.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | ppairo.h _rd_, _rs1_, _rs2_
+|          | &#10003; | ppairo.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | ppairoe.b _rd_, _rs1_, _rs2_
+| &#10003; |          | ppairoe.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | ppairoe.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | ppairoe.h _rd_, _rs1_, _rs2_
+|          | &#10003; | ppairoe.w _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | psext.h.b _rd_, _rs1_
+| &#10003; |          | psext.dh.b _rd_p_, _rs1_p_
+| &#10003; |          | psext.dw.b _rd_p_, _rs1_p_
+| &#10003; |          | psext.dw.h _rd_p_, _rs1_p_
+|          | &#10003; | psext.w.b _rd_, _rs1_
+|          | &#10003; | psext.w.h _rd_, _rs1_
+| &#10003; | &#10003; | psll.bs _rd_, _rs1_, _rs2_
+| &#10003; |          | psll.dbs _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psll.dhs _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psll.dws _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | psll.hs _rd_, _rs1_, _rs2_
+|          | &#10003; | psll.ws _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | pslli.b _rd_, _rs1_, _imm_
+| &#10003; |          | pslli.db _rd_p_, _rs1_p_, _imm_
+| &#10003; |          | pslli.dh _rd_p_, _rs1_p_, _imm_
+| &#10003; |          | pslli.dw _rd_p_, _rs1_p_, _imm_
+| &#10003; | &#10003; | pslli.h _rd_, _rs1_, _imm_
+|          | &#10003; | pslli.w _rd_, _rs1_, _imm_
+| &#10003; | &#10003; | psra.bs _rd_, _rs1_, _rs2_
+| &#10003; |          | psra.dbs _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psra.dhs _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psra.dws _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | psra.hs _rd_, _rs1_, _rs2_
+|          | &#10003; | psra.ws _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | psrai.b _rd_, _rs1_, _imm_
+| &#10003; |          | psrai.db _rd_p_, _rs1_p_, _imm_
+| &#10003; |          | psrai.dh _rd_p_, _rs1_p_, _imm_
+| &#10003; |          | psrai.dw _rd_p_, _rs1_p_, _imm_
+| &#10003; | &#10003; | psrai.h _rd_, _rs1_, _imm_
+|          | &#10003; | psrai.w _rd_, _rs1_, _imm_
+| &#10003; | &#10003; | psrl.bs _rd_, _rs1_, _rs2_
+| &#10003; |          | psrl.dbs _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psrl.dhs _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psrl.dws _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | psrl.hs _rd_, _rs1_, _rs2_
+|          | &#10003; | psrl.ws _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | psrli.b _rd_, _rs1_, _imm_
+| &#10003; |          | psrli.db _rd_p_, _rs1_p_, _imm_
+| &#10003; |          | psrli.dh _rd_p_, _rs1_p_, _imm_
+| &#10003; |          | psrli.dw _rd_p_, _rs1_p_, _imm_
+| &#10003; | &#10003; | psrli.h _rd_, _rs1_, _imm_
+|          | &#10003; | psrli.w _rd_, _rs1_, _imm_
+| &#10003; | &#10003; | psub.b _rd_, _rs1_, _rs2_
+| &#10003; |          | psub.db _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psub.dh _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psub.dw _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; | &#10003; | psub.h _rd_, _rs1_, _rs2_
+|          | &#10003; | psub.w _rd_, _rs1_, _rs2_
+| &#10003; |          | pwadd.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwadd.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwadda.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwadda.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwaddau.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwaddau.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwaddu.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwaddu.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmacc.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmaccsu.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmaccu.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmul.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmul.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmulsu.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmulsu.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmulu.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwmulu.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsla.bs _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsla.hs _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwslai.b _rd_p_, _rs1_, _imm_
+| &#10003; |          | pwslai.h _rd_p_, _rs1_, _imm_
+| &#10003; |          | pwsll.bs _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsll.hs _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwslli.b _rd_p_, _rs1_, _imm_
+| &#10003; |          | pwslli.h _rd_p_, _rs1_, _imm_
+| &#10003; |          | pwsub.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsub.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsuba.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsuba.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsubau.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsubau.h _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsubu.b _rd_p_, _rs1_, _rs2_
+| &#10003; |          | pwsubu.h _rd_p_, _rs1_, _rs2_
+| &#10003; | &#10003; | rev _rd_, _rs1_
+|          | &#10003; | rev16 _rd_, _rs1_
+| &#10003; | &#10003; | slx _rd_, _rs1_, _rs2_
+| &#10003; | &#10003; | srx _rd_, _rs1_, _rs2_
+| &#10003; |          | subd _rd_p_, _rs1__, _rs2_p_
+| &#10003; |          | wadd _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wadda _rd_p_, _rs1_, _rs2_
+| &#10003; |          | waddau _rd_p_, _rs1_, _rs2_
+| &#10003; |          | waddu _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wmacc _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wmaccsu _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wmaccu _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wmul _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wmulsu _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wmulu _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wsla _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wslai _rd_p_, _rs1_, _imm_
+| &#10003; |          | wsll _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wslli _rd_p_, _rs1_, _imm_
+| &#10003; |          | wsub _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wsuba _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wsubau _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wsubu _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wzip8p _rd_p_, _rs1_, _rs2_
+| &#10003; |          | wzip16p _rd_p_, _rs1_, _rs2_
+|          | &#10003; | unzip8p _rd_, _rs1_, _rs2_
+|          | &#10003; | unzip8hp _rd_, _rs1_, _rs2_
+|          | &#10003; | unzip16p _rd_, _rs1_, _rs2_
+|          | &#10003; | unziphp _rd_, _rs1_, _rs2_
+|          | &#10003; | zip8p _rd_, _rs1_, _rs2_
+|          | &#10003; | zip8hp _rd_, _rs1_, _rs2_
+|          | &#10003; | zip16p _rd_, _rs1_, _rs2_
+|          | &#10003; | ziphp _rd_, _rs1_, _rs2_
+|===
