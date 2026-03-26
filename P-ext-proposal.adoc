@@ -1244,6 +1244,10 @@ Mnemonic::
 
 padd.bs _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmv.bs _rd_, _rs2_ &#8594; padd.bs _rd_, x0, _rs2_
+
 Encoding::
 
 PADD.BS is encoded using the OP-IMM-32 major opcode with a scalar second source
@@ -1295,6 +1299,10 @@ Mnemonic::
 
 padd.hs _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmv.hs _rd_, _rs2_ &#8594; padd.hs _rd_, x0, _rs2_
+
 Encoding::
 
 PADD.HS is encoded in the OP-IMM-32 major opcode with a scalar second source
@@ -1341,6 +1349,10 @@ X[rd] = d
 Mnemonic::
 
 padd.ws _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmv.ws _rd_, _rs2_ &#8594; padd.ws _rd_, x0, _rs2_
 
 Encoding::
 
@@ -1556,6 +1568,10 @@ Mnemonic::
 
 padd.dbs _rd_p_, _rs1_p_, _rs2_
 
+Pseudoinstructions::
+
+pmv.dbs _rd_p_, _rs2_ &#8594; padd.dbs _rd_p_, x0, _rs2_
+
 Encoding::
 
 PADD.DBS is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -1612,6 +1628,10 @@ Mnemonic::
 
 padd.dhs _rd_p_, _rs1_p_, _rs2_
 
+Pseudoinstructions::
+
+pmv.dhs _rd_p_, _rs2_ &#8594; padd.dhs _rd_p_, x0, _rs2_
+
 Encoding::
 
 PADD.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -1667,6 +1687,10 @@ if (rd_p != 0):
 Mnemonic::
 
 padd.dws _rd_p_, _rs1_p_, _rs2_
+
+Pseudoinstructions::
+
+pmv.dws _rd_p_, _rs2_ &#8594; padd.dws _rd_p_, x0, _rs2_
 
 Encoding::
 
@@ -1727,6 +1751,10 @@ Mnemonic::
 
 psub.b _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pneg.b _rd_, _rs2_ &#8594; psub.b _rd_, x0, _rs2_
+
 Encoding::
 
 PSUB.B is encoded in the OP-32 major opcode with packed byte elements.
@@ -1773,6 +1801,10 @@ X[rd] = d
 Mnemonic::
 
 psub.h _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pneg.h _rd_, _rs2_ &#8594; psub.h _rd_, x0, _rs2_
 
 Encoding::
 
@@ -1821,6 +1853,10 @@ Mnemonic::
 
 psub.w _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pneg.w _rd_, _rs2_ &#8594; psub.w _rd_, x0, _rs2_
+
 Encoding::
 
 PSUB.W is encoded in the OP-32 major opcode and is available only in RV64.
@@ -1865,6 +1901,10 @@ X[rd] = d
 Mnemonic::
 
 psub.db _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pneg.db _rd_p_, _rs2_p_ &#8594; psub.db _rd_p_, x0, _rs2_p_
 
 Encoding::
 
@@ -1922,6 +1962,10 @@ Mnemonic::
 
 psub.dh _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pneg.dh _rd_p_, _rs2_p_ &#8594; psub.dh _rd_p_, x0, _rs2_p_
+
 Encoding::
 
 PSUB.DH is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -1977,6 +2021,10 @@ if (rd_p != 0):
 Mnemonic::
 
 psub.dw _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pneg.dw _rd_p_, _rs2_p_ &#8594; psub.dw _rd_p_, x0, _rs2_p_
 
 Encoding::
 
@@ -6796,6 +6844,10 @@ Mnemonic::
 
 pabd.b _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pabs.b _rd_, _rs1_ &#8594; pabd.b _rd_, _rs1_, x0
+
 Encoding::
 
 PABD.B is encoded in the OP-32 major opcode. It uses packed byte elements.
@@ -6845,6 +6897,10 @@ Notes::
 Mnemonic::
 
 pabd.h _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pabs.h _rd_, _rs1_ &#8594; pabd.h _rd_, _rs1_, x0
 
 Encoding::
 
@@ -7096,6 +7152,10 @@ Mnemonic::
 
 pabd.db _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pabs.db _rd_p_, _rs1_p_ &#8594; pabd.db _rd_p_, _rs1_p_, x0
+
 Encoding::
 
 PABD.DB is the register-pair (double-wide) variant of PABD.B and is available
@@ -7153,6 +7213,10 @@ if (rd_p != 0):
 Mnemonic::
 
 pabd.dh _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pabs.dh _rd_p_, _rs1_p_ &#8594; pabd.dh _rd_p_, _rs1_p_, x0
 
 Encoding::
 
@@ -9069,6 +9133,10 @@ Mnemonic::
 
 pmseq.b _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmseqz.b _rd_, _rs1_ &#8594; pmseq.b _rd_, _rs1_, x0
+
 Encoding::
 
 PMSEQ.B is encoded in the OP-32 major opcode with packed byte elements.
@@ -9116,6 +9184,10 @@ X[rd] = d
 Mnemonic::
 
 pmseq.h _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmseqz.h _rd_, _rs1_ &#8594; pmseq.h _rd_, _rs1_, x0
 
 Encoding::
 
@@ -9165,6 +9237,10 @@ Mnemonic::
 
 pmseq.w _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmseqz.w _rd_, _rs1_ &#8594; pmseq.w _rd_, _rs1_, x0
+
 Encoding::
 
 PMSEQ.W is available only in RV64.
@@ -9206,6 +9282,12 @@ X[rd] = d1 @ d0
 Mnemonic::
 
 pmslt.b _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgt.b _rd_, _rs2_, _rs1_ &#8594; pmslt.b _rd_, _rs1_, _rs2_ +
+pmsltz.b _rd_, _rs1_ &#8594; pmslt.b _rd_, _rs1_, x0 +
+pmsgtz.b _rd_, _rs2_ &#8594; pmslt.b _rd_, x0, _rs2_
 
 Encoding::
 
@@ -9255,6 +9337,12 @@ Mnemonic::
 
 pmslt.h _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmsgt.h _rd_, _rs2_, _rs1_ &#8594; pmslt.h _rd_, _rs1_, _rs2_ +
+pmsltz.h _rd_, _rs1_ &#8594; pmslt.h _rd_, _rs1_, x0 +
+pmsgtz.h _rd_, _rs2_ &#8594; pmslt.h _rd_, x0, _rs2_
+
 Encoding::
 
 PMSLT.H is encoded in the OP-32 major opcode with packed halfword elements.
@@ -9303,6 +9391,12 @@ Mnemonic::
 
 pmslt.w _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmsgt.w _rd_, _rs2_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, _rs2_ +
+pmsltz.w _rd_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, x0 +
+pmsgtz.w _rd_, _rs2_ &#8594; pmslt.w _rd_, x0, _rs2_
+
 Encoding::
 
 PMSLT.W is available only in RV64.
@@ -9344,6 +9438,11 @@ X[rd] = d1 @ d0
 Mnemonic::
 
 pmsltu.b _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgtu.b _rd_, _rs2_, _rs1_ &#8594; pmsltu.b _rd_, _rs1_, _rs2_ +
+pmsnez.b _rd_, _rs2_ &#8594; pmsltu.b _rd_, x0, _rs2_
 
 Encoding::
 
@@ -9393,6 +9492,11 @@ Mnemonic::
 
 pmsltu.h _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmsgtu.h _rd_, _rs2_, _rs1_ &#8594; pmsltu.h _rd_, _rs1_, _rs2_ +
+pmsnez.h _rd_, _rs2_ &#8594; pmsltu.h _rd_, x0, _rs2_
+
 Encoding::
 
 PMSLTU.H is encoded in the OP-32 major opcode with packed halfword elements.
@@ -9441,6 +9545,11 @@ Mnemonic::
 
 pmsltu.w _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pmsgtu.w _rd_, _rs2_, _rs1_ &#8594; pmsltu.w _rd_, _rs1_, _rs2_ +
+pmsnez.w _rd_, _rs2_ &#8594; pmsltu.w _rd_, x0, _rs2_
+
 Encoding::
 
 PMSLTU.W is available only in RV64.
@@ -9483,6 +9592,10 @@ Mnemonic::
 
 mseq _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+mseqz _rd_, _rs1_ &#8594; mseq _rd_, _rs1_, x0
+
 Encoding::
 
 MSEQ is available only in RV32.
@@ -9520,6 +9633,11 @@ X[rd] = (X[rs1] == X[rs2]) ? 0xFFFFFFFF : 0x00000000
 Mnemonic::
 
 mslt _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+msgt _rd_, _rs2_, _rs1_ &#8594; mslt _rd_, _rs1_, _rs2_ +
+msltz _rd_, _rs1_ &#8594; mslt _rd_, _rs1_, x0
 
 Encoding::
 
@@ -9559,6 +9677,11 @@ Mnemonic::
 
 msltu _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+msgtu _rd_, _rs2_, _rs1_ &#8594; msltu _rd_, _rs1_, _rs2_ +
+msnez _rd_, _rs2_ &#8594; msltu _rd_, x0, _rs2_
+
 Encoding::
 
 MSLTU is available only in RV32.
@@ -9597,6 +9720,10 @@ X[rd] = (X[rs1] <_u X[rs2]) ? 0xFFFFFFFF : 0x00000000
 Mnemonic::
 
 pmseq.db _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pmseqz.db _rd_p_, _rs1_p_ &#8594; pmseq.db _rd_p_, _rs1_p_, x0
 
 Encoding::
 
@@ -9655,6 +9782,10 @@ Mnemonic::
 
 pmseq.dh _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pmseqz.dh _rd_p_, _rs1_p_ &#8594; pmseq.dh _rd_p_, _rs1_p_, x0
+
 Encoding::
 
 PMSEQ.DH is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -9712,6 +9843,10 @@ Mnemonic::
 
 pmseq.dw _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pmseqz.dw _rd_p_, _rs1_p_ &#8594; pmseq.dw _rd_p_, _rs1_p_, x0
+
 Encoding::
 
 PMSEQ.DW is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -9768,6 +9903,12 @@ if (rd_p != 0):
 Mnemonic::
 
 pmslt.db _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pmsgt.db _rd_p_, _rs2_p_, _rs1_p_ &#8594; pmslt.db _rd_p_, _rs1_p_, _rs2_p_ +
+pmsltz.db _rd_p_, _rs1_p_ &#8594; pmslt.db _rd_p_, _rs1_p_, x0 +
+pmsgtz.db _rd_p_, _rs2_p_ &#8594; pmslt.db _rd_p_, x0, _rs2_p_
 
 Encoding::
 
@@ -9827,6 +9968,12 @@ Mnemonic::
 
 pmslt.dh _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pmsgt.dh _rd_p_, _rs2_p_, _rs1_p_ &#8594; pmslt.dh _rd_p_, _rs1_p_, _rs2_p_ +
+pmsltz.dh _rd_p_, _rs1_p_ &#8594; pmslt.dh _rd_p_, _rs1_p_, x0 +
+pmsgtz.dh _rd_p_, _rs2_p_ &#8594; pmslt.dh _rd_p_, x0, _rs2_p_
+
 Encoding::
 
 PMSLT.DH is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -9884,6 +10031,12 @@ if (rd_p != 0):
 Mnemonic::
 
 pmslt.dw _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pmsgt.dw _rd_p_, _rs2_p_, _rs1_p_ &#8594; pmslt.dw _rd_p_, _rs1_p_, _rs2_p_ +
+pmsltz.dw _rd_p_, _rs1_p_ &#8594; pmslt.dw _rd_p_, _rs1_p_, x0 +
+pmsgtz.dw _rd_p_, _rs2_p_ &#8594; pmslt.dw _rd_p_, x0, _rs2_p_
 
 Encoding::
 
@@ -9943,6 +10096,11 @@ Mnemonic::
 
 pmsltu.db _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pmsgtu.db _rd_p_, _rs2_p_, _rs1_p_ &#8594; pmsltu.db _rd_p_, _rs1_p_, _rs2_p_ +
+pmsnez.db _rd_p_, _rs2_p_ &#8594; pmsltu.db _rd_p_, x0, _rs2_p_
+
 Encoding::
 
 PMSLTU.DB is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -10001,6 +10159,11 @@ Mnemonic::
 
 pmsltu.dh _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pmsgtu.dh _rd_p_, _rs2_p_, _rs1_p_ &#8594; pmsltu.dh _rd_p_, _rs1_p_, _rs2_p_ +
+pmsnez.dh _rd_p_, _rs2_p_ &#8594; pmsltu.dh _rd_p_, x0, _rs2_p_
+
 Encoding::
 
 PMSLTU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -10058,6 +10221,11 @@ if (rd_p != 0):
 Mnemonic::
 
 pmsltu.dw _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pmsgtu.dw _rd_p_, _rs2_p_, _rs1_p_ &#8594; pmsltu.dw _rd_p_, _rs1_p_, _rs2_p_ +
+pmsnez.dw _rd_p_, _rs2_p_ &#8594; pmsltu.dw _rd_p_, x0, _rs2_p_
 
 Encoding::
 
@@ -15249,6 +15417,10 @@ Mnemonic::
 
 ppaire.b _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pzext.h.b _rd_, _rs1_ &#8594; ppaire.b _rd_, _rs1_, x0
+
 Encoding::
 
 PPAIRE.B is encoded in the OP-32 major opcode with packed-byte pairing.
@@ -15296,6 +15468,10 @@ X[rd] = d
 Mnemonic::
 
 ppaire.h _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pzext.w.h _rd_, _rs1_ &#8594; ppaire.h _rd_, _rs1_, x0
 
 Encoding::
 
@@ -15777,6 +15953,10 @@ Mnemonic::
 
 ppaire.db _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+pzext.dh.b _rd_p_, _rs1_p_ &#8594; ppaire.db _rd_p_, _rs1_p_, x0
+
 Encoding::
 
 PPAIRE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -15832,6 +16012,10 @@ if (rd_p != 0):
 Mnemonic::
 
 ppaire.dh _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pzext.dw.h _rd_p_, _rs1_p_ &#8594; ppaire.dh _rd_p_, _rs1_p_, x0
 
 Encoding::
 
@@ -16227,6 +16411,11 @@ Mnemonic::
 
 zip8p _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pwcvtu.b _rd_, _rs1_ &#8594; zip8p _rd_, _rs1_, x0 +
+pwcvth.b _rd_, _rs2_ &#8594; zip8p _rd_, x0, _rs2_
+
 Encoding::
 
 ZIP8P is encoded in the OP-32 major opcode and is available only in RV64.
@@ -16315,6 +16504,10 @@ Mnemonic::
 
 unzip8p _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pncvt.b _rd_, _rs1_ &#8594; unzip8p _rd_, _rs1_, x0
+
 Encoding::
 
 UNZIP8P is encoded in the OP-32 major opcode and is available only in RV64.
@@ -16359,6 +16552,10 @@ Mnemonic::
 
 unzip8hp _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pncvth.b _rd_, _rs1_ &#8594; unzip8hp _rd_, _rs1_, x0
+
 Encoding::
 
 UNZIP8HP is encoded in the OP-32 major opcode and is available only in RV64.
@@ -16402,6 +16599,11 @@ X[rd] =
 Mnemonic::
 
 zip16p _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pwcvtu.h _rd_, _rs1_ &#8594; zip16p _rd_, _rs1_, x0 +
+pwcvth.h _rd_, _rs2_ &#8594; zip16p _rd_, x0, _rs2_
 
 Encoding::
 
@@ -16487,6 +16689,10 @@ Mnemonic::
 
 unzip16p _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pncvt.h _rd_, _rs1_ &#8594; unzip16p _rd_, _rs1_, x0
+
 Encoding::
 
 UNZIP16P is encoded in the OP-32 major opcode and is available only in RV64.
@@ -16528,6 +16734,10 @@ X[rd] = s2[47:32] @ s2[15:0] @ s1[47:32] @ s1[15:0]
 Mnemonic::
 
 unzip16hp _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pncvth.h _rd_, _rs1_ &#8594; unzip16hp _rd_, _rs1_, x0
 
 Encoding::
 
@@ -17013,6 +17223,11 @@ Mnemonic::
 
 pack _rd_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+ppaire.h _rd_, _rs1_, _rs2_ (RV32) +
+ppaire.w _rd_, _rs1_, _rs2_ (RV64)
+
 Encoding::
 
 PACK is encoded in the OP major opcode.
@@ -17110,6 +17325,10 @@ Mnemonic::
 
 subd _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+negd _rd_p_, _rs2_p_ &#8594; subd _rd_p_, x0, _rs2_p_
+
 Encoding::
 
 SUBD is encoded in the OP-IMM-32 major opcode using the double-wide
@@ -17163,6 +17382,10 @@ X[rd_p * 2 + 1] = d[63:32]
 Mnemonic::
 
 pwadd.b _rd_p_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pwcvt.b _rd_p_, _rs1_ &#8594; pwadd.b _rd_p_, _rs1_, x0
 
 Encoding::
 
@@ -17582,6 +17805,10 @@ if (rd_p != 0):
 Mnemonic::
 
 pwadd.h _rd_p_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pwcvt.h _rd_p_, _rs1_ &#8594; pwadd.h _rd_p_, _rs1_, x0
 
 Encoding::
 
@@ -18892,6 +19119,11 @@ Mnemonic::
 
 wzip8p _rd_p_, _rs1_, _rs2_
 
+Pseudoinstructions::
+
+pwcvtu.b _rd_p_, _rs1_ &#8594; wzip8p _rd_p_, _rs1_, x0 +
+pwcvth.b _rd_p_, _rs2_ &#8594; wzip8p _rd_p_, x0, _rs2_
+
 Encoding::
 
 WZIP8P is available only in RV32. It writes its 64-bit result to the even-odd
@@ -18943,6 +19175,11 @@ if (rd_p != 0):
 Mnemonic::
 
 wzip16p _rd_p_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pwcvtu.h _rd_p_, _rs1_ &#8594; wzip16p _rd_p_, _rs1_, x0 +
+pwcvth.h _rd_p_, _rs2_ &#8594; wzip16p _rd_p_, x0, _rs2_
 
 Encoding::
 
@@ -19211,6 +19448,11 @@ X[rd] = to_bits(32, sum)
 Mnemonic::
 
 pnsrli.b _rd_, _rs1_p_, _uimm4_
+
+Pseudoinstructions::
+
+pncvt.b _rd_, _rs1_p_ &#8594; pnsrli.b _rd_, _rs1_p_, 0 +
+pncvth.b _rd_, _rs1_p_ &#8594; pnsrli.b _rd_, _rs1_p_, 8
 
 Encoding::
 
@@ -19516,6 +19758,11 @@ X[rd] = d
 Mnemonic::
 
 pnsrli.h _rd_, _rs1_p_, _uimm5_
+
+Pseudoinstructions::
+
+pncvt.h _rd_, _rs1_p_ &#8594; pnsrli.h _rd_, _rs1_p_, 0 +
+pncvth.h _rd_, _rs1_p_ &#8594; pnsrli.h _rd_, _rs1_p_, 16
 
 Encoding::
 
