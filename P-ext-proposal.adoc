@@ -19003,7 +19003,7 @@ PREDSUM.DBS is available only in RV32. It reads a 64-bit packed source from the
 even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
 in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
 
-PREDSUM.DBS is encoded in the OP-IMM-32 major opcode with `func3=100`, bit 28
+PREDSUM.DBS is encoded in the OP-IMM-32 major opcode with `funct3=100`, bit 28
 set to 1, and `rs1_p` selecting the source register pair.
 
 [wavedrom, ,svg]
@@ -32683,3 +32683,290 @@ For the following instructions:
 the double-wide instruction is equivalent to two single-wide instructions that
 share the same scalar `rs2` (no `rs2+`), and must be performed simultaneously,
 or in an order that does not overwrite `rs2` between the two operations.
+
+<<<
+== Instruction Formats
+
+A few non-SIMD instructions of the P extension (including ABS, CLS, PACK,
+REV, and REV16) are encoded alongside other ordinary RISC-V "scalar"
+instructions in the major opcodes known as OP (binary code `0110011`), OP-IMM
+(`0010011`), and OP-IMM-32 (`0011011`).
+
+All other Base P instructions are encoded either: (a) within major opcode OP-32
+(binary code `0111011`) with instruction bit 31 = 1; or (b) within OP-IMM-32 with
+bits 14:12 (funct3) = binary `010`, `100`, or `110`.
+
+Apart from the subset of non-SIMD instructions already mentioned plus a few
+other special cases, the following instruction formats are used for all Base
+P instructions that have no register-pair operands, only single registers:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 7, name: 'w-uimm' },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 7, name: 'w-uimm' },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 1, name: 0x0 },
+    { bits: 1, name: 'x' },
+    { bits: 1, name: 'x' },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 4, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 'x' },
+    { bits: 1, name: 'x' },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 'R' },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Note that he first four formats are in major opcode OP-IMM-32, and the last two
+are in OP-32. Of the OP-IMM-32 formats, those with funct3 = binary `010` are
+mostly shifts left, while those with funct3 = binary `100` are mostly shifts right.
+
+The two-bit field `w` often selects the SIMD element width, whether bytes,
+halfwords, or words, although that is not its only function. The most common,
+though not universal, encoding for `w` has binary `00` = halfwords, `01` = words,
+`10` = bytes, and `11` = a doubleword. Field `w-uimm` encodes both an element
+width and an unsigned immediate operand whose size varies with the element
+width; for example, 3 bits for bytes, 4 bits for halfwords, 5 bits for words,
+and 6 bits for a doubleword.
+
+For the last format, when bit R = 1, an instruction both reads and writes the
+destination operand. Usually this is done for an accumulate operation,
+although there are some other instances, such as SRX (Shift Right Extended)
+and MVM (Move Masked). Instructions encoded in the other formats listed above
+never read the destination.
+
+With RV32, the P extension has additional instruction formats for the cases
+when operands are even-odd register pairs:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 7, name: 'w-uimm' },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 'R' },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 7, name: 'w-uimm' },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 7, name: 'w-uimm' },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 'w' },
+    { bits: 4, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+All of these are in major opcode OP-IMM-32. The formats here with funct3 =
+binary `010` primarily encode widening shifts left and other widening
+instructions, and those with funct3 = binary `100` encode narrowing shifts right
+and reductions. The last three formats, with funct3 = binary `110`, encode all
+the double-wide instructions, which have at least the first source and
+destination as register pairs, and often the second source operand as well.
+
+The third format listed above, with an R bit, encodes widening adds,
+subtracts, and multiplies that may optionally read the destination for an
+accumulate operation (WADDA, WSUBA, WMACC, etc.).
+
+The following format is not used by Base P but is recommended for a Zp*
+extension that adds double-wide multiply instructions:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 'x' },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 'w' },
+    { bits: 1, name: 'R' },
+    { bits: 3, name: 'f' },
+    { bits: 1, name: 0x1 },
+]}
+....
