@@ -22569,11 +22569,7 @@ and writes the upper XLEN bits of the rounded product to `rd`.
 
 [source,pseudocode]
 ----
-# RV32
 X[rd] = (signed(X[rs1]) * signed(X[rs2]) + 2^31)[63:32]
-
-# RV64
-X[rd] = (signed(X[rs1]) * signed(X[rs2]) + 2^63)[127:64]
 ----
 
 
