@@ -6236,14 +6236,22 @@ for i = 0 .. 1:
     // Even halfword: saturating subtract
     a_even = signed(s1[(32*i+15):(32*i)])
     b_odd = signed(s2[(32*i+31):(32*i+16)])
-    diff = a_even - b_odd
-    d[(32*i+15):(32*i)] = SAT16(diff)
+    res_even = a_even - b_odd
+    if res_even > 2^15 - 1:
+        res_even = 2^15 - 1; vxsat = 1
+    else if res_even < -(2^15):
+        res_even = -(2^15); vxsat = 1
+    d[(32*i+15):(32*i)] = res_even[15:0]
 
     // Odd halfword: saturating add
     a_odd = signed(s1[(32*i+31):(32*i+16)])
     b_even = signed(s2[(32*i+15):(32*i)])
-    sum = a_odd + b_even
-    d[(32*i+31):(32*i+16)] = SAT16(sum)
+    res_odd = a_odd + b_even
+    if res_odd > 2^15 - 1:
+        res_odd = 2^15 - 1; vxsat = 1
+    else if res_odd < -(2^15):
+        res_odd = -(2^15); vxsat = 1
+    d[(32*i+31):(32*i+16)] = res_odd[15:0]
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -6447,14 +6455,22 @@ for i = 0 .. 1:
     // Even halfword: saturating add
     a_even = signed(s1[(32*i+15):(32*i)])
     b_odd = signed(s2[(32*i+31):(32*i+16)])
-    sum = a_even + b_odd
-    d[(32*i+15):(32*i)] = SAT16(sum)
+    res_even = a_even + b_odd
+    if res_even > 2^15 - 1:
+        res_even = 2^15 - 1; vxsat = 1
+    else if res_even < -(2^15):
+        res_even = -(2^15); vxsat = 1
+    d[(32*i+15):(32*i)] = res_even[15:0]
 
     // Odd halfword: saturating subtract
     a_odd = signed(s1[(32*i+31):(32*i+16)])
     b_even = signed(s2[(32*i+15):(32*i)])
-    diff = a_odd - b_even
-    d[(32*i+31):(32*i+16)] = SAT16(diff)
+    res_odd = a_odd - b_even
+    if res_odd > 2^15 - 1:
+        res_odd = 2^15 - 1; vxsat = 1
+    else if res_odd < -(2^15):
+        res_odd = -(2^15); vxsat = 1
+    d[(32*i+31):(32*i+16)] = res_odd[15:0]
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
