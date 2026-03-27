@@ -1126,7 +1126,7 @@ PADD.B is encoded in the OP-32 major opcode with packed byte elements.
 ===== Description
 
 PADD.B adds corresponding packed 8-bit elements of `rs1` and `rs2` and writes
-the packed byte results to `rd`. Each element addition wraps modulo 2^8.
+the packed byte results to `rd`. Each element addition wraps modulo 2^8^.
 
 ===== Operation
 
@@ -1173,7 +1173,7 @@ PADD.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 PADD.H adds corresponding packed 16-bit halfword elements of `rs1` and `rs2`
 and writes the packed halfword results to `rd`. Each element addition wraps
-modulo 2^16.
+modulo 2^16^.
 
 ===== Operation
 
@@ -1219,7 +1219,7 @@ PADD.W is encoded in the OP-32 major opcode and is available only in RV64.
 ===== Description
 
 PADD.W adds corresponding packed 32-bit word elements of `rs1` and `rs2` and
-writes the packed word results to `rd`. Each element addition wraps modulo 2^32.
+writes the packed word results to `rd`. Each element addition wraps modulo 2^32^.
 Available only in RV64.
 
 ===== Operation
@@ -1284,7 +1284,7 @@ X[rd] = d
 
 ===== Notes
 
-* Each 8-bit element addition wraps modulo 2^8.
+* Each 8-bit element addition wraps modulo 2^8^.
 * The scalar operand is taken only from bits [7:0] of `rs2`; higher bits are ignored.
 
 <<<
@@ -1415,7 +1415,7 @@ PADD.DB performs packed 8-bit byte addition on double-wide (register-pair)
 operands. It is equivalent to two PADD.B operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-addition wraps modulo 2^8. Available only in RV32.
+addition wraps modulo 2^8^. Available only in RV32.
 
 ===== Operation
 
@@ -1471,7 +1471,7 @@ PADD.DH performs packed 16-bit halfword addition on double-wide (register-pair)
 operands. It is equivalent to two PADD.H operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-addition wraps modulo 2^16. Available only in RV32.
+addition wraps modulo 2^16^. Available only in RV32.
 
 ===== Operation
 
@@ -1527,7 +1527,7 @@ PADD.DW performs 32-bit word addition on double-wide (register-pair) operands.
 It is equivalent to two ADD operations: one on the even registers and one on
 the odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`)
 are register pairs and must specify even register numbers. Each element addition
-wraps modulo 2^32. Available only in RV32.
+wraps modulo 2^32^. Available only in RV32.
 
 ===== Operation
 
@@ -1584,7 +1584,7 @@ across a double-wide (register-pair) source. It is equivalent to two PADD.BS
 operations: one on the even registers and one on the odd registers of each pair.
 The destination (`rd_p`) and first source (`rs1_p`) are register pairs and must
 specify even register numbers; `rs2` is a single register. Each element addition
-wraps modulo 2^8. Available only in RV32.
+wraps modulo 2^8^. Available only in RV32.
 
 ===== Operation
 
@@ -1640,7 +1640,7 @@ element across a double-wide (register-pair) source. It is equivalent to two
 PADD.HS operations: one on the even registers and one on the odd registers of
 each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register. Each
-element addition wraps modulo 2^16. Available only in RV32.
+element addition wraps modulo 2^16^. Available only in RV32.
 
 ===== Operation
 
@@ -1696,7 +1696,7 @@ a double-wide (register-pair) source. It is equivalent to two PADD.WS
 operations: one on the even registers and one on the odd registers of each pair.
 The destination (`rd_p`) and first source (`rs1_p`) are register pairs and must
 specify even register numbers; `rs2` is a single register. Each element addition
-wraps modulo 2^32. Available only in RV32.
+wraps modulo 2^32^. Available only in RV32.
 
 ===== Operation
 
@@ -1748,7 +1748,7 @@ PSUB.B is encoded in the OP-32 major opcode with packed byte elements.
 
 PSUB.B subtracts corresponding packed 8-bit elements of `rs2` from `rs1` and
 writes the packed byte results to `rd`. Each element subtraction wraps modulo
-2^8.
+2^8^.
 
 ===== Operation
 
@@ -1795,7 +1795,7 @@ PSUB.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 PSUB.H subtracts corresponding packed 16-bit halfword elements of `rs2` from
 `rs1` and writes the packed halfword results to `rd`. Each element subtraction
-wraps modulo 2^16.
+wraps modulo 2^16^.
 
 ===== Operation
 
@@ -1842,7 +1842,7 @@ PSUB.W is encoded in the OP-32 major opcode and is available only in RV64.
 
 PSUB.W subtracts corresponding packed 32-bit word elements of `rs2` from `rs1`
 and writes the packed word results to `rd`. Each element subtraction wraps
-modulo 2^32. Available only in RV64.
+modulo 2^32^. Available only in RV64.
 
 ===== Operation
 
@@ -1893,7 +1893,7 @@ PSUB.DB performs packed 8-bit byte subtraction on double-wide (register-pair)
 operands. It is equivalent to two PSUB.B operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-subtraction wraps modulo 2^8. Available only in RV32.
+subtraction wraps modulo 2^8^. Available only in RV32.
 
 ===== Operation
 
@@ -1949,7 +1949,7 @@ PSUB.DH performs packed 16-bit halfword subtraction on double-wide
 (register-pair) operands. It is equivalent to two PSUB.H operations: one on the
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Each element subtraction wraps modulo 2^16. Available only in RV32.
+numbers. Each element subtraction wraps modulo 2^16^. Available only in RV32.
 
 ===== Operation
 
@@ -2005,7 +2005,7 @@ PSUB.DW performs 32-bit word subtraction on double-wide (register-pair)
 operands. It is equivalent to two SUB operations: one on the even registers and
 one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-subtraction wraps modulo 2^32. Available only in RV32.
+subtraction wraps modulo 2^32^. Available only in RV32.
 
 ===== Operation
 
@@ -2166,7 +2166,7 @@ Available only in RV64.
 
 PSADD.W performs signed saturating addition on packed 32-bit word elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [-(2^31), 2^31-1]. Corresponds to KADD32 in the earlier P extension
+the range [-(2^31^), 2^31^-1]. Corresponds to KADD32 in the earlier P extension
 draft. Available only in RV64.
 
 ===== Operation
@@ -2325,7 +2325,7 @@ Available only in RV64.
 
 PSADDU.W performs unsigned saturating addition on packed 32-bit word elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [0, 2^32-1]. Corresponds to UKADD32 in the earlier P extension draft.
+the range [0, 2^32^-1]. Corresponds to UKADD32 in the earlier P extension draft.
 Available only in RV64.
 
 ===== Operation
@@ -2610,7 +2610,7 @@ PSADD.DW performs signed saturating 32-bit word addition on double-wide
 (register-pair) operands. It is equivalent to two SADD operations: one on the
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Each element result is clamped to the range [-(2^31), 2^31-1].
+numbers. Each element result is clamped to the range [-(2^31^), 2^31^-1].
 Available only in RV32.
 
 ===== Operation
@@ -2735,7 +2735,7 @@ PSADDU.DH (Packed Saturating Add Unsigned, Double-wide Halfword) performs
 unsigned saturating addition on corresponding packed 16-bit halfword elements
 across a register pair. This is equivalent to performing PSADDU.H on both the
 even and odd registers of the pair. Each element result is clamped to the
-range [0, 2^16-1]. Available only on RV32.
+range [0, 2^16^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -2794,7 +2794,7 @@ PSADDU.DW (Packed Saturating Add Unsigned, Double-wide Word) performs unsigned
 saturating addition on corresponding 32-bit word values across a register
 pair. This is equivalent to performing SADDU on both the even and odd
 registers of the pair. Each element result is clamped to the range
-[0, 2^32-1]. Available only on RV32.
+[0, 2^32^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -2849,7 +2849,7 @@ PSSUB.B is encoded in the OP-32 major opcode with packed byte elements.
 
 PSSUB.B performs signed saturating subtraction on corresponding packed 8-bit
 byte elements of `rs1` and `rs2`, writing the results to `rd`. Each element
-result is clamped to the range [-(2^7), 2^7-1].
+result is clamped to the range [-(2^7^), 2^7^-1].
 
 ===== Operation
 
@@ -2901,7 +2901,7 @@ PSSUB.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 PSSUB.H performs signed saturating subtraction on corresponding packed 16-bit
 halfword elements of `rs1` and `rs2`, writing the results to `rd`. Each
-element result is clamped to the range [-(2^15), 2^15-1].
+element result is clamped to the range [-(2^15^), 2^15^-1].
 
 ===== Operation
 
@@ -2953,7 +2953,7 @@ PSSUB.W is encoded in the OP-32 major opcode and is available only in RV64.
 
 PSSUB.W performs signed saturating subtraction on corresponding packed 32-bit
 word elements of `rs1` and `rs2`, writing the results to `rd`. Each element
-result is clamped to the range [-(2^31), 2^31-1]. Available only in RV64.
+result is clamped to the range [-(2^31^), 2^31^-1]. Available only in RV64.
 
 ===== Operation
 
@@ -3015,7 +3015,7 @@ PSSUBU.B is encoded in the OP-32 major opcode with packed byte elements.
 
 PSSUBU.B performs unsigned saturating subtraction on corresponding packed
 8-bit byte elements of `rs1` and `rs2`, writing the results to `rd`. Each
-element result is clamped to the range [0, 2^8-1].
+element result is clamped to the range [0, 2^8^-1].
 
 ===== Operation
 
@@ -3065,7 +3065,7 @@ PSSUBU.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 PSSUBU.H performs unsigned saturating subtraction on corresponding packed
 16-bit halfword elements of `rs1` and `rs2`, writing the results to `rd`.
-Each element result is clamped to the range [0, 2^16-1].
+Each element result is clamped to the range [0, 2^16^-1].
 
 ===== Operation
 
@@ -3115,7 +3115,7 @@ PSSUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
 
 PSSUBU.W performs unsigned saturating subtraction on corresponding packed
 32-bit word elements of `rs1` and `rs2`, writing the results to `rd`. Each
-element result is clamped to the range [0, 2^32-1]. Available only in RV64.
+element result is clamped to the range [0, 2^32^-1]. Available only in RV64.
 
 ===== Operation
 
@@ -3276,7 +3276,7 @@ PSSUB.DB (Packed Signed Saturating Subtract, Double-wide Byte) performs signed
 saturating subtraction on corresponding packed 8-bit byte elements across a
 register pair. This is equivalent to performing PSSUB.B on both the even and
 odd registers of the pair. Each element result is clamped to the range
-[-(2^7), 2^7-1]. Available only on RV32.
+[-(2^7^), 2^7^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -3337,7 +3337,7 @@ PSSUB.DH (Packed Signed Saturating Subtract, Double-wide Halfword) performs
 signed saturating subtraction on corresponding packed 16-bit halfword elements
 across a register pair. This is equivalent to performing PSSUB.H on both the
 even and odd registers of the pair. Each element result is clamped to the
-range [-(2^15), 2^15-1]. Available only on RV32.
+range [-(2^15^), 2^15^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -3397,7 +3397,7 @@ instruction exists only for RV32 and uses register pairs `rd_p`, `rs1_p`, and
 PSSUB.DW (Packed Signed Saturating Subtract, Double-wide Word) performs signed
 saturating subtraction on corresponding 32-bit word values across a register
 pair. This is equivalent to performing SSUB on both the even and odd registers
-of the pair. Each element result is clamped to the range [-(2^31), 2^31-1].
+of the pair. Each element result is clamped to the range [-(2^31^), 2^31^-1].
 Available only on RV32.
 
 ===== Operation
@@ -3459,7 +3459,7 @@ PSSUBU.DB (Packed Unsigned Saturating Subtract, Double-wide Byte) performs
 unsigned saturating subtraction on corresponding packed 8-bit byte elements
 across a register pair. This is equivalent to performing PSSUBU.B on both the
 even and odd registers of the pair. Each element result is clamped to the
-range [0, 2^8-1]. Available only on RV32.
+range [0, 2^8^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -3518,7 +3518,7 @@ PSSUBU.DH (Packed Unsigned Saturating Subtract, Double-wide Halfword) performs
 unsigned saturating subtraction on corresponding packed 16-bit halfword
 elements across a register pair. This is equivalent to performing PSSUBU.H on
 both the even and odd registers of the pair. Each element result is clamped to
-the range [0, 2^16-1]. Available only on RV32.
+the range [0, 2^16^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -3577,7 +3577,7 @@ PSSUBU.DW (Packed Unsigned Saturating Subtract, Double-wide Word) performs
 unsigned saturating subtraction on corresponding 32-bit word values across a
 register pair. This is equivalent to performing SSUBU on both the even and odd
 registers of the pair. Each element result is clamped to the range
-[0, 2^32-1]. Available only on RV32.
+[0, 2^32^-1]. Available only on RV32.
 
 ===== Operation
 
@@ -5413,7 +5413,7 @@ register-pair format. Available only in RV32.
 PSH1ADD.DH (Packed Shift-left-by-1 and Add, Double-wide Halfword) performs a
 packed halfword shift-left-by-1-and-add across register pairs. For each 16-bit
 element, it shifts the element from `rs1` left by 1 and adds the corresponding
-element from `rs2`, wrapping modulo 2^16. It is equivalent to performing
+element from `rs2`, wrapping modulo 2^16^. It is equivalent to performing
 PSH1ADD.H independently on both the even and odd registers of the source and
 destination pairs. This instruction is available only on RV32.
 
@@ -5471,7 +5471,7 @@ register-pair format. Available only in RV32.
 PSH1ADD.DW (Packed Shift-left-by-1 and Add, Double-wide Word) performs a 32-bit
 word shift-left-by-1-and-add across register pairs. For each 32-bit element, it
 shifts the element from `rs1` left by 1 and adds the corresponding element from
-`rs2`, wrapping modulo 2^32. It is equivalent to performing SH1ADD independently
+`rs2`, wrapping modulo 2^32^. It is equivalent to performing SH1ADD independently
 on both the even and odd registers of the source and destination pairs. This
 instruction is available only on RV32.
 
@@ -5529,7 +5529,7 @@ register-pair format. Available only in RV32.
 PSSH1SADD.DH (Packed Saturating Shift-left-by-1 Saturating Add, Double-wide
 Halfword) performs a packed halfword saturating shift-left-by-1 followed by a
 saturating add across register pairs. For each 16-bit element, the value from
-`rs1` is saturating-shifted left by 1 (clamped to [-2^15, 2^15-1]), then the
+`rs1` is saturating-shifted left by 1 (clamped to [-2^15^, 2^15^-1]), then the
 corresponding element from `rs2` is added with signed saturation. It is
 equivalent to performing PSSH1SADD.H independently on both the even and odd
 registers of the source and destination pairs. Sets `vxsat` on saturation. This
@@ -5602,7 +5602,7 @@ register-pair format. Available only in RV32.
 PSSH1SADD.DW (Packed Saturating Shift-left-by-1 Saturating Add, Double-wide
 Word) performs a 32-bit word saturating shift-left-by-1 followed by a saturating
 add across register pairs. For each 32-bit element, the value from `rs1` is
-saturating-shifted left by 1 (clamped to [-2^31, 2^31-1]), then the
+saturating-shifted left by 1 (clamped to [-2^31^, 2^31^-1]), then the
 corresponding element from `rs2` is added with signed saturation. It is
 equivalent to performing SSH1SADD independently on both the even and odd
 registers of the source and destination pairs. Sets `vxsat` on saturation. This
@@ -6552,7 +6552,7 @@ signed saturating cross add-subtract on packed 16-bit halfword elements across
 register pairs. It is equivalent to two PSAS.HX operations: one on the even
 registers and one on the odd registers of each pair. All three operands (`rd_p`,
 `rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
-Results are saturated to the signed 16-bit range [-2^15, 2^15-1]. If saturation
+Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
 occurs, the overflow flag `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -6621,7 +6621,7 @@ signed saturating cross subtract-add on packed 16-bit halfword elements across
 register pairs. It is equivalent to two PSSA.HX operations: one on the even
 registers and one on the odd registers of each pair. All three operands (`rd_p`,
 `rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
-Results are saturated to the signed 16-bit range [-2^15, 2^15-1]. If saturation
+Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
 occurs, the overflow flag `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -13808,7 +13808,7 @@ The `uimm4` field encodes the 4-bit shift amount for halfword elements.
 
 PSSLAI.H (Packed Saturating Shift Left Arithmetic Immediate, Halfword) shifts
 each packed signed 16-bit element of `rs1` left by a 4-bit unsigned immediate.
-If the shifted result overflows the signed 16-bit range [-2^15, 2^15-1], the
+If the shifted result overflows the signed 16-bit range [-2^15^, 2^15^-1], the
 result is saturated to the nearest boundary and the `vxsat` flag is set. The
 packed halfword results are written to `rd`.
 
@@ -13869,7 +13869,7 @@ The `uimm5` field encodes the 5-bit shift amount for word elements.
 
 PSSLAI.W (Packed Saturating Shift Left Arithmetic Immediate, Word) shifts each
 packed signed 32-bit element of `rs1` left by a 5-bit unsigned immediate. If
-the shifted result overflows the signed 32-bit range [-2^31, 2^31-1], the
+the shifted result overflows the signed 32-bit range [-2^31^, 2^31^-1], the
 result is saturated to the nearest boundary and the `vxsat` flag is set. The
 packed word results are written to `rd`. Available only in RV64.
 
@@ -14540,7 +14540,7 @@ PSSHA.DHS (Packed Saturating Shift Halfword Arithmetic, Double-wide, Scalar)
 performs a signed shift on each packed 16-bit element across a double-wide
 (register-pair) source using a scalar shift amount from `rs2`. When the shift
 amount is positive, elements are shifted left with signed saturation to the
-range [-2^15, 2^15-1]; on saturation the `vxsat` flag is set. When negative,
+range [-2^15^, 2^15^-1]; on saturation the `vxsat` flag is set. When negative,
 elements are arithmetically shifted right. It is equivalent to two PSSHA.HS
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
@@ -14615,7 +14615,7 @@ PSSHA.DWS (Packed Saturating Shift Word Arithmetic, Double-wide, Scalar)
 performs a signed shift on each 32-bit word element across a double-wide
 (register-pair) source using a scalar shift amount from `rs2`. When the shift
 amount is positive, elements are shifted left with signed saturation to the
-range [-2^31, 2^31-1]; on saturation the `vxsat` flag is set. When negative,
+range [-2^31^, 2^31^-1]; on saturation the `vxsat` flag is set. When negative,
 elements are arithmetically shifted right. It is equivalent to two SSHA
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
@@ -14690,7 +14690,7 @@ PSSHAR.DHS (Packed Saturating Shift Halfword Arithmetic Rounding, Double-wide,
 Scalar) performs a signed shift on each packed 16-bit element across a
 double-wide (register-pair) source using a scalar shift amount from `rs2`.
 When the shift amount is positive, elements are shifted left with signed
-saturation to the range [-2^15, 2^15-1]; on saturation the `vxsat` flag is
+saturation to the range [-2^15^, 2^15^-1]; on saturation the `vxsat` flag is
 set. When negative, elements are arithmetically shifted right with rounding
 (the shifted-out bit below the LSB is added). It is equivalent to two
 PSSHAR.HS operations: one on the even registers and one on the odd registers
@@ -14768,7 +14768,7 @@ PSSHAR.DWS (Packed Saturating Shift Word Arithmetic Rounding, Double-wide,
 Scalar) performs a signed shift on each 32-bit word element across a
 double-wide (register-pair) source using a scalar shift amount from `rs2`.
 When the shift amount is positive, elements are shifted left with signed
-saturation to the range [-2^31, 2^31-1]; on saturation the `vxsat` flag is
+saturation to the range [-2^31^, 2^31^-1]; on saturation the `vxsat` flag is
 set. When negative, elements are arithmetically shifted right with rounding
 (the shifted-out bit below the LSB is added). It is equivalent to two SSHAR
 operations: one on the even registers and one on the odd registers of each
@@ -17082,7 +17082,7 @@ register-pair format. Available only in RV32.
 
 ADDD (Add Doubleword) performs a 64-bit addition of two register-pair operands
 on RV32. The 64-bit source values are formed by concatenating the odd (high) and
-even (low) registers of each pair. The 64-bit sum wraps modulo 2^64 and is
+even (low) registers of each pair. The 64-bit sum wraps modulo 2^64^ and is
 written back to the register pair designated by `rd_p`. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. Available only in RV32.
@@ -21138,7 +21138,7 @@ and XLEN-wide narrowing. Available only in RV32.
 NCLIPI performs an XLEN-wide narrowing signed clip with an immediate shift
 amount. The 64-bit source is read from the register pair designated by
 `rs1_p`. The value is arithmetically right-shifted by the 6-bit immediate, then
-clamped to the signed 32-bit range [-2^31, 2^31 - 1]. The 32-bit result is
+clamped to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is
 written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21196,7 +21196,7 @@ XLEN-wide narrowing. Available only in RV32.
 NCLIP performs an XLEN-wide narrowing signed clip with a scalar shift amount.
 The 64-bit source is read from the register pair designated by `rs1_p`. The
 value is arithmetically right-shifted by the amount in `rs2[5:0]`, then clamped
-to the signed 32-bit range [-2^31, 2^31 - 1]. The 32-bit result is written to
+to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is written to
 `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21255,7 +21255,7 @@ NCLIPRI performs an XLEN-wide narrowing signed clip with rounding using an
 immediate shift amount. The 64-bit source is read from the register pair
 designated by `rs1_p`. The value is arithmetically right-shifted with
 round-to-nearest-up by the 6-bit immediate, then clamped to the signed 32-bit
-range [-2^31, 2^31 - 1]. The 32-bit result is written to `rd`. If saturation
+range [-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation
 occurs, `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21316,7 +21316,7 @@ NCLIPR performs an XLEN-wide narrowing signed clip with rounding using a scalar
 shift amount. The 64-bit source is read from the register pair designated by
 `rs1_p`. The value is arithmetically right-shifted with round-to-nearest-up by
 the amount in `rs2[5:0]`, then clamped to the signed 32-bit range
-[-2^31, 2^31 - 1]. The 32-bit result is written to `rd`. If saturation occurs,
+[-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation occurs,
 `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21376,7 +21376,7 @@ amount and unsigned XLEN-wide narrowing. Available only in RV32.
 NCLIPIU performs an XLEN-wide narrowing unsigned clip with an immediate shift
 amount. The 64-bit source is read from the register pair designated by
 `rs1_p`. The value is logically right-shifted by the 6-bit immediate, then
-clamped to the unsigned 32-bit range [0, 2^32 - 1]. The 32-bit result is
+clamped to the unsigned 32-bit range [0, 2^32^-1]. The 32-bit result is
 written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21487,7 +21487,7 @@ NCLIPRIU performs an XLEN-wide narrowing unsigned clip with rounding using an
 immediate shift amount. The 64-bit source is read from the register pair
 designated by `rs1_p`. The value is logically right-shifted with
 round-to-nearest-up by the 6-bit immediate, then clamped to the unsigned
-32-bit range [0, 2^32 - 1]. The 32-bit result is written to `rd`. If
+32-bit range [0, 2^32^-1]. The 32-bit result is written to `rd`. If
 saturation occurs, `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21546,7 +21546,7 @@ NCLIPRU performs an XLEN-wide narrowing unsigned clip with rounding using a
 scalar shift amount. The 64-bit source is read from the register pair
 designated by `rs1_p`. The value is logically right-shifted with
 round-to-nearest-up by the amount in `rs2[5:0]`, then clamped to the unsigned
-32-bit range [0, 2^32 - 1]. The 32-bit result is written to `rd`. If
+32-bit range [0, 2^32^-1]. The 32-bit result is written to `rd`. If
 saturation occurs, `vxsat` is set. Available only in RV32.
 
 ===== Operation
@@ -21998,7 +21998,7 @@ elements and returns the rounded high half of each signed 16×16 multiplication.
 ===== Description
 
 PMULHR.H performs lane-wise signed multiplication of packed 16-bit elements from
-`rs1` and `rs2`. For each lane, it adds 2^15 to the 32-bit product and then
+`rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product and then
 writes the upper 16 bits of the adjusted value to the corresponding 16-bit
 element of `rd`, implementing rounding when extracting the high half.
 
@@ -22112,7 +22112,7 @@ multiplication.
 
 PMULHRSU.H performs lane-wise multiplication of packed 16-bit elements from `rs1`
 and `rs2`, treating each element of `rs1` as signed and each element of `rs2` as
-unsigned. For each lane, it adds 2^15 to the 32-bit product and then writes the
+unsigned. For each lane, it adds 2^15^ to the 32-bit product and then writes the
 upper 16 bits of the adjusted value to the corresponding 16-bit element of
 `rd`, implementing rounding when extracting the high half.
 
@@ -22215,7 +22215,7 @@ elements and returns the rounded high half of each unsigned 16×16 multiplicatio
 ===== Description
 
 PMULHRU.H performs lane-wise unsigned multiplication of packed 16-bit elements
-from `rs1` and `rs2`. For each lane, it adds 2^15 to the 32-bit product and then
+from `rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product and then
 writes the upper 16 bits of the adjusted value to the corresponding 16-bit
 element of `rd`, implementing rounding when extracting the high half.
 
@@ -22320,7 +22320,7 @@ PMULHR.W is encoded in the OP-32 major opcode with packed word elements (RV64 on
 
 PMULHR.W multiplies corresponding signed packed 32-bit word elements of `rs1`
 and `rs2`, producing 64-bit intermediate products, adds a rounding constant
-of 2^31, and writes the upper 32 bits of each rounded product to the
+of 2^31^, and writes the upper 32 bits of each rounded product to the
 corresponding word element of `rd`. This instruction is available only on RV64.
 
 ===== Operation
@@ -22436,7 +22436,7 @@ X[rd] = d
 
 ===== Notes
 
-* Rounding is performed by adding 2^31 before extracting bits [63:32].
+* Rounding is performed by adding 2^31^ before extracting bits [63:32].
 
 <<<
 ==== PMULHU.W (RV64)
@@ -22532,7 +22532,7 @@ X[rd] = d
 
 ===== Notes
 
-* Rounding is performed by adding 2^31.
+* Rounding is performed by adding 2^31^.
 
 <<<
 ==== MULHR (RV32)
@@ -22606,7 +22606,7 @@ multiply-high rounded sub-encoding.
 ===== Description
 
 The MULHRSU instruction multiplies `rs1` as a signed value by `rs2` as an
-unsigned value, adds 2^31 for rounding, and writes the upper 32 bits of the
+unsigned value, adds 2^31^ for rounding, and writes the upper 32 bits of the
 result to `rd`.
 
 ===== Operation
@@ -22621,7 +22621,7 @@ X[rd] = (prod + 2^31)[63:32]
 
 ===== Notes
 
-* Rounding is performed by adding 2^31 before extracting bits [63:32].
+* Rounding is performed by adding 2^31^ before extracting bits [63:32].
 
 <<<
 ==== MULHRU (RV32)
@@ -22751,7 +22751,7 @@ elements and produces a signed Q15-style rounded product with saturation.
 ===== Description
 
 PMULQR.H performs lane-wise signed multiplication of packed 16-bit elements and
-returns a Q15-style rounded result per lane. For each lane, it adds 2^14 to the
+returns a Q15-style rounded result per lane. For each lane, it adds 2^14^ to the
 32-bit product and extracts bits [30:15] (equivalently, a rounded arithmetic
 right shift by 15). If both inputs are `0x8000`, the result saturates to
 `0x7FFF` and the `vxsat` sticky flag is set.
@@ -22871,7 +22871,7 @@ PMULQR.W is encoded in the OP-32 major opcode with packed word elements (RV64 on
 
 PMULQR.W performs a rounding Q-format multiply on corresponding signed packed
 32-bit word elements of `rs1` and `rs2`. It computes `(a * b) << 1`, adds a
-rounding constant of 2^30 before the shift, and keeps the upper 32 bits. When
+rounding constant of 2^30^ before the shift, and keeps the upper 32 bits. When
 both inputs are the most negative value (0x80000000), the result saturates to
 0x7FFFFFFF and the `vxsat` overflow flag is set. This instruction is available
 only on RV64.
@@ -23077,7 +23077,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16.
+* The per-lane add wraps modulo 2^16^.
 
 <<<
 ==== PMHRACC.H
@@ -23109,7 +23109,7 @@ multiplication into `rd`.
 ===== Description
 
 PMHRACC.H performs lane-wise signed multiplication of packed 16-bit elements from
-`rs1` and `rs2`. For each lane, it adds 2^15 to the 32-bit product, extracts the
+`rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product, extracts the
 upper 16 bits of the adjusted value, and accumulates that into the corresponding
 16-bit element of `rd`. The packed accumulated result is written back to `rd`,
 implementing rounding when extracting the high half.
@@ -23136,7 +23136,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16.
+* The per-lane add wraps modulo 2^16^.
 
 <<<
 ==== PMHACCSU.H
@@ -23195,7 +23195,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16.
+* The per-lane add wraps modulo 2^16^.
 
 <<<
 ==== PMHRACCSU.H
@@ -23228,7 +23228,7 @@ elements and accumulates the rounded high half of each mixed signed×unsigned
 
 PMHRACCSU.H performs lane-wise multiplication of packed 16-bit elements from `rs1`
 and `rs2`, treating `rs1` elements as signed and `rs2` elements as unsigned. For
-each lane, it adds 2^15 to the 32-bit product, extracts the upper 16 bits of the
+each lane, it adds 2^15^ to the 32-bit product, extracts the upper 16 bits of the
 adjusted value, and accumulates that into the corresponding 16-bit element of
 `rd`. The packed accumulated result is written back to `rd`, implementing
 rounding when extracting the high half.
@@ -23255,7 +23255,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16.
+* The per-lane add wraps modulo 2^16^.
 
 <<<
 ==== PMHACCU.H
@@ -23313,7 +23313,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16.
+* The per-lane add wraps modulo 2^16^.
 
 <<<
 ==== PMHRACCU.H
@@ -23345,7 +23345,7 @@ multiplication into `rd`.
 ===== Description
 
 PMHRACCU.H performs lane-wise unsigned multiplication of packed 16-bit elements
-from `rs1` and `rs2`. For each lane, it adds 2^15 to the 32-bit product, extracts
+from `rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product, extracts
 the upper 16 bits of the adjusted value, and accumulates that into the
 corresponding 16-bit element of `rd`. The packed accumulated result is written
 back to `rd`, implementing rounding when extracting the high half.
@@ -23372,7 +23372,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16.
+* The per-lane add wraps modulo 2^16^.
 
 <<<
 ==== PMHACC.W (RV64)
@@ -23760,7 +23760,7 @@ X[rd] = X[rd] + hi_rnd
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^31.
+* Rounding is performed by adding 2^31^.
 
 <<<
 ==== MHACCSU (RV32)
@@ -24101,7 +24101,7 @@ accumulate instruction operating on the low halfwords of `rs1` and `rs2`.
 ===== Description
 
 The MQRACC.H00 instruction is like MQACC.H00 but applies rounding by adding
-2^14 before extracting bits [46:15], and then accumulates into `rd`.
+2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 ===== Operation
 
@@ -24116,7 +24116,7 @@ X[rd] = X[rd] + q
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== MQRACC.H01 (RV32)
@@ -24147,7 +24147,7 @@ accumulate instruction operating on `rs1[15:0]` and `rs2[31:16]`.
 ===== Description
 
 The MQRACC.H01 instruction is like MQACC.H01 but applies rounding by adding
-2^14 before extracting bits [46:15], and then accumulates into `rd`.
+2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 ===== Operation
 
@@ -24162,7 +24162,7 @@ X[rd] = X[rd] + q
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== MQRACC.H11 (RV32)
@@ -24193,7 +24193,7 @@ accumulate instruction operating on the high halfwords of `rs1` and `rs2`.
 ===== Description
 
 The MQRACC.H11 instruction is like MQACC.H11 but applies rounding by adding
-2^14 before extracting bits [46:15], and then accumulates into `rd`.
+2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 ===== Operation
 
@@ -24208,7 +24208,7 @@ X[rd] = X[rd] + q
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== PMQACC.W.H00 (RV64)
@@ -24392,7 +24392,7 @@ multiply-accumulate instruction producing packed 32-bit elements.
 ===== Description
 
 The PMQRACC.W.H00 instruction is like PMQACC.W.H00 but applies rounding by
-adding 2^14 before extracting bits [46:15], and then accumulates into `rd`.
+adding 2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 ===== Operation
 
@@ -24414,7 +24414,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== PMQRACC.W.H01 (RV64)
@@ -24445,7 +24445,7 @@ multiply-accumulate instruction producing packed 32-bit elements.
 ===== Description
 
 The PMQRACC.W.H01 instruction is like PMQACC.W.H01 but applies rounding by
-adding 2^14 before extracting bits [46:15], and then accumulates into `rd`.
+adding 2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 ===== Operation
 
@@ -24467,7 +24467,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== PMQRACC.W.H11 (RV64)
@@ -24498,7 +24498,7 @@ multiply-accumulate instruction producing packed 32-bit elements.
 ===== Description
 
 The PMQRACC.W.H11 instruction is like PMQACC.W.H11 but applies rounding by
-adding 2^14 before extracting bits [46:15], and then accumulates into `rd`.
+adding 2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 ===== Operation
 
@@ -24520,7 +24520,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== PMQ2ADD.H
@@ -24659,7 +24659,7 @@ and producing packed 32-bit results with rounding.
 
 ===== Description
 
-The PMQR2ADD.H instruction is like PMQ2ADD.H but applies rounding (adding 2^14)
+The PMQR2ADD.H instruction is like PMQ2ADD.H but applies rounding (adding 2^14^)
 to each Q-format product before extracting bits [46:15], and then sums the two
 terms per 32-bit lane.
 
@@ -24685,7 +24685,7 @@ X[rd] = d
 
 ===== Notes
 
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== PMQR2ADDA.H
@@ -24742,7 +24742,7 @@ X[rd] = d
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== MQACC.W00 (RV64)
@@ -24910,7 +24910,7 @@ accumulate instruction operating on the low words of `rs1` and `rs2`.
 
 ===== Description
 
-The MQRACC.W00 instruction is like MQACC.W00 but applies rounding by adding 2^30
+The MQRACC.W00 instruction is like MQACC.W00 but applies rounding by adding 2^30^
 before extracting bits [94:31], and then accumulates the extracted value into
 `rd`.
 
@@ -24927,7 +24927,7 @@ X[rd] = X[rd] + q
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^30.
+* Rounding is performed by adding 2^30^.
 
 <<<
 ==== MQRACC.W01 (RV64)
@@ -24957,7 +24957,7 @@ accumulate instruction operating on `rs1[31:0]` and `rs2[63:32]`.
 
 ===== Description
 
-The MQRACC.W01 instruction is like MQACC.W01 but applies rounding by adding 2^30
+The MQRACC.W01 instruction is like MQACC.W01 but applies rounding by adding 2^30^
 before extracting bits [94:31], and then accumulates into `rd`.
 
 ===== Operation
@@ -24973,7 +24973,7 @@ X[rd] = X[rd] + q
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^30.
+* Rounding is performed by adding 2^30^.
 
 <<<
 ==== MQRACC.W11 (RV64)
@@ -25003,7 +25003,7 @@ accumulate instruction operating on the high words of `rs1` and `rs2`.
 
 ===== Description
 
-The MQRACC.W11 instruction is like MQACC.W11 but applies rounding by adding 2^30
+The MQRACC.W11 instruction is like MQACC.W11 but applies rounding by adding 2^30^
 before extracting bits [94:31], and then accumulates into `rd`.
 
 ===== Operation
@@ -25019,7 +25019,7 @@ X[rd] = X[rd] + q
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^30.
+* Rounding is performed by adding 2^30^.
 
 <<<
 ==== PMQ2ADD.W (RV64)
@@ -25145,7 +25145,7 @@ PMQR2ADD.W is encoded in the OP-32 major opcode as a rounded form of PMQ2ADD.W.
 
 ===== Description
 
-The PMQR2ADD.W instruction is like PMQ2ADD.W but applies rounding by adding 2^30
+The PMQR2ADD.W instruction is like PMQ2ADD.W but applies rounding by adding 2^30^
 to each product before extracting bits [94:31], and then sums the two extracted
 values.
 
@@ -25166,7 +25166,7 @@ X[rd] = q0 + q1
 
 ===== Notes
 
-* Rounding is performed by adding 2^30.
+* Rounding is performed by adding 2^30^.
 
 <<<
 ==== PMQR2ADDA.W (RV64)
@@ -25216,7 +25216,7 @@ X[rd] = X[rd] + q0 + q1
 ===== Notes
 
 * This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^30.
+* Rounding is performed by adding 2^30^.
 
 
 <<<
@@ -28397,7 +28397,7 @@ and saturating addition.
 
 PM2SADD.H multiplies two pairs of signed 16-bit halfword elements from `rs1`
 and `rs2` within each 32-bit group, sums the two products, and saturates the
-result to the signed 32-bit range [-2^31, 2^31-1]. The saturated 32-bit result
+result to the signed 32-bit range [-2^31^, 2^31^-1]. The saturated 32-bit result
 for each group is written to the corresponding 32-bit position in `rd`.
 
 ===== Operation
@@ -28451,7 +28451,7 @@ crossed operands, and saturating addition.
 
 PM2SADD.HX multiplies two pairs of signed 16-bit halfword elements from `rs1`
 and `rs2` within each 32-bit group using crossed `rs2` operands, sums the two
-products, and saturates the result to the signed 32-bit range [-2^31, 2^31-1].
+products, and saturates the result to the signed 32-bit range [-2^31^, 2^31^-1].
 The lower halfword of `rs1` is multiplied with the upper halfword of `rs2`, and
 vice versa. The saturated 32-bit result for each group is written to the
 corresponding 32-bit position in `rd`.
@@ -31772,7 +31772,7 @@ but uses the rounded variant.
 
 ===== Description
 
-PMQRWACC.H is the rounded form of PMQWACC.H. It adds a rounding bias of 2^14 to
+PMQRWACC.H is the rounded form of PMQWACC.H. It adds a rounding bias of 2^14^ to
 each halfword product before extracting bits [46:15], then accumulates the
 result into the 64-bit destination register pair selected by `rd_p`.
 
@@ -31890,7 +31890,7 @@ uses the rounded variant.
 
 ===== Description
 
-MQRWACC is the rounded form of MQWACC. It adds a rounding bias of 2^30 before
+MQRWACC is the rounded form of MQWACC. It adds a rounding bias of 2^30^ before
 taking the product shifted right by 31, then accumulates the 64-bit term into
 the destination register pair selected by `rd_p`.
 
