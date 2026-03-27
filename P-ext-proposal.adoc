@@ -6249,7 +6249,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -6368,7 +6367,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -15470,7 +15468,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -15613,7 +15610,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -15757,7 +15753,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -17089,7 +17084,7 @@ Operation::
 
 [source,pseudocode]
 ----
-// 64-bit addition using register pairs (RV32 only)
+// 64-bit addition using register pairs
 s1 = X[rs1_p * 2 + 1] @ X[rs1_p * 2]   // 64-bit value from register pair
 s2 = X[rs2_p * 2 + 1] @ X[rs2_p * 2]   // 64-bit value from register pair
 
@@ -17141,7 +17136,7 @@ Operation::
 
 [source,pseudocode]
 ----
-// 64-bit subtract using register pairs (RV32 only)
+// 64-bit subtract using register pairs
 s1 = X[rs1_p * 2 + 1] @ X[rs1_p * 2]   // 64-bit source from pair
 s2 = X[rs2_p * 2 + 1] @ X[rs2_p * 2]   // 64-bit source from pair
 
@@ -22276,7 +22271,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -22325,7 +22319,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -22816,7 +22809,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -22874,7 +22866,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -25600,7 +25591,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV32
 s1_h0 = X[rs1][15:0]
 s2_h0 = X[rs2][15:0]
 X[rd] = signed(s1_h0) * signed(s2_h0)
@@ -25642,7 +25632,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV32
 s1_h0 = X[rs1][15:0]
 s2_h1 = X[rs2][31:16]
 X[rd] = signed(s1_h0) * signed(s2_h1)
@@ -25684,7 +25673,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV32
 s1_h1 = X[rs1][31:16]
 s2_h1 = X[rs2][31:16]
 X[rd] = signed(s1_h1) * signed(s2_h1)
@@ -25932,7 +25920,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 d_w0 = signed(s1[15:0])  * signed(s2[15:0])
@@ -25977,7 +25964,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 d_w0 = signed(s1[15:0])  * signed(s2[31:16])
@@ -26023,7 +26009,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 d_w0 = signed(s1[31:16]) * signed(s2[31:16])
@@ -26292,7 +26277,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1_w0 = X[rs1][31:0]
 s2_w0 = X[rs2][31:0]
 X[rd] = signed(s1_w0) * signed(s2_w0)
@@ -26334,7 +26318,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1_w0 = X[rs1][31:0]
 s2_w1 = X[rs2][63:32]
 X[rd] = signed(s1_w0) * signed(s2_w1)
@@ -26376,7 +26359,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1_w1 = X[rs1][63:32]
 s2_w1 = X[rs2][63:32]
 X[rd] = signed(s1_w1) * signed(s2_w1)
@@ -28530,7 +28512,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -28710,7 +28691,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -28941,7 +28921,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -28988,7 +28967,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -29635,7 +29613,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -30108,7 +30085,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV32
 s2_h0 = X[rs2][15:0]
 X[rd] = (signed(X[rs1]) * signed(s2_h0))[47:16]
 ----
@@ -30150,7 +30126,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV32
 s2_h1 = X[rs2][31:16]
 X[rd] = (signed(X[rs1]) * signed(s2_h1))[47:16]
 ----
@@ -30465,7 +30440,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 d_w0 = (signed(s1[31:0])  * signed(s2[15:0]) )[47:16]
@@ -30511,7 +30485,6 @@ Operation::
 
 [source,pseudocode]
 ----
-# RV64 only
 s1 = X[rs1]
 s2 = X[rs2]
 d_w0 = (signed(s1[31:0])  * signed(s2[31:16]))[47:16]
@@ -30889,7 +30862,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -31000,7 +30972,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -31054,7 +31025,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -31161,7 +31131,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -31212,7 +31181,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 // Widening signed multiply: XLEN x XLEN -> 2*XLEN
 d = signed(X[rs1]) * signed(X[rs2])
 
@@ -31311,7 +31279,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 // Widening unsigned multiply: XLEN x XLEN -> 2*XLEN
 d = unsigned(X[rs1]) * unsigned(X[rs2])
 
@@ -31533,7 +31500,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 // Load existing 64-bit accumulator from register pair
 d = if (rd_p == 0) then 0 else (X[rd_p*2+1] @ X[rd_p*2])
 
@@ -31638,7 +31604,6 @@ Operation::
 
 [source,pseudocode]
 ----
-// RV32 only
 // Load existing 64-bit accumulator from register pair
 d = if (rd_p == 0) then 0 else (X[rd_p*2+1] @ X[rd_p*2])
 
