@@ -13556,7 +13556,7 @@ for i = 0 .. (XLEN/16 - 1):
         else
             shx = xh << shamt[3:0]
 
-        if shx >_s 0x0000FFFF:
+        if shx >_u 0x0000FFFF:
             vxsat = 1
             r = 0xFFFF
         else
@@ -13601,7 +13601,7 @@ PSSHL.WS is available only in RV64.
 
 The PSSHL.WS instruction performs an unsigned variable shift on each packed 32-bit
 element of `rs1` using the signed shift amount in `rs2[7:0]`. Left shifts
-saturate to the signed 32-bit range.
+saturate to the unsigned 32-bit range.
 
 ===== Operation
 
@@ -13628,7 +13628,7 @@ for i = 0 .. (XLEN/32 - 1):
         else
             shx = xw << shamt[4:0]
 
-        if shx >_s 0xFFFFFFFF:
+        if shx >_u 0xFFFFFFFF:
             vxsat = 1
             r = 0xFFFFFFFF
         else
@@ -13668,9 +13668,9 @@ PSSHLR.HS is encoded in the OP-IMM-32 major opcode.
 
 ===== Description
 
-The PSSHLR.HS instruction performs an unsigned variable shift on each packed 16-bit
-element of `rs1` using the signed shift amount in `rs2[7:0]`. Right shifts are
-rounded, and left shifts saturate to the signed 16-bit range.
+The PSSHLR.HS instruction performs an unsigned variable shift on each packed
+16-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
+shifts are rounded, and left shifts saturate to the unsigned 16-bit range.
 
 ===== Operation
 
@@ -13694,7 +13694,7 @@ for i = 0 .. (XLEN/16 - 1):
         shx = (sshamt >= 16) ? (h @ 0x0000)
                              : (sign_extend(32, h) << shamt[3:0])
 
-        if shx >_s 0x0000FFFF:
+        if shx >_u 0x0000FFFF:
             vxsat = 1
             r = 0xFFFF
         else
@@ -13737,9 +13737,9 @@ PSSHLR.WS is available only in RV64.
 
 ===== Description
 
-The PSSHLR.WS instruction performs a unsigned variable shift on each packed 32-bit
-element of `rs1` using the signed shift amount in `rs2[7:0]`. Right shifts are
-rounded, and left shifts saturate to the signed 32-bit range.
+The PSSHLR.WS instruction performs a unsigned variable shift on each packed
+32-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
+shifts are rounded, and left shifts saturate to the unsigned 32-bit range.
 
 ===== Operation
 
@@ -13763,7 +13763,7 @@ for i = 0 .. (XLEN/32 - 1):
         shx = (sshamt >= 32) ? (h @ 0x00000000)
                              : (zero_extend(32, w) << shamt[4:0])
 
-        if shx >_s 0x00000000FFFFFFFF:
+        if shx >_u 0x00000000FFFFFFFF:
             vxsat = 1
             r = 0xFFFF0000
         else
@@ -14054,7 +14054,7 @@ SSHL is encoded in the OP-IMM-32 major opcode and is available only in RV32.
 ===== Description
 
 The SSHL instruction performs an unsigned variable shift of `rs1` using the signed
-shift amount in `rs2[7:0]`. Left shifts saturate to the signed 32-bit range.
+shift amount in `rs2[7:0]`. Left shifts saturate to the unsigned 32-bit range.
 
 ===== Operation
 
@@ -14074,12 +14074,9 @@ else:
     shx = (sshamt >= 32) ? (s1 @ 0x00000000)
                          : (xs1 << shamt[4:0])
 
-    if shx <_s 0xFFFFFFFF80000000:
+    if shx >_u 0x00000000FFFFFFFF:
         vxsat = 1
-        X[rd] = 0x80000000
-    else if shx >_s 0x000000007FFFFFFF:
-        vxsat = 1
-        X[rd] = 0x7FFFFFFF
+        X[rd] = 0xFFFFFFFF
     else
         X[rd] = shx[31:0]
 ----
@@ -14139,7 +14136,7 @@ else:
     shx = (sshamt >= 32) ? (s1 @ 0x00000000)
                          : (zero_extend(64, s1) << shamt[4:0])
 
-    if shx >_s 0x00000000FFFFFFFF:
+    if shx >_u 0x00000000FFFFFFFF:
         vxsat = 1
         X[rd] = 0xFFFFFFFF
     else
@@ -21845,7 +21842,7 @@ s = X[rs2] @ X[rs1]
 
 for i = 0 .. 3:
     w = s[(32*i+32):(32*i)]
-    if (w >s 0x0000FFFF):
+    if (w >u 0x0000FFFF):
       d[(16*i+15):(16*i)] = 0xFFFF; vxsat = 1;
     else:
        d[(16*i+15):(16*i)] = w[15:0];
@@ -21901,7 +21898,7 @@ s = X[rs2] @ X[rs1]
 
 for i = 0 .. 1:
     d = s[(64*i+64):(64*i)]
-    else if (d >s 0x00000000FFFFFFFF):
+    else if (d >u 0x00000000FFFFFFFF):
       d[(32*i+31):(32*i)] = 0xFFFFFFFF; vxsat = 1;
     else:
        d[(32*i+31):(32*i)] = d[31:0];
