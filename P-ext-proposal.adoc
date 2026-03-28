@@ -24735,228 +24735,6 @@ Notes::
 * Rounding is performed by adding 2^14^.
 
 <<<
-==== PMQ2ADD.H
-
-Mnemonic::
-
-pmq2add.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQ2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
-and producing packed 32-bit results (one per halfword pair).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x6, attr: ['PMQ2ADD.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQ2ADD.H instruction computes, for each 32-bit lane, the sum of two
-Q-format multiply-high results: one from the low halfword pair and one from the
-high halfword pair, and writes the packed 32-bit sums to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0)[46:15]
-    q1 = (a1 * b1)[46:15]
-    d[(32*i+31):(32*i)] = q0 + q1
-
-X[rd] = d
-----
-
-
-<<<
-==== PMQ2ADDA.H
-
-Mnemonic::
-
-pmq2adda.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQ2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
-PMQ2ADD.H.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x7, attr: ['PMQ2ADDA.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQ2ADDA.H instruction adds the PMQ2ADD.H result into the corresponding
-packed 32-bit elements of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0)[46:15]
-    q1 = (a1 * b1)[46:15]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PMQR2ADD.H
-
-Mnemonic::
-
-pmqr2add.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQR2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
-and producing packed 32-bit results with rounding.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x6, attr: ['PMQR2ADD.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQR2ADD.H instruction is like PMQ2ADD.H but applies rounding (adding 2^14^)
-to each Q-format product before extracting bits [46:15], and then sums the two
-terms per 32-bit lane.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0 + 2^14)[46:15]
-    q1 = (a1 * b1 + 2^14)[46:15]
-    d[(32*i+31):(32*i)] = q0 + q1
-
-X[rd] = d
-----
-
-Notes::
-
-* Rounding is performed by adding 2^14^.
-
-<<<
-==== PMQR2ADDA.H
-
-Mnemonic::
-
-pmqr2adda.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQR2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
-PMQR2ADD.H.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x7, attr: ['PMQR2ADDA.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQR2ADDA.H instruction adds the PMQR2ADD.H result into the corresponding
-packed 32-bit elements of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0 + 2^14)[46:15]
-    q1 = (a1 * b1 + 2^14)[46:15]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14^.
-
-<<<
 ==== MQACC.W00 (RV64)
 
 Mnemonic::
@@ -25234,6 +25012,61 @@ Notes::
 * Rounding is performed by adding 2^30^.
 
 <<<
+=== Q-format Horizontal Multiply-Add
+
+==== PMQ2ADD.H
+
+Mnemonic::
+
+pmq2add.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQ2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
+and producing packed 32-bit results (one per halfword pair).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x6, attr: ['PMQ2ADD.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQ2ADD.H instruction computes, for each 32-bit lane, the sum of two
+Q-format multiply-high results: one from the low halfword pair and one from the
+high halfword pair, and writes the packed 32-bit sums to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0)[46:15]
+    q1 = (a1 * b1)[46:15]
+    d[(32*i+31):(32*i)] = q0 + q1
+
+X[rd] = d
+----
+
+
+<<<
 ==== PMQ2ADD.W (RV64)
 
 Mnemonic::
@@ -25280,6 +25113,62 @@ q1 = (a1 * b1)[94:31]
 X[rd] = q0 + q1
 ----
 
+
+<<<
+==== PMQ2ADDA.H
+
+Mnemonic::
+
+pmq2adda.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQ2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
+PMQ2ADD.H.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x7, attr: ['PMQ2ADDA.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQ2ADDA.H instruction adds the PMQ2ADD.H result into the corresponding
+packed 32-bit elements of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0)[46:15]
+    q1 = (a1 * b1)[46:15]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PMQ2ADDA.W (RV64)
@@ -25331,6 +25220,62 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
+==== PMQR2ADD.H
+
+Mnemonic::
+
+pmqr2add.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQR2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
+and producing packed 32-bit results with rounding.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x6, attr: ['PMQR2ADD.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQR2ADD.H instruction is like PMQ2ADD.H but applies rounding (adding 2^14^)
+to each Q-format product before extracting bits [46:15], and then sums the two
+terms per 32-bit lane.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0 + 2^14)[46:15]
+    q1 = (a1 * b1 + 2^14)[46:15]
+    d[(32*i+31):(32*i)] = q0 + q1
+
+X[rd] = d
+----
+
+Notes::
+
+* Rounding is performed by adding 2^14^.
+
+<<<
 ==== PMQR2ADD.W (RV64)
 
 Mnemonic::
@@ -25379,6 +25324,63 @@ X[rd] = q0 + q1
 Notes::
 
 * Rounding is performed by adding 2^30^.
+
+<<<
+==== PMQR2ADDA.H
+
+Mnemonic::
+
+pmqr2adda.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQR2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
+PMQR2ADD.H.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x7, attr: ['PMQR2ADDA.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQR2ADDA.H instruction adds the PMQR2ADD.H result into the corresponding
+packed 32-bit elements of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0 + 2^14)[46:15]
+    q1 = (a1 * b1 + 2^14)[46:15]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^14^.
 
 <<<
 ==== PMQR2ADDA.W (RV64)
