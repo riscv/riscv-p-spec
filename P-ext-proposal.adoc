@@ -861,95 +861,6 @@ X[rd] = d
 
 
 <<<
-==== PLUI.H
-
-Mnemonic::
-
-plui.h _rd_, _simm10_
-
-Encoding::
-
-PLUI.H is encoded in the OP-IMM-32 major opcode with a 10-bit immediate
-loaded into the upper bits of each halfword element.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 10, name: 'imm[6|15:7]' },
-    { bits: 2, name: 0x0 },
-    { bits: 5, name: 0x1e, attr: ['PLUI.H'] },
-]}
-....
-
-Description::
-
-PLUI.H (Packed Load Upper Immediate, Halfword) loads a 10-bit signed immediate
-into the most-significant 10 bits of each 16-bit halfword element, with the
-lower 6 bits set to zero, and replicates the result into every halfword
-element of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-imm_h = sign_extend(16, imm[9:0] << 6)
-
-for i = 0 .. (XLEN/16 - 1):
-    d[(16*i+15):(16*i)] = imm_h
-
-X[rd] = d
-----
-
-
-<<<
-==== PLUI.W (RV64)
-
-Mnemonic::
-
-plui.w _rd_, _simm10_
-
-Encoding::
-
-PLUI.W is encoded in the OP-IMM-32 major opcode with a 10-bit immediate
-loaded into the upper bits of each word element. This instruction exists
-only for RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 10, name: 'imm[22|31:23]' },
-    { bits: 2, name: 0x1 },
-    { bits: 5, name: 0x1e, attr: ['PLUI.W'] },
-]}
-....
-
-Description::
-
-PLUI.W (Packed Load Upper Immediate, Word) loads a 10-bit signed immediate
-into the most-significant 10 bits of each 32-bit word element, with the
-lower 22 bits set to zero, and replicates the result into every word element
-of `rd`. This instruction is available only on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-imm_w = sign_extend(32, imm[9:0] << 22)
-
-for i = 0 .. (XLEN/32 - 1):
-    d[(32*i+31):(32*i)] = imm_w
-
-X[rd] = d
-----
-
-
-<<<
 ==== PLI.DB (RV32)
 
 Mnemonic::
@@ -1043,6 +954,95 @@ for i = 0 .. 3:
 if (rd_p != 0):
     X[2*rd_p] = d[31:0]
     X[2*rd_p+1] = d[63:32]
+----
+
+
+<<<
+==== PLUI.H
+
+Mnemonic::
+
+plui.h _rd_, _simm10_
+
+Encoding::
+
+PLUI.H is encoded in the OP-IMM-32 major opcode with a 10-bit immediate
+loaded into the upper bits of each halfword element.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 10, name: 'imm[6|15:7]' },
+    { bits: 2, name: 0x0 },
+    { bits: 5, name: 0x1e, attr: ['PLUI.H'] },
+]}
+....
+
+Description::
+
+PLUI.H (Packed Load Upper Immediate, Halfword) loads a 10-bit signed immediate
+into the most-significant 10 bits of each 16-bit halfword element, with the
+lower 6 bits set to zero, and replicates the result into every halfword
+element of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+imm_h = sign_extend(16, imm[9:0] << 6)
+
+for i = 0 .. (XLEN/16 - 1):
+    d[(16*i+15):(16*i)] = imm_h
+
+X[rd] = d
+----
+
+
+<<<
+==== PLUI.W (RV64)
+
+Mnemonic::
+
+plui.w _rd_, _simm10_
+
+Encoding::
+
+PLUI.W is encoded in the OP-IMM-32 major opcode with a 10-bit immediate
+loaded into the upper bits of each word element. This instruction exists
+only for RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 10, name: 'imm[22|31:23]' },
+    { bits: 2, name: 0x1 },
+    { bits: 5, name: 0x1e, attr: ['PLUI.W'] },
+]}
+....
+
+Description::
+
+PLUI.W (Packed Load Upper Immediate, Word) loads a 10-bit signed immediate
+into the most-significant 10 bits of each 32-bit word element, with the
+lower 22 bits set to zero, and replicates the result into every word element
+of `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+imm_w = sign_extend(32, imm[9:0] << 22)
+
+for i = 0 .. (XLEN/32 - 1):
+    d[(32*i+31):(32*i)] = imm_w
+
+X[rd] = d
 ----
 
 
@@ -1238,162 +1238,6 @@ X[rd] = d
 
 
 <<<
-==== PADD.BS
-
-Mnemonic::
-
-padd.bs _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmv.bs _rd_, _rs2_ &#8594; padd.bs _rd_, x0, _rs2_
-
-Encoding::
-
-PADD.BS is encoded using the OP-IMM-32 major opcode with a scalar second source
-operand and packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x1, attr: ['PADD.BS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PADD.BS instruction adds the least-significant byte of `rs2` to each packed
-8-bit element of `rs1`, producing a packed byte result in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-s2_b0 = X[rs2][7:0]          // least-significant byte of X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    s1_b = s1[(8*i+7) : (8*i)]
-    d[(8*i+7) : (8*i)] = s1_b + s2_b0
-
-X[rd] = d
-----
-
-Notes::
-
-* Each 8-bit element addition wraps modulo 2^8^.
-* The scalar operand is taken only from bits [7:0] of `rs2`; higher bits are ignored.
-
-<<<
-==== PADD.HS
-
-Mnemonic::
-
-padd.hs _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmv.hs _rd_, _rs2_ &#8594; padd.hs _rd_, x0, _rs2_
-
-Encoding::
-
-PADD.HS is encoded in the OP-IMM-32 major opcode with a scalar second source
-operand and packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x1, attr: ['PADD.HS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PADD.HS instruction adds the least-significant halfword of `rs2` to each
-packed 16-bit element of `rs1`, producing a packed halfword result in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-s2_h0 = X[rs2][15:0]
-
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15) : (16*i)]
-    d[(16*i+15) : (16*i)] = h + s2_h0
-
-X[rd] = d
-----
-
-
-<<<
-==== PADD.WS (RV64)
-
-Mnemonic::
-
-padd.ws _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmv.ws _rd_, _rs2_ &#8594; padd.ws _rd_, x0, _rs2_
-
-Encoding::
-
-PADD.WS is encoded in the OP-IMM-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x1, attr: ['PADD.WS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PADD.WS instruction adds the least-significant word of `rs2` to each packed
-32-bit element of `rs1`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-s2_w0 = X[rs2][31:0]
-
-d[31:0]  = s1[31:0]  + s2_w0
-d[63:32] = s1[63:32] + s2_w0
-
-X[rd] = d
-----
-
-
-
-<<<
 ==== PADD.DB (RV32)
 
 Mnemonic::
@@ -1559,6 +1403,162 @@ if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
 ----
+
+
+<<<
+==== PADD.BS
+
+Mnemonic::
+
+padd.bs _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmv.bs _rd_, _rs2_ &#8594; padd.bs _rd_, x0, _rs2_
+
+Encoding::
+
+PADD.BS is encoded using the OP-IMM-32 major opcode with a scalar second source
+operand and packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x1, attr: ['PADD.BS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PADD.BS instruction adds the least-significant byte of `rs2` to each packed
+8-bit element of `rs1`, producing a packed byte result in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+s2_b0 = X[rs2][7:0]          // least-significant byte of X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    s1_b = s1[(8*i+7) : (8*i)]
+    d[(8*i+7) : (8*i)] = s1_b + s2_b0
+
+X[rd] = d
+----
+
+Notes::
+
+* Each 8-bit element addition wraps modulo 2^8^.
+* The scalar operand is taken only from bits [7:0] of `rs2`; higher bits are ignored.
+
+<<<
+==== PADD.HS
+
+Mnemonic::
+
+padd.hs _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmv.hs _rd_, _rs2_ &#8594; padd.hs _rd_, x0, _rs2_
+
+Encoding::
+
+PADD.HS is encoded in the OP-IMM-32 major opcode with a scalar second source
+operand and packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x1, attr: ['PADD.HS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PADD.HS instruction adds the least-significant halfword of `rs2` to each
+packed 16-bit element of `rs1`, producing a packed halfword result in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+s2_h0 = X[rs2][15:0]
+
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15) : (16*i)]
+    d[(16*i+15) : (16*i)] = h + s2_h0
+
+X[rd] = d
+----
+
+
+<<<
+==== PADD.WS (RV64)
+
+Mnemonic::
+
+padd.ws _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmv.ws _rd_, _rs2_ &#8594; padd.ws _rd_, x0, _rs2_
+
+Encoding::
+
+PADD.WS is encoded in the OP-IMM-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x1, attr: ['PADD.WS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PADD.WS instruction adds the least-significant word of `rs2` to each packed
+32-bit element of `rs1`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+s2_w0 = X[rs2][31:0]
+
+d[31:0]  = s1[31:0]  + s2_w0
+d[63:32] = s1[63:32] + s2_w0
+
+X[rd] = d
+----
+
 
 
 <<<
@@ -2242,163 +2242,6 @@ X[rd] = d
 
 
 <<<
-==== PSADDU.B
-
-Mnemonic::
-
-psaddu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSADDU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x6, attr: ['PSADDU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSADDU.B performs unsigned saturating addition on packed 8-bit byte elements of
-`rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [0, 255]. Corresponds to UKADD8 in the earlier P extension draft.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    result = a + b
-    if result > 255:
-        d[(8*i+7):(8*i)] = to_bits(8, 255)
-    else:
-        d[(8*i+7):(8*i)] = to_bits(8, result)
-
-X[rd] = d
-----
-
-
-<<<
-==== PSADDU.H
-
-Mnemonic::
-
-psaddu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSADDU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x6, attr: ['PSADDU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSADDU.H performs unsigned saturating addition on packed 16-bit halfword
-elements of `rs1` and `rs2`, writing the results to `rd`. Each element result is
-clamped to the range [0, 65535]. Corresponds to UKADD16 in the earlier P
-extension draft.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    result = a + b
-    if result > 65535:
-        d[(16*i+15):(16*i)] = to_bits(16, 65535)
-    else:
-        d[(16*i+15):(16*i)] = to_bits(16, result)
-
-X[rd] = d
-----
-
-
-<<<
-==== PSADDU.W (RV64)
-
-Mnemonic::
-
-psaddu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSADDU.W is encoded in the OP-32 major opcode with packed word elements.
-Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x6, attr: ['PSADDU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSADDU.W performs unsigned saturating addition on packed 32-bit word elements of
-`rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [0, 2^32^-1]. Corresponds to UKADD32 in the earlier P extension draft.
-Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Two packed 32-bit unsigned saturating additions
-for i = 0 .. 1:
-    a = unsigned(s1[(32*i+31):(32*i)])
-    b = unsigned(s2[(32*i+31):(32*i)])
-    result = a + b
-    if result > 4294967295:
-        d[(32*i+31):(32*i)] = to_bits(32, 4294967295)
-    else:
-        d[(32*i+31):(32*i)] = to_bits(32, result)
-
-X[rd] = d
-----
-
-
-<<<
 ==== SADD (RV32)
 
 Mnemonic::
@@ -2443,54 +2286,6 @@ if result > (2^(XLEN-1) - 1):
     d = to_bits(XLEN, 2^(XLEN-1) - 1)
 else if result < -(2^(XLEN-1)):
     d = to_bits(XLEN, -(2^(XLEN-1)))
-else:
-    d = to_bits(XLEN, result)
-
-X[rd] = d
-----
-
-
-<<<
-==== SADDU (RV32)
-
-Mnemonic::
-
-saddu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SADDU is encoded in the OP-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x6, attr: ['SADDU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-SADDU performs unsigned saturating addition of the full XLEN-wide values in
-`rs1` and `rs2`, writing the result to `rd`. The result is clamped to the range
-[0, 2^XLEN-1]. Corresponds to UKADDW in the earlier P extension draft.
-
-Operation::
-
-[source,pseudocode]
-----
-a = unsigned(X[rs1])
-b = unsigned(X[rs2])
-result = a + b
-
-if result > (2^XLEN - 1):
-    d = to_bits(XLEN, 2^XLEN - 1)
 else:
     d = to_bits(XLEN, result)
 
@@ -2684,6 +2479,211 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PSADDU.B
+
+Mnemonic::
+
+psaddu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSADDU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x6, attr: ['PSADDU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSADDU.B performs unsigned saturating addition on packed 8-bit byte elements of
+`rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
+the range [0, 255]. Corresponds to UKADD8 in the earlier P extension draft.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    result = a + b
+    if result > 255:
+        d[(8*i+7):(8*i)] = to_bits(8, 255)
+    else:
+        d[(8*i+7):(8*i)] = to_bits(8, result)
+
+X[rd] = d
+----
+
+
+<<<
+==== PSADDU.H
+
+Mnemonic::
+
+psaddu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSADDU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x6, attr: ['PSADDU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSADDU.H performs unsigned saturating addition on packed 16-bit halfword
+elements of `rs1` and `rs2`, writing the results to `rd`. Each element result is
+clamped to the range [0, 65535]. Corresponds to UKADD16 in the earlier P
+extension draft.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    result = a + b
+    if result > 65535:
+        d[(16*i+15):(16*i)] = to_bits(16, 65535)
+    else:
+        d[(16*i+15):(16*i)] = to_bits(16, result)
+
+X[rd] = d
+----
+
+
+<<<
+==== PSADDU.W (RV64)
+
+Mnemonic::
+
+psaddu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSADDU.W is encoded in the OP-32 major opcode with packed word elements.
+Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x6, attr: ['PSADDU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSADDU.W performs unsigned saturating addition on packed 32-bit word elements of
+`rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
+the range [0, 2^32^-1]. Corresponds to UKADD32 in the earlier P extension draft.
+Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Two packed 32-bit unsigned saturating additions
+for i = 0 .. 1:
+    a = unsigned(s1[(32*i+31):(32*i)])
+    b = unsigned(s2[(32*i+31):(32*i)])
+    result = a + b
+    if result > 4294967295:
+        d[(32*i+31):(32*i)] = to_bits(32, 4294967295)
+    else:
+        d[(32*i+31):(32*i)] = to_bits(32, result)
+
+X[rd] = d
+----
+
+
+<<<
+==== SADDU (RV32)
+
+Mnemonic::
+
+saddu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SADDU is encoded in the OP-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x6, attr: ['SADDU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+SADDU performs unsigned saturating addition of the full XLEN-wide values in
+`rs1` and `rs2`, writing the result to `rd`. The result is clamped to the range
+[0, 2^XLEN-1]. Corresponds to UKADDW in the earlier P extension draft.
+
+Operation::
+
+[source,pseudocode]
+----
+a = unsigned(X[rs1])
+b = unsigned(X[rs2])
+result = a + b
+
+if result > (2^XLEN - 1):
+    d = to_bits(XLEN, 2^XLEN - 1)
+else:
+    d = to_bits(XLEN, result)
+
+X[rd] = d
 ----
 
 
@@ -3036,164 +3036,6 @@ X[rd] = d
 
 
 <<<
-==== PSSUBU.B
-
-Mnemonic::
-
-pssubu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSUBU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xe, attr: ['PSSUBU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSSUBU.B performs unsigned saturating subtraction on corresponding packed
-8-bit byte elements of `rs1` and `rs2`, writing the results to `rd`. Each
-element result is clamped to the range [0, 2^8^-1].
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    res = a - b
-    if res < 0:
-        res = 0
-    d[(8*i+7):(8*i)] = res[7:0]
-
-X[rd] = d
-----
-
-
-<<<
-==== PSSUBU.H
-
-Mnemonic::
-
-pssubu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSUBU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xe, attr: ['PSSUBU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSSUBU.H performs unsigned saturating subtraction on corresponding packed
-16-bit halfword elements of `rs1` and `rs2`, writing the results to `rd`.
-Each element result is clamped to the range [0, 2^16^-1].
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    res = a - b
-    if res < 0:
-        res = 0
-    d[(16*i+15):(16*i)] = res[15:0]
-
-X[rd] = d
-----
-
-
-<<<
-==== PSSUBU.W (RV64)
-
-Mnemonic::
-
-pssubu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xe, attr: ['PSSUBU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSSUBU.W performs unsigned saturating subtraction on corresponding packed
-32-bit word elements of `rs1` and `rs2`, writing the results to `rd`. Each
-element result is clamped to the range [0, 2^32^-1]. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Lower 32-bit element
-a_lo = unsigned(s1[31:0])
-b_lo = unsigned(s2[31:0])
-res_lo = a_lo - b_lo
-if res_lo < 0:
-    res_lo = 0
-d[31:0] = res_lo[31:0]
-
-// Upper 32-bit element
-a_hi = unsigned(s1[63:32])
-b_hi = unsigned(s2[63:32])
-res_hi = a_hi - b_hi
-if res_hi < 0:
-    res_hi = 0
-d[63:32] = res_hi[31:0]
-
-X[rd] = d
-----
-
-
-<<<
 ==== SSUB (RV32)
 
 Mnemonic::
@@ -3238,52 +3080,6 @@ if res > 2^(XLEN-1) - 1:
     res = 2^(XLEN-1) - 1
 else if res < -(2^(XLEN-1)):
     res = -(2^(XLEN-1))
-
-X[rd] = res[XLEN-1:0]
-----
-
-
-<<<
-==== SSUBU (RV32)
-
-Mnemonic::
-
-ssubu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SSUBU is encoded in the OP-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xe, attr: ['SSUBU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-SSUBU performs unsigned saturating subtraction of `rs2` from `rs1`, writing
-the result to `rd`. The result is clamped to the range [0, 2^XLEN-1]. This
-instruction is available only on RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-a = unsigned(X[rs1])
-b = unsigned(X[rs2])
-res = a - b
-
-if res < 0:
-    res = 0
 
 X[rd] = res[XLEN-1:0]
 ----
@@ -3469,6 +3265,210 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PSSUBU.B
+
+Mnemonic::
+
+pssubu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSUBU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xe, attr: ['PSSUBU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSSUBU.B performs unsigned saturating subtraction on corresponding packed
+8-bit byte elements of `rs1` and `rs2`, writing the results to `rd`. Each
+element result is clamped to the range [0, 2^8^-1].
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    res = a - b
+    if res < 0:
+        res = 0
+    d[(8*i+7):(8*i)] = res[7:0]
+
+X[rd] = d
+----
+
+
+<<<
+==== PSSUBU.H
+
+Mnemonic::
+
+pssubu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSUBU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xe, attr: ['PSSUBU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSSUBU.H performs unsigned saturating subtraction on corresponding packed
+16-bit halfword elements of `rs1` and `rs2`, writing the results to `rd`.
+Each element result is clamped to the range [0, 2^16^-1].
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    res = a - b
+    if res < 0:
+        res = 0
+    d[(16*i+15):(16*i)] = res[15:0]
+
+X[rd] = d
+----
+
+
+<<<
+==== PSSUBU.W (RV64)
+
+Mnemonic::
+
+pssubu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xe, attr: ['PSSUBU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSSUBU.W performs unsigned saturating subtraction on corresponding packed
+32-bit word elements of `rs1` and `rs2`, writing the results to `rd`. Each
+element result is clamped to the range [0, 2^32^-1]. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Lower 32-bit element
+a_lo = unsigned(s1[31:0])
+b_lo = unsigned(s2[31:0])
+res_lo = a_lo - b_lo
+if res_lo < 0:
+    res_lo = 0
+d[31:0] = res_lo[31:0]
+
+// Upper 32-bit element
+a_hi = unsigned(s1[63:32])
+b_hi = unsigned(s2[63:32])
+res_hi = a_hi - b_hi
+if res_hi < 0:
+    res_hi = 0
+d[63:32] = res_hi[31:0]
+
+X[rd] = d
+----
+
+
+<<<
+==== SSUBU (RV32)
+
+Mnemonic::
+
+ssubu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SSUBU is encoded in the OP-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xe, attr: ['SSUBU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+SSUBU performs unsigned saturating subtraction of `rs2` from `rs1`, writing
+the result to `rd`. The result is clamped to the range [0, 2^XLEN-1]. This
+instruction is available only on RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+a = unsigned(X[rs1])
+b = unsigned(X[rs2])
+res = a - b
+
+if res < 0:
+    res = 0
+
+X[rd] = res[XLEN-1:0]
 ----
 
 
@@ -3806,158 +3806,6 @@ X[rd] = d
 
 
 <<<
-==== PAADDU.B
-
-Mnemonic::
-
-paaddu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PAADDU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x7, attr: ['PAADDU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PAADDU.B performs an unsigned averaging addition on packed 8-bit elements. For
-each byte lane, it adds the unsigned elements from `rs1` and `rs2` at full
-precision (9 bits), then shifts the result right by 1, and writes the lower
-8 bits to the corresponding byte of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    sum = a + b
-    d[(8*i+7):(8*i)] = to_bits(8, sum >> 1)
-
-X[rd] = d
-----
-
-
-<<<
-==== PAADDU.H
-
-Mnemonic::
-
-paaddu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PAADDU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x7, attr: ['PAADDU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PAADDU.H performs an unsigned averaging addition on packed 16-bit halfword
-elements. For each halfword lane, it adds the unsigned elements from `rs1` and
-`rs2` at full precision (17 bits), then shifts the result right by 1, and writes
-the lower 16 bits to the corresponding halfword of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    sum = a + b
-    d[(16*i+15):(16*i)] = to_bits(16, sum >> 1)
-
-X[rd] = d
-----
-
-
-<<<
-==== PAADDU.W (RV64)
-
-Mnemonic::
-
-paaddu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PAADDU.W is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x7, attr: ['PAADDU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PAADDU.W performs an unsigned averaging addition on packed 32-bit word elements.
-For each word lane, it adds the unsigned elements from `rs1` and `rs2` at full
-precision (33 bits), then shifts the result right by 1, and writes the lower
-32 bits to the corresponding word of `rd`. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Unsigned averaging add on packed 32-bit elements
-a_lo = unsigned(s1[31:0])
-b_lo = unsigned(s2[31:0])
-sum_lo = a_lo + b_lo
-d[31:0] = to_bits(32, sum_lo >> 1)
-
-a_hi = unsigned(s1[63:32])
-b_hi = unsigned(s2[63:32])
-sum_hi = a_hi + b_hi
-d[63:32] = to_bits(32, sum_hi >> 1)
-
-X[rd] = d
-----
-
-
-<<<
 ==== AADD (RV32)
 
 Mnemonic::
@@ -3995,50 +3843,6 @@ Operation::
 ----
 s1 = signed(X[rs1])
 s2 = signed(X[rs2])
-
-sum = s1 + s2
-X[rd] = to_bits(32, sum >> 1)
-----
-
-
-<<<
-==== AADDU (RV32)
-
-Mnemonic::
-
-aaddu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-AADDU is encoded in the OP-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x7, attr: ['AADDU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-AADDU performs an unsigned averaging addition on a single XLEN-wide value. It
-adds the unsigned values in `rs1` and `rs2` at full precision (33 bits), then
-shifts the result right by 1, and writes the lower 32 bits to `rd`. Available
-only in RV32; the RV64 counterpart is PAADDU.W.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = unsigned(X[rs1])
-s2 = unsigned(X[rs2])
 
 sum = s1 + s2
 X[rd] = to_bits(32, sum >> 1)
@@ -4214,6 +4018,202 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PAADDU.B
+
+Mnemonic::
+
+paaddu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PAADDU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x7, attr: ['PAADDU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PAADDU.B performs an unsigned averaging addition on packed 8-bit elements. For
+each byte lane, it adds the unsigned elements from `rs1` and `rs2` at full
+precision (9 bits), then shifts the result right by 1, and writes the lower
+8 bits to the corresponding byte of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    sum = a + b
+    d[(8*i+7):(8*i)] = to_bits(8, sum >> 1)
+
+X[rd] = d
+----
+
+
+<<<
+==== PAADDU.H
+
+Mnemonic::
+
+paaddu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PAADDU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x7, attr: ['PAADDU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PAADDU.H performs an unsigned averaging addition on packed 16-bit halfword
+elements. For each halfword lane, it adds the unsigned elements from `rs1` and
+`rs2` at full precision (17 bits), then shifts the result right by 1, and writes
+the lower 16 bits to the corresponding halfword of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    sum = a + b
+    d[(16*i+15):(16*i)] = to_bits(16, sum >> 1)
+
+X[rd] = d
+----
+
+
+<<<
+==== PAADDU.W (RV64)
+
+Mnemonic::
+
+paaddu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PAADDU.W is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x7, attr: ['PAADDU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PAADDU.W performs an unsigned averaging addition on packed 32-bit word elements.
+For each word lane, it adds the unsigned elements from `rs1` and `rs2` at full
+precision (33 bits), then shifts the result right by 1, and writes the lower
+32 bits to the corresponding word of `rd`. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Unsigned averaging add on packed 32-bit elements
+a_lo = unsigned(s1[31:0])
+b_lo = unsigned(s2[31:0])
+sum_lo = a_lo + b_lo
+d[31:0] = to_bits(32, sum_lo >> 1)
+
+a_hi = unsigned(s1[63:32])
+b_hi = unsigned(s2[63:32])
+sum_hi = a_hi + b_hi
+d[63:32] = to_bits(32, sum_hi >> 1)
+
+X[rd] = d
+----
+
+
+<<<
+==== AADDU (RV32)
+
+Mnemonic::
+
+aaddu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+AADDU is encoded in the OP-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x7, attr: ['AADDU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+AADDU performs an unsigned averaging addition on a single XLEN-wide value. It
+adds the unsigned values in `rs1` and `rs2` at full precision (33 bits), then
+shifts the result right by 1, and writes the lower 32 bits to `rd`. Available
+only in RV32; the RV64 counterpart is PAADDU.W.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = unsigned(X[rs1])
+s2 = unsigned(X[rs2])
+
+sum = s1 + s2
+X[rd] = to_bits(32, sum >> 1)
 ----
 
 
@@ -4549,160 +4549,6 @@ X[rd] = d
 
 
 <<<
-==== PASUBU.B
-
-Mnemonic::
-
-pasubu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PASUBU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xf, attr: ['PASUBU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PASUBU.B performs an unsigned averaging subtraction on packed 8-bit elements.
-For each byte lane, it subtracts the unsigned element in `rs2` from the unsigned
-element in `rs1` at full precision (9 bits), then shifts the result right by 1,
-and writes the lower 8 bits to the corresponding byte of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    diff = a - b
-    d[(8*i+7):(8*i)] = to_bits(8, diff >> 1)
-
-X[rd] = d
-----
-
-
-<<<
-==== PASUBU.H
-
-Mnemonic::
-
-pasubu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PASUBU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xf, attr: ['PASUBU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PASUBU.H performs an unsigned averaging subtraction on packed 16-bit halfword
-elements. For each halfword lane, it subtracts the unsigned element in `rs2`
-from the unsigned element in `rs1` at full precision (17 bits), then shifts the
-result right by 1, and writes the lower 16 bits to the corresponding halfword
-of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    diff = a - b
-    d[(16*i+15):(16*i)] = to_bits(16, diff >> 1)
-
-X[rd] = d
-----
-
-
-<<<
-==== PASUBU.W (RV64)
-
-Mnemonic::
-
-pasubu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PASUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xf, attr: ['PASUBU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PASUBU.W performs an unsigned averaging subtraction on packed 32-bit word
-elements. For each word lane, it subtracts the unsigned element in `rs2` from
-the unsigned element in `rs1` at full precision (33 bits), then shifts the
-result right by 1, and writes the lower 32 bits to the corresponding word of
-`rd`. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Unsigned averaging subtract on packed 32-bit elements
-a_lo = unsigned(s1[31:0])
-b_lo = unsigned(s2[31:0])
-diff_lo = a_lo - b_lo
-d[31:0] = to_bits(32, diff_lo >> 1)
-
-a_hi = unsigned(s1[63:32])
-b_hi = unsigned(s2[63:32])
-diff_hi = a_hi - b_hi
-d[63:32] = to_bits(32, diff_hi >> 1)
-
-X[rd] = d
-----
-
-
-<<<
 ==== ASUB (RV32)
 
 Mnemonic::
@@ -4740,50 +4586,6 @@ Operation::
 ----
 s1 = signed(X[rs1])
 s2 = signed(X[rs2])
-
-diff = s1 - s2
-X[rd] = to_bits(32, diff >> 1)
-----
-
-
-<<<
-==== ASUBU (RV32)
-
-Mnemonic::
-
-asubu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-ASUBU is encoded in the OP-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xf, attr: ['ASUBU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-ASUBU performs an unsigned averaging subtraction on a single XLEN-wide value. It
-subtracts the unsigned value in `rs2` from `rs1` at full precision (33 bits),
-then shifts the result right by 1, and writes the lower 32 bits to `rd`.
-Available only in RV32; the RV64 counterpart is PASUBU.W.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = unsigned(X[rs1])
-s2 = unsigned(X[rs2])
 
 diff = s1 - s2
 X[rd] = to_bits(32, diff >> 1)
@@ -4958,6 +4760,204 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PASUBU.B
+
+Mnemonic::
+
+pasubu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PASUBU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xf, attr: ['PASUBU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PASUBU.B performs an unsigned averaging subtraction on packed 8-bit elements.
+For each byte lane, it subtracts the unsigned element in `rs2` from the unsigned
+element in `rs1` at full precision (9 bits), then shifts the result right by 1,
+and writes the lower 8 bits to the corresponding byte of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    diff = a - b
+    d[(8*i+7):(8*i)] = to_bits(8, diff >> 1)
+
+X[rd] = d
+----
+
+
+<<<
+==== PASUBU.H
+
+Mnemonic::
+
+pasubu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PASUBU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xf, attr: ['PASUBU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PASUBU.H performs an unsigned averaging subtraction on packed 16-bit halfword
+elements. For each halfword lane, it subtracts the unsigned element in `rs2`
+from the unsigned element in `rs1` at full precision (17 bits), then shifts the
+result right by 1, and writes the lower 16 bits to the corresponding halfword
+of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    diff = a - b
+    d[(16*i+15):(16*i)] = to_bits(16, diff >> 1)
+
+X[rd] = d
+----
+
+
+<<<
+==== PASUBU.W (RV64)
+
+Mnemonic::
+
+pasubu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PASUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xf, attr: ['PASUBU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PASUBU.W performs an unsigned averaging subtraction on packed 32-bit word
+elements. For each word lane, it subtracts the unsigned element in `rs2` from
+the unsigned element in `rs1` at full precision (33 bits), then shifts the
+result right by 1, and writes the lower 32 bits to the corresponding word of
+`rd`. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Unsigned averaging subtract on packed 32-bit elements
+a_lo = unsigned(s1[31:0])
+b_lo = unsigned(s2[31:0])
+diff_lo = a_lo - b_lo
+d[31:0] = to_bits(32, diff_lo >> 1)
+
+a_hi = unsigned(s1[63:32])
+b_hi = unsigned(s2[63:32])
+diff_hi = a_hi - b_hi
+d[63:32] = to_bits(32, diff_hi >> 1)
+
+X[rd] = d
+----
+
+
+<<<
+==== ASUBU (RV32)
+
+Mnemonic::
+
+asubu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+ASUBU is encoded in the OP-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xf, attr: ['ASUBU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+ASUBU performs an unsigned averaging subtraction on a single XLEN-wide value. It
+subtracts the unsigned value in `rs2` from `rs1` at full precision (33 bits),
+then shifts the result right by 1, and writes the lower 32 bits to `rd`.
+Available only in RV32; the RV64 counterpart is PASUBU.W.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = unsigned(X[rs1])
+s2 = unsigned(X[rs2])
+
+diff = s1 - s2
+X[rd] = to_bits(32, diff >> 1)
 ----
 
 
