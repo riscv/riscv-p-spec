@@ -5227,6 +5227,122 @@ X[rd] = d
 
 
 <<<
+==== PSH1ADD.DH (RV32)
+
+Mnemonic::
+
+psh1add.dh _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PSH1ADD.DH is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['PSH1ADD.DH'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSH1ADD.DH (Packed Shift-left-by-1 and Add, Double-wide Halfword) performs a
+packed halfword shift-left-by-1-and-add across register pairs. For each 16-bit
+element, it shifts the element from `rs1` left by 1 and adds the corresponding
+element from `rs2`, wrapping modulo 2^16^. It is equivalent to performing
+PSH1ADD.H independently on both the even and odd registers of the source and
+destination pairs. This instruction is available only on RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PSH1ADD.H operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 3:
+    a = s1[(16*i+15):(16*i)]
+    b = s2[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (a << 1) + b
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PSH1ADD.DW (RV32)
+
+Mnemonic::
+
+psh1add.dw _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PSH1ADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['PSH1ADD.DW'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSH1ADD.DW (Packed Shift-left-by-1 and Add, Double-wide Word) performs a 32-bit
+word shift-left-by-1-and-add across register pairs. For each 32-bit element, it
+shifts the element from `rs1` left by 1 and adds the corresponding element from
+`rs2`, wrapping modulo 2^32^. It is equivalent to performing SH1ADD independently
+on both the even and odd registers of the source and destination pairs. This
+instruction is available only on RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two SH1ADD operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    a = s1[(32*i+31):(32*i)]
+    b = s2[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (a << 1) + b
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
 ==== PSSH1SADD.H
 
 Mnemonic::
@@ -5426,122 +5542,6 @@ else
 Notes::
 
 * `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PSH1ADD.DH (RV32)
-
-Mnemonic::
-
-psh1add.dh _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PSH1ADD.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['PSH1ADD.DH'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSH1ADD.DH (Packed Shift-left-by-1 and Add, Double-wide Halfword) performs a
-packed halfword shift-left-by-1-and-add across register pairs. For each 16-bit
-element, it shifts the element from `rs1` left by 1 and adds the corresponding
-element from `rs2`, wrapping modulo 2^16^. It is equivalent to performing
-PSH1ADD.H independently on both the even and odd registers of the source and
-destination pairs. This instruction is available only on RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PSH1ADD.H operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 3:
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (a << 1) + b
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PSH1ADD.DW (RV32)
-
-Mnemonic::
-
-psh1add.dw _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PSH1ADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['PSH1ADD.DW'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSH1ADD.DW (Packed Shift-left-by-1 and Add, Double-wide Word) performs a 32-bit
-word shift-left-by-1-and-add across register pairs. For each 32-bit element, it
-shifts the element from `rs1` left by 1 and adds the corresponding element from
-`rs2`, wrapping modulo 2^32^. It is equivalent to performing SH1ADD independently
-on both the even and odd registers of the source and destination pairs. This
-instruction is available only on RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two SH1ADD operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    a = s1[(32*i+31):(32*i)]
-    b = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (a << 1) + b
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
 
 <<<
 ==== PSSH1SADD.DH (RV32)
@@ -5804,6 +5804,70 @@ X[rd] = d
 
 
 <<<
+==== PAS.DHX (RV32)
+
+Mnemonic::
+
+pas.dhx _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x0, attr: ['PAS.DHX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PAS.DHX (Packed Add-Subtract, Double-wide Cross Halfword) performs packed
+16-bit cross add-subtract on double-wide (register-pair) operands. It is
+equivalent to two PAS.HX operations: one on the even registers and one on the
+odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`) are
+register pairs and must specify even register numbers. For each pair of
+halfwords, the upper halfword is added cross with the lower halfword of the
+other operand, and vice versa with subtraction. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PAS.HX operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    // Even halfword: subtract
+    a_even = s1[(32*i+15):(32*i)]
+    b_odd = s2[(32*i+31):(32*i+16)]
+    d[(32*i+15):(32*i)] = a_even - b_odd
+
+    // Odd halfword: add
+    a_odd = s1[(32*i+31):(32*i+16)]
+    b_even = s2[(32*i+15):(32*i)]
+    d[(32*i+31):(32*i+16)] = a_odd + b_even
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
 ==== PSA.HX
 
 Mnemonic::
@@ -5911,6 +5975,71 @@ b_even = s2[31:0]
 d[63:32] = a_odd - b_even
 
 X[rd] = d
+----
+
+
+<<<
+==== PSA.DHX (RV32)
+
+Mnemonic::
+
+psa.dhx _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PSA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x0, attr: ['PSA.DHX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSA.DHX (Packed Subtract-Add, Double-wide Cross Halfword) performs packed
+16-bit cross subtract-add on double-wide (register-pair) operands. It is
+equivalent to two PSA.HX operations: one on the even registers and one on the
+odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`) are
+register pairs and must specify even register numbers. For each pair of
+halfwords, the upper halfword of `rs1` has the lower halfword of `rs2`
+subtracted, and the lower halfword of `rs1` is added with the upper halfword
+of `rs2`. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PSA.HX operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    // Even halfword: add
+    a_even = s1[(32*i+15):(32*i)]
+    b_odd = s2[(32*i+31):(32*i+16)]
+    d[(32*i+15):(32*i)] = a_even + b_odd
+
+    // Odd halfword: subtract
+    a_odd = s1[(32*i+31):(32*i+16)]
+    b_even = s2[(32*i+15):(32*i)]
+    d[(32*i+31):(32*i+16)] = a_odd - b_even
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
 ----
 
 
@@ -6050,6 +6179,75 @@ else if res_odd < -(2^31):
 d[63:32] = res_odd[31:0]
 
 X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSAS.DHX (RV32)
+
+Mnemonic::
+
+psas.dhx _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PSAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x2, attr: ['PSAS.DHX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSAS.DHX (Packed Saturating Add-Subtract, Double-wide Cross Halfword) performs
+signed saturating cross add-subtract on packed 16-bit halfword elements across
+register pairs. It is equivalent to two PSAS.HX operations: one on the even
+registers and one on the odd registers of each pair. All three operands (`rd_p`,
+`rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
+Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
+occurs, the overflow flag `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PSAS.HX operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    // Even halfword: saturating subtract
+    a_even = signed(s1[(32*i+15):(32*i)])
+    b_odd = signed(s2[(32*i+31):(32*i+16)])
+    diff = a_even - b_odd
+    d[(32*i+15):(32*i)] = SAT16(diff)
+
+    // Odd halfword: saturating add
+    a_odd = signed(s1[(32*i+31):(32*i+16)])
+    b_even = signed(s2[(32*i+15):(32*i)])
+    sum = a_odd + b_even
+    d[(32*i+31):(32*i+16)] = SAT16(sum)
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
 ----
 
 Notes::
@@ -6199,6 +6397,75 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
+==== PSSA.DHX (RV32)
+
+Mnemonic::
+
+pssa.dhx _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PSSA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x2, attr: ['PSSA.DHX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSSA.DHX (Packed Saturating Subtract-Add, Double-wide Cross Halfword) performs
+signed saturating cross subtract-add on packed 16-bit halfword elements across
+register pairs. It is equivalent to two PSSA.HX operations: one on the even
+registers and one on the odd registers of each pair. All three operands (`rd_p`,
+`rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
+Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
+occurs, the overflow flag `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PSSA.HX operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    // Even halfword: saturating add
+    a_even = signed(s1[(32*i+15):(32*i)])
+    b_odd = signed(s2[(32*i+31):(32*i+16)])
+    sum = a_even + b_odd
+    d[(32*i+15):(32*i)] = SAT16(sum)
+
+    // Odd halfword: saturating subtract
+    a_odd = signed(s1[(32*i+31):(32*i+16)])
+    b_even = signed(s2[(32*i+15):(32*i)])
+    diff = a_odd - b_even
+    d[(32*i+31):(32*i+16)] = SAT16(diff)
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PAAS.HX
 
 Mnemonic::
@@ -6317,6 +6584,72 @@ X[rd] = d
 
 
 <<<
+==== PAAS.DHX (RV32)
+
+Mnemonic::
+
+paas.dhx _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PAAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x3, attr: ['PAAS.DHX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PAAS.DHX (Packed Averaging Add-Subtract, Double-wide Cross Halfword) performs
+signed averaging cross add-subtract on packed 16-bit halfword elements across
+register pairs. It is equivalent to two PAAS.HX operations: one on the even
+registers and one on the odd registers of each pair. All three operands (`rd_p`,
+`rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
+Each result is computed at full precision and then shifted right by 1 (toward
+negative infinity). Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PAAS.HX operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    // Even halfword: averaging subtract
+    a_even = signed(s1[(32*i+15):(32*i)])
+    b_odd = signed(s2[(32*i+31):(32*i+16)])
+    diff = a_even - b_odd
+    d[(32*i+15):(32*i)] = to_bits(16, diff >> 1)
+
+    // Odd halfword: averaging add
+    a_odd = signed(s1[(32*i+31):(32*i+16)])
+    b_even = signed(s2[(32*i+15):(32*i)])
+    sum = a_odd + b_even
+    d[(32*i+31):(32*i+16)] = to_bits(16, sum >> 1)
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
 ==== PASA.HX
 
 Mnemonic::
@@ -6431,339 +6764,6 @@ sum = a_lo + b_hi
 d[31:0] = to_bits(32, sum >> 1)
 
 X[rd] = d
-----
-
-
-<<<
-==== PAS.DHX (RV32)
-
-Mnemonic::
-
-pas.dhx _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x0, attr: ['PAS.DHX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PAS.DHX (Packed Add-Subtract, Double-wide Cross Halfword) performs packed
-16-bit cross add-subtract on double-wide (register-pair) operands. It is
-equivalent to two PAS.HX operations: one on the even registers and one on the
-odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`) are
-register pairs and must specify even register numbers. For each pair of
-halfwords, the upper halfword is added cross with the lower halfword of the
-other operand, and vice versa with subtraction. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PAS.HX operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    // Even halfword: subtract
-    a_even = s1[(32*i+15):(32*i)]
-    b_odd = s2[(32*i+31):(32*i+16)]
-    d[(32*i+15):(32*i)] = a_even - b_odd
-
-    // Odd halfword: add
-    a_odd = s1[(32*i+31):(32*i+16)]
-    b_even = s2[(32*i+15):(32*i)]
-    d[(32*i+31):(32*i+16)] = a_odd + b_even
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PSA.DHX (RV32)
-
-Mnemonic::
-
-psa.dhx _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PSA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x0, attr: ['PSA.DHX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSA.DHX (Packed Subtract-Add, Double-wide Cross Halfword) performs packed
-16-bit cross subtract-add on double-wide (register-pair) operands. It is
-equivalent to two PSA.HX operations: one on the even registers and one on the
-odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`) are
-register pairs and must specify even register numbers. For each pair of
-halfwords, the upper halfword of `rs1` has the lower halfword of `rs2`
-subtracted, and the lower halfword of `rs1` is added with the upper halfword
-of `rs2`. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PSA.HX operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    // Even halfword: add
-    a_even = s1[(32*i+15):(32*i)]
-    b_odd = s2[(32*i+31):(32*i+16)]
-    d[(32*i+15):(32*i)] = a_even + b_odd
-
-    // Odd halfword: subtract
-    a_odd = s1[(32*i+31):(32*i+16)]
-    b_even = s2[(32*i+15):(32*i)]
-    d[(32*i+31):(32*i+16)] = a_odd - b_even
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PSAS.DHX (RV32)
-
-Mnemonic::
-
-psas.dhx _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PSAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x2, attr: ['PSAS.DHX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSAS.DHX (Packed Saturating Add-Subtract, Double-wide Cross Halfword) performs
-signed saturating cross add-subtract on packed 16-bit halfword elements across
-register pairs. It is equivalent to two PSAS.HX operations: one on the even
-registers and one on the odd registers of each pair. All three operands (`rd_p`,
-`rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
-Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
-occurs, the overflow flag `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PSAS.HX operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    // Even halfword: saturating subtract
-    a_even = signed(s1[(32*i+15):(32*i)])
-    b_odd = signed(s2[(32*i+31):(32*i+16)])
-    diff = a_even - b_odd
-    d[(32*i+15):(32*i)] = SAT16(diff)
-
-    // Odd halfword: saturating add
-    a_odd = signed(s1[(32*i+31):(32*i+16)])
-    b_even = signed(s2[(32*i+15):(32*i)])
-    sum = a_odd + b_even
-    d[(32*i+31):(32*i+16)] = SAT16(sum)
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PSSA.DHX (RV32)
-
-Mnemonic::
-
-pssa.dhx _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PSSA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x2, attr: ['PSSA.DHX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSSA.DHX (Packed Saturating Subtract-Add, Double-wide Cross Halfword) performs
-signed saturating cross subtract-add on packed 16-bit halfword elements across
-register pairs. It is equivalent to two PSSA.HX operations: one on the even
-registers and one on the odd registers of each pair. All three operands (`rd_p`,
-`rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
-Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
-occurs, the overflow flag `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PSSA.HX operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    // Even halfword: saturating add
-    a_even = signed(s1[(32*i+15):(32*i)])
-    b_odd = signed(s2[(32*i+31):(32*i+16)])
-    sum = a_even + b_odd
-    d[(32*i+15):(32*i)] = SAT16(sum)
-
-    // Odd halfword: saturating subtract
-    a_odd = signed(s1[(32*i+31):(32*i+16)])
-    b_even = signed(s2[(32*i+15):(32*i)])
-    diff = a_odd - b_even
-    d[(32*i+31):(32*i+16)] = SAT16(diff)
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PAAS.DHX (RV32)
-
-Mnemonic::
-
-paas.dhx _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PAAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x3, attr: ['PAAS.DHX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PAAS.DHX (Packed Averaging Add-Subtract, Double-wide Cross Halfword) performs
-signed averaging cross add-subtract on packed 16-bit halfword elements across
-register pairs. It is equivalent to two PAAS.HX operations: one on the even
-registers and one on the odd registers of each pair. All three operands (`rd_p`,
-`rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
-Each result is computed at full precision and then shifted right by 1 (toward
-negative infinity). Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PAAS.HX operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    // Even halfword: averaging subtract
-    a_even = signed(s1[(32*i+15):(32*i)])
-    b_odd = signed(s2[(32*i+31):(32*i+16)])
-    diff = a_even - b_odd
-    d[(32*i+15):(32*i)] = to_bits(16, diff >> 1)
-
-    // Odd halfword: averaging add
-    a_odd = signed(s1[(32*i+31):(32*i+16)])
-    b_even = signed(s2[(32*i+15):(32*i)])
-    sum = a_odd + b_even
-    d[(32*i+31):(32*i+16)] = to_bits(16, sum >> 1)
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
 ----
 
 
@@ -6941,209 +6941,6 @@ X[rd] = d
 
 
 <<<
-==== PABDU.B
-
-Mnemonic::
-
-pabdu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PABDU.B is encoded in the OP-32 major opcode. It uses packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xd, attr: ['PABDU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PABDU.B instruction computes the absolute difference of corresponding packed
-8-bit elements of `rs1` and `rs2`, using unsigned comparison, and writes the
-result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = s1[(8*i+7) : (8*i)]
-    b = s2[(8*i+7) : (8*i)]
-    d[(8*i+7) : (8*i)] = (a <_u b) ? (b - a) : (a - b)
-
-X[rd] = d
-----
-
-Notes::
-
-* Unsigned ordering is used to determine the magnitude of each element difference.
-
-<<<
-==== PABDU.H
-
-Mnemonic::
-
-pabdu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PABDU.H is encoded in the OP-32 major opcode. It uses packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x0 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xd, attr: ['PABDU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PABDU.H instruction computes the absolute difference of corresponding packed
-16-bit elements of `rs1` and `rs2`, using unsigned comparison, and writes the
-result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15) : (16*i)]
-    b = s2[(16*i+15) : (16*i)]
-    d[(16*i+15) : (16*i)] = (a <_u b) ? (b - a) : (a - b)
-
-X[rd] = d
-----
-
-
-
-<<<
-==== PABDSUMU.B
-
-Mnemonic::
-
-pabdsumu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PABDSUMU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x6, attr: ['PABDSUMU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PABDSUMU.B (Packed Absolute Difference Sum, Unsigned Byte) computes the sum of
-absolute differences of packed unsigned 8-bit byte elements from `rs1` and
-`rs2`. For each byte lane, the unsigned absolute difference is computed, and all
-differences are summed into a single scalar result written to `rd`. This
-instruction is commonly used in motion estimation and image processing
-algorithms.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-sum = 0
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    diff = (a >= b) ? (a - b) : (b - a)
-    sum = sum + diff
-
-X[rd] = to_bits(XLEN, sum)
-----
-
-
-<<<
-==== PABDSUMAU.B
-
-Mnemonic::
-
-pabdsumau.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PABDSUMAU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x7, attr: ['PABDSUMAU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PABDSUMAU.B (Packed Absolute Difference Sum Accumulate, Unsigned Byte) computes
-the sum of absolute differences of packed unsigned 8-bit byte elements from
-`rs1` and `rs2`, and accumulates the result into `rd`. For each byte lane, the
-unsigned absolute difference is computed. All differences are summed and added to
-the current value of `rd`. This accumulating form is useful for iteratively
-computing the sum of absolute differences across multiple register-widths of
-data, as commonly needed in motion estimation and image processing algorithms.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-sum = unsigned(X[rd])
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    diff = (a >= b) ? (a - b) : (b - a)
-    sum = sum + diff
-
-X[rd] = to_bits(XLEN, sum)
-----
-
-
-<<<
 ==== PABD.DB (RV32)
 
 Mnemonic::
@@ -7268,6 +7065,103 @@ if (rd_p != 0):
 
 
 <<<
+==== PABDU.B
+
+Mnemonic::
+
+pabdu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PABDU.B is encoded in the OP-32 major opcode. It uses packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xd, attr: ['PABDU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PABDU.B instruction computes the absolute difference of corresponding packed
+8-bit elements of `rs1` and `rs2`, using unsigned comparison, and writes the
+result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = s1[(8*i+7) : (8*i)]
+    b = s2[(8*i+7) : (8*i)]
+    d[(8*i+7) : (8*i)] = (a <_u b) ? (b - a) : (a - b)
+
+X[rd] = d
+----
+
+Notes::
+
+* Unsigned ordering is used to determine the magnitude of each element difference.
+
+<<<
+==== PABDU.H
+
+Mnemonic::
+
+pabdu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PABDU.H is encoded in the OP-32 major opcode. It uses packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x0 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xd, attr: ['PABDU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PABDU.H instruction computes the absolute difference of corresponding packed
+16-bit elements of `rs1` and `rs2`, using unsigned comparison, and writes the
+result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = s1[(16*i+15) : (16*i)]
+    b = s2[(16*i+15) : (16*i)]
+    d[(16*i+15) : (16*i)] = (a <_u b) ? (b - a) : (a - b)
+
+X[rd] = d
+----
+
+
+<<<
 ==== PABDU.DB (RV32)
 
 Mnemonic::
@@ -7380,6 +7274,112 @@ for i = 0 .. 3:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+
+<<<
+==== PABDSUMU.B
+
+Mnemonic::
+
+pabdsumu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PABDSUMU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x6, attr: ['PABDSUMU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PABDSUMU.B (Packed Absolute Difference Sum, Unsigned Byte) computes the sum of
+absolute differences of packed unsigned 8-bit byte elements from `rs1` and
+`rs2`. For each byte lane, the unsigned absolute difference is computed, and all
+differences are summed into a single scalar result written to `rd`. This
+instruction is commonly used in motion estimation and image processing
+algorithms.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+sum = 0
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    diff = (a >= b) ? (a - b) : (b - a)
+    sum = sum + diff
+
+X[rd] = to_bits(XLEN, sum)
+----
+
+
+<<<
+==== PABDSUMAU.B
+
+Mnemonic::
+
+pabdsumau.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PABDSUMAU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x7, attr: ['PABDSUMAU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PABDSUMAU.B (Packed Absolute Difference Sum Accumulate, Unsigned Byte) computes
+the sum of absolute differences of packed unsigned 8-bit byte elements from
+`rs1` and `rs2`, and accumulates the result into `rd`. For each byte lane, the
+unsigned absolute difference is computed. All differences are summed and added to
+the current value of `rd`. This accumulating form is useful for iteratively
+computing the sum of absolute differences across multiple register-widths of
+data, as commonly needed in motion estimation and image processing algorithms.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+sum = unsigned(X[rd])
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    diff = (a >= b) ? (a - b) : (b - a)
+    sum = sum + diff
+
+X[rd] = to_bits(XLEN, sum)
 ----
 
 
@@ -8040,417 +8040,6 @@ X[rd] = d
 
 
 <<<
-==== PMINU.B
-
-Mnemonic::
-
-pminu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMINU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xd, attr: ['PMINU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMINU.B computes the unsigned minimum of corresponding packed 8-bit byte
-elements of `rs1` and `rs2` and writes the packed byte results to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a < b) ? a : b
-
-X[rd] = d
-----
-
-
-<<<
-==== PMINU.H
-
-Mnemonic::
-
-pminu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMINU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xd, attr: ['PMINU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMINU.H computes the unsigned minimum of corresponding packed 16-bit halfword
-elements of `rs1` and `rs2` and writes the packed halfword results to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a < b) ? a : b
-
-X[rd] = d
-----
-
-
-<<<
-==== PMINU.W (RV64)
-
-Mnemonic::
-
-pminu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMINU.W is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xd, attr: ['PMINU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMINU.W computes the unsigned minimum of corresponding packed 32-bit word
-elements of `rs1` and `rs2` and writes the packed word results to `rd`.
-Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-d[31:0]  = (unsigned(s1[31:0])  < unsigned(s2[31:0]))  ? s1[31:0]  : s2[31:0]
-d[63:32] = (unsigned(s1[63:32]) < unsigned(s2[63:32])) ? s1[63:32] : s2[63:32]
-
-X[rd] = d
-----
-
-
-<<<
-==== PMAX.B
-
-Mnemonic::
-
-pmax.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMAX.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xe, attr: ['PMAX.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMAX.B computes the signed maximum of corresponding packed 8-bit byte elements
-of `rs1` and `rs2` and writes the packed byte results to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = signed(s1[(8*i+7):(8*i)])
-    b = signed(s2[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a > b) ? a : b
-
-X[rd] = d
-----
-
-
-<<<
-==== PMAX.H
-
-Mnemonic::
-
-pmax.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMAX.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xe, attr: ['PMAX.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMAX.H computes the signed maximum of corresponding packed 16-bit halfword
-elements of `rs1` and `rs2` and writes the packed halfword results to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = signed(s1[(16*i+15):(16*i)])
-    b = signed(s2[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a > b) ? a : b
-
-X[rd] = d
-----
-
-
-<<<
-==== PMAX.W (RV64)
-
-Mnemonic::
-
-pmax.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMAX.W is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xe, attr: ['PMAX.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMAX.W computes the signed maximum of corresponding packed 32-bit word elements
-of `rs1` and `rs2` and writes the packed word results to `rd`. Available only
-in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-d[31:0]  = (signed(s1[31:0])  > signed(s2[31:0]))  ? s1[31:0]  : s2[31:0]
-d[63:32] = (signed(s1[63:32]) > signed(s2[63:32])) ? s1[63:32] : s2[63:32]
-
-X[rd] = d
-----
-
-
-<<<
-==== PMAXU.B
-
-Mnemonic::
-
-pmaxu.b _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMAXU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xf, attr: ['PMAXU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMAXU.B computes the unsigned maximum of corresponding packed 8-bit byte
-elements of `rs1` and `rs2` and writes the packed byte results to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a > b) ? a : b
-
-X[rd] = d
-----
-
-
-<<<
-==== PMAXU.H
-
-Mnemonic::
-
-pmaxu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMAXU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xf, attr: ['PMAXU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMAXU.H computes the unsigned maximum of corresponding packed 16-bit halfword
-elements of `rs1` and `rs2` and writes the packed halfword results to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a > b) ? a : b
-
-X[rd] = d
-----
-
-
-<<<
-==== PMAXU.W (RV64)
-
-Mnemonic::
-
-pmaxu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMAXU.W is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xf, attr: ['PMAXU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMAXU.W computes the unsigned maximum of corresponding packed 32-bit word
-elements of `rs1` and `rs2` and writes the packed word results to `rd`.
-Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-d[31:0]  = (unsigned(s1[31:0])  > unsigned(s2[31:0]))  ? s1[31:0]  : s2[31:0]
-d[63:32] = (unsigned(s1[63:32]) > unsigned(s2[63:32])) ? s1[63:32] : s2[63:32]
-
-X[rd] = d
-----
-
-
-<<<
 ==== PMIN.DB (RV32)
 
 Mnemonic::
@@ -8615,6 +8204,143 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PMINU.B
+
+Mnemonic::
+
+pminu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMINU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xd, attr: ['PMINU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMINU.B computes the unsigned minimum of corresponding packed 8-bit byte
+elements of `rs1` and `rs2` and writes the packed byte results to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    d[(8*i+7):(8*i)] = (a < b) ? a : b
+
+X[rd] = d
+----
+
+
+<<<
+==== PMINU.H
+
+Mnemonic::
+
+pminu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMINU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xd, attr: ['PMINU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMINU.H computes the unsigned minimum of corresponding packed 16-bit halfword
+elements of `rs1` and `rs2` and writes the packed halfword results to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    d[(16*i+15):(16*i)] = (a < b) ? a : b
+
+X[rd] = d
+----
+
+
+<<<
+==== PMINU.W (RV64)
+
+Mnemonic::
+
+pminu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMINU.W is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xd, attr: ['PMINU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMINU.W computes the unsigned minimum of corresponding packed 32-bit word
+elements of `rs1` and `rs2` and writes the packed word results to `rd`.
+Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+d[31:0]  = (unsigned(s1[31:0])  < unsigned(s2[31:0]))  ? s1[31:0]  : s2[31:0]
+d[63:32] = (unsigned(s1[63:32]) < unsigned(s2[63:32])) ? s1[63:32] : s2[63:32]
+
+X[rd] = d
 ----
 
 
@@ -8787,58 +8513,139 @@ if (rd_p != 0):
 
 
 <<<
-==== PMAX.DB (RV32)
+==== PMAX.B
 
 Mnemonic::
 
-pmax.db _rd_p_, _rs1_p_, _rs2_p_
+pmax.b _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMAX.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+PMAX.B is encoded in the OP-32 major opcode with packed byte elements.
 
 [wavedrom, ,svg]
 ....
 {reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
     { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs2_p' },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
     { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xe, attr: ['PMAX.DB'] },
+    { bits: 4, name: 0xe, attr: ['PMAX.B'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PMAX.DB performs packed signed 8-bit byte maximum on double-wide (register-pair)
-operands. It is equivalent to two PMAX.B operations: one on the even registers
-and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
-`rs2_p`) are register pairs and must specify even register numbers. Available
-only in RV32.
+PMAX.B computes the signed maximum of corresponding packed 8-bit byte elements
+of `rs1` and `rs2` and writes the packed byte results to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-// Equivalent to two PMAX.B operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+s1 = X[rs1]
+s2 = X[rs2]
 
-for i = 0 .. 7:
+for i = 0 .. (XLEN/8 - 1):
     a = signed(s1[(8*i+7):(8*i)])
     b = signed(s2[(8*i+7):(8*i)])
     d[(8*i+7):(8*i)] = (a > b) ? a : b
 
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
+X[rd] = d
+----
+
+
+<<<
+==== PMAX.H
+
+Mnemonic::
+
+pmax.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMAX.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xe, attr: ['PMAX.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMAX.H computes the signed maximum of corresponding packed 16-bit halfword
+elements of `rs1` and `rs2` and writes the packed halfword results to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = signed(s1[(16*i+15):(16*i)])
+    b = signed(s2[(16*i+15):(16*i)])
+    d[(16*i+15):(16*i)] = (a > b) ? a : b
+
+X[rd] = d
+----
+
+
+<<<
+==== PMAX.W (RV64)
+
+Mnemonic::
+
+pmax.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMAX.W is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xe, attr: ['PMAX.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMAX.W computes the signed maximum of corresponding packed 32-bit word elements
+of `rs1` and `rs2` and writes the packed word results to `rd`. Available only
+in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+d[31:0]  = (signed(s1[31:0])  > signed(s2[31:0]))  ? s1[31:0]  : s2[31:0]
+d[63:32] = (signed(s1[63:32]) > signed(s2[63:32])) ? s1[63:32] : s2[63:32]
+
+X[rd] = d
 ----
 
 
@@ -8947,6 +8754,199 @@ for i = 0 .. 1:
     a = signed(s1[(32*i+31):(32*i)])
     b = signed(s2[(32*i+31):(32*i)])
     d[(32*i+31):(32*i)] = (a > b) ? a : b
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PMAXU.B
+
+Mnemonic::
+
+pmaxu.b _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMAXU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xf, attr: ['PMAXU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMAXU.B computes the unsigned maximum of corresponding packed 8-bit byte
+elements of `rs1` and `rs2` and writes the packed byte results to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    d[(8*i+7):(8*i)] = (a > b) ? a : b
+
+X[rd] = d
+----
+
+
+<<<
+==== PMAXU.H
+
+Mnemonic::
+
+pmaxu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMAXU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xf, attr: ['PMAXU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMAXU.H computes the unsigned maximum of corresponding packed 16-bit halfword
+elements of `rs1` and `rs2` and writes the packed halfword results to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    d[(16*i+15):(16*i)] = (a > b) ? a : b
+
+X[rd] = d
+----
+
+
+<<<
+==== PMAXU.W (RV64)
+
+Mnemonic::
+
+pmaxu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMAXU.W is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xf, attr: ['PMAXU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMAXU.W computes the unsigned maximum of corresponding packed 32-bit word
+elements of `rs1` and `rs2` and writes the packed word results to `rd`.
+Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+d[31:0]  = (unsigned(s1[31:0])  > unsigned(s2[31:0]))  ? s1[31:0]  : s2[31:0]
+d[63:32] = (unsigned(s1[63:32]) > unsigned(s2[63:32])) ? s1[63:32] : s2[63:32]
+
+X[rd] = d
+----
+
+
+<<<
+==== PMAX.DB (RV32)
+
+Mnemonic::
+
+pmax.db _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PMAX.DB is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xe, attr: ['PMAX.DB'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMAX.DB performs packed signed 8-bit byte maximum on double-wide (register-pair)
+operands. It is equivalent to two PMAX.B operations: one on the even registers
+and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
+`rs2_p`) are register pairs and must specify even register numbers. Available
+only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PMAX.B operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 7:
+    a = signed(s1[(8*i+7):(8*i)])
+    b = signed(s2[(8*i+7):(8*i)])
+    d[(8*i+7):(8*i)] = (a > b) ? a : b
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -9275,315 +9275,6 @@ X[rd] = d1 @ d0
 
 
 <<<
-==== PMSLT.B
-
-Mnemonic::
-
-pmslt.b _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmsgt.b _rd_, _rs2_, _rs1_ &#8594; pmslt.b _rd_, _rs1_, _rs2_ +
-pmsltz.b _rd_, _rs1_ &#8594; pmslt.b _rd_, _rs1_, x0 +
-pmsgtz.b _rd_, _rs2_ &#8594; pmslt.b _rd_, x0, _rs2_
-
-Encoding::
-
-PMSLT.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xa, attr: ['PMSLT.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMSLT.B performs a signed less-than comparison on corresponding packed 8-bit byte
-elements of `rs1` and `rs2`. For each element, if the signed value of `rs1` is
-less than the signed value of `rs2`, the corresponding byte in `rd` is set to
-all-ones (0xFF); otherwise it is set to all-zeros (0x00).
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = signed(s1[(8*i+7):(8*i)])
-    b = signed(s2[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a < b) ? 0xFF : 0x00
-
-X[rd] = d
-----
-
-
-<<<
-==== PMSLT.H
-
-Mnemonic::
-
-pmslt.h _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmsgt.h _rd_, _rs2_, _rs1_ &#8594; pmslt.h _rd_, _rs1_, _rs2_ +
-pmsltz.h _rd_, _rs1_ &#8594; pmslt.h _rd_, _rs1_, x0 +
-pmsgtz.h _rd_, _rs2_ &#8594; pmslt.h _rd_, x0, _rs2_
-
-Encoding::
-
-PMSLT.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xa, attr: ['PMSLT.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMSLT.H performs a signed less-than comparison on corresponding packed 16-bit
-halfword elements of `rs1` and `rs2`. For each element, if the signed value of
-`rs1` is less than the signed value of `rs2`, the corresponding halfword in `rd`
-is set to all-ones (0xFFFF); otherwise it is set to all-zeros (0x0000).
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = signed(s1[(16*i+15):(16*i)])
-    b = signed(s2[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a < b) ? 0xFFFF : 0x0000
-
-X[rd] = d
-----
-
-
-<<<
-==== PMSLT.W (RV64)
-
-Mnemonic::
-
-pmslt.w _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmsgt.w _rd_, _rs2_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, _rs2_ +
-pmsltz.w _rd_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, x0 +
-pmsgtz.w _rd_, _rs2_ &#8594; pmslt.w _rd_, x0, _rs2_
-
-Encoding::
-
-PMSLT.W is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xa, attr: ['PMSLT.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMSLT.W instruction performs signed less-than comparisons on corresponding
-packed 32-bit elements and produces a packed word mask in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d0 = (s1[31:0]  <_s s2[31:0])  ? 0xFFFFFFFF : 0x00000000
-d1 = (s1[63:32] <_s s2[63:32]) ? 0xFFFFFFFF : 0x00000000
-X[rd] = d1 @ d0
-----
-
-
-<<<
-==== PMSLTU.B
-
-Mnemonic::
-
-pmsltu.b _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmsgtu.b _rd_, _rs2_, _rs1_ &#8594; pmsltu.b _rd_, _rs1_, _rs2_ +
-pmsnez.b _rd_, _rs2_ &#8594; pmsltu.b _rd_, x0, _rs2_
-
-Encoding::
-
-PMSLTU.B is encoded in the OP-32 major opcode with packed byte elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xb, attr: ['PMSLTU.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMSLTU.B performs an unsigned less-than comparison on corresponding packed 8-bit
-byte elements of `rs1` and `rs2`. For each element, if the unsigned value of
-`rs1` is less than the unsigned value of `rs2`, the corresponding byte in `rd` is
-set to all-ones (0xFF); otherwise it is set to all-zeros (0x00).
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/8 - 1):
-    a = unsigned(s1[(8*i+7):(8*i)])
-    b = unsigned(s2[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a < b) ? 0xFF : 0x00
-
-X[rd] = d
-----
-
-
-<<<
-==== PMSLTU.H
-
-Mnemonic::
-
-pmsltu.h _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmsgtu.h _rd_, _rs2_, _rs1_ &#8594; pmsltu.h _rd_, _rs1_, _rs2_ +
-pmsnez.h _rd_, _rs2_ &#8594; pmsltu.h _rd_, x0, _rs2_
-
-Encoding::
-
-PMSLTU.H is encoded in the OP-32 major opcode with packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xb, attr: ['PMSLTU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMSLTU.H performs an unsigned less-than comparison on corresponding packed 16-bit
-halfword elements of `rs1` and `rs2`. For each element, if the unsigned value of
-`rs1` is less than the unsigned value of `rs2`, the corresponding halfword in
-`rd` is set to all-ones (0xFFFF); otherwise it is set to all-zeros (0x0000).
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/16 - 1):
-    a = unsigned(s1[(16*i+15):(16*i)])
-    b = unsigned(s2[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a < b) ? 0xFFFF : 0x0000
-
-X[rd] = d
-----
-
-
-<<<
-==== PMSLTU.W (RV64)
-
-Mnemonic::
-
-pmsltu.w _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pmsgtu.w _rd_, _rs2_, _rs1_ &#8594; pmsltu.w _rd_, _rs1_, _rs2_ +
-pmsnez.w _rd_, _rs2_ &#8594; pmsltu.w _rd_, x0, _rs2_
-
-Encoding::
-
-PMSLTU.W is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xb, attr: ['PMSLTU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMSLTU.W instruction performs unsigned less-than comparisons on corresponding
-packed 32-bit elements and produces a packed word mask in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d0 = (s1[31:0]  <_u s2[31:0])  ? 0xFFFFFFFF : 0x00000000
-d1 = (s1[63:32] <_u s2[63:32]) ? 0xFFFFFFFF : 0x00000000
-X[rd] = d1 @ d0
-----
-
-
-<<<
 ==== MSEQ (RV32)
 
 Mnemonic::
@@ -9623,93 +9314,6 @@ Operation::
 ----
 X[rd] = (X[rs1] == X[rs2]) ? 0xFFFFFFFF : 0x00000000
 ----
-
-
-<<<
-==== MSLT (RV32)
-
-Mnemonic::
-
-mslt _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-msgt _rd_, _rs2_, _rs1_ &#8594; mslt _rd_, _rs1_, _rs2_ +
-msltz _rd_, _rs1_ &#8594; mslt _rd_, _rs1_, x0
-
-Encoding::
-
-MSLT is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xa, attr: ['MSLT'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MSLT instruction sets `rd` to all ones if `rs1` is less than `rs2` using
-signed comparison; otherwise it sets `rd` to zero.
-
-Operation::
-
-[source,pseudocode]
-----
-X[rd] = (X[rs1] <_s X[rs2]) ? 0xFFFFFFFF : 0x00000000
-----
-
-
-<<<
-==== MSLTU (RV32)
-
-Mnemonic::
-
-msltu _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-msgtu _rd_, _rs2_, _rs1_ &#8594; msltu _rd_, _rs1_, _rs2_ +
-msnez _rd_, _rs2_ &#8594; msltu _rd_, x0, _rs2_
-
-Encoding::
-
-MSLTU is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x6 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xb, attr: ['MSLTU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MSLTU instruction sets `rd` to all ones if `rs1` is less than `rs2` using
-unsigned comparison; otherwise it sets `rd` to zero.
-
-Operation::
-
-[source,pseudocode]
-----
-X[rd] = (X[rs1] <_u X[rs2]) ? 0xFFFFFFFF : 0x00000000
-----
-
 
 
 <<<
@@ -9892,6 +9496,205 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PMSLT.B
+
+Mnemonic::
+
+pmslt.b _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgt.b _rd_, _rs2_, _rs1_ &#8594; pmslt.b _rd_, _rs1_, _rs2_ +
+pmsltz.b _rd_, _rs1_ &#8594; pmslt.b _rd_, _rs1_, x0 +
+pmsgtz.b _rd_, _rs2_ &#8594; pmslt.b _rd_, x0, _rs2_
+
+Encoding::
+
+PMSLT.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xa, attr: ['PMSLT.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMSLT.B performs a signed less-than comparison on corresponding packed 8-bit byte
+elements of `rs1` and `rs2`. For each element, if the signed value of `rs1` is
+less than the signed value of `rs2`, the corresponding byte in `rd` is set to
+all-ones (0xFF); otherwise it is set to all-zeros (0x00).
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = signed(s1[(8*i+7):(8*i)])
+    b = signed(s2[(8*i+7):(8*i)])
+    d[(8*i+7):(8*i)] = (a < b) ? 0xFF : 0x00
+
+X[rd] = d
+----
+
+
+<<<
+==== PMSLT.H
+
+Mnemonic::
+
+pmslt.h _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgt.h _rd_, _rs2_, _rs1_ &#8594; pmslt.h _rd_, _rs1_, _rs2_ +
+pmsltz.h _rd_, _rs1_ &#8594; pmslt.h _rd_, _rs1_, x0 +
+pmsgtz.h _rd_, _rs2_ &#8594; pmslt.h _rd_, x0, _rs2_
+
+Encoding::
+
+PMSLT.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xa, attr: ['PMSLT.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMSLT.H performs a signed less-than comparison on corresponding packed 16-bit
+halfword elements of `rs1` and `rs2`. For each element, if the signed value of
+`rs1` is less than the signed value of `rs2`, the corresponding halfword in `rd`
+is set to all-ones (0xFFFF); otherwise it is set to all-zeros (0x0000).
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = signed(s1[(16*i+15):(16*i)])
+    b = signed(s2[(16*i+15):(16*i)])
+    d[(16*i+15):(16*i)] = (a < b) ? 0xFFFF : 0x0000
+
+X[rd] = d
+----
+
+
+<<<
+==== PMSLT.W (RV64)
+
+Mnemonic::
+
+pmslt.w _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgt.w _rd_, _rs2_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, _rs2_ +
+pmsltz.w _rd_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, x0 +
+pmsgtz.w _rd_, _rs2_ &#8594; pmslt.w _rd_, x0, _rs2_
+
+Encoding::
+
+PMSLT.W is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xa, attr: ['PMSLT.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMSLT.W instruction performs signed less-than comparisons on corresponding
+packed 32-bit elements and produces a packed word mask in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d0 = (s1[31:0]  <_s s2[31:0])  ? 0xFFFFFFFF : 0x00000000
+d1 = (s1[63:32] <_s s2[63:32]) ? 0xFFFFFFFF : 0x00000000
+X[rd] = d1 @ d0
+----
+
+
+<<<
+==== MSLT (RV32)
+
+Mnemonic::
+
+mslt _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+msgt _rd_, _rs2_, _rs1_ &#8594; mslt _rd_, _rs1_, _rs2_ +
+msltz _rd_, _rs1_ &#8594; mslt _rd_, _rs1_, x0
+
+Encoding::
+
+MSLT is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xa, attr: ['MSLT'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MSLT instruction sets `rd` to all ones if `rs1` is less than `rs2` using
+signed comparison; otherwise it sets `rd` to zero.
+
+Operation::
+
+[source,pseudocode]
+----
+X[rd] = (X[rs1] <_s X[rs2]) ? 0xFFFFFFFF : 0x00000000
 ----
 
 
@@ -10085,6 +9888,203 @@ if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
 ----
+
+
+<<<
+==== PMSLTU.B
+
+Mnemonic::
+
+pmsltu.b _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgtu.b _rd_, _rs2_, _rs1_ &#8594; pmsltu.b _rd_, _rs1_, _rs2_ +
+pmsnez.b _rd_, _rs2_ &#8594; pmsltu.b _rd_, x0, _rs2_
+
+Encoding::
+
+PMSLTU.B is encoded in the OP-32 major opcode with packed byte elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xb, attr: ['PMSLTU.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMSLTU.B performs an unsigned less-than comparison on corresponding packed 8-bit
+byte elements of `rs1` and `rs2`. For each element, if the unsigned value of
+`rs1` is less than the unsigned value of `rs2`, the corresponding byte in `rd` is
+set to all-ones (0xFF); otherwise it is set to all-zeros (0x00).
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/8 - 1):
+    a = unsigned(s1[(8*i+7):(8*i)])
+    b = unsigned(s2[(8*i+7):(8*i)])
+    d[(8*i+7):(8*i)] = (a < b) ? 0xFF : 0x00
+
+X[rd] = d
+----
+
+
+<<<
+==== PMSLTU.H
+
+Mnemonic::
+
+pmsltu.h _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgtu.h _rd_, _rs2_, _rs1_ &#8594; pmsltu.h _rd_, _rs1_, _rs2_ +
+pmsnez.h _rd_, _rs2_ &#8594; pmsltu.h _rd_, x0, _rs2_
+
+Encoding::
+
+PMSLTU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xb, attr: ['PMSLTU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMSLTU.H performs an unsigned less-than comparison on corresponding packed 16-bit
+halfword elements of `rs1` and `rs2`. For each element, if the unsigned value of
+`rs1` is less than the unsigned value of `rs2`, the corresponding halfword in
+`rd` is set to all-ones (0xFFFF); otherwise it is set to all-zeros (0x0000).
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = unsigned(s1[(16*i+15):(16*i)])
+    b = unsigned(s2[(16*i+15):(16*i)])
+    d[(16*i+15):(16*i)] = (a < b) ? 0xFFFF : 0x0000
+
+X[rd] = d
+----
+
+
+<<<
+==== PMSLTU.W (RV64)
+
+Mnemonic::
+
+pmsltu.w _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pmsgtu.w _rd_, _rs2_, _rs1_ &#8594; pmsltu.w _rd_, _rs1_, _rs2_ +
+pmsnez.w _rd_, _rs2_ &#8594; pmsltu.w _rd_, x0, _rs2_
+
+Encoding::
+
+PMSLTU.W is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xb, attr: ['PMSLTU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMSLTU.W instruction performs unsigned less-than comparisons on corresponding
+packed 32-bit elements and produces a packed word mask in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d0 = (s1[31:0]  <_u s2[31:0])  ? 0xFFFFFFFF : 0x00000000
+d1 = (s1[63:32] <_u s2[63:32]) ? 0xFFFFFFFF : 0x00000000
+X[rd] = d1 @ d0
+----
+
+
+<<<
+==== MSLTU (RV32)
+
+Mnemonic::
+
+msltu _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+msgtu _rd_, _rs2_, _rs1_ &#8594; msltu _rd_, _rs1_, _rs2_ +
+msnez _rd_, _rs2_ &#8594; msltu _rd_, x0, _rs2_
+
+Encoding::
+
+MSLTU is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xb, attr: ['MSLTU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MSLTU instruction sets `rd` to all ones if `rs1` is less than `rs2` using
+unsigned comparison; otherwise it sets `rd` to zero.
+
+Operation::
+
+[source,pseudocode]
+----
+X[rd] = (X[rs1] <_u X[rs2]) ? 0xFFFFFFFF : 0x00000000
+----
+
 
 
 <<<
@@ -10686,128 +10686,6 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
-==== PUSATI.H
-
-Mnemonic::
-
-pusati.h _rd_, _rs1_, _uimm4_
-
-Encoding::
-
-PUSATI.H is encoded in the OP-IMM-32 major opcode with the w-uimm format for
-packed halfword elements with a 4-bit unsigned immediate.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['PUSATI.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PUSATI.H performs unsigned saturation on each packed 16-bit halfword element of
-`rs1` to the range [0, 2^width^-1], where `width` is specified by `uimm4`.
-Negative values are clamped to zero and values exceeding the maximum are clamped
-to 2^width^-1. When clamping occurs, the `vxsat` overflow flag is set.
-Elements already within range are passed through unchanged.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-n = uimm4[3:0]
-maxval_h = ~(0xFFFF << n) & 0xFFFF
-
-for i = 0 .. (XLEN/16 - 1):
-    e = signed(s1[(16*i+15):(16*i)])
-    if e < 0:
-        d[(16*i+15):(16*i)] = 0x0000
-        vxsat = 1
-    else if e > signed(maxval_h):
-        d[(16*i+15):(16*i)] = maxval_h
-        vxsat = 1
-    else:
-        d[(16*i+15):(16*i)] = s1[(16*i+15):(16*i)]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PUSATI.W (RV64)
-
-Mnemonic::
-
-pusati.w _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-PUSATI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format for
-packed word elements with a 5-bit unsigned immediate. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['PUSATI.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PUSATI.W performs unsigned saturation on each packed 32-bit word element of `rs1`
-to the range [0, 2^width^-1], where `width` is specified by `uimm5`.
-Negative values are clamped to zero and values exceeding the maximum are clamped
-to 2^width^-1. When clamping occurs, the `vxsat` overflow flag is set. Elements
-already within range are passed through unchanged. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-n = uimm5[4:0]
-maxval_w = ~(0xFFFFFFFF << n) & 0xFFFFFFFF
-
-for i = 0 .. (XLEN/32 - 1):
-    e = signed(s1[(32*i+31):(32*i)])
-    if e < 0:
-        d[(32*i+31):(32*i)] = 0x00000000
-        vxsat = 1
-    else if e > signed(maxval_w):
-        d[(32*i+31):(32*i)] = maxval_w
-        vxsat = 1
-    else:
-        d[(32*i+31):(32*i)] = s1[(32*i+31):(32*i)]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
 ==== SATI
 
 Mnemonic::
@@ -10905,105 +10783,6 @@ else:
 Notes::
 
 * `vxsat` is set to 1 if saturation occurs.
-
-<<<
-==== USATI
-
-Mnemonic::
-
-usati _rd_, _rs1_, _uimm5_ (RV32) +
-usati _rd_, _rs1_, _uimm6_ (RV64)
-
-Encoding::
-
-USATI is encoded in the OP-IMM-32 major opcode.
-
-RV32:
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['USATI'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-RV64:
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['USATI'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The USATI instruction saturates `rs1` to the unsigned range [0, 2^width^-1]
-where `width` is specified by `uimm5`(RV32) or `uimm6`(RV64). Negative values
-are clamped to zero and values exceeding the maximum are clamped to 2^width^-1.
-When clamping occurs, the `vxsat` overflow flag is set. Values already within
-range are passed through unchanged.
-
-Operation::
-
-RV32:
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-n  = uimm5[4:0]
-
-maxval = ~(FFFF_FFFF << n)
-
-if (s1 <_s 0):
-    vxsat = 1
-    X[rd] = 0
-else if (s1 >_s maxval):
-    vxsat = 1
-    X[rd] = maxval
-else:
-    X[rd] = s1
-----
-
-RV64:
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-n  = uimm6[5:0]
-
-maxval = ~(0xFFFF_FFFF_FFFF_FFFF << n)
-
-if (s1 <_s 0):
-    vxsat = 1
-    X[rd] = 0
-else if (s1 >_s maxval):
-    vxsat = 1
-    X[rd] = maxval
-else:
-    X[rd] = s1
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs.
-
 
 <<<
 ==== PSATI.DH (RV32)
@@ -11141,6 +10920,227 @@ if (rd_p != 0):
 Notes::
 
 * `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PUSATI.H
+
+Mnemonic::
+
+pusati.h _rd_, _rs1_, _uimm4_
+
+Encoding::
+
+PUSATI.H is encoded in the OP-IMM-32 major opcode with the w-uimm format for
+packed halfword elements with a 4-bit unsigned immediate.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['PUSATI.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PUSATI.H performs unsigned saturation on each packed 16-bit halfword element of
+`rs1` to the range [0, 2^width^-1], where `width` is specified by `uimm4`.
+Negative values are clamped to zero and values exceeding the maximum are clamped
+to 2^width^-1. When clamping occurs, the `vxsat` overflow flag is set.
+Elements already within range are passed through unchanged.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+n = uimm4[3:0]
+maxval_h = ~(0xFFFF << n) & 0xFFFF
+
+for i = 0 .. (XLEN/16 - 1):
+    e = signed(s1[(16*i+15):(16*i)])
+    if e < 0:
+        d[(16*i+15):(16*i)] = 0x0000
+        vxsat = 1
+    else if e > signed(maxval_h):
+        d[(16*i+15):(16*i)] = maxval_h
+        vxsat = 1
+    else:
+        d[(16*i+15):(16*i)] = s1[(16*i+15):(16*i)]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PUSATI.W (RV64)
+
+Mnemonic::
+
+pusati.w _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+PUSATI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format for
+packed word elements with a 5-bit unsigned immediate. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['PUSATI.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PUSATI.W performs unsigned saturation on each packed 32-bit word element of `rs1`
+to the range [0, 2^width^-1], where `width` is specified by `uimm5`.
+Negative values are clamped to zero and values exceeding the maximum are clamped
+to 2^width^-1. When clamping occurs, the `vxsat` overflow flag is set. Elements
+already within range are passed through unchanged. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+n = uimm5[4:0]
+maxval_w = ~(0xFFFFFFFF << n) & 0xFFFFFFFF
+
+for i = 0 .. (XLEN/32 - 1):
+    e = signed(s1[(32*i+31):(32*i)])
+    if e < 0:
+        d[(32*i+31):(32*i)] = 0x00000000
+        vxsat = 1
+    else if e > signed(maxval_w):
+        d[(32*i+31):(32*i)] = maxval_w
+        vxsat = 1
+    else:
+        d[(32*i+31):(32*i)] = s1[(32*i+31):(32*i)]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== USATI
+
+Mnemonic::
+
+usati _rd_, _rs1_, _uimm5_ (RV32) +
+usati _rd_, _rs1_, _uimm6_ (RV64)
+
+Encoding::
+
+USATI is encoded in the OP-IMM-32 major opcode.
+
+RV32:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['USATI'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+RV64:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['USATI'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The USATI instruction saturates `rs1` to the unsigned range [0, 2^width^-1]
+where `width` is specified by `uimm5`(RV32) or `uimm6`(RV64). Negative values
+are clamped to zero and values exceeding the maximum are clamped to 2^width^-1.
+When clamping occurs, the `vxsat` overflow flag is set. Values already within
+range are passed through unchanged.
+
+Operation::
+
+RV32:
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+n  = uimm5[4:0]
+
+maxval = ~(FFFF_FFFF << n)
+
+if (s1 <_s 0):
+    vxsat = 1
+    X[rd] = 0
+else if (s1 >_s maxval):
+    vxsat = 1
+    X[rd] = maxval
+else:
+    X[rd] = s1
+----
+
+RV64:
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+n  = uimm6[5:0]
+
+maxval = ~(0xFFFF_FFFF_FFFF_FFFF << n)
+
+if (s1 <_s 0):
+    vxsat = 1
+    X[rd] = 0
+else if (s1 >_s maxval):
+    vxsat = 1
+    X[rd] = maxval
+else:
+    X[rd] = s1
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs.
+
 
 <<<
 ==== PUSATI.DH (RV32)
