@@ -11414,819 +11414,6 @@ X[rd] = d
 
 
 <<<
-==== PSRL.BS
-
-Mnemonic::
-
-psrl.bs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSRL.BS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['PSRL.BS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSRL.BS instruction logically shifts each packed 8-bit element of `rs1`
-right by the shift amount in `rs2[4:0]` and writes the packed byte result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-for i = 0 .. (XLEN/8 - 1):
-    b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (zero_extend(32, b) >> shamt)[7:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRL.HS
-
-Mnemonic::
-
-psrl.hs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSRL.HS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['PSRL.HS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSRL.HS instruction logically shifts each packed 16-bit element of `rs1`
-right by the shift amount in `rs2[4:0]` and writes the packed halfword result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (zero_extend(32, h) >> shamt)[15:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRL.WS (RV64)
-
-Mnemonic::
-
-psrl.ws _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSRL.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
-and word elements. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['PSRL.WS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSRL.WS logically shifts each packed 32-bit element of `rs1` right by the
-scalar shift amount in `rs2[4:0]` and writes the packed word result to `rd`.
-Bits shifted out are discarded and vacated bit positions are filled with zeros.
-Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (zero_extend(64, w) >> shamt)[31:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRA.BS
-
-Mnemonic::
-
-psra.bs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSRA.BS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x4, attr: ['PSRA.BS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSRA.BS instruction arithmetically shifts each packed 8-bit element of `rs1`
-right by the shift amount in `rs2[4:0]` and writes the packed byte result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-for i = 0 .. (XLEN/8 - 1):
-    b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (sign_extend(40, b) >> shamt)[7:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRA.HS
-
-Mnemonic::
-
-psra.hs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSRA.HS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x4, attr: ['PSRA.HS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSRA.HS instruction arithmetically shifts each packed 16-bit element of `rs1`
-right by the shift amount in `rs2[4:0]` and writes the packed halfword result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (sign_extend(48, h) >> shamt)[15:0]
-X[rd] = d
-----
-
-
-
-<<<
-==== PSRA.WS (RV64)
-
-Mnemonic::
-
-psra.ws _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSRA.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
-and word elements. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x4, attr: ['PSRA.WS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PSRA.WS arithmetically shifts each packed 32-bit element of `rs1` right by the
-scalar shift amount in `rs2[4:0]` and writes the packed word result to `rd`.
-Bits shifted out are discarded and vacated bit positions are filled with copies
-of the sign bit. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (sign_extend(64, w) >> shamt)[31:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSLLI.B
-
-Mnemonic::
-
-pslli.b _rd_, _rs1_, _uimm3_
-
-Encoding::
-
-PSLLI.B is encoded in the OP-IMM-32 major opcode with packed byte elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 3, name: 'uimm3' },
-    { bits: 4, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PSLLI.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm3` field encodes the 3-bit shift amount for byte elements.
-
-Description::
-
-PSLLI.B shifts each packed 8-bit element of `rs1` left by the immediate shift
-amount encoded in `uimm3` and writes the packed byte result to `rd`. Bits
-shifted out are discarded and vacated bit positions are filled with zeros.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm3[2:0]
-for i = 0 .. (XLEN/8 - 1):
-    b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (zero_extend(32, b) << shamt)[7:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSLLI.H
-
-Mnemonic::
-
-pslli.h _rd_, _rs1_, _uimm4_
-
-Encoding::
-
-PSLLI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PSLLI.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm4` field encodes the 4-bit shift amount for halfword elements.
-
-Description::
-
-PSLLI.H shifts each packed 16-bit element of `rs1` left by the immediate shift
-amount encoded in `uimm4` and writes the packed halfword result to `rd`.
-Bits shifted out are discarded and vacated bit positions are filled with zeros.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm4[3:0]
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (zero_extend(32, h) << shamt)[15:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSLLI.W (RV64)
-
-Mnemonic::
-
-pslli.w _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-PSLLI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PSLLI.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount for word elements.
-
-Description::
-
-PSLLI.W shifts each packed 32-bit element of `rs1` left by the immediate shift
-amount encoded in `uimm5` and writes the packed word result to `rd`. Bits
-shifted out are discarded and vacated bit positions are filled with zeros.
-Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm5[4:0]
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (zero_extend(64, w) << shamt)[31:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRLI.B
-
-Mnemonic::
-
-psrli.b _rd_, _rs1_, _uimm3_
-
-Encoding::
-
-PSRLI.B is encoded in the OP-IMM-32 major opcode with packed byte elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 3, name: 'uimm3' },
-    { bits: 4, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PSRLI.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm3` field encodes the 3-bit shift amount for byte elements.
-
-Description::
-
-PSRLI.B logically shifts each packed 8-bit element of `rs1` right by the
-immediate shift amount encoded in `uimm3` and writes the packed byte result
-to `rd`. Bits shifted out are discarded and vacated bit positions are filled
-with zeros.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm3[2:0]
-for i = 0 .. (XLEN/8 - 1):
-    b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (zero_extend(32, b) >> shamt)[7:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRLI.H
-
-Mnemonic::
-
-psrli.h _rd_, _rs1_, _uimm4_
-
-Encoding::
-
-PSRLI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PSRLI.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm4` field encodes the 4-bit shift amount for halfword elements.
-
-Description::
-
-PSRLI.H logically shifts each packed 16-bit element of `rs1` right by the
-immediate shift amount encoded in `uimm4` and writes the packed halfword
-result to `rd`. Bits shifted out are discarded and vacated bit positions are
-filled with zeros.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm4[3:0]
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (zero_extend(32, h) >> shamt)[15:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRLI.W (RV64)
-
-Mnemonic::
-
-psrli.w _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-PSRLI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PSRLI.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount for word elements.
-
-Description::
-
-PSRLI.W logically shifts each packed 32-bit element of `rs1` right by the
-immediate shift amount encoded in `uimm5` and writes the packed word result
-to `rd`. Bits shifted out are discarded and vacated bit positions are filled
-with zeros. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm5[4:0]
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (zero_extend(64, w) >> shamt)[31:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRAI.B
-
-Mnemonic::
-
-psrai.b _rd_, _rs1_, _uimm3_
-
-Encoding::
-
-PSRAI.B is encoded in the OP-IMM-32 major opcode with packed byte elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 3, name: 'uimm3' },
-    { bits: 4, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['PSRAI.B'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm3` field encodes the 3-bit shift amount for byte elements.
-
-Description::
-
-PSRAI.B arithmetically shifts each packed 8-bit element of `rs1` right by the
-immediate shift amount encoded in `uimm3` and writes the packed byte result
-to `rd`. Bits shifted out are discarded and vacated bit positions are filled
-with copies of the sign bit.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm3[2:0]
-for i = 0 .. (XLEN/8 - 1):
-    b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (sign_extend(40, b) >> shamt)[7:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRAI.H
-
-Mnemonic::
-
-psrai.h _rd_, _rs1_, _uimm4_
-
-Encoding::
-
-PSRAI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['PSRAI.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm4` field encodes the 4-bit shift amount for halfword elements.
-
-Description::
-
-PSRAI.H arithmetically shifts each packed 16-bit element of `rs1` right by the
-immediate shift amount encoded in `uimm4` and writes the packed halfword
-result to `rd`. Bits shifted out are discarded and vacated bit positions are
-filled with copies of the sign bit.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm4[3:0]
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (sign_extend(48, h) >> shamt)[15:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRAI.W (RV64)
-
-Mnemonic::
-
-psrai.w _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-PSRAI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['PSRAI.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount for word elements.
-
-Description::
-
-PSRAI.W arithmetically shifts each packed 32-bit element of `rs1` right by the
-immediate shift amount encoded in `uimm5` and writes the packed word result
-to `rd`. Bits shifted out are discarded and vacated bit positions are filled
-with copies of the sign bit. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm5[4:0]
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (sign_extend(64, w) >> shamt)[31:0]
-X[rd] = d
-----
-
-
-<<<
-==== PSRARI.H
-
-Mnemonic::
-
-psrari.h _rd_, _rs1_, _uimm4_
-
-Encoding::
-
-PSRARI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
-and an immediate shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PSRARI.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm4` field encodes the 4-bit shift amount for halfword elements.
-
-Description::
-
-PSRARI.H arithmetically shifts each packed 16-bit element of `rs1` right by
-the immediate shift amount encoded in `uimm4` with rounding and writes the
-packed halfword result to `rd`. A rounding bit is added before the shift so that
-the result is rounded to the nearest integer (round-to-nearest, ties round up).
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm4[3:0]
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]
-    // Append rounding bit, shift, then extract rounded result
-    shx[(16+1):0] = ((sign_extend(48, h) @ 0b0) >> shamt)[(16+1):0]
-    d[(16*i+15):(16*i)] = (shx + 1)[16:1]
-X[rd] = d
-----
-
-
-<<<
-==== PSRARI.W (RV64)
-
-Mnemonic::
-
-psrari.w _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-PSRARI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PSRARI.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount for word elements.
-
-Description::
-
-PSRARI.W arithmetically shifts each packed 32-bit element of `rs1` right by
-the immediate shift amount encoded in `uimm5` with rounding and writes the
-packed word result to `rd`. A rounding bit is added before the shift so that the
-result is rounded to the nearest integer (round-to-nearest, ties round up).
-Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm5[4:0]
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]
-    // Append rounding bit, shift, then extract rounded result
-    shx[(32+1):0] = ((sign_extend(64, w) @ 0b0) >> shamt)[(32+1):0]
-    d[(32*i+31):(32*i)] = (shx + 1)[32:1]
-X[rd] = d
-----
-
-
-<<<
 ==== PSLL.DBS (RV32)
 
 Mnemonic::
@@ -12397,6 +11584,141 @@ if (rd_p != 0):
 
 
 <<<
+==== PSRL.BS
+
+Mnemonic::
+
+psrl.bs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSRL.BS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['PSRL.BS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSRL.BS instruction logically shifts each packed 8-bit element of `rs1`
+right by the shift amount in `rs2[4:0]` and writes the packed byte result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+for i = 0 .. (XLEN/8 - 1):
+    b = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = (zero_extend(32, b) >> shamt)[7:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRL.HS
+
+Mnemonic::
+
+psrl.hs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSRL.HS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['PSRL.HS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSRL.HS instruction logically shifts each packed 16-bit element of `rs1`
+right by the shift amount in `rs2[4:0]` and writes the packed halfword result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (zero_extend(32, h) >> shamt)[15:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRL.WS (RV64)
+
+Mnemonic::
+
+psrl.ws _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSRL.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
+and word elements. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['PSRL.WS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSRL.WS logically shifts each packed 32-bit element of `rs1` right by the
+scalar shift amount in `rs2[4:0]` and writes the packed word result to `rd`.
+Bits shifted out are discarded and vacated bit positions are filled with zeros.
+Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (zero_extend(64, w) >> shamt)[31:0]
+X[rd] = d
+----
+
+
+<<<
 ==== PSRL.DBS (RV32)
 
 Mnemonic::
@@ -12563,6 +11885,142 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PSRA.BS
+
+Mnemonic::
+
+psra.bs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSRA.BS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x4, attr: ['PSRA.BS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSRA.BS instruction arithmetically shifts each packed 8-bit element of `rs1`
+right by the shift amount in `rs2[4:0]` and writes the packed byte result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+for i = 0 .. (XLEN/8 - 1):
+    b = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = (sign_extend(40, b) >> shamt)[7:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRA.HS
+
+Mnemonic::
+
+psra.hs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSRA.HS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x4, attr: ['PSRA.HS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSRA.HS instruction arithmetically shifts each packed 16-bit element of `rs1`
+right by the shift amount in `rs2[4:0]` and writes the packed halfword result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (sign_extend(48, h) >> shamt)[15:0]
+X[rd] = d
+----
+
+
+
+<<<
+==== PSRA.WS (RV64)
+
+Mnemonic::
+
+psra.ws _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSRA.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
+and word elements. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x4, attr: ['PSRA.WS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PSRA.WS arithmetically shifts each packed 32-bit element of `rs1` right by the
+scalar shift amount in `rs2[4:0]` and writes the packed word result to `rd`.
+Bits shifted out are discarded and vacated bit positions are filled with copies
+of the sign bit. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (sign_extend(64, w) >> shamt)[31:0]
+X[rd] = d
 ----
 
 
@@ -12740,6 +12198,151 @@ if (rd_p != 0):
 
 
 <<<
+==== PSLLI.B
+
+Mnemonic::
+
+pslli.b _rd_, _rs1_, _uimm3_
+
+Encoding::
+
+PSLLI.B is encoded in the OP-IMM-32 major opcode with packed byte elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 3, name: 'uimm3' },
+    { bits: 4, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PSLLI.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm3` field encodes the 3-bit shift amount for byte elements.
+
+Description::
+
+PSLLI.B shifts each packed 8-bit element of `rs1` left by the immediate shift
+amount encoded in `uimm3` and writes the packed byte result to `rd`. Bits
+shifted out are discarded and vacated bit positions are filled with zeros.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm3[2:0]
+for i = 0 .. (XLEN/8 - 1):
+    b = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = (zero_extend(32, b) << shamt)[7:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSLLI.H
+
+Mnemonic::
+
+pslli.h _rd_, _rs1_, _uimm4_
+
+Encoding::
+
+PSLLI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PSLLI.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm4` field encodes the 4-bit shift amount for halfword elements.
+
+Description::
+
+PSLLI.H shifts each packed 16-bit element of `rs1` left by the immediate shift
+amount encoded in `uimm4` and writes the packed halfword result to `rd`.
+Bits shifted out are discarded and vacated bit positions are filled with zeros.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm4[3:0]
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (zero_extend(32, h) << shamt)[15:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSLLI.W (RV64)
+
+Mnemonic::
+
+pslli.w _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+PSLLI.W is encoded in the OP-IMM-32 major opcode with packed word elements
+and an immediate shift amount. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PSLLI.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for word elements.
+
+Description::
+
+PSLLI.W shifts each packed 32-bit element of `rs1` left by the immediate shift
+amount encoded in `uimm5` and writes the packed word result to `rd`. Bits
+shifted out are discarded and vacated bit positions are filled with zeros.
+Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm5[4:0]
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (zero_extend(64, w) << shamt)[31:0]
+X[rd] = d
+----
+
+
+<<<
 ==== PSLLI.DB (RV32)
 
 Mnemonic::
@@ -12905,6 +12508,153 @@ for i = 0 .. 1:
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
     X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PSRLI.B
+
+Mnemonic::
+
+psrli.b _rd_, _rs1_, _uimm3_
+
+Encoding::
+
+PSRLI.B is encoded in the OP-IMM-32 major opcode with packed byte elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 3, name: 'uimm3' },
+    { bits: 4, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PSRLI.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm3` field encodes the 3-bit shift amount for byte elements.
+
+Description::
+
+PSRLI.B logically shifts each packed 8-bit element of `rs1` right by the
+immediate shift amount encoded in `uimm3` and writes the packed byte result
+to `rd`. Bits shifted out are discarded and vacated bit positions are filled
+with zeros.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm3[2:0]
+for i = 0 .. (XLEN/8 - 1):
+    b = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = (zero_extend(32, b) >> shamt)[7:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRLI.H
+
+Mnemonic::
+
+psrli.h _rd_, _rs1_, _uimm4_
+
+Encoding::
+
+PSRLI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PSRLI.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm4` field encodes the 4-bit shift amount for halfword elements.
+
+Description::
+
+PSRLI.H logically shifts each packed 16-bit element of `rs1` right by the
+immediate shift amount encoded in `uimm4` and writes the packed halfword
+result to `rd`. Bits shifted out are discarded and vacated bit positions are
+filled with zeros.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm4[3:0]
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (zero_extend(32, h) >> shamt)[15:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRLI.W (RV64)
+
+Mnemonic::
+
+psrli.w _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+PSRLI.W is encoded in the OP-IMM-32 major opcode with packed word elements
+and an immediate shift amount. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PSRLI.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for word elements.
+
+Description::
+
+PSRLI.W logically shifts each packed 32-bit element of `rs1` right by the
+immediate shift amount encoded in `uimm5` and writes the packed word result
+to `rd`. Bits shifted out are discarded and vacated bit positions are filled
+with zeros. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm5[4:0]
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (zero_extend(64, w) >> shamt)[31:0]
+X[rd] = d
 ----
 
 
@@ -13080,6 +12830,153 @@ if (rd_p != 0):
 
 
 <<<
+==== PSRAI.B
+
+Mnemonic::
+
+psrai.b _rd_, _rs1_, _uimm3_
+
+Encoding::
+
+PSRAI.B is encoded in the OP-IMM-32 major opcode with packed byte elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 3, name: 'uimm3' },
+    { bits: 4, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['PSRAI.B'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm3` field encodes the 3-bit shift amount for byte elements.
+
+Description::
+
+PSRAI.B arithmetically shifts each packed 8-bit element of `rs1` right by the
+immediate shift amount encoded in `uimm3` and writes the packed byte result
+to `rd`. Bits shifted out are discarded and vacated bit positions are filled
+with copies of the sign bit.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm3[2:0]
+for i = 0 .. (XLEN/8 - 1):
+    b = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = (sign_extend(40, b) >> shamt)[7:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRAI.H
+
+Mnemonic::
+
+psrai.h _rd_, _rs1_, _uimm4_
+
+Encoding::
+
+PSRAI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['PSRAI.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm4` field encodes the 4-bit shift amount for halfword elements.
+
+Description::
+
+PSRAI.H arithmetically shifts each packed 16-bit element of `rs1` right by the
+immediate shift amount encoded in `uimm4` and writes the packed halfword
+result to `rd`. Bits shifted out are discarded and vacated bit positions are
+filled with copies of the sign bit.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm4[3:0]
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (sign_extend(48, h) >> shamt)[15:0]
+X[rd] = d
+----
+
+
+<<<
+==== PSRAI.W (RV64)
+
+Mnemonic::
+
+psrai.w _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+PSRAI.W is encoded in the OP-IMM-32 major opcode with packed word elements
+and an immediate shift amount. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['PSRAI.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for word elements.
+
+Description::
+
+PSRAI.W arithmetically shifts each packed 32-bit element of `rs1` right by the
+immediate shift amount encoded in `uimm5` and writes the packed word result
+to `rd`. Bits shifted out are discarded and vacated bit positions are filled
+with copies of the sign bit. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm5[4:0]
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (sign_extend(64, w) >> shamt)[31:0]
+X[rd] = d
+----
+
+
+<<<
 ==== PSRAI.DB (RV32)
 
 Mnemonic::
@@ -13251,129 +13148,113 @@ if (rd_p != 0):
 
 
 <<<
-==== PSRARI.DH (RV32)
+==== SHA (RV64)
 
 Mnemonic::
 
-psrari.dh _rd_p_, _rs1_p_, _uimm4_
+sha _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSRARI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed halfword elements. Available only in RV32.
+SHA is encoded in the OP-32 major opcode and is available only in RV64.
 
 [wavedrom, ,svg]
 ....
 {reg:[
     { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
     { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PSRARI.DH'] },
-    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x6, attr: ['SHA'] },
+    { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PSRARI.DH (Packed Shift Right Arithmetic Rounding Immediate, Double-wide
-Halfword) performs arithmetic right shift with rounding on each packed 16-bit
-element by a 4-bit unsigned immediate across a double-wide (register-pair)
-source. It is equivalent to two PSRARI.H operations: one on the even
-registers and one on the odd registers of each pair. The destination (`rd_p`)
-and source (`rs1_p`) are register pairs and must specify even register numbers.
-The shifted-out bit immediately below the least-significant result bit is
-added for rounding. Available only in RV32.
+The SHA instruction performs a signed variable shift of `rs1` using the signed
+shift amount in `rs2[7:0]`. Negative shift amounts shift right; non-negative
+shift amounts shift left.
 
 Operation::
 
 [source,pseudocode]
 ----
-// Equivalent to two PSRARI.H operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-shamt = uimm4[3:0]          // 4-bit shift amount for halfwords
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
 
-for i = 0 .. 3:
-    a = signed(s1[(16*i+15):(16*i)])
-    if shamt == 0:
-        d[(16*i+15):(16*i)] = a[15:0]
+if (sshamt < 0):
+    xs1 = sign_extend(128, s1)
+    if (sshamt <= -64):
+        X[rd] = xs1[127:64]
     else:
-        round = a[shamt-1]
-        d[(16*i+15):(16*i)] = ((a >> shamt) + round)[15:0]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
+        X[rd] = (xs1 >> (0 - shamt)[5:0])[63:0]
+else:
+    if (sshamt >= 64):
+        X[rd] = 0
+    else:
+        X[rd] = s1 << shamt[5:0]
 ----
 
 
 <<<
-==== PSRARI.DW (RV32)
+==== SHL (RV64)
 
 Mnemonic::
 
-psrari.dw _rd_p_, _rs1_p_, _uimm5_
+shl _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSRARI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with word elements. Available only in RV32.
+SHL is encoded in the OP-32 major opcode and is available only in RV64.
 
 [wavedrom, ,svg]
 ....
 {reg:[
     { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
     { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PSRARI.DW'] },
-    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['SHL'] },
+    { bits: 1, name: 0x1 },
 ]}
 ....
 
-The `uimm5` field encodes the 5-bit shift amount for word elements.
-
 Description::
 
-PSRARI.DW (Packed Shift Right Arithmetic Rounding Immediate, Double-wide
-Word) performs arithmetic right shift with rounding on each 32-bit word
-element by a 5-bit unsigned immediate across a double-wide (register-pair)
-source. It is equivalent to two SRARI operations: one on the even registers
-and one on the odd registers of each pair. The destination (`rd_p`) and source
-(`rs1_p`) are register pairs and must specify even register numbers. The
-shifted-out bit immediately below the least-significant result bit is added
-for rounding. Available only in RV32.
+The SHL instruction performs an unsigned variable shift of `rs1` using the
+signed shift amount in `rs2[7:0]`. Negative shift amounts shift right;
+non-negative shift amounts shift left.
 
 Operation::
 
 [source,pseudocode]
 ----
-// Equivalent to two SRARI operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-shamt = uimm5[4:0]          // 5-bit shift amount for words
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
 
-for i = 0 .. 1:
-    w = s1[(32*i+31):(32*i)]
-    if shamt == 0:
-        d[(32*i+31):(32*i)] = w
+if (sshamt < 0):
+    xs1 = zero_extend(128, s1)
+    if (sshamt <= -64):
+        X[rd] = xs1[127:64]
     else:
-        round = w[shamt-1]
-        d[(32*i+31):(32*i)] = (signed(w) >> shamt) + round
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
+        X[rd] = (xs1 >> (0 - shamt)[5:0])[63:0]
+else:
+    if (sshamt >= 64):
+        X[rd] = 0
+    else:
+        X[rd] = s1 << shamt[5:0]
 ----
+
+
 
 
 <<<
@@ -13526,545 +13407,6 @@ X[rd] = d
 
 
 <<<
-==== PSSHAR.HS
-
-Mnemonic::
-
-psshar.hs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSHAR.HS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x7, attr: ['PSSHAR.HS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSSHAR.HS instruction performs a signed variable shift on each packed 16-bit
-element of `rs1` using the signed shift amount in `rs2[7:0]`. Right shifts are
-rounded, and left shifts saturate to the signed 16-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]    // signed 16-bit
-
-    if sshamt < 0:
-        // arithmetic right shift with rounding
-        x  = sign_extend(32, h) @ 0b0          // 33-bit
-        y  = (sshamt <= -16) ? x[32:16]
-                             : (x >> (0 - shamt)[3:0])[16:0]
-        r  = (y + 1)[16:1]
-    else:
-        // shift left with signed saturation to 16-bit range
-        shx = (sshamt >= 16) ? (h @ 0x0000)
-                             : (sign_extend(32, h) << shamt[3:0])
-
-        if shx <_s 0xFFFF8000:
-            vxsat = 1
-            r = 0x8000
-        else if shx >_s 0x00007FFF:
-            vxsat = 1
-            r = 0x7FFF
-        else
-            r = shx[15:0]
-
-    d[(16*i+15):(16*i)] = r
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PSSHAR.WS (RV64)
-
-Mnemonic::
-
-psshar.ws _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSHAR.WS is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x7, attr: ['PSSHAR.WS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSSHAR.WS instruction performs a signed variable shift on each packed 32-bit
-element of `rs1` using the signed shift amount in `rs2[7:0]`. Right shifts are
-rounded, and left shifts saturate to the signed 32-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]    // signed 32-bit
-
-    if sshamt < 0:
-        // arithmetic right shift with rounding
-        x  = sign_extend(64, w) @ 0b0          // 65-bit
-        y  = (sshamt <= -32) ? x[64:32]
-                             : (x >> (0 - shamt)[4:0])[32:0]
-        r  = (y + 1)[32:1]
-    else:
-        // shift left with signed saturation to 32-bit range
-        shx = (sshamt >= 32) ? (w @ 0x00000000)
-                             : (sign_extend(64, w) << shamt[4:0])
-
-        if shx <_s 0xFFFFFFFF80000000:
-            vxsat = 1
-            r = 0x80000000
-        else if shx >_s 0x000000007FFFFFFF:
-            vxsat = 1
-            r = 0x7FFFFFFF
-        else
-            r = shx[31:0]
-
-    d[(32*i+31):(32*i)] = r
-
-X[rd] = d
-----
-
-
-<<<
-==== PSSHL.HS
-
-Mnemonic::
-
-psshl.hs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSHL.HS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x2, attr: ['PSSHL.HS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSSHL.HS instruction performs an unsigned variable shift on each packed 16-bit
-element of `rs1` using the signed shift amount in `rs2[7:0]`. Left shifts saturate
-to the signed 16-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][7:0]
-sshamt = signed(shamt)
-
-for i = 0 .. (XLEN/16 - 1):
-    h  = s1[(16*i+15):(16*i)]
-    xh = zero_extend(32, h)
-
-    if sshamt < 0:
-        // logical shift right by (-sshamt), saturating not required
-        if sshamt <= -16:
-            r = xh[31:16]
-        else
-            r = (xh >> (0 - shamt)[3:0])[15:0]
-    else:
-        // shift left with unsigned saturation to 16-bit range
-        if sshamt >= 16:
-            shx = (h @ 0x0000)
-        else
-            shx = xh << shamt[3:0]
-
-        if shx >_u 0x0000FFFF:
-            vxsat = 1
-            r = 0xFFFF
-        else
-            r = shx[15:0]
-
-    d[(16*i+15):(16*i)] = r
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PSSHL.WS (RV64)
-
-Mnemonic::
-
-psshl.ws _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSHL.WS is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x2, attr: ['PSSHL.WS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSSHL.WS instruction performs an unsigned variable shift on each packed 32-bit
-element of `rs1` using the signed shift amount in `rs2[7:0]`. Left shifts
-saturate to the unsigned 32-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][7:0]
-sshamt = signed(shamt)
-
-for i = 0 .. (XLEN/32 - 1):
-    w  = s1[(32*i+32):(32*i)]
-    xw = zero_extend(64, w)
-
-    if sshamt < 0:
-        // logical shift right by (-sshamt), saturating not required
-        if sshamt <= -32:
-            r = xh[63:32]
-        else
-            r = (xh >> (0 - shamt)[4:0])[31:0]
-    else:
-        // shift left with unsigned saturation to 32-bit range
-        if sshamt >= 32:
-            shx = (w @ 0x00000000)
-        else
-            shx = xw << shamt[4:0]
-
-        if shx >_u 0xFFFFFFFF:
-            vxsat = 1
-            r = 0xFFFFFFFF
-        else
-            r = shx[31:0]
-
-    d[(32*i+31):(32*i)] = r
-
-X[rd] = d
-----
-
-
-<<<
-==== PSSHLR.HS
-
-Mnemonic::
-
-psshlr.hs _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSHLR.HS is encoded in the OP-IMM-32 major opcode.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['PSSHLR.HS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSSHLR.HS instruction performs an unsigned variable shift on each packed
-16-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
-shifts are rounded, and left shifts saturate to the unsigned 16-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]    // signed 16-bit
-
-    if sshamt < 0:
-        // logical right shift with rounding
-        x  = zero_extend(32, h) @ 0b0          // 33-bit
-        y  = (sshamt <= -16) ? x[32:16]
-                             : (x >> (0 - shamt)[3:0])[16:0]
-        r  = (y + 1)[16:1]
-    else:
-        // shift left with unsigned saturation to 16-bit range
-        shx = (sshamt >= 16) ? (h @ 0x0000)
-                             : (sign_extend(32, h) << shamt[3:0])
-
-        if shx >_u 0x0000FFFF:
-            vxsat = 1
-            r = 0xFFFF
-        else
-            r = shx[15:0]
-
-    d[(16*i+15):(16*i)] = r
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PSSHLR.WS (RV64)
-
-Mnemonic::
-
-psshlr.ws _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PSSHLR.WS is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['PSSHLR.WS'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PSSHLR.WS instruction performs a unsigned variable shift on each packed
-32-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
-shifts are rounded, and left shifts saturate to the unsigned 32-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]    // signed 32-bit
-
-    if sshamt < 0:
-        // logical right shift with rounding
-        x  = zero_extend(64, w) @ 0b0          // 65-bit
-        y  = (sshamt <= -32) ? x[64:32]
-                             : (x >> (0 - shamt)[4:0])[32:0]
-        r  = (y + 1)[32:1]
-    else:
-        // shift left with unsigned saturation to 32-bit range
-        shx = (sshamt >= 32) ? (h @ 0x00000000)
-                             : (zero_extend(32, w) << shamt[4:0])
-
-        if shx >_u 0x00000000FFFFFFFF:
-            vxsat = 1
-            r = 0xFFFF0000
-        else
-            r = shx[31:0]
-
-    d[(32*i+31):(32*i)] = r
-
-X[rd] = d
-----
-
-
-<<<
-==== PSSLAI.H
-
-Mnemonic::
-
-psslai.h _rd_, _rs1_, _uimm4_
-
-Encoding::
-
-PSSLAI.H is encoded in the OP-IMM-32 major opcode with the w-uimm format
-and packed halfword elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PSSLAI.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm4` field encodes the 4-bit shift amount for halfword elements.
-
-Description::
-
-PSSLAI.H (Packed Saturating Shift Left Arithmetic Immediate, Halfword) shifts
-each packed signed 16-bit element of `rs1` left by a 4-bit unsigned immediate.
-If the shifted result overflows the signed 16-bit range [-2^15^, 2^15^-1], the
-result is saturated to the nearest boundary and the `vxsat` flag is set. The
-packed halfword results are written to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-shamt = uimm4[3:0]          // 4-bit shift amount for halfwords
-
-for i = 0 .. (XLEN/16 - 1):
-    a = signed(s1[(16*i+15):(16*i)])
-    result = a << shamt
-    if result < -2^15:
-        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if result > 2^15 - 1:
-        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
-    else:
-        d[(16*i+15):(16*i)] = result[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PSSLAI.W (RV64)
-
-Mnemonic::
-
-psslai.w _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-PSSLAI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format
-and word elements. Available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PSSLAI.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount for word elements.
-
-Description::
-
-PSSLAI.W (Packed Saturating Shift Left Arithmetic Immediate, Word) shifts each
-packed signed 32-bit element of `rs1` left by a 5-bit unsigned immediate. If
-the shifted result overflows the signed 32-bit range [-2^31^, 2^31^-1], the
-result is saturated to the nearest boundary and the `vxsat` flag is set. The
-packed word results are written to `rd`. Available only in RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-shamt = uimm5[4:0]          // 5-bit shift amount for words
-
-for i = 0 .. (XLEN/32 - 1):
-    a = signed(s1[(32*i+31):(32*i)])
-    result = a << shamt
-    if result < -2^31:
-        d[(32*i+31):(32*i)] = 0x80000000; vxsat = 1
-    else if result > 2^31 - 1:
-        d[(32*i+31):(32*i)] = 0x7FFFFFFF; vxsat = 1
-    else:
-        d[(32*i+31):(32*i)] = result[31:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
 ==== SSHA (RV32)
 
 Mnemonic::
@@ -14126,548 +13468,6 @@ else:
 Notes::
 
 * `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== SSHAR (RV32)
-
-Mnemonic::
-
-sshar _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SSHAR is encoded in the OP-IMM-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x7, attr: ['SSHAR'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SSHAR instruction performs a signed variable shift of `rs1` using the signed
-shift amount in `rs2[7:0]`. Right shifts are rounded, and left shifts saturate
-to the signed 32-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-if sshamt < 0:
-    // arithmetic right shift with rounding
-    x  = sign_extend(64, s1) @ 0b0            // 65-bit
-    y  = (sshamt <= -32) ? x[64:32]
-                         : (x >> (0 - shamt)[4:0])[32:0]
-    X[rd] = (y + 1)[32:1]
-else:
-    // shift left with signed saturation to 32-bit range
-    shx = (sshamt >= 32) ? (s1 @ 0x00000000)
-                         : (sign_extend(64, s1) << shamt[4:0])
-
-    if shx <_s 0xFFFFFFFF80000000:
-        vxsat = 1
-        X[rd] = 0x80000000
-    else if shx >_s 0x000000007FFFFFFF:
-        vxsat = 1
-        X[rd] = 0x7FFFFFFF
-    else
-        X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs.
-
-<<<
-==== SSHL (RV32)
-
-Mnemonic::
-
-sshl _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SSHL is encoded in the OP-IMM-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x2, attr: ['SSHL'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SSHL instruction performs an unsigned variable shift of `rs1` using the signed
-shift amount in `rs2[7:0]`. Left shifts saturate to the unsigned 32-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-xs1    = zero_extend(64, s1)
-
-if sshamt < 0:
-    if sshamt <= -32:
-        X[rd] = xs1[63:32]
-    else
-        X[rd] = (xs1 >> (0 - shamt)[4:0])[31:0]
-else:
-    shx = (sshamt >= 32) ? (s1 @ 0x00000000)
-                         : (xs1 << shamt[4:0])
-
-    if shx >_u 0x00000000FFFFFFFF:
-        vxsat = 1
-        X[rd] = 0xFFFFFFFF
-    else
-        X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== SSHLR (RV32)
-
-Mnemonic::
-
-sshlr _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SSHLR is encoded in the OP-IMM-32 major opcode and is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['SSHLR'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SSHLR instruction performs an unsigned variable shift of `rs1` using the signed
-shift amount in `rs2[7:0]`. Right shifts are rounded, and left shifts saturate
-to the signed 32-bit range.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-if sshamt < 0:
-    // arithmetic right shift with rounding
-    x  = zero_extend(64, s1) @ 0b0            // 65-bit
-    y  = (sshamt <= -32) ? x[64:32]
-                         : (x >> (0 - shamt)[4:0])[32:0]
-    X[rd] = (y + 1)[32:1]
-else:
-    // shift left with unsigned saturation to 32-bit range
-    shx = (sshamt >= 32) ? (s1 @ 0x00000000)
-                         : (zero_extend(64, s1) << shamt[4:0])
-
-    if shx >_u 0x00000000FFFFFFFF:
-        vxsat = 1
-        X[rd] = 0xFFFFFFFF
-    else
-        X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs.
-
-<<<
-==== SSLAI (RV32)
-
-Mnemonic::
-
-sslai _rd_, _rs1_, _uimm5_
-
-Encoding::
-
-SSLAI is encoded in the OP-IMM-32 major opcode with the w-uimm format as
-a scalar XLEN-wide saturating shift left arithmetic immediate.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['SSLAI'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount.
-
-Description::
-
-SSLAI shifts the signed XLEN-wide value in `rs1` left by the immediate
-shift amount and writes the result to `rd` with signed saturation. If the
-shifted result overflows the signed XLEN-wide range, the result is clamped
-to the nearest boundary and the `vxsat` overflow flag is set.
-
-Operation::
-
-[source,pseudocode]
-----
-a = signed(X[rs1])
-shamt = uimm5[4:0]
-
-result = a << shamt
-
-if result < -(2^(XLEN-1)):
-    d = to_bits(XLEN, -(2^(XLEN-1))); vxsat = 1
-else if result > 2^(XLEN-1) - 1:
-    d = to_bits(XLEN, 2^(XLEN-1) - 1); vxsat = 1
-else:
-    d = to_bits(XLEN, result)
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== SRARI
-
-Mnemonic::
-
-srari _rd_, _rs1_, _uimm5_ (RV32) +
-srari _rd_, _rs1_, _uimm6_ (RV64)
-
-Encoding::
-
-SRARI is encoded in the OP-IMM-32 major opcode with the w-uimm format as
-a scalar XLEN-wide shift right arithmetic with rounding. In RV32 the shift
-amount is 5 bits; in RV64 the shift amount is 6 bits.
-
-RV32:
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 7, name: '01xxxxx' },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['SRARI'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm5` field encodes the 5-bit shift amount for RV32.
-
-RV64:
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 5, name: 'rs1' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['SRARI'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-The `uimm6` field encodes the 6-bit shift amount for RV64.
-
-Description::
-
-SRARI arithmetically shifts the XLEN-wide value in `rs1` right by the
-immediate shift amount with rounding and writes the result to `rd`. A
-rounding bit is added before the final shift so that the result is rounded
-to the nearest integer (round-to-nearest, ties round up). When the shift
-amount is zero the source value is written unchanged.
-
-Operation::
-
-[source,pseudocode]
-----
-a = X[rs1]
-shamt = uimm6[log2(XLEN)-1:0]
-
-if shamt == 0:
-    d = a
-else:
-    // Append rounding bit, shift, then extract rounded result
-    shx[(XLEN+1):0] = ((sign_extend(2*XLEN, a) @ 0b0) >> shamt)[(XLEN+1):0]
-    d = (shx + 1)[XLEN:1]
-
-X[rd] = d
-----
-
-
-<<<
-==== SHA (RV64)
-
-Mnemonic::
-
-sha _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SHA is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x6, attr: ['SHA'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SHA instruction performs a signed variable shift of `rs1` using the signed
-shift amount in `rs2[7:0]`. Negative shift amounts shift right; non-negative
-shift amounts shift left.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-if (sshamt < 0):
-    xs1 = sign_extend(128, s1)
-    if (sshamt <= -64):
-        X[rd] = xs1[127:64]
-    else:
-        X[rd] = (xs1 >> (0 - shamt)[5:0])[63:0]
-else:
-    if (sshamt >= 64):
-        X[rd] = 0
-    else:
-        X[rd] = s1 << shamt[5:0]
-----
-
-
-<<<
-==== SHAR (RV64)
-
-Mnemonic::
-
-shar _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SHAR is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x7, attr: ['SHAR'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SHAR instruction matches SHA for non-negative shift amounts. For negative
-shift amounts it performs a rounding arithmetic right shift as specified in the
-Sail code.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-if (sshamt < 0):
-    xs1 = sign_extend(128, s1) @ 0b0          // 129-bit
-    if (sshamt <= -64):
-        shx = xs1[128:64]
-    else:
-        shx = (xs1 >> (0 - shamt)[5:0])[64:0]
-    X[rd] = (shx + 1)[64:1]
-else:
-    if (sshamt >= 64):
-        X[rd] = 0
-    else:
-        X[rd] = s1 << shamt[5:0]
-----
-
-
-
-<<<
-==== SHL (RV64)
-
-Mnemonic::
-
-shl _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SHL is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x2, attr: ['SHL'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SHL instruction performs an unsigned variable shift of `rs1` using the
-signed shift amount in `rs2[7:0]`. Negative shift amounts shift right;
-non-negative shift amounts shift left.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-if (sshamt < 0):
-    xs1 = zero_extend(128, s1)
-    if (sshamt <= -64):
-        X[rd] = xs1[127:64]
-    else:
-        X[rd] = (xs1 >> (0 - shamt)[5:0])[63:0]
-else:
-    if (sshamt >= 64):
-        X[rd] = 0
-    else:
-        X[rd] = s1 << shamt[5:0]
-----
-
-
-<<<
-==== SHLR (RV64)
-
-Mnemonic::
-
-shlr _rd_, _rs1_, _rs2_
-
-Encoding::
-
-SHLR is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['SHLR'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The SHLR instruction matches SHL for non-negative shift amounts. For negative
-shift amounts it performs a rounding logical right shift as specified in the
-Sail code.
-
-Operation::
-
-[source,pseudocode]
-----
-s1     = X[rs1]
-shamt  = X[rs2][7:0]
-sshamt = signed(shamt)
-
-if (sshamt < 0):
-    xs1 = zero_extend(128, s1) @ 0b0          // 129-bit
-    if (sshamt <= -64):
-        shx = xs1[128:64]
-    else:
-        shx = (xs1 >> (0 - shamt)[5:0])[64:0]
-    X[rd] = (shx + 1)[64:1]
-else:
-    if (sshamt >= 64):
-        X[rd] = 0
-    else:
-        X[rd] = s1 << shamt[5:0]
-----
-
 
 <<<
 ==== PSSHA.DHS (RV32)
@@ -14818,6 +13618,212 @@ if (rd_p != 0):
 Notes::
 
 * `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSSHAR.HS
+
+Mnemonic::
+
+psshar.hs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSHAR.HS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x7, attr: ['PSSHAR.HS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSSHAR.HS instruction performs a signed variable shift on each packed 16-bit
+element of `rs1` using the signed shift amount in `rs2[7:0]`. Right shifts are
+rounded, and left shifts saturate to the signed 16-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]    // signed 16-bit
+
+    if sshamt < 0:
+        // arithmetic right shift with rounding
+        x  = sign_extend(32, h) @ 0b0          // 33-bit
+        y  = (sshamt <= -16) ? x[32:16]
+                             : (x >> (0 - shamt)[3:0])[16:0]
+        r  = (y + 1)[16:1]
+    else:
+        // shift left with signed saturation to 16-bit range
+        shx = (sshamt >= 16) ? (h @ 0x0000)
+                             : (sign_extend(32, h) << shamt[3:0])
+
+        if shx <_s 0xFFFF8000:
+            vxsat = 1
+            r = 0x8000
+        else if shx >_s 0x00007FFF:
+            vxsat = 1
+            r = 0x7FFF
+        else
+            r = shx[15:0]
+
+    d[(16*i+15):(16*i)] = r
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSSHAR.WS (RV64)
+
+Mnemonic::
+
+psshar.ws _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSHAR.WS is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x7, attr: ['PSSHAR.WS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSSHAR.WS instruction performs a signed variable shift on each packed 32-bit
+element of `rs1` using the signed shift amount in `rs2[7:0]`. Right shifts are
+rounded, and left shifts saturate to the signed 32-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]    // signed 32-bit
+
+    if sshamt < 0:
+        // arithmetic right shift with rounding
+        x  = sign_extend(64, w) @ 0b0          // 65-bit
+        y  = (sshamt <= -32) ? x[64:32]
+                             : (x >> (0 - shamt)[4:0])[32:0]
+        r  = (y + 1)[32:1]
+    else:
+        // shift left with signed saturation to 32-bit range
+        shx = (sshamt >= 32) ? (w @ 0x00000000)
+                             : (sign_extend(64, w) << shamt[4:0])
+
+        if shx <_s 0xFFFFFFFF80000000:
+            vxsat = 1
+            r = 0x80000000
+        else if shx >_s 0x000000007FFFFFFF:
+            vxsat = 1
+            r = 0x7FFFFFFF
+        else
+            r = shx[31:0]
+
+    d[(32*i+31):(32*i)] = r
+
+X[rd] = d
+----
+
+
+<<<
+==== SSHAR (RV32)
+
+Mnemonic::
+
+sshar _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SSHAR is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x7, attr: ['SSHAR'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The SSHAR instruction performs a signed variable shift of `rs1` using the signed
+shift amount in `rs2[7:0]`. Right shifts are rounded, and left shifts saturate
+to the signed 32-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+if sshamt < 0:
+    // arithmetic right shift with rounding
+    x  = sign_extend(64, s1) @ 0b0            // 65-bit
+    y  = (sshamt <= -32) ? x[64:32]
+                         : (x >> (0 - shamt)[4:0])[32:0]
+    X[rd] = (y + 1)[32:1]
+else:
+    // shift left with signed saturation to 32-bit range
+    shx = (sshamt >= 32) ? (s1 @ 0x00000000)
+                         : (sign_extend(64, s1) << shamt[4:0])
+
+    if shx <_s 0xFFFFFFFF80000000:
+        vxsat = 1
+        X[rd] = 0x80000000
+    else if shx >_s 0x000000007FFFFFFF:
+        vxsat = 1
+        X[rd] = 0x7FFFFFFF
+    else
+        X[rd] = shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs.
 
 <<<
 ==== PSSHAR.DHS (RV32)
@@ -14976,6 +13982,207 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
+==== PSSHL.HS
+
+Mnemonic::
+
+psshl.hs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSHL.HS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x2, attr: ['PSSHL.HS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSSHL.HS instruction performs an unsigned variable shift on each packed 16-bit
+element of `rs1` using the signed shift amount in `rs2[7:0]`. Left shifts saturate
+to the signed 16-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][7:0]
+sshamt = signed(shamt)
+
+for i = 0 .. (XLEN/16 - 1):
+    h  = s1[(16*i+15):(16*i)]
+    xh = zero_extend(32, h)
+
+    if sshamt < 0:
+        // logical shift right by (-sshamt), saturating not required
+        if sshamt <= -16:
+            r = xh[31:16]
+        else
+            r = (xh >> (0 - shamt)[3:0])[15:0]
+    else:
+        // shift left with unsigned saturation to 16-bit range
+        if sshamt >= 16:
+            shx = (h @ 0x0000)
+        else
+            shx = xh << shamt[3:0]
+
+        if shx >_u 0x0000FFFF:
+            vxsat = 1
+            r = 0xFFFF
+        else
+            r = shx[15:0]
+
+    d[(16*i+15):(16*i)] = r
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSSHL.WS (RV64)
+
+Mnemonic::
+
+psshl.ws _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSHL.WS is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x2, attr: ['PSSHL.WS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSSHL.WS instruction performs an unsigned variable shift on each packed 32-bit
+element of `rs1` using the signed shift amount in `rs2[7:0]`. Left shifts
+saturate to the unsigned 32-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][7:0]
+sshamt = signed(shamt)
+
+for i = 0 .. (XLEN/32 - 1):
+    w  = s1[(32*i+32):(32*i)]
+    xw = zero_extend(64, w)
+
+    if sshamt < 0:
+        // logical shift right by (-sshamt), saturating not required
+        if sshamt <= -32:
+            r = xh[63:32]
+        else
+            r = (xh >> (0 - shamt)[4:0])[31:0]
+    else:
+        // shift left with unsigned saturation to 32-bit range
+        if sshamt >= 32:
+            shx = (w @ 0x00000000)
+        else
+            shx = xw << shamt[4:0]
+
+        if shx >_u 0xFFFFFFFF:
+            vxsat = 1
+            r = 0xFFFFFFFF
+        else
+            r = shx[31:0]
+
+    d[(32*i+31):(32*i)] = r
+
+X[rd] = d
+----
+
+
+<<<
+==== SSHL (RV32)
+
+Mnemonic::
+
+sshl _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SSHL is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x2, attr: ['SSHL'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The SSHL instruction performs an unsigned variable shift of `rs1` using the signed
+shift amount in `rs2[7:0]`. Left shifts saturate to the unsigned 32-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+xs1    = zero_extend(64, s1)
+
+if sshamt < 0:
+    if sshamt <= -32:
+        X[rd] = xs1[63:32]
+    else
+        X[rd] = (xs1 >> (0 - shamt)[4:0])[31:0]
+else:
+    shx = (sshamt >= 32) ? (s1 @ 0x00000000)
+                         : (xs1 << shamt[4:0])
+
+    if shx >_u 0x00000000FFFFFFFF:
+        vxsat = 1
+        X[rd] = 0xFFFFFFFF
+    else
+        X[rd] = shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PSSHL.DHS (RV32)
 
 Mnemonic::
@@ -15118,6 +14325,141 @@ if (rd_p != 0):
 Notes::
 
 * `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSSHLR.HS
+
+Mnemonic::
+
+psshlr.hs _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSHLR.HS is encoded in the OP-IMM-32 major opcode.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['PSSHLR.HS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSSHLR.HS instruction performs an unsigned variable shift on each packed
+16-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
+shifts are rounded, and left shifts saturate to the unsigned 16-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]    // signed 16-bit
+
+    if sshamt < 0:
+        // logical right shift with rounding
+        x  = zero_extend(32, h) @ 0b0          // 33-bit
+        y  = (sshamt <= -16) ? x[32:16]
+                             : (x >> (0 - shamt)[3:0])[16:0]
+        r  = (y + 1)[16:1]
+    else:
+        // shift left with unsigned saturation to 16-bit range
+        shx = (sshamt >= 16) ? (h @ 0x0000)
+                             : (sign_extend(32, h) << shamt[3:0])
+
+        if shx >_u 0x0000FFFF:
+            vxsat = 1
+            r = 0xFFFF
+        else
+            r = shx[15:0]
+
+    d[(16*i+15):(16*i)] = r
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSSHLR.WS (RV64)
+
+Mnemonic::
+
+psshlr.ws _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PSSHLR.WS is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['PSSHLR.WS'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PSSHLR.WS instruction performs a unsigned variable shift on each packed
+32-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
+shifts are rounded, and left shifts saturate to the unsigned 32-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]    // signed 32-bit
+
+    if sshamt < 0:
+        // logical right shift with rounding
+        x  = zero_extend(64, w) @ 0b0          // 65-bit
+        y  = (sshamt <= -32) ? x[64:32]
+                             : (x >> (0 - shamt)[4:0])[32:0]
+        r  = (y + 1)[32:1]
+    else:
+        // shift left with unsigned saturation to 32-bit range
+        shx = (sshamt >= 32) ? (h @ 0x00000000)
+                             : (zero_extend(32, w) << shamt[4:0])
+
+        if shx >_u 0x00000000FFFFFFFF:
+            vxsat = 1
+            r = 0xFFFF0000
+        else
+            r = shx[31:0]
+
+    d[(32*i+31):(32*i)] = r
+
+X[rd] = d
+----
+
 
 <<<
 ==== PSSHLR.DHS (RV32)
@@ -15270,6 +14612,187 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
+==== PSSLAI.H
+
+Mnemonic::
+
+psslai.h _rd_, _rs1_, _uimm4_
+
+Encoding::
+
+PSSLAI.H is encoded in the OP-IMM-32 major opcode with the w-uimm format
+and packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PSSLAI.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm4` field encodes the 4-bit shift amount for halfword elements.
+
+Description::
+
+PSSLAI.H (Packed Saturating Shift Left Arithmetic Immediate, Halfword) shifts
+each packed signed 16-bit element of `rs1` left by a 4-bit unsigned immediate.
+If the shifted result overflows the signed 16-bit range [-2^15^, 2^15^-1], the
+result is saturated to the nearest boundary and the `vxsat` flag is set. The
+packed halfword results are written to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+shamt = uimm4[3:0]          // 4-bit shift amount for halfwords
+
+for i = 0 .. (XLEN/16 - 1):
+    a = signed(s1[(16*i+15):(16*i)])
+    result = a << shamt
+    if result < -2^15:
+        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
+    else if result > 2^15 - 1:
+        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
+    else:
+        d[(16*i+15):(16*i)] = result[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PSSLAI.W (RV64)
+
+Mnemonic::
+
+psslai.w _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+PSSLAI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format
+and word elements. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PSSLAI.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for word elements.
+
+Description::
+
+PSSLAI.W (Packed Saturating Shift Left Arithmetic Immediate, Word) shifts each
+packed signed 32-bit element of `rs1` left by a 5-bit unsigned immediate. If
+the shifted result overflows the signed 32-bit range [-2^31^, 2^31^-1], the
+result is saturated to the nearest boundary and the `vxsat` flag is set. The
+packed word results are written to `rd`. Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+shamt = uimm5[4:0]          // 5-bit shift amount for words
+
+for i = 0 .. (XLEN/32 - 1):
+    a = signed(s1[(32*i+31):(32*i)])
+    result = a << shamt
+    if result < -2^31:
+        d[(32*i+31):(32*i)] = 0x80000000; vxsat = 1
+    else if result > 2^31 - 1:
+        d[(32*i+31):(32*i)] = 0x7FFFFFFF; vxsat = 1
+    else:
+        d[(32*i+31):(32*i)] = result[31:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== SSLAI (RV32)
+
+Mnemonic::
+
+sslai _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+SSLAI is encoded in the OP-IMM-32 major opcode with the w-uimm format as
+a scalar XLEN-wide saturating shift left arithmetic immediate.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['SSLAI'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount.
+
+Description::
+
+SSLAI shifts the signed XLEN-wide value in `rs1` left by the immediate
+shift amount and writes the result to `rd` with signed saturation. If the
+shifted result overflows the signed XLEN-wide range, the result is clamped
+to the nearest boundary and the `vxsat` overflow flag is set.
+
+Operation::
+
+[source,pseudocode]
+----
+a = signed(X[rs1])
+shamt = uimm5[4:0]
+
+result = a << shamt
+
+if result < -(2^(XLEN-1)):
+    d = to_bits(XLEN, -(2^(XLEN-1))); vxsat = 1
+else if result > 2^(XLEN-1) - 1:
+    d = to_bits(XLEN, 2^(XLEN-1) - 1); vxsat = 1
+else:
+    d = to_bits(XLEN, result)
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PSSLAI.DH (RV32)
 
 Mnemonic::
@@ -15404,6 +14927,483 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
+==== SSHLR (RV32)
+
+Mnemonic::
+
+sshlr _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SSHLR is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['SSHLR'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The SSHLR instruction performs an unsigned variable shift of `rs1` using the signed
+shift amount in `rs2[7:0]`. Right shifts are rounded, and left shifts saturate
+to the signed 32-bit range.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+if sshamt < 0:
+    // arithmetic right shift with rounding
+    x  = zero_extend(64, s1) @ 0b0            // 65-bit
+    y  = (sshamt <= -32) ? x[64:32]
+                         : (x >> (0 - shamt)[4:0])[32:0]
+    X[rd] = (y + 1)[32:1]
+else:
+    // shift left with unsigned saturation to 32-bit range
+    shx = (sshamt >= 32) ? (s1 @ 0x00000000)
+                         : (zero_extend(64, s1) << shamt[4:0])
+
+    if shx >_u 0x00000000FFFFFFFF:
+        vxsat = 1
+        X[rd] = 0xFFFFFFFF
+    else
+        X[rd] = shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs.
+
+<<<
+==== SHAR (RV64)
+
+Mnemonic::
+
+shar _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SHAR is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x7, attr: ['SHAR'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The SHAR instruction matches SHA for non-negative shift amounts. For negative
+shift amounts it performs a rounding arithmetic right shift as specified in the
+Sail code.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+if (sshamt < 0):
+    xs1 = sign_extend(128, s1) @ 0b0          // 129-bit
+    if (sshamt <= -64):
+        shx = xs1[128:64]
+    else:
+        shx = (xs1 >> (0 - shamt)[5:0])[64:0]
+    X[rd] = (shx + 1)[64:1]
+else:
+    if (sshamt >= 64):
+        X[rd] = 0
+    else:
+        X[rd] = s1 << shamt[5:0]
+----
+
+
+
+<<<
+==== SHLR (RV64)
+
+Mnemonic::
+
+shlr _rd_, _rs1_, _rs2_
+
+Encoding::
+
+SHLR is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['SHLR'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The SHLR instruction matches SHL for non-negative shift amounts. For negative
+shift amounts it performs a rounding logical right shift as specified in the
+Sail code.
+
+Operation::
+
+[source,pseudocode]
+----
+s1     = X[rs1]
+shamt  = X[rs2][7:0]
+sshamt = signed(shamt)
+
+if (sshamt < 0):
+    xs1 = zero_extend(128, s1) @ 0b0          // 129-bit
+    if (sshamt <= -64):
+        shx = xs1[128:64]
+    else:
+        shx = (xs1 >> (0 - shamt)[5:0])[64:0]
+    X[rd] = (shx + 1)[64:1]
+else:
+    if (sshamt >= 64):
+        X[rd] = 0
+    else:
+        X[rd] = s1 << shamt[5:0]
+----
+
+
+<<<
+==== PSRARI.H
+
+Mnemonic::
+
+psrari.h _rd_, _rs1_, _uimm4_
+
+Encoding::
+
+PSRARI.H is encoded in the OP-IMM-32 major opcode with packed halfword elements
+and an immediate shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PSRARI.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm4` field encodes the 4-bit shift amount for halfword elements.
+
+Description::
+
+PSRARI.H arithmetically shifts each packed 16-bit element of `rs1` right by
+the immediate shift amount encoded in `uimm4` with rounding and writes the
+packed halfword result to `rd`. A rounding bit is added before the shift so that
+the result is rounded to the nearest integer (round-to-nearest, ties round up).
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm4[3:0]
+for i = 0 .. (XLEN/16 - 1):
+    h = s1[(16*i+15):(16*i)]
+    // Append rounding bit, shift, then extract rounded result
+    shx[(16+1):0] = ((sign_extend(48, h) @ 0b0) >> shamt)[(16+1):0]
+    d[(16*i+15):(16*i)] = (shx + 1)[16:1]
+X[rd] = d
+----
+
+
+<<<
+==== PSRARI.W (RV64)
+
+Mnemonic::
+
+psrari.w _rd_, _rs1_, _uimm5_
+
+Encoding::
+
+PSRARI.W is encoded in the OP-IMM-32 major opcode with packed word elements
+and an immediate shift amount. Available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PSRARI.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for word elements.
+
+Description::
+
+PSRARI.W arithmetically shifts each packed 32-bit element of `rs1` right by
+the immediate shift amount encoded in `uimm5` with rounding and writes the
+packed word result to `rd`. A rounding bit is added before the shift so that the
+result is rounded to the nearest integer (round-to-nearest, ties round up).
+Available only in RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm5[4:0]
+for i = 0 .. (XLEN/32 - 1):
+    w = s1[(32*i+31):(32*i)]
+    // Append rounding bit, shift, then extract rounded result
+    shx[(32+1):0] = ((sign_extend(64, w) @ 0b0) >> shamt)[(32+1):0]
+    d[(32*i+31):(32*i)] = (shx + 1)[32:1]
+X[rd] = d
+----
+
+
+<<<
+==== SRARI
+
+Mnemonic::
+
+srari _rd_, _rs1_, _uimm5_ (RV32) +
+srari _rd_, _rs1_, _uimm6_ (RV64)
+
+Encoding::
+
+SRARI is encoded in the OP-IMM-32 major opcode with the w-uimm format as
+a scalar XLEN-wide shift right arithmetic with rounding. In RV32 the shift
+amount is 5 bits; in RV64 the shift amount is 6 bits.
+
+RV32:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 7, name: '01xxxxx' },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['SRARI'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for RV32.
+
+RV64:
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 5, name: 'rs1' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['SRARI'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+The `uimm6` field encodes the 6-bit shift amount for RV64.
+
+Description::
+
+SRARI arithmetically shifts the XLEN-wide value in `rs1` right by the
+immediate shift amount with rounding and writes the result to `rd`. A
+rounding bit is added before the final shift so that the result is rounded
+to the nearest integer (round-to-nearest, ties round up). When the shift
+amount is zero the source value is written unchanged.
+
+Operation::
+
+[source,pseudocode]
+----
+a = X[rs1]
+shamt = uimm6[log2(XLEN)-1:0]
+
+if shamt == 0:
+    d = a
+else:
+    // Append rounding bit, shift, then extract rounded result
+    shx[(XLEN+1):0] = ((sign_extend(2*XLEN, a) @ 0b0) >> shamt)[(XLEN+1):0]
+    d = (shx + 1)[XLEN:1]
+
+X[rd] = d
+----
+
+
+<<<
+==== PSRARI.DH (RV32)
+
+Mnemonic::
+
+psrari.dh _rd_p_, _rs1_p_, _uimm4_
+
+Encoding::
+
+PSRARI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
+w-uimm format with packed halfword elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PSRARI.DH'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PSRARI.DH (Packed Shift Right Arithmetic Rounding Immediate, Double-wide
+Halfword) performs arithmetic right shift with rounding on each packed 16-bit
+element by a 4-bit unsigned immediate across a double-wide (register-pair)
+source. It is equivalent to two PSRARI.H operations: one on the even
+registers and one on the odd registers of each pair. The destination (`rd_p`)
+and source (`rs1_p`) are register pairs and must specify even register numbers.
+The shifted-out bit immediately below the least-significant result bit is
+added for rounding. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PSRARI.H operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+shamt = uimm4[3:0]          // 4-bit shift amount for halfwords
+
+for i = 0 .. 3:
+    a = signed(s1[(16*i+15):(16*i)])
+    if shamt == 0:
+        d[(16*i+15):(16*i)] = a[15:0]
+    else:
+        round = a[shamt-1]
+        d[(16*i+15):(16*i)] = ((a >> shamt) + round)[15:0]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PSRARI.DW (RV32)
+
+Mnemonic::
+
+psrari.dw _rd_p_, _rs1_p_, _uimm5_
+
+Encoding::
+
+PSRARI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
+w-uimm format with word elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PSRARI.DW'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+The `uimm5` field encodes the 5-bit shift amount for word elements.
+
+Description::
+
+PSRARI.DW (Packed Shift Right Arithmetic Rounding Immediate, Double-wide
+Word) performs arithmetic right shift with rounding on each 32-bit word
+element by a 5-bit unsigned immediate across a double-wide (register-pair)
+source. It is equivalent to two SRARI operations: one on the even registers
+and one on the odd registers of each pair. The destination (`rd_p`) and source
+(`rs1_p`) are register pairs and must specify even register numbers. The
+shifted-out bit immediately below the least-significant result bit is added
+for rounding. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two SRARI operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+shamt = uimm5[4:0]          // 5-bit shift amount for words
+
+for i = 0 .. 1:
+    w = s1[(32*i+31):(32*i)]
+    if shamt == 0:
+        d[(32*i+31):(32*i)] = w
+    else:
+        round = w[shamt-1]
+        d[(32*i+31):(32*i)] = (signed(w) >> shamt) + round
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+<<<
 === Pair Operations
 
 ==== PPAIRE.B
@@ -15508,6 +15508,126 @@ for i = 0 .. (XLEN/32 - 1):
     d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[15:0]
 
 X[rd] = d
+----
+
+
+<<<
+==== PPAIRE.DB (RV32)
+
+Mnemonic::
+
+ppaire.db _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pzext.dh.b _rd_p_, _rs1_p_ &#8594; ppaire.db _rd_p_, _rs1_p_, x0
+
+Encoding::
+
+PPAIRE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed byte elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x0, attr: ['PPAIRE.DB'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PPAIRE.DB performs packed byte even-element packing on double-wide
+(register-pair) operands. It is equivalent to two PPAIRE.B operations: one on
+the even registers and one on the odd registers of each pair. All three operands
+(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
+numbers. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PPAIRE.B operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 3:
+    s1_h = s1[(16*i+15):(16*i)]
+    s2_h = s2[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = s2_h[7:0] @ s1_h[7:0]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PPAIRE.DH (RV32)
+
+Mnemonic::
+
+ppaire.dh _rd_p_, _rs1_p_, _rs2_p_
+
+Pseudoinstructions::
+
+pzext.dw.h _rd_p_, _rs1_p_ &#8594; ppaire.dh _rd_p_, _rs1_p_, x0
+
+Encoding::
+
+PPAIRE.DH is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed halfword elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x0, attr: ['PPAIRE.DH'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PPAIRE.DH performs packed halfword even-element packing on double-wide
+(register-pair) operands. It is equivalent to two PPAIRE.H operations: one on
+the even registers and one on the odd registers of each pair. All three operands
+(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
+numbers. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PPAIRE.H operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    s2_w = s2[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[15:0]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
 ----
 
 
@@ -15654,6 +15774,118 @@ X[rd] = d
 
 
 <<<
+==== PPAIREO.DB (RV32)
+
+Mnemonic::
+
+ppaireo.db _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PPAIREO.DB is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed byte elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x2, attr: ['PPAIREO.DB'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PPAIREO.DB performs packed byte even-odd element packing on double-wide
+(register-pair) operands. It is equivalent to two PPAIREO.B operations: one on
+the even registers and one on the odd registers of each pair. All three operands
+(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
+numbers. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PPAIREO.B operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 3:
+    s1_h = s1[(16*i+15):(16*i)]
+    s2_h = s2[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = s2_h[15:8] @ s1_h[7:0]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PPAIREO.DH (RV32)
+
+Mnemonic::
+
+ppaireo.dh _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PPAIREO.DH is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed halfword elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['PPAIREO.DH'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PPAIREO.DH performs packed halfword even-odd element packing on double-wide
+(register-pair) operands. It is equivalent to two PPAIREO.H operations: one on
+the even registers and one on the odd registers of each pair. All three operands
+(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
+numbers. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PPAIREO.H operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    s2_w = s2[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = s2_w[31:16] @ s1_w[15:0]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
 ==== PPAIROE.B
 
 Mnemonic::
@@ -15792,6 +16024,118 @@ s2 = X[rs2]
 d = s2[31:0] @ s1[63:32]
 
 X[rd] = d
+----
+
+
+<<<
+==== PPAIROE.DB (RV32)
+
+Mnemonic::
+
+ppairoe.db _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PPAIROE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed byte elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x4, attr: ['PPAIROE.DB'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PPAIROE.DB performs packed byte odd-even element packing on double-wide
+(register-pair) operands. It is equivalent to two PPAIROE.B operations: one on
+the even registers and one on the odd registers of each pair. All three operands
+(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
+numbers. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PPAIROE.B operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 3:
+    s1_h = s1[(16*i+15):(16*i)]
+    s2_h = s2[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = s2_h[7:0] @ s1_h[15:8]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
+----
+
+
+<<<
+==== PPAIROE.DH (RV32)
+
+Mnemonic::
+
+ppairoe.dh _rd_p_, _rs1_p_, _rs2_p_
+
+Encoding::
+
+PPAIROE.DH is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed halfword elements. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x6 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs2_p' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x4, attr: ['PPAIROE.DH'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PPAIROE.DH performs packed halfword odd-even element packing on double-wide
+(register-pair) operands. It is equivalent to two PPAIROE.H operations: one on
+the even registers and one on the odd registers of each pair. All three operands
+(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
+numbers. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Equivalent to two PPAIROE.H operations on even/odd register pairs
+s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
+s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    s2_w = s2[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[31:16]
+
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
 ----
 
 
@@ -15935,350 +16279,6 @@ s2 = X[rs2]
 d = s2[63:32] @ s1[63:32]
 
 X[rd] = d
-----
-
-
-<<<
-==== PPAIRE.DB (RV32)
-
-Mnemonic::
-
-ppaire.db _rd_p_, _rs1_p_, _rs2_p_
-
-Pseudoinstructions::
-
-pzext.dh.b _rd_p_, _rs1_p_ &#8594; ppaire.db _rd_p_, _rs1_p_, x0
-
-Encoding::
-
-PPAIRE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x0, attr: ['PPAIRE.DB'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PPAIRE.DB performs packed byte even-element packing on double-wide
-(register-pair) operands. It is equivalent to two PPAIRE.B operations: one on
-the even registers and one on the odd registers of each pair. All three operands
-(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PPAIRE.B operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[7:0] @ s1_h[7:0]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PPAIRE.DH (RV32)
-
-Mnemonic::
-
-ppaire.dh _rd_p_, _rs1_p_, _rs2_p_
-
-Pseudoinstructions::
-
-pzext.dw.h _rd_p_, _rs1_p_ &#8594; ppaire.dh _rd_p_, _rs1_p_, x0
-
-Encoding::
-
-PPAIRE.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x0, attr: ['PPAIRE.DH'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PPAIRE.DH performs packed halfword even-element packing on double-wide
-(register-pair) operands. It is equivalent to two PPAIRE.H operations: one on
-the even registers and one on the odd registers of each pair. All three operands
-(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PPAIRE.H operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[15:0]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PPAIREO.DB (RV32)
-
-Mnemonic::
-
-ppaireo.db _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PPAIREO.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x2, attr: ['PPAIREO.DB'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PPAIREO.DB performs packed byte even-odd element packing on double-wide
-(register-pair) operands. It is equivalent to two PPAIREO.B operations: one on
-the even registers and one on the odd registers of each pair. All three operands
-(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PPAIREO.B operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[15:8] @ s1_h[7:0]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PPAIREO.DH (RV32)
-
-Mnemonic::
-
-ppaireo.dh _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PPAIREO.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['PPAIREO.DH'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PPAIREO.DH performs packed halfword even-odd element packing on double-wide
-(register-pair) operands. It is equivalent to two PPAIREO.H operations: one on
-the even registers and one on the odd registers of each pair. All three operands
-(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PPAIREO.H operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[31:16] @ s1_w[15:0]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PPAIROE.DB (RV32)
-
-Mnemonic::
-
-ppairoe.db _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PPAIROE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x4, attr: ['PPAIROE.DB'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PPAIROE.DB performs packed byte odd-even element packing on double-wide
-(register-pair) operands. It is equivalent to two PPAIROE.B operations: one on
-the even registers and one on the odd registers of each pair. All three operands
-(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PPAIROE.B operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[7:0] @ s1_h[15:8]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
-----
-
-
-<<<
-==== PPAIROE.DH (RV32)
-
-Mnemonic::
-
-ppairoe.dh _rd_p_, _rs1_p_, _rs2_p_
-
-Encoding::
-
-PPAIROE.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x6 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs2_p' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x4, attr: ['PPAIROE.DH'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PPAIROE.DH performs packed halfword odd-even element packing on double-wide
-(register-pair) operands. It is equivalent to two PPAIROE.H operations: one on
-the even registers and one on the odd registers of each pair. All three operands
-(`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Equivalent to two PPAIROE.H operations on even/odd register pairs
-s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
-s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[31:16]
-
-if (rd_p != 0):
-    X[rd_p*2]   = d[31:0]
-    X[rd_p*2+1] = d[63:32]
 ----
 
 
@@ -16490,6 +16490,95 @@ X[rd] =
 
 
 <<<
+==== ZIP16P (RV64)
+
+Mnemonic::
+
+zip16p _rd_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pwcvtu.h _rd_, _rs1_ &#8594; zip16p _rd_, _rs1_, x0 +
+pwcvth.h _rd_, _rs2_ &#8594; zip16p _rd_, x0, _rs2_
+
+Encoding::
+
+ZIP16P is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x7, attr: ['ZIP16P'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The ZIP16P instruction interleaves 16-bit chunks from `rs2` and `rs1` to form a
+64-bit result.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+X[rd] = s2[31:16] @ s1[31:16] @ s2[15:0] @ s1[15:0]
+----
+
+
+<<<
+==== ZIP16HP (RV64)
+
+Mnemonic::
+
+zip16hp _rd_, _rs1_, _rs2_
+
+Encoding::
+
+ZIP16HP is encoded in the OP-32 major opcode and is available only in RV64.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x7, attr: ['ZIP16HP'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The ZIP16HP instruction interleaves 16-bit chunks from the high 32-bit halves of
+`rs2` and `rs1` to form a 64-bit result.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+X[rd] = s2[63:48] @ s1[63:48] @ s2[47:32] @ s1[47:32]
+----
+
+
+<<<
 ==== UNZIP8P (RV64)
 
 Mnemonic::
@@ -16582,95 +16671,6 @@ s2 = X[rs2]
 X[rd] =
     s2[63:56] @ s2[47:40] @ s2[31:24] @ s2[15:8]
   @ s1[63:56] @ s1[47:40] @ s1[31:24] @ s1[15:8]
-----
-
-
-<<<
-==== ZIP16P (RV64)
-
-Mnemonic::
-
-zip16p _rd_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pwcvtu.h _rd_, _rs1_ &#8594; zip16p _rd_, _rs1_, x0 +
-pwcvth.h _rd_, _rs2_ &#8594; zip16p _rd_, x0, _rs2_
-
-Encoding::
-
-ZIP16P is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x7, attr: ['ZIP16P'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The ZIP16P instruction interleaves 16-bit chunks from `rs2` and `rs1` to form a
-64-bit result.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-X[rd] = s2[31:16] @ s1[31:16] @ s2[15:0] @ s1[15:0]
-----
-
-
-<<<
-==== ZIP16HP (RV64)
-
-Mnemonic::
-
-zip16hp _rd_, _rs1_, _rs2_
-
-Encoding::
-
-ZIP16HP is encoded in the OP-32 major opcode and is available only in RV64.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x7, attr: ['ZIP16HP'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The ZIP16HP instruction interleaves 16-bit chunks from the high 32-bit halves of
-`rs2` and `rs1` to form a 64-bit result.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-X[rd] = s2[63:48] @ s1[63:48] @ s2[47:32] @ s1[47:32]
 ----
 
 
