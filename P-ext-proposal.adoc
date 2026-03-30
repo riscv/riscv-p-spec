@@ -22210,16 +22210,15 @@ Notes::
   product, keeping the upper half.
 
 <<<
-==== PMULHR.H
+==== PMULH.W (RV64)
 
 Mnemonic::
 
-pmulhr.h _rd_, _rs1_, _rs2_
+pmulh.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULHR.H is encoded using the OP-32 major opcode. It operates on packed 16-bit
-elements and returns the rounded high half of each signed 16×16 multiplication.
+PMULH.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
 
 [wavedrom, ,svg]
 ....
@@ -22229,18 +22228,18 @@ elements and returns the rounded high half of each signed 16×16 multiplication.
     { bits: 3, name: 0x7 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x0, attr: ['PMULHR.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x0, attr: ['PMULH.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PMULHR.H performs lane-wise signed multiplication of packed 16-bit elements from
-`rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product and then
-writes the upper 16 bits of the adjusted value to the corresponding 16-bit
-element of `rd`, implementing rounding when extracting the high half.
+PMULH.W multiplies corresponding signed packed 32-bit word elements of `rs1`
+and `rs2`, producing 64-bit intermediate products, and writes the upper 32 bits
+of each product to the corresponding word element of `rd`. This instruction is
+available only on RV64.
 
 Operation::
 
@@ -22249,21 +22248,14 @@ Operation::
 s1 = X[rs1]
 s2 = X[rs2]
 
-for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    // add 2^15 before taking high 16 bits (rounding)
-    d[(16*i+15):(16*i)] =
-        to_bits(32, signed(a) * signed(b) + 2^15)[31:16]
+for i = 0 .. 1:
+    a = s1[(32*i+31):(32*i)]
+    b = s2[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (signed(a) * signed(b))[63:32]
 
 X[rd] = d
 ----
 
-Notes::
-
-* This instruction does not set `vxsat`.
-* The per-lane result corresponds to rounding the 32-bit product before
-  extracting bits [31:16].
 
 <<<
 ==== PMULHSU.H
@@ -22320,6 +22312,289 @@ Notes::
 * This instruction does not set `vxsat`.
 * The result is equivalent to extracting bits [31:16] of the full 32-bit
   mixed signed×unsigned product.
+
+<<<
+==== PMULHSU.W (RV64)
+
+Mnemonic::
+
+pmulhsu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULHSU.W is encoded in the OP-32 major opcode using packed 32-bit elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x8, attr: ['PMULHSU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMULHSU.W instruction multiplies corresponding 32-bit elements of `rs1`
+(signed) and `rs2` (unsigned), and writes the upper 32 bits of each product
+to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. 1:
+    a = sext_64(s1[(32*i+31):(32*i)])
+    b = zext_64(s2[(32*i+31):(32*i)])
+    d[(32*i+31):(32*i)] = (a * b)[63:32]
+
+X[rd] = d
+----
+
+
+<<<
+==== PMULHU.H
+
+Mnemonic::
+
+pmulhu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULHU.H is encoded in the OP-32 major opcode with packed halfword elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x2, attr: ['PMULHU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMULHU.H multiplies corresponding unsigned packed 16-bit halfword elements of
+`rs1` and `rs2`, producing 32-bit intermediate products, and writes the upper
+16 bits of each product to the corresponding halfword element of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = s1[(16*i+15):(16*i)]
+    b = s2[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = (unsigned(a) * unsigned(b))[31:16]
+
+X[rd] = d
+----
+
+
+<<<
+==== PMULHU.W (RV64)
+
+Mnemonic::
+
+pmulhu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULHU.W is encoded in the OP-32 major opcode using packed 32-bit elements.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['PMULHU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMULHU.W instruction multiplies corresponding unsigned 32-bit elements of
+`rs1` and `rs2`, writing the upper 32 bits of each product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. 1:
+    a = zext_64(s1[(32*i+31):(32*i)])
+    b = zext_64(s2[(32*i+31):(32*i)])
+    d[(32*i+31):(32*i)] = (a * b)[63:32]
+
+X[rd] = d
+----
+
+
+<<<
+==== PMULHR.H
+
+Mnemonic::
+
+pmulhr.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULHR.H is encoded using the OP-32 major opcode. It operates on packed 16-bit
+elements and returns the rounded high half of each signed 16×16 multiplication.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x0, attr: ['PMULHR.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMULHR.H performs lane-wise signed multiplication of packed 16-bit elements from
+`rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product and then
+writes the upper 16 bits of the adjusted value to the corresponding 16-bit
+element of `rd`, implementing rounding when extracting the high half.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/16 - 1):
+    a = s1[(16*i+15):(16*i)]
+    b = s2[(16*i+15):(16*i)]
+    // add 2^15 before taking high 16 bits (rounding)
+    d[(16*i+15):(16*i)] =
+        to_bits(32, signed(a) * signed(b) + 2^15)[31:16]
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction does not set `vxsat`.
+* The per-lane result corresponds to rounding the 32-bit product before
+  extracting bits [31:16].
+
+<<<
+==== PMULHR.W (RV64)
+
+Mnemonic::
+
+pmulhr.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULHR.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x0, attr: ['PMULHR.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMULHR.W multiplies corresponding signed packed 32-bit word elements of `rs1`
+and `rs2`, producing 64-bit intermediate products, adds a rounding constant
+of 2^31^, and writes the upper 32 bits of each rounded product to the
+corresponding word element of `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. 1:
+    a = s1[(32*i+31):(32*i)]
+    b = s2[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = (signed(a) * signed(b) + 2^31)[63:32]
+
+X[rd] = d
+----
+
+
+<<<
+==== MULHR (RV32)
+
+Mnemonic::
+
+mulhr _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULHR is encoded in the OP-32 major opcode as an XLEN-wide operation.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x0, attr: ['MULHR'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MULHR multiplies the full signed XLEN-bit values of `rs1` and `rs2`, producing
+a 2*XLEN-bit intermediate product, adds a rounding constant of 2^(XLEN-1),
+and writes the upper XLEN bits of the rounded product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+X[rd] = (signed(X[rs1]) * signed(X[rs2]) + 2^31)[63:32]
+----
+
 
 <<<
 ==== PMULHRSU.H
@@ -22380,15 +22655,16 @@ Notes::
   before extracting bits [31:16].
 
 <<<
-==== PMULHU.H
+==== PMULHRSU.W (RV64)
 
 Mnemonic::
 
-pmulhu.h _rd_, _rs1_, _rs2_
+pmulhrsu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULHU.H is encoded in the OP-32 major opcode with packed halfword elements.
+PMULHRSU.W is encoded in the OP-32 major opcode using packed 32-bit elements
+with rounding.
 
 [wavedrom, ,svg]
 ....
@@ -22398,17 +22674,17 @@ PMULHU.H is encoded in the OP-32 major opcode with packed halfword elements.
     { bits: 3, name: 0x7 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x2, attr: ['PMULHU.H'] },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x8, attr: ['PMULHRSU.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PMULHU.H multiplies corresponding unsigned packed 16-bit halfword elements of
-`rs1` and `rs2`, producing 32-bit intermediate products, and writes the upper
-16 bits of each product to the corresponding halfword element of `rd`.
+The PMULHRSU.W instruction performs signed×unsigned packed multiplication on
+32-bit elements, applies rounding, and writes the upper 32 bits of each result
+to `rd`.
 
 Operation::
 
@@ -22417,14 +22693,63 @@ Operation::
 s1 = X[rs1]
 s2 = X[rs2]
 
-for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (unsigned(a) * unsigned(b))[31:16]
+for i = 0 .. 1:
+    a = sext_64(s1[(32*i+31):(32*i)])
+    b = zext_64(s2[(32*i+31):(32*i)])
+    d[(32*i+31):(32*i)] = (a * b + 2^31)[63:32]
 
 X[rd] = d
 ----
 
+Notes::
+
+* Rounding is performed by adding 2^31^ before extracting bits [63:32].
+
+<<<
+==== MULHRSU (RV32)
+
+Mnemonic::
+
+mulhrsu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULHRSU is encoded in the OP-32 major opcode using the scalar
+multiply-high rounded sub-encoding.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x8, attr: ['MULHRSU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MULHRSU instruction multiplies `rs1` as a signed value by `rs2` as an
+unsigned value, adds 2^31^ for rounding, and writes the upper 32 bits of the
+result to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a64 = sext_64(X[rs1])
+b64 = zext_64(X[rs2])
+prod = a64 * b64
+X[rd] = (prod + 2^31)[63:32]
+----
+
+Notes::
+
+* Rounding is performed by adding 2^31^ before extracting bits [63:32].
 
 <<<
 ==== PMULHRU.H
@@ -22483,246 +22808,6 @@ Notes::
   extracting bits [31:16].
 
 <<<
-==== PMULH.W (RV64)
-
-Mnemonic::
-
-pmulh.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULH.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x0, attr: ['PMULH.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMULH.W multiplies corresponding signed packed 32-bit word elements of `rs1`
-and `rs2`, producing 64-bit intermediate products, and writes the upper 32 bits
-of each product to the corresponding word element of `rd`. This instruction is
-available only on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. 1:
-    a = s1[(32*i+31):(32*i)]
-    b = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (signed(a) * signed(b))[63:32]
-
-X[rd] = d
-----
-
-
-<<<
-==== PMULHR.W (RV64)
-
-Mnemonic::
-
-pmulhr.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULHR.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x0, attr: ['PMULHR.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMULHR.W multiplies corresponding signed packed 32-bit word elements of `rs1`
-and `rs2`, producing 64-bit intermediate products, adds a rounding constant
-of 2^31^, and writes the upper 32 bits of each rounded product to the
-corresponding word element of `rd`. This instruction is available only on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. 1:
-    a = s1[(32*i+31):(32*i)]
-    b = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (signed(a) * signed(b) + 2^31)[63:32]
-
-X[rd] = d
-----
-
-
-<<<
-==== PMULHSU.W (RV64)
-
-Mnemonic::
-
-pmulhsu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULHSU.W is encoded in the OP-32 major opcode using packed 32-bit elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x8, attr: ['PMULHSU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMULHSU.W instruction multiplies corresponding 32-bit elements of `rs1`
-(signed) and `rs2` (unsigned), and writes the upper 32 bits of each product
-to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. 1:
-    a = sext_64(s1[(32*i+31):(32*i)])
-    b = zext_64(s2[(32*i+31):(32*i)])
-    d[(32*i+31):(32*i)] = (a * b)[63:32]
-
-X[rd] = d
-----
-
-
-<<<
-==== PMULHRSU.W (RV64)
-
-Mnemonic::
-
-pmulhrsu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULHRSU.W is encoded in the OP-32 major opcode using packed 32-bit elements
-with rounding.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x8, attr: ['PMULHRSU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMULHRSU.W instruction performs signed×unsigned packed multiplication on
-32-bit elements, applies rounding, and writes the upper 32 bits of each result
-to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. 1:
-    a = sext_64(s1[(32*i+31):(32*i)])
-    b = zext_64(s2[(32*i+31):(32*i)])
-    d[(32*i+31):(32*i)] = (a * b + 2^31)[63:32]
-
-X[rd] = d
-----
-
-Notes::
-
-* Rounding is performed by adding 2^31^ before extracting bits [63:32].
-
-<<<
-==== PMULHU.W (RV64)
-
-Mnemonic::
-
-pmulhu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULHU.W is encoded in the OP-32 major opcode using packed 32-bit elements.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['PMULHU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMULHU.W instruction multiplies corresponding unsigned 32-bit elements of
-`rs1` and `rs2`, writing the upper 32 bits of each product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. 1:
-    a = zext_64(s1[(32*i+31):(32*i)])
-    b = zext_64(s2[(32*i+31):(32*i)])
-    d[(32*i+31):(32*i)] = (a * b)[63:32]
-
-X[rd] = d
-----
-
-
-<<<
 ==== PMULHRU.W (RV64)
 
 Mnemonic::
@@ -22771,91 +22856,6 @@ X[rd] = d
 Notes::
 
 * Rounding is performed by adding 2^31^.
-
-<<<
-==== MULHR (RV32)
-
-Mnemonic::
-
-mulhr _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULHR is encoded in the OP-32 major opcode as an XLEN-wide operation.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x0, attr: ['MULHR'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULHR multiplies the full signed XLEN-bit values of `rs1` and `rs2`, producing
-a 2*XLEN-bit intermediate product, adds a rounding constant of 2^(XLEN-1),
-and writes the upper XLEN bits of the rounded product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-X[rd] = (signed(X[rs1]) * signed(X[rs2]) + 2^31)[63:32]
-----
-
-
-<<<
-==== MULHRSU (RV32)
-
-Mnemonic::
-
-mulhrsu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULHRSU is encoded in the OP-32 major opcode using the scalar
-multiply-high rounded sub-encoding.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x8, attr: ['MULHRSU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MULHRSU instruction multiplies `rs1` as a signed value by `rs2` as an
-unsigned value, adds 2^31^ for rounding, and writes the upper 32 bits of the
-result to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a64 = sext_64(X[rs1])
-b64 = zext_64(X[rs2])
-prod = a64 * b64
-X[rd] = (prod + 2^31)[63:32]
-----
-
-Notes::
-
-* Rounding is performed by adding 2^31^ before extracting bits [63:32].
 
 <<<
 ==== MULHRU (RV32)
@@ -22957,6 +22957,111 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
+==== PMULQ.W (RV64)
+
+Mnemonic::
+
+pmulq.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULQ.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xa, attr: ['PMULQ.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMULQ.W performs a Q-format multiply on corresponding signed packed 32-bit
+word elements of `rs1` and `rs2`. It computes `(a * b) << 1` and keeps the
+upper 32 bits. When both inputs are the most negative value (0x80000000), the
+result saturates to 0x7FFFFFFF and the `vxsat` overflow flag is set. This
+instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. 1:
+    a = s1[(32*i+31):(32*i)]
+    b = s2[(32*i+31):(32*i)]
+    if (a == 0x80000000) & (b == 0x80000000):
+        d[(32*i+31):(32*i)] = 0x7FFFFFFF
+        vxsat = 1
+    else:
+        d[(32*i+31):(32*i)] = (signed(a) * signed(b))[62:31]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== MULQ (RV32)
+
+Mnemonic::
+
+mulq _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULQ is encoded in the OP-32 major opcode as an XLEN-wide operation.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xa, attr: ['MULQ'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MULQ performs a Q-format multiply on the full signed XLEN-bit values of `rs1`
+and `rs2`. It computes `(a * b) << 1` and keeps the upper XLEN bits. When both
+inputs are the most negative value, the result saturates to the most positive
+value and the `vxsat` overflow flag is set.
+
+Operation::
+
+[source,pseudocode]
+----
+a = X[rs1]
+b = X[rs2]
+if (a == 0x80000000) & (b == 0x80000000):
+    X[rd] = 0x7FFFFFFF
+    vxsat = 1
+else:
+    X[rd] = (signed(a) * signed(b))[62:31]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PMULQR.H
 
 Mnemonic::
@@ -23020,62 +23125,6 @@ Notes::
 
 
 <<<
-==== PMULQ.W (RV64)
-
-Mnemonic::
-
-pmulq.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULQ.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xa, attr: ['PMULQ.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMULQ.W performs a Q-format multiply on corresponding signed packed 32-bit
-word elements of `rs1` and `rs2`. It computes `(a * b) << 1` and keeps the
-upper 32 bits. When both inputs are the most negative value (0x80000000), the
-result saturates to 0x7FFFFFFF and the `vxsat` overflow flag is set. This
-instruction is available only on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. 1:
-    a = s1[(32*i+31):(32*i)]
-    b = s2[(32*i+31):(32*i)]
-    if (a == 0x80000000) & (b == 0x80000000):
-        d[(32*i+31):(32*i)] = 0x7FFFFFFF
-        vxsat = 1
-    else:
-        d[(32*i+31):(32*i)] = (signed(a) * signed(b))[62:31]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
 ==== PMULQR.W (RV64)
 
 Mnemonic::
@@ -23126,55 +23175,6 @@ for i = 0 .. 1:
         d[(32*i+31):(32*i)] = (signed(a) * signed(b) + 2^30)[62:31]
 
 X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== MULQ (RV32)
-
-Mnemonic::
-
-mulq _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULQ is encoded in the OP-32 major opcode as an XLEN-wide operation.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xa, attr: ['MULQ'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULQ performs a Q-format multiply on the full signed XLEN-bit values of `rs1`
-and `rs2`. It computes `(a * b) << 1` and keeps the upper XLEN bits. When both
-inputs are the most negative value, the result saturates to the most positive
-value and the `vxsat` overflow flag is set.
-
-Operation::
-
-[source,pseudocode]
-----
-a = X[rs1]
-b = X[rs2]
-if (a == 0x80000000) & (b == 0x80000000):
-    X[rd] = 0x7FFFFFFF
-    vxsat = 1
-else:
-    X[rd] = (signed(a) * signed(b))[62:31]
 ----
 
 Notes::
@@ -23292,17 +23292,16 @@ Notes::
 * The per-lane add wraps modulo 2^16^.
 
 <<<
-==== PMHRACC.H
+==== PMHACC.W (RV64)
 
 Mnemonic::
 
-pmhracc.h _rd_, _rs1_, _rs2_
+pmhacc.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMHRACC.H is encoded using the OP-32 major opcode. It operates on packed 16-bit
-elements and accumulates the rounded high half of each signed 16×16
-multiplication into `rd`.
+PMHACC.W is encoded in the OP-32 major opcode as a packed multiply-high
+accumulate instruction.
 
 [wavedrom, ,svg]
 ....
@@ -23312,19 +23311,16 @@ multiplication into `rd`.
     { bits: 3, name: 0x7 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x1, attr: ['PMHRACC.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x1, attr: ['PMHACC.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PMHRACC.H performs lane-wise signed multiplication of packed 16-bit elements from
-`rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product, extracts the
-upper 16 bits of the adjusted value, and accumulates that into the corresponding
-16-bit element of `rd`. The packed accumulated result is written back to `rd`,
-implementing rounding when extracting the high half.
+The PMHACC.W instruction multiplies signed packed 32-bit elements and
+accumulates the upper 32 bits of each product into `rd`.
 
 Operation::
 
@@ -23334,21 +23330,63 @@ s1 = X[rs1]
 s2 = X[rs2]
 d  = X[rd]
 
-for i = 0 .. (XLEN/16 - 1):
-    a   = s1[(16*i+15):(16*i)]
-    b   = s2[(16*i+15):(16*i)]
-    acc = d[(16*i+15):(16*i)]
-
-    d[(16*i+15):(16*i)] =
-        acc + to_bits(32, signed(a) * signed(b) + 2^15)[31:16]
+for i = 0 .. 1:
+    a = sext_64(s1[(32*i+31):(32*i)])
+    b = sext_64(s2[(32*i+31):(32*i)])
+    hi = (a * b)[63:32]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
 
 X[rd] = d
 ----
 
 Notes::
 
-* This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16^.
+* This instruction reads and writes `rd`.
+
+<<<
+==== MHACC (RV32)
+
+Mnemonic::
+
+mhacc _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MHACC is encoded in the OP-32 major opcode as a scalar
+multiply-high accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x1, attr: ['MHACC'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MHACC instruction multiplies `rs1` and `rs2` as signed values, extracts
+the upper 32 bits of the product, and accumulates the result into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a64 = sext_64(X[rs1])
+b64 = sext_64(X[rs2])
+hi  = (a64 * b64)[63:32]
+X[rd] = X[rd] + hi
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PMHACCSU.H
@@ -23408,6 +23446,400 @@ Notes::
 
 * This instruction does not set `vxsat`.
 * The per-lane add wraps modulo 2^16^.
+
+<<<
+==== PMHACCSU.W (RV64)
+
+Mnemonic::
+
+pmhaccsu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMHACCSU.W is encoded in the OP-32 major opcode as a packed signed×unsigned
+multiply-high accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x9, attr: ['PMHACCSU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMHACCSU.W instruction multiplies signed elements of `rs1` with unsigned
+elements of `rs2` and accumulates the upper 32 bits into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. 1:
+    a = sext_64(s1[(32*i+31):(32*i)])
+    b = zext_64(s2[(32*i+31):(32*i)])
+    hi = (a * b)[63:32]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
+
+X[rd] = d
+----
+
+
+<<<
+==== MHACCSU (RV32)
+
+Mnemonic::
+
+mhaccsu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MHACCSU is encoded in the OP-32 major opcode as a scalar
+signed×unsigned multiply-high accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x9, attr: ['MHACCSU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MHACCSU instruction multiplies `rs1` as signed by `rs2` as unsigned,
+extracts the upper 32 bits of the product, and accumulates the result.
+
+Operation::
+
+[source,pseudocode]
+----
+a64 = sext_64(X[rs1])
+b64 = zext_64(X[rs2])
+hi  = (a64 * b64)[63:32]
+X[rd] = X[rd] + hi
+----
+
+
+<<<
+==== PMHACCU.H
+
+Mnemonic::
+
+pmhaccu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMHACCU.H is encoded using the OP-32 major opcode. It operates on packed 16-bit
+elements and accumulates the high half of each unsigned 16×16 multiplication
+into `rd`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x3, attr: ['PMHACCU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMHACCU.H performs lane-wise unsigned multiplication of packed 16-bit elements
+from `rs1` and `rs2`. For each lane, it extracts the upper 16 bits of the 32-bit
+product and accumulates that value into the corresponding 16-bit element of
+`rd`. The packed accumulated result is written back to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/16 - 1):
+    a   = s1[(16*i+15):(16*i)]
+    b   = s2[(16*i+15):(16*i)]
+    acc = d[(16*i+15):(16*i)]
+
+    d[(16*i+15):(16*i)] =
+        acc + to_bits(32, unsigned(a) * unsigned(b))[31:16]
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction does not set `vxsat`.
+* The per-lane add wraps modulo 2^16^.
+
+<<<
+==== PMHACCU.W (RV64)
+
+Mnemonic::
+
+pmhaccu.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMHACCU.W is encoded in the OP-32 major opcode as a packed unsigned×unsigned
+multiply-high accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x3, attr: ['PMHACCU.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMHACCU.W instruction multiplies unsigned packed 32-bit elements and
+accumulates the upper 32 bits of each product into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. 1:
+    a = zext_64(s1[(32*i+31):(32*i)])
+    b = zext_64(s2[(32*i+31):(32*i)])
+    hi = (a * b)[63:32]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
+
+X[rd] = d
+----
+
+
+<<<
+==== MHACCU (RV32)
+
+Mnemonic::
+
+mhaccu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MHACCU is encoded in the OP-32 major opcode as a scalar
+unsigned×unsigned multiply-high accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x3, attr: ['MHACCU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MHACCU instruction multiplies `rs1` and `rs2` as unsigned values and
+accumulates the upper 32 bits of the product into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a64 = zext_64(X[rs1])
+b64 = zext_64(X[rs2])
+hi  = (a64 * b64)[63:32]
+X[rd] = X[rd] + hi
+----
+
+
+<<<
+==== PMHRACC.H
+
+Mnemonic::
+
+pmhracc.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMHRACC.H is encoded using the OP-32 major opcode. It operates on packed 16-bit
+elements and accumulates the rounded high half of each signed 16×16
+multiplication into `rd`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x1, attr: ['PMHRACC.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMHRACC.H performs lane-wise signed multiplication of packed 16-bit elements from
+`rs1` and `rs2`. For each lane, it adds 2^15^ to the 32-bit product, extracts the
+upper 16 bits of the adjusted value, and accumulates that into the corresponding
+16-bit element of `rd`. The packed accumulated result is written back to `rd`,
+implementing rounding when extracting the high half.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/16 - 1):
+    a   = s1[(16*i+15):(16*i)]
+    b   = s2[(16*i+15):(16*i)]
+    acc = d[(16*i+15):(16*i)]
+
+    d[(16*i+15):(16*i)] =
+        acc + to_bits(32, signed(a) * signed(b) + 2^15)[31:16]
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction does not set `vxsat`.
+* The per-lane add wraps modulo 2^16^.
+
+<<<
+==== PMHRACC.W (RV64)
+
+Mnemonic::
+
+pmhracc.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMHRACC.W is encoded in the OP-32 major opcode as a packed multiply-high
+rounded accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x1, attr: ['PMHRACC.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMHRACC.W instruction performs signed packed multiplication with rounding
+and accumulates the upper 32 bits of each product into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. 1:
+    a = sext_64(s1[(32*i+31):(32*i)])
+    b = sext_64(s2[(32*i+31):(32*i)])
+    hi = (a * b + 2^31)[63:32]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
+
+X[rd] = d
+----
+
+
+<<<
+==== MHRACC (RV32)
+
+Mnemonic::
+
+mhracc _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MHRACC is encoded in the OP-32 major opcode as a scalar
+multiply-high rounded accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x1, attr: ['MHRACC'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MHRACC instruction multiplies `rs1` and `rs2` as signed values,
+rounds the product, and accumulates the upper 32 bits into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a64 = sext_64(X[rs1])
+b64 = sext_64(X[rs2])
+hi_rnd = (a64 * b64 + 2^31)[63:32]
+X[rd] = X[rd] + hi_rnd
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^31^.
 
 <<<
 ==== PMHRACCSU.H
@@ -23470,17 +23902,16 @@ Notes::
 * The per-lane add wraps modulo 2^16^.
 
 <<<
-==== PMHACCU.H
+==== PMHRACCSU.W (RV64)
 
 Mnemonic::
 
-pmhaccu.h _rd_, _rs1_, _rs2_
+pmhraccsu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMHACCU.H is encoded using the OP-32 major opcode. It operates on packed 16-bit
-elements and accumulates the high half of each unsigned 16×16 multiplication
-into `rd`.
+PMHRACCSU.W is encoded in the OP-32 major opcode as a packed signed×unsigned
+multiply-high rounded accumulate instruction.
 
 [wavedrom, ,svg]
 ....
@@ -23490,18 +23921,16 @@ into `rd`.
     { bits: 3, name: 0x7 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x3, attr: ['PMHACCU.H'] },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x9, attr: ['PMHRACCSU.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PMHACCU.H performs lane-wise unsigned multiplication of packed 16-bit elements
-from `rs1` and `rs2`. For each lane, it extracts the upper 16 bits of the 32-bit
-product and accumulates that value into the corresponding 16-bit element of
-`rd`. The packed accumulated result is written back to `rd`.
+The PMHRACCSU.W instruction performs signed×unsigned packed multiplication with
+rounding and accumulates the upper 32 bits into `rd`.
 
 Operation::
 
@@ -23511,21 +23940,57 @@ s1 = X[rs1]
 s2 = X[rs2]
 d  = X[rd]
 
-for i = 0 .. (XLEN/16 - 1):
-    a   = s1[(16*i+15):(16*i)]
-    b   = s2[(16*i+15):(16*i)]
-    acc = d[(16*i+15):(16*i)]
-
-    d[(16*i+15):(16*i)] =
-        acc + to_bits(32, unsigned(a) * unsigned(b))[31:16]
+for i = 0 .. 1:
+    a = sext_64(s1[(32*i+31):(32*i)])
+    b = zext_64(s2[(32*i+31):(32*i)])
+    hi = (a * b + 2^31)[63:32]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
 
 X[rd] = d
 ----
 
-Notes::
 
-* This instruction does not set `vxsat`.
-* The per-lane add wraps modulo 2^16^.
+<<<
+==== MHRACCSU (RV32)
+
+Mnemonic::
+
+mhraccsu _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MHRACCSU is encoded in the OP-32 major opcode as a scalar
+signed×unsigned multiply-high rounded accumulate instruction.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x9, attr: ['MHRACCSU'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MHRACCSU instruction performs a signed×unsigned multiply, rounds the
+product, and accumulates the upper 32 bits into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a64 = sext_64(X[rs1])
+b64 = zext_64(X[rs2])
+hi_rnd = (a64 * b64 + 2^31)[63:32]
+X[rd] = X[rd] + hi_rnd
+----
+
 
 <<<
 ==== PMHRACCU.H
@@ -23587,254 +24052,6 @@ Notes::
 * The per-lane add wraps modulo 2^16^.
 
 <<<
-==== PMHACC.W (RV64)
-
-Mnemonic::
-
-pmhacc.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMHACC.W is encoded in the OP-32 major opcode as a packed multiply-high
-accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x1, attr: ['PMHACC.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMHACC.W instruction multiplies signed packed 32-bit elements and
-accumulates the upper 32 bits of each product into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. 1:
-    a = sext_64(s1[(32*i+31):(32*i)])
-    b = sext_64(s2[(32*i+31):(32*i)])
-    hi = (a * b)[63:32]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PMHRACC.W (RV64)
-
-Mnemonic::
-
-pmhracc.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMHRACC.W is encoded in the OP-32 major opcode as a packed multiply-high
-rounded accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x1, attr: ['PMHRACC.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMHRACC.W instruction performs signed packed multiplication with rounding
-and accumulates the upper 32 bits of each product into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. 1:
-    a = sext_64(s1[(32*i+31):(32*i)])
-    b = sext_64(s2[(32*i+31):(32*i)])
-    hi = (a * b + 2^31)[63:32]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
-
-X[rd] = d
-----
-
-
-<<<
-==== PMHACCSU.W (RV64)
-
-Mnemonic::
-
-pmhaccsu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMHACCSU.W is encoded in the OP-32 major opcode as a packed signed×unsigned
-multiply-high accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x9, attr: ['PMHACCSU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMHACCSU.W instruction multiplies signed elements of `rs1` with unsigned
-elements of `rs2` and accumulates the upper 32 bits into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. 1:
-    a = sext_64(s1[(32*i+31):(32*i)])
-    b = zext_64(s2[(32*i+31):(32*i)])
-    hi = (a * b)[63:32]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
-
-X[rd] = d
-----
-
-
-<<<
-==== PMHRACCSU.W (RV64)
-
-Mnemonic::
-
-pmhraccsu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMHRACCSU.W is encoded in the OP-32 major opcode as a packed signed×unsigned
-multiply-high rounded accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x9, attr: ['PMHRACCSU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMHRACCSU.W instruction performs signed×unsigned packed multiplication with
-rounding and accumulates the upper 32 bits into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. 1:
-    a = sext_64(s1[(32*i+31):(32*i)])
-    b = zext_64(s2[(32*i+31):(32*i)])
-    hi = (a * b + 2^31)[63:32]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
-
-X[rd] = d
-----
-
-
-<<<
-==== PMHACCU.W (RV64)
-
-Mnemonic::
-
-pmhaccu.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMHACCU.W is encoded in the OP-32 major opcode as a packed unsigned×unsigned
-multiply-high accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x3, attr: ['PMHACCU.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMHACCU.W instruction multiplies unsigned packed 32-bit elements and
-accumulates the upper 32 bits of each product into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. 1:
-    a = zext_64(s1[(32*i+31):(32*i)])
-    b = zext_64(s2[(32*i+31):(32*i)])
-    hi = (a * b)[63:32]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + hi
-
-X[rd] = d
-----
-
-
-<<<
 ==== PMHRACCU.W (RV64)
 
 Mnemonic::
@@ -23884,223 +24101,6 @@ X[rd] = d
 
 
 <<<
-==== MHACC (RV32)
-
-Mnemonic::
-
-mhacc _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MHACC is encoded in the OP-32 major opcode as a scalar
-multiply-high accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x1, attr: ['MHACC'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MHACC instruction multiplies `rs1` and `rs2` as signed values, extracts
-the upper 32 bits of the product, and accumulates the result into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a64 = sext_64(X[rs1])
-b64 = sext_64(X[rs2])
-hi  = (a64 * b64)[63:32]
-X[rd] = X[rd] + hi
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MHRACC (RV32)
-
-Mnemonic::
-
-mhracc _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MHRACC is encoded in the OP-32 major opcode as a scalar
-multiply-high rounded accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x1, attr: ['MHRACC'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MHRACC instruction multiplies `rs1` and `rs2` as signed values,
-rounds the product, and accumulates the upper 32 bits into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a64 = sext_64(X[rs1])
-b64 = sext_64(X[rs2])
-hi_rnd = (a64 * b64 + 2^31)[63:32]
-X[rd] = X[rd] + hi_rnd
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^31^.
-
-<<<
-==== MHACCSU (RV32)
-
-Mnemonic::
-
-mhaccsu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MHACCSU is encoded in the OP-32 major opcode as a scalar
-signed×unsigned multiply-high accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x9, attr: ['MHACCSU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MHACCSU instruction multiplies `rs1` as signed by `rs2` as unsigned,
-extracts the upper 32 bits of the product, and accumulates the result.
-
-Operation::
-
-[source,pseudocode]
-----
-a64 = sext_64(X[rs1])
-b64 = zext_64(X[rs2])
-hi  = (a64 * b64)[63:32]
-X[rd] = X[rd] + hi
-----
-
-
-<<<
-==== MHRACCSU (RV32)
-
-Mnemonic::
-
-mhraccsu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MHRACCSU is encoded in the OP-32 major opcode as a scalar
-signed×unsigned multiply-high rounded accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x9, attr: ['MHRACCSU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MHRACCSU instruction performs a signed×unsigned multiply, rounds the
-product, and accumulates the upper 32 bits into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a64 = sext_64(X[rs1])
-b64 = zext_64(X[rs2])
-hi_rnd = (a64 * b64 + 2^31)[63:32]
-X[rd] = X[rd] + hi_rnd
-----
-
-
-<<<
-==== MHACCU (RV32)
-
-Mnemonic::
-
-mhaccu _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MHACCU is encoded in the OP-32 major opcode as a scalar
-unsigned×unsigned multiply-high accumulate instruction.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x3, attr: ['MHACCU'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MHACCU instruction multiplies `rs1` and `rs2` as unsigned values and
-accumulates the upper 32 bits of the product into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a64 = zext_64(X[rs1])
-b64 = zext_64(X[rs2])
-hi  = (a64 * b64)[63:32]
-X[rd] = X[rd] + hi
-----
-
-
-<<<
 ==== MHRACCU (RV32)
 
 Mnemonic::
@@ -24146,283 +24146,6 @@ X[rd] = X[rd] + hi_rnd
 <<<
 === Q-format Multiply-Accumulate
 
-==== MQACC.H00 (RV32)
-
-Mnemonic::
-
-mqacc.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MQACC.H00 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
-instruction operating on the low halfwords of `rs1` and `rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xd, attr: ['MQACC.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MQACC.H00 instruction multiplies the low 16-bit halfwords of `rs1` and `rs2`
-as signed values, extracts bits [46:15] of the 47-bit product, and accumulates
-the extracted value into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_47(X[rs1][15:0])
-b = sext_47(X[rs2][15:0])
-q = (a * b)[46:15]
-X[rd] = X[rd] + q
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MQACC.H01 (RV32)
-
-Mnemonic::
-
-mqacc.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MQACC.H01 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
-instruction operating on the low halfword of `rs1` and the high halfword of
-`rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xf, attr: ['MQACC.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MQACC.H01 instruction multiplies `rs1[15:0]` by `rs2[31:16]` as signed
-halfwords, extracts bits [46:15] of the product, and accumulates the extracted
-value into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_47(X[rs1][15:0])
-b = sext_47(X[rs2][31:16])
-q = (a * b)[46:15]
-X[rd] = X[rd] + q
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MQACC.H11 (RV32)
-
-Mnemonic::
-
-mqacc.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MQACC.H11 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
-instruction operating on the high halfwords of `rs1` and `rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xf, attr: ['MQACC.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MQACC.H11 instruction multiplies the high 16-bit halfwords of `rs1` and
-`rs2` as signed values, extracts bits [46:15] of the product, and accumulates
-the extracted value into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_47(X[rs1][31:16])
-b = sext_47(X[rs2][31:16])
-q = (a * b)[46:15]
-X[rd] = X[rd] + q
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MQRACC.H00 (RV32)
-
-Mnemonic::
-
-mqracc.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MQRACC.H00 is encoded in the OP-32 major opcode as a scalar Q-format rounded
-accumulate instruction operating on the low halfwords of `rs1` and `rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xd, attr: ['MQRACC.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MQRACC.H00 instruction is like MQACC.H00 but applies rounding by adding
-2^14^ before extracting bits [46:15], and then accumulates into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_47(X[rs1][15:0])
-b = sext_47(X[rs2][15:0])
-q = (a * b + 2^14)[46:15]
-X[rd] = X[rd] + q
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14^.
-
-<<<
-==== MQRACC.H01 (RV32)
-
-Mnemonic::
-
-mqracc.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MQRACC.H01 is encoded in the OP-32 major opcode as a scalar Q-format rounded
-accumulate instruction operating on `rs1[15:0]` and `rs2[31:16]`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xf, attr: ['MQRACC.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MQRACC.H01 instruction is like MQACC.H01 but applies rounding by adding
-2^14^ before extracting bits [46:15], and then accumulates into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_47(X[rs1][15:0])
-b = sext_47(X[rs2][31:16])
-q = (a * b + 2^14)[46:15]
-X[rd] = X[rd] + q
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14^.
-
-<<<
-==== MQRACC.H11 (RV32)
-
-Mnemonic::
-
-mqracc.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MQRACC.H11 is encoded in the OP-32 major opcode as a scalar Q-format rounded
-accumulate instruction operating on the high halfwords of `rs1` and `rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x7 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xf, attr: ['MQRACC.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The MQRACC.H11 instruction is like MQACC.H11 but applies rounding by adding
-2^14^ before extracting bits [46:15], and then accumulates into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_47(X[rs1][31:16])
-b = sext_47(X[rs2][31:16])
-q = (a * b + 2^14)[46:15]
-X[rd] = X[rd] + q
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14^.
-
-<<<
 ==== PMQACC.W.H00 (RV64)
 
 Mnemonic::
@@ -24574,6 +24297,283 @@ for i = 0 .. 1:
 X[rd] = d
 ----
 
+
+<<<
+==== MQACC.H00 (RV32)
+
+Mnemonic::
+
+mqacc.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MQACC.H00 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
+instruction operating on the low halfwords of `rs1` and `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xd, attr: ['MQACC.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MQACC.H00 instruction multiplies the low 16-bit halfwords of `rs1` and `rs2`
+as signed values, extracts bits [46:15] of the 47-bit product, and accumulates
+the extracted value into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_47(X[rs1][15:0])
+b = sext_47(X[rs2][15:0])
+q = (a * b)[46:15]
+X[rd] = X[rd] + q
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MQACC.H01 (RV32)
+
+Mnemonic::
+
+mqacc.h01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MQACC.H01 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
+instruction operating on the low halfword of `rs1` and the high halfword of
+`rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xf, attr: ['MQACC.H01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MQACC.H01 instruction multiplies `rs1[15:0]` by `rs2[31:16]` as signed
+halfwords, extracts bits [46:15] of the product, and accumulates the extracted
+value into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_47(X[rs1][15:0])
+b = sext_47(X[rs2][31:16])
+q = (a * b)[46:15]
+X[rd] = X[rd] + q
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MQACC.H11 (RV32)
+
+Mnemonic::
+
+mqacc.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MQACC.H11 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
+instruction operating on the high halfwords of `rs1` and `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xf, attr: ['MQACC.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MQACC.H11 instruction multiplies the high 16-bit halfwords of `rs1` and
+`rs2` as signed values, extracts bits [46:15] of the product, and accumulates
+the extracted value into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_47(X[rs1][31:16])
+b = sext_47(X[rs2][31:16])
+q = (a * b)[46:15]
+X[rd] = X[rd] + q
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MQACC.W00 (RV64)
+
+Mnemonic::
+
+mqacc.w00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MQACC.W00 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
+instruction operating on the low words of `rs1` and `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xd, attr: ['MQACC.W00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MQACC.W00 instruction multiplies `rs1[31:0]` and `rs2[31:0]` as signed
+32-bit values, extracts bits [94:31] of the 95-bit product, and accumulates the
+extracted value into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_95(X[rs1][31:0])
+b = sext_95(X[rs2][31:0])
+q = (a * b)[94:31]
+X[rd] = X[rd] + q
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MQACC.W01 (RV64)
+
+Mnemonic::
+
+mqacc.w01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MQACC.W01 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
+instruction operating on the low word of `rs1` and the high word of `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xf, attr: ['MQACC.W01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MQACC.W01 instruction multiplies `rs1[31:0]` by `rs2[63:32]` as signed
+32-bit values, extracts bits [94:31] of the product, and accumulates the result
+into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_95(X[rs1][31:0])
+b = sext_95(X[rs2][63:32])
+q = (a * b)[94:31]
+X[rd] = X[rd] + q
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MQACC.W11 (RV64)
+
+Mnemonic::
+
+mqacc.w11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MQACC.W11 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
+instruction operating on the high words of `rs1` and `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x7 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xf, attr: ['MQACC.W11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The MQACC.W11 instruction multiplies `rs1[63:32]` and `rs2[63:32]` as signed
+32-bit values, extracts bits [94:31] of the product, and accumulates the result
+into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_95(X[rs1][63:32])
+b = sext_95(X[rs2][63:32])
+q = (a * b)[94:31]
+X[rd] = X[rd] + q
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PMQRACC.W.H00 (RV64)
@@ -24733,18 +24733,17 @@ Notes::
 
 * This instruction reads and writes `rd`.
 * Rounding is performed by adding 2^14^.
-
 <<<
-==== MQACC.W00 (RV64)
+==== MQRACC.H00 (RV32)
 
 Mnemonic::
 
-mqacc.w00 _rd_, _rs1_, _rs2_
+mqracc.h00 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MQACC.W00 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
-instruction operating on the low words of `rs1` and `rs2`.
+MQRACC.H00 is encoded in the OP-32 major opcode as a scalar Q-format rounded
+accumulate instruction operating on the low halfwords of `rs1` and `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -24754,43 +24753,43 @@ instruction operating on the low words of `rs1` and `rs2`.
     { bits: 3, name: 0x7 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xd, attr: ['MQACC.W00'] },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xd, attr: ['MQRACC.H00'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The MQACC.W00 instruction multiplies `rs1[31:0]` and `rs2[31:0]` as signed
-32-bit values, extracts bits [94:31] of the 95-bit product, and accumulates the
-extracted value into `rd`.
+The MQRACC.H00 instruction is like MQACC.H00 but applies rounding by adding
+2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a = sext_95(X[rs1][31:0])
-b = sext_95(X[rs2][31:0])
-q = (a * b)[94:31]
+a = sext_47(X[rs1][15:0])
+b = sext_47(X[rs2][15:0])
+q = (a * b + 2^14)[46:15]
 X[rd] = X[rd] + q
 ----
 
 Notes::
 
 * This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^14^.
 
 <<<
-==== MQACC.W01 (RV64)
+==== MQRACC.H01 (RV32)
 
 Mnemonic::
 
-mqacc.w01 _rd_, _rs1_, _rs2_
+mqracc.h01 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MQACC.W01 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
-instruction operating on the low word of `rs1` and the high word of `rs2`.
+MQRACC.H01 is encoded in the OP-32 major opcode as a scalar Q-format rounded
+accumulate instruction operating on `rs1[15:0]` and `rs2[31:16]`.
 
 [wavedrom, ,svg]
 ....
@@ -24800,43 +24799,43 @@ instruction operating on the low word of `rs1` and the high word of `rs2`.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xf, attr: ['MQACC.W01'] },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xf, attr: ['MQRACC.H01'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The MQACC.W01 instruction multiplies `rs1[31:0]` by `rs2[63:32]` as signed
-32-bit values, extracts bits [94:31] of the product, and accumulates the result
-into `rd`.
+The MQRACC.H01 instruction is like MQACC.H01 but applies rounding by adding
+2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a = sext_95(X[rs1][31:0])
-b = sext_95(X[rs2][63:32])
-q = (a * b)[94:31]
+a = sext_47(X[rs1][15:0])
+b = sext_47(X[rs2][31:16])
+q = (a * b + 2^14)[46:15]
 X[rd] = X[rd] + q
 ----
 
 Notes::
 
 * This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^14^.
 
 <<<
-==== MQACC.W11 (RV64)
+==== MQRACC.H11 (RV32)
 
 Mnemonic::
 
-mqacc.w11 _rd_, _rs1_, _rs2_
+mqracc.h11 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MQACC.W11 is encoded in the OP-32 major opcode as a scalar Q-format accumulate
-instruction operating on the high words of `rs1` and `rs2`.
+MQRACC.H11 is encoded in the OP-32 major opcode as a scalar Q-format rounded
+accumulate instruction operating on the high halfwords of `rs1` and `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -24846,31 +24845,32 @@ instruction operating on the high words of `rs1` and `rs2`.
     { bits: 3, name: 0x7 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xf, attr: ['MQACC.W11'] },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xf, attr: ['MQRACC.H11'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The MQACC.W11 instruction multiplies `rs1[63:32]` and `rs2[63:32]` as signed
-32-bit values, extracts bits [94:31] of the product, and accumulates the result
-into `rd`.
+The MQRACC.H11 instruction is like MQACC.H11 but applies rounding by adding
+2^14^ before extracting bits [46:15], and then accumulates into `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a = sext_95(X[rs1][63:32])
-b = sext_95(X[rs2][63:32])
-q = (a * b)[94:31]
+a = sext_47(X[rs1][31:16])
+b = sext_47(X[rs2][31:16])
+q = (a * b + 2^14)[46:15]
 X[rd] = X[rd] + q
 ----
 
 Notes::
 
 * This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^14^.
+
 
 <<<
 ==== MQRACC.W00 (RV64)
@@ -25010,428 +25010,6 @@ Notes::
 
 * This instruction reads and writes `rd`.
 * Rounding is performed by adding 2^30^.
-
-<<<
-=== Q-format Horizontal Multiply-Add
-
-==== PMQ2ADD.H
-
-Mnemonic::
-
-pmq2add.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQ2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
-and producing packed 32-bit results (one per halfword pair).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x6, attr: ['PMQ2ADD.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQ2ADD.H instruction computes, for each 32-bit lane, the sum of two
-Q-format multiply-high results: one from the low halfword pair and one from the
-high halfword pair, and writes the packed 32-bit sums to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0)[46:15]
-    q1 = (a1 * b1)[46:15]
-    d[(32*i+31):(32*i)] = q0 + q1
-
-X[rd] = d
-----
-
-
-<<<
-==== PMQ2ADD.W (RV64)
-
-Mnemonic::
-
-pmq2add.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQ2ADD.W is encoded in the OP-32 major opcode as a packed Q-format instruction
-that sums two word products to produce a scalar XLEN result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x6, attr: ['PMQ2ADD.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQ2ADD.W instruction multiplies the low words and the high words of `rs1`
-and `rs2` as signed 32-bit values, extracts bits [94:31] from each product, and
-adds the two extracted values to produce the result in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a0 = sext_95(X[rs1][31:0])
-b0 = sext_95(X[rs2][31:0])
-a1 = sext_95(X[rs1][63:32])
-b1 = sext_95(X[rs2][63:32])
-
-q0 = (a0 * b0)[94:31]
-q1 = (a1 * b1)[94:31]
-
-X[rd] = q0 + q1
-----
-
-
-<<<
-==== PMQ2ADDA.H
-
-Mnemonic::
-
-pmq2adda.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQ2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
-PMQ2ADD.H.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x7, attr: ['PMQ2ADDA.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQ2ADDA.H instruction adds the PMQ2ADD.H result into the corresponding
-packed 32-bit elements of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0)[46:15]
-    q1 = (a1 * b1)[46:15]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PMQ2ADDA.W (RV64)
-
-Mnemonic::
-
-pmq2adda.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQ2ADDA.W is encoded in the OP-32 major opcode as an accumulating form of
-PMQ2ADD.W.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x7, attr: ['PMQ2ADDA.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQ2ADDA.W instruction adds the PMQ2ADD.W result into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a0 = sext_95(X[rs1][31:0])
-b0 = sext_95(X[rs2][31:0])
-a1 = sext_95(X[rs1][63:32])
-b1 = sext_95(X[rs2][63:32])
-
-q0 = (a0 * b0)[94:31]
-q1 = (a1 * b1)[94:31]
-
-X[rd] = X[rd] + q0 + q1
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PMQR2ADD.H
-
-Mnemonic::
-
-pmqr2add.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQR2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
-and producing packed 32-bit results with rounding.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x6, attr: ['PMQR2ADD.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQR2ADD.H instruction is like PMQ2ADD.H but applies rounding (adding 2^14^)
-to each Q-format product before extracting bits [46:15], and then sums the two
-terms per 32-bit lane.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0 + 2^14)[46:15]
-    q1 = (a1 * b1 + 2^14)[46:15]
-    d[(32*i+31):(32*i)] = q0 + q1
-
-X[rd] = d
-----
-
-Notes::
-
-* Rounding is performed by adding 2^14^.
-
-<<<
-==== PMQR2ADD.W (RV64)
-
-Mnemonic::
-
-pmqr2add.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQR2ADD.W is encoded in the OP-32 major opcode as a rounded form of PMQ2ADD.W.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x6, attr: ['PMQR2ADD.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQR2ADD.W instruction is like PMQ2ADD.W but applies rounding by adding 2^30^
-to each product before extracting bits [94:31], and then sums the two extracted
-values.
-
-Operation::
-
-[source,pseudocode]
-----
-a0 = sext_95(X[rs1][31:0])
-b0 = sext_95(X[rs2][31:0])
-a1 = sext_95(X[rs1][63:32])
-b1 = sext_95(X[rs2][63:32])
-
-q0 = (a0 * b0 + 2^30)[94:31]
-q1 = (a1 * b1 + 2^30)[94:31]
-
-X[rd] = q0 + q1
-----
-
-Notes::
-
-* Rounding is performed by adding 2^30^.
-
-<<<
-==== PMQR2ADDA.H
-
-Mnemonic::
-
-pmqr2adda.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQR2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
-PMQR2ADD.H.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x7, attr: ['PMQR2ADDA.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQR2ADDA.H instruction adds the PMQR2ADD.H result into the corresponding
-packed 32-bit elements of `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_47(s1[(32*i+15):(32*i)])
-    a1 = sext_47(s1[(32*i+31):(32*i+16)])
-    b0 = sext_47(s2[(32*i+15):(32*i)])
-    b1 = sext_47(s2[(32*i+31):(32*i+16)])
-
-    q0 = (a0 * b0 + 2^14)[46:15]
-    q1 = (a1 * b1 + 2^14)[46:15]
-    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^14^.
-
-<<<
-==== PMQR2ADDA.W (RV64)
-
-Mnemonic::
-
-pmqr2adda.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMQR2ADDA.W is encoded in the OP-32 major opcode as an accumulating form of
-PMQR2ADD.W.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x7, attr: ['PMQR2ADDA.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PMQR2ADDA.W instruction adds the PMQR2ADD.W result into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a0 = sext_95(X[rs1][31:0])
-b0 = sext_95(X[rs2][31:0])
-a1 = sext_95(X[rs1][63:32])
-b1 = sext_95(X[rs2][63:32])
-
-q0 = (a0 * b0 + 2^30)[94:31]
-q1 = (a1 * b1 + 2^30)[94:31]
-
-X[rd] = X[rd] + q0 + q1
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-* Rounding is performed by adding 2^30^.
-
 
 <<<
 === Cross-element Multiply
@@ -25575,6 +25153,385 @@ X[rd] = d
 
 
 <<<
+==== PMUL.W.H00 (RV64)
+
+Mnemonic::
+
+pmul.w.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMUL.W.H00 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x0, attr: ['PMUL.W.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMUL.W.H00 multiplies the low halfword (h0) of each packed 32-bit word element
+in `rs1` by the low halfword (h0) of the corresponding word element in `rs2`,
+both treated as signed, producing a 32-bit product per element that is written
+to the corresponding word of `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d_w0 = signed(s1[15:0])  * signed(s2[15:0])
+d_w1 = signed(s1[47:32]) * signed(s2[47:32])
+X[rd] = d_w1 @ d_w0
+----
+
+
+<<<
+==== PMUL.W.H01 (RV64)
+
+Mnemonic::
+
+pmul.w.h01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMUL.W.H01 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['PMUL.W.H01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMUL.W.H01 multiplies the low halfword (h0) of each packed 32-bit word element
+in `rs1` by the high halfword (h1) of the corresponding word element in `rs2`,
+both treated as signed, producing a 32-bit product per element that is written
+to the corresponding word of `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d_w0 = signed(s1[15:0])  * signed(s2[31:16])
+d_w1 = signed(s1[47:32]) * signed(s2[63:48])
+X[rd] = d_w1 @ d_w0
+----
+
+
+<<<
+==== PMUL.W.H11 (RV64)
+
+Mnemonic::
+
+pmul.w.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMUL.W.H11 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['PMUL.W.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMUL.W.H11 multiplies the high halfword (h1) of each packed 32-bit word
+element in `rs1` by the high halfword (h1) of the corresponding word element in
+`rs2`, both treated as signed, producing a 32-bit product per element that is
+written to the corresponding word of `rd`. This instruction is available only
+on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d_w0 = signed(s1[31:16]) * signed(s2[31:16])
+d_w1 = signed(s1[63:48]) * signed(s2[63:48])
+X[rd] = d_w1 @ d_w0
+----
+
+
+<<<
+==== MUL.H00 (RV32)
+
+Mnemonic::
+
+mul.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MUL.H00 is encoded in the OP-32 major opcode as an XLEN-wide cross-halfword multiply.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x0, attr: ['MUL.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MUL.H00 multiplies the low 16-bit halfword (h0) of `rs1` by the low 16-bit
+halfword (h0) of `rs2`, both treated as signed, producing a full 32-bit signed
+product that is written to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1_h0 = X[rs1][15:0]
+s2_h0 = X[rs2][15:0]
+X[rd] = signed(s1_h0) * signed(s2_h0)
+----
+
+
+<<<
+==== MUL.H01 (RV32)
+
+Mnemonic::
+
+mul.h01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MUL.H01 is encoded in the OP-32 major opcode as an XLEN-wide cross-halfword multiply.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['MUL.H01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MUL.H01 multiplies the low 16-bit halfword (h0) of `rs1` by the high 16-bit
+halfword (h1) of `rs2`, both treated as signed, producing a full 32-bit signed
+product that is written to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1_h0 = X[rs1][15:0]
+s2_h1 = X[rs2][31:16]
+X[rd] = signed(s1_h0) * signed(s2_h1)
+----
+
+
+<<<
+==== MUL.H11 (RV32)
+
+Mnemonic::
+
+mul.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MUL.H11 is encoded in the OP-32 major opcode as an XLEN-wide cross-halfword multiply.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['MUL.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MUL.H11 multiplies the high 16-bit halfword (h1) of `rs1` by the high 16-bit
+halfword (h1) of `rs2`, both treated as signed, producing a full 32-bit signed
+product that is written to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1_h1 = X[rs1][31:16]
+s2_h1 = X[rs2][31:16]
+X[rd] = signed(s1_h1) * signed(s2_h1)
+----
+
+
+<<<
+==== MUL.W00 (RV64)
+
+Mnemonic::
+
+mul.w00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MUL.W00 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x0, attr: ['MUL.W00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MUL.W00 multiplies the low 32-bit word (w0) of `rs1` by the low 32-bit word
+(w0) of `rs2`, both treated as signed, producing a full 64-bit signed product
+that is written to `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1_w0 = X[rs1][31:0]
+s2_w0 = X[rs2][31:0]
+X[rd] = signed(s1_w0) * signed(s2_w0)
+----
+
+
+<<<
+==== MUL.W01 (RV64)
+
+Mnemonic::
+
+mul.w01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MUL.W01 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x2, attr: ['MUL.W01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MUL.W01 multiplies the low 32-bit word (w0) of `rs1` by the high 32-bit word
+(w1) of `rs2`, both treated as signed, producing a full 64-bit signed product
+that is written to `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1_w0 = X[rs1][31:0]
+s2_w1 = X[rs2][63:32]
+X[rd] = signed(s1_w0) * signed(s2_w1)
+----
+
+
+<<<
+==== MUL.W11 (RV64)
+
+Mnemonic::
+
+mul.w11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MUL.W11 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x2, attr: ['MUL.W11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MUL.W11 multiplies the high 32-bit word (w1) of `rs1` by the high 32-bit word
+(w1) of `rs2`, both treated as signed, producing a full 64-bit signed product
+that is written to `rd`. This instruction is available only on RV64.
+
+Operation::
+
+[source,pseudocode]
+----
+s1_w1 = X[rs1][63:32]
+s2_w1 = X[rs2][63:32]
+X[rd] = signed(s1_w1) * signed(s2_w1)
+----
+
+
+<<<
 ==== PMULSU.H.B00
 
 Mnemonic::
@@ -25663,6 +25620,260 @@ for i = 0 .. (XLEN/16 - 1):
     d[(16*i+15):(16*i)] = to_bits(16, a * b)
 
 X[rd] = d
+----
+
+
+<<<
+==== PMULSU.W.H00 (RV64)
+
+Mnemonic::
+
+pmulsu.w.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULSU.W.H00 is encoded in the OP-32 major opcode producing packed 32-bit
+elements from halfword operands (signed×unsigned).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xc, attr: ['PMULSU.W.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMULSU.W.H00 multiplies, per 32-bit lane, the low halfwords of `rs1` (signed)
+and `rs2` (unsigned) and writes packed 32-bit products to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+d0 = to_bits(32, sext_32(s1[15:0])  * zext_32(s2[15:0]))
+d1 = to_bits(32, sext_32(s1[47:32]) * zext_32(s2[47:32]))
+
+X[rd] = d1 @ d0
+----
+
+
+<<<
+==== PMULSU.W.H11 (RV64)
+
+Mnemonic::
+
+pmulsu.w.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMULSU.W.H11 is encoded in the OP-32 major opcode producing packed 32-bit
+elements from halfword operands (signed×unsigned).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xe, attr: ['PMULSU.W.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PMULSU.W.H11 multiplies, per 32-bit lane, the high halfwords of `rs1` (signed)
+and `rs2` (unsigned) and writes packed 32-bit products to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+d0 = to_bits(32, sext_32(s1[31:16]) * zext_32(s2[31:16]))
+d1 = to_bits(32, sext_32(s1[63:48]) * zext_32(s2[63:48]))
+
+X[rd] = d1 @ d0
+----
+
+
+<<<
+==== MULSU.H00 (RV32)
+
+Mnemonic::
+
+mulsu.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULSU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
+(signed×unsigned) producing a 32-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xc, attr: ['MULSU.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MULSU.H00 multiplies `rs1[15:0]` (signed) by `rs2[15:0]` (unsigned) and writes
+the 32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][15:0])
+b = zext_32(X[rs2][15:0])
+X[rd] = to_bits(32, a * b)
+----
+
+
+<<<
+==== MULSU.H11 (RV32)
+
+Mnemonic::
+
+mulsu.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULSU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
+(signed×unsigned) producing a 32-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xe, attr: ['MULSU.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MULSU.H11 multiplies `rs1[31:16]` (signed) by `rs2[31:16]` (unsigned) and writes
+the 32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][31:16])
+b = zext_32(X[rs2][31:16])
+X[rd] = to_bits(32, a * b)
+----
+
+
+<<<
+==== MULSU.W00 (RV64)
+
+Mnemonic::
+
+mulsu.w00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULSU.W00 is encoded in the OP-32 major opcode as a scalar word multiply
+(signed×unsigned) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0xc, attr: ['MULSU.W00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MULSU.W00 multiplies `rs1[31:0]` (signed) by `rs2[31:0]` (unsigned) and writes
+the 64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][31:0])
+b = zext_64(X[rs2][31:0])
+X[rd] = to_bits(64, a * b)
+----
+
+
+<<<
+==== MULSU.W11 (RV64)
+
+Mnemonic::
+
+mulsu.w11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MULSU.W11 is encoded in the OP-32 major opcode as a scalar word multiply
+(signed×unsigned) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0xe, attr: ['MULSU.W11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MULSU.W11 multiplies `rs1[63:32]` (signed) by `rs2[63:32]` (unsigned) and writes
+the 64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][63:32])
+b = zext_64(X[rs2][63:32])
+X[rd] = to_bits(64, a * b)
 ----
 
 
@@ -25806,557 +26017,6 @@ X[rd] = d
 
 
 <<<
-==== MUL.H00 (RV32)
-
-Mnemonic::
-
-mul.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MUL.H00 is encoded in the OP-32 major opcode as an XLEN-wide cross-halfword multiply.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x0, attr: ['MUL.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MUL.H00 multiplies the low 16-bit halfword (h0) of `rs1` by the low 16-bit
-halfword (h0) of `rs2`, both treated as signed, producing a full 32-bit signed
-product that is written to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1_h0 = X[rs1][15:0]
-s2_h0 = X[rs2][15:0]
-X[rd] = signed(s1_h0) * signed(s2_h0)
-----
-
-
-<<<
-==== MUL.H01 (RV32)
-
-Mnemonic::
-
-mul.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MUL.H01 is encoded in the OP-32 major opcode as an XLEN-wide cross-halfword multiply.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['MUL.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MUL.H01 multiplies the low 16-bit halfword (h0) of `rs1` by the high 16-bit
-halfword (h1) of `rs2`, both treated as signed, producing a full 32-bit signed
-product that is written to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1_h0 = X[rs1][15:0]
-s2_h1 = X[rs2][31:16]
-X[rd] = signed(s1_h0) * signed(s2_h1)
-----
-
-
-<<<
-==== MUL.H11 (RV32)
-
-Mnemonic::
-
-mul.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MUL.H11 is encoded in the OP-32 major opcode as an XLEN-wide cross-halfword multiply.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['MUL.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MUL.H11 multiplies the high 16-bit halfword (h1) of `rs1` by the high 16-bit
-halfword (h1) of `rs2`, both treated as signed, producing a full 32-bit signed
-product that is written to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1_h1 = X[rs1][31:16]
-s2_h1 = X[rs2][31:16]
-X[rd] = signed(s1_h1) * signed(s2_h1)
-----
-
-
-<<<
-==== MULSU.H00 (RV32)
-
-Mnemonic::
-
-mulsu.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULSU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
-(signed×unsigned) producing a 32-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xc, attr: ['MULSU.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULSU.H00 multiplies `rs1[15:0]` (signed) by `rs2[15:0]` (unsigned) and writes
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][15:0])
-b = zext_32(X[rs2][15:0])
-X[rd] = to_bits(32, a * b)
-----
-
-
-<<<
-==== MULSU.H11 (RV32)
-
-Mnemonic::
-
-mulsu.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULSU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
-(signed×unsigned) producing a 32-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xe, attr: ['MULSU.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULSU.H11 multiplies `rs1[31:16]` (signed) by `rs2[31:16]` (unsigned) and writes
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][31:16])
-b = zext_32(X[rs2][31:16])
-X[rd] = to_bits(32, a * b)
-----
-
-
-<<<
-==== MULU.H00 (RV32)
-
-Mnemonic::
-
-mulu.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
-(unsigned×unsigned) producing a 32-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x4, attr: ['MULU.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULU.H00 multiplies `rs1[15:0]` and `rs2[15:0]` as unsigned halfwords and writes
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = zext_32(X[rs1][15:0])
-b = zext_32(X[rs2][15:0])
-X[rd] = to_bits(32, a * b)
-----
-
-
-<<<
-==== MULU.H01 (RV32)
-
-Mnemonic::
-
-mulu.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULU.H01 is encoded in the OP-32 major opcode as a scalar halfword multiply
-(unsigned×unsigned) producing a 32-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x6, attr: ['MULU.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULU.H01 multiplies `rs1[15:0]` by `rs2[31:16]` as unsigned halfwords and writes
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = zext_32(X[rs1][15:0])
-b = zext_32(X[rs2][31:16])
-X[rd] = to_bits(32, a * b)
-----
-
-
-<<<
-==== MULU.H11 (RV32)
-
-Mnemonic::
-
-mulu.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
-(unsigned×unsigned) producing a 32-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x6, attr: ['MULU.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULU.H11 multiplies `rs1[31:16]` and `rs2[31:16]` as unsigned halfwords and
-writes the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = zext_32(X[rs1][31:16])
-b = zext_32(X[rs2][31:16])
-X[rd] = to_bits(32, a * b)
-----
-
-
-<<<
-==== PMUL.W.H00 (RV64)
-
-Mnemonic::
-
-pmul.w.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMUL.W.H00 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x0, attr: ['PMUL.W.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMUL.W.H00 multiplies the low halfword (h0) of each packed 32-bit word element
-in `rs1` by the low halfword (h0) of the corresponding word element in `rs2`,
-both treated as signed, producing a 32-bit product per element that is written
-to the corresponding word of `rd`. This instruction is available only on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d_w0 = signed(s1[15:0])  * signed(s2[15:0])
-d_w1 = signed(s1[47:32]) * signed(s2[47:32])
-X[rd] = d_w1 @ d_w0
-----
-
-
-<<<
-==== PMUL.W.H01 (RV64)
-
-Mnemonic::
-
-pmul.w.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMUL.W.H01 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['PMUL.W.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMUL.W.H01 multiplies the low halfword (h0) of each packed 32-bit word element
-in `rs1` by the high halfword (h1) of the corresponding word element in `rs2`,
-both treated as signed, producing a 32-bit product per element that is written
-to the corresponding word of `rd`. This instruction is available only on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d_w0 = signed(s1[15:0])  * signed(s2[31:16])
-d_w1 = signed(s1[47:32]) * signed(s2[63:48])
-X[rd] = d_w1 @ d_w0
-----
-
-
-<<<
-==== PMUL.W.H11 (RV64)
-
-Mnemonic::
-
-pmul.w.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMUL.W.H11 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['PMUL.W.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMUL.W.H11 multiplies the high halfword (h1) of each packed 32-bit word
-element in `rs1` by the high halfword (h1) of the corresponding word element in
-`rs2`, both treated as signed, producing a 32-bit product per element that is
-written to the corresponding word of `rd`. This instruction is available only
-on RV64.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d_w0 = signed(s1[31:16]) * signed(s2[31:16])
-d_w1 = signed(s1[63:48]) * signed(s2[63:48])
-X[rd] = d_w1 @ d_w0
-----
-
-
-<<<
-==== PMULSU.W.H00 (RV64)
-
-Mnemonic::
-
-pmulsu.w.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULSU.W.H00 is encoded in the OP-32 major opcode producing packed 32-bit
-elements from halfword operands (signed×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xc, attr: ['PMULSU.W.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMULSU.W.H00 multiplies, per 32-bit lane, the low halfwords of `rs1` (signed)
-and `rs2` (unsigned) and writes packed 32-bit products to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-d0 = to_bits(32, sext_32(s1[15:0])  * zext_32(s2[15:0]))
-d1 = to_bits(32, sext_32(s1[47:32]) * zext_32(s2[47:32]))
-
-X[rd] = d1 @ d0
-----
-
-
-<<<
-==== PMULSU.W.H11 (RV64)
-
-Mnemonic::
-
-pmulsu.w.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PMULSU.W.H11 is encoded in the OP-32 major opcode producing packed 32-bit
-elements from halfword operands (signed×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xe, attr: ['PMULSU.W.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PMULSU.W.H11 multiplies, per 32-bit lane, the high halfwords of `rs1` (signed)
-and `rs2` (unsigned) and writes packed 32-bit products to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-d0 = to_bits(32, sext_32(s1[31:16]) * zext_32(s2[31:16]))
-d1 = to_bits(32, sext_32(s1[63:48]) * zext_32(s2[63:48]))
-
-X[rd] = d1 @ d0
-----
-
-
-<<<
 ==== PMULU.W.H00 (RV64)
 
 Mnemonic::
@@ -26492,15 +26152,16 @@ X[rd] = d1 @ d0
 
 
 <<<
-==== MUL.W00 (RV64)
+==== MULU.H00 (RV32)
 
 Mnemonic::
 
-mul.w00 _rd_, _rs1_, _rs2_
+mulu.h00 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MUL.W00 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+MULU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
+(unsigned×unsigned) producing a 32-bit result.
 
 [wavedrom, ,svg]
 ....
@@ -26510,38 +26171,38 @@ MUL.W00 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only
     { bits: 3, name: 0x3 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x0, attr: ['MUL.W00'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x4, attr: ['MULU.H00'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-MUL.W00 multiplies the low 32-bit word (w0) of `rs1` by the low 32-bit word
-(w0) of `rs2`, both treated as signed, producing a full 64-bit signed product
-that is written to `rd`. This instruction is available only on RV64.
+MULU.H00 multiplies `rs1[15:0]` and `rs2[15:0]` as unsigned halfwords and writes
+the 32-bit product to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1_w0 = X[rs1][31:0]
-s2_w0 = X[rs2][31:0]
-X[rd] = signed(s1_w0) * signed(s2_w0)
+a = zext_32(X[rs1][15:0])
+b = zext_32(X[rs2][15:0])
+X[rd] = to_bits(32, a * b)
 ----
 
 
 <<<
-==== MUL.W01 (RV64)
+==== MULU.H01 (RV32)
 
 Mnemonic::
 
-mul.w01 _rd_, _rs1_, _rs2_
+mulu.h01 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MUL.W01 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+MULU.H01 is encoded in the OP-32 major opcode as a scalar halfword multiply
+(unsigned×unsigned) producing a 32-bit result.
 
 [wavedrom, ,svg]
 ....
@@ -26551,38 +26212,38 @@ MUL.W01 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only
     { bits: 3, name: 0x1 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x2, attr: ['MUL.W01'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x6, attr: ['MULU.H01'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-MUL.W01 multiplies the low 32-bit word (w0) of `rs1` by the high 32-bit word
-(w1) of `rs2`, both treated as signed, producing a full 64-bit signed product
-that is written to `rd`. This instruction is available only on RV64.
+MULU.H01 multiplies `rs1[15:0]` by `rs2[31:16]` as unsigned halfwords and writes
+the 32-bit product to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1_w0 = X[rs1][31:0]
-s2_w1 = X[rs2][63:32]
-X[rd] = signed(s1_w0) * signed(s2_w1)
+a = zext_32(X[rs1][15:0])
+b = zext_32(X[rs2][31:16])
+X[rd] = to_bits(32, a * b)
 ----
 
 
 <<<
-==== MUL.W11 (RV64)
+==== MULU.H11 (RV32)
 
 Mnemonic::
 
-mul.w11 _rd_, _rs1_, _rs2_
+mulu.h11 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MUL.W11 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+MULU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
+(unsigned×unsigned) producing a 32-bit result.
 
 [wavedrom, ,svg]
 ....
@@ -26592,107 +26253,24 @@ MUL.W11 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only
     { bits: 3, name: 0x3 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x2, attr: ['MUL.W11'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x6, attr: ['MULU.H11'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-MUL.W11 multiplies the high 32-bit word (w1) of `rs1` by the high 32-bit word
-(w1) of `rs2`, both treated as signed, producing a full 64-bit signed product
-that is written to `rd`. This instruction is available only on RV64.
+MULU.H11 multiplies `rs1[31:16]` and `rs2[31:16]` as unsigned halfwords and
+writes the 32-bit product to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1_w1 = X[rs1][63:32]
-s2_w1 = X[rs2][63:32]
-X[rd] = signed(s1_w1) * signed(s2_w1)
-----
-
-
-<<<
-==== MULSU.W00 (RV64)
-
-Mnemonic::
-
-mulsu.w00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULSU.W00 is encoded in the OP-32 major opcode as a scalar word multiply
-(signed×unsigned) producing a 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0xc, attr: ['MULSU.W00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULSU.W00 multiplies `rs1[31:0]` (signed) by `rs2[31:0]` (unsigned) and writes
-the 64-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_64(X[rs1][31:0])
-b = zext_64(X[rs2][31:0])
-X[rd] = to_bits(64, a * b)
-----
-
-
-<<<
-==== MULSU.W11 (RV64)
-
-Mnemonic::
-
-mulsu.w11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MULSU.W11 is encoded in the OP-32 major opcode as a scalar word multiply
-(signed×unsigned) producing a 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0xe, attr: ['MULSU.W11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MULSU.W11 multiplies `rs1[63:32]` (signed) by `rs2[63:32]` (unsigned) and writes
-the 64-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_64(X[rs1][63:32])
-b = zext_64(X[rs2][63:32])
-X[rd] = to_bits(64, a * b)
+a = zext_32(X[rs1][31:16])
+b = zext_32(X[rs2][31:16])
+X[rd] = to_bits(32, a * b)
 ----
 
 
@@ -26823,358 +26401,6 @@ X[rd] = to_bits(64, a * b)
 <<<
 === Cross-element Multiply-Accumulate
 
-==== MACC.H00 (RV32)
-
-Mnemonic::
-
-macc.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACC.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (signed×signed).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x1, attr: ['MACC.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACC.H00 multiplies `rs1[15:0]` and `rs2[15:0]` as signed halfwords and adds the
-32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][15:0])
-b = sext_32(X[rs2][15:0])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACC.H01 (RV32)
-
-Mnemonic::
-
-macc.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACC.H01 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (signed×signed).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x3, attr: ['MACC.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACC.H01 multiplies `rs1[15:0]` by `rs2[31:16]` as signed halfwords and adds the
-32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][15:0])
-b = sext_32(X[rs2][31:16])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACC.H11 (RV32)
-
-Mnemonic::
-
-macc.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACC.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (signed×signed).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x3, attr: ['MACC.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACC.H11 multiplies `rs1[31:16]` and `rs2[31:16]` as signed halfwords and adds
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][31:16])
-b = sext_32(X[rs2][31:16])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCSU.H00 (RV32)
-
-Mnemonic::
-
-maccsu.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCSU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (signed×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xd, attr: ['MACCSU.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCSU.H00 multiplies `rs1[15:0]` (signed) by `rs2[15:0]` (unsigned) and adds
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][15:0])
-b = zext_32(X[rs2][15:0])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCSU.H11 (RV32)
-
-Mnemonic::
-
-maccsu.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCSU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (signed×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xf, attr: ['MACCSU.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCSU.H11 multiplies `rs1[31:16]` (signed) by `rs2[31:16]` (unsigned) and adds
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_32(X[rs1][31:16])
-b = zext_32(X[rs2][31:16])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCU.H00 (RV32)
-
-Mnemonic::
-
-maccu.h00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (unsigned×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x5, attr: ['MACCU.H00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCU.H00 multiplies `rs1[15:0]` and `rs2[15:0]` as unsigned halfwords and adds
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = zext_32(X[rs1][15:0])
-b = zext_32(X[rs2][15:0])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCU.H01 (RV32)
-
-Mnemonic::
-
-maccu.h01 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCU.H01 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (unsigned×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x1 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x7, attr: ['MACCU.H01'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCU.H01 multiplies `rs1[15:0]` by `rs2[31:16]` as unsigned halfwords and adds
-the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = zext_32(X[rs1][15:0])
-b = zext_32(X[rs2][31:16])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCU.H11 (RV32)
-
-Mnemonic::
-
-maccu.h11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
-accumulate (unsigned×unsigned).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x7, attr: ['MACCU.H11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCU.H11 multiplies `rs1[31:16]` and `rs2[31:16]` as unsigned halfwords and
-adds the 32-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = zext_32(X[rs1][31:16])
-b = zext_32(X[rs2][31:16])
-X[rd] = X[rd] + to_bits(32, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
 ==== PMACC.W.H00 (RV64)
 
 Mnemonic::
@@ -27322,6 +26548,270 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
+==== MACC.H00 (RV32)
+
+Mnemonic::
+
+macc.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACC.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (signed×signed).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x1, attr: ['MACC.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACC.H00 multiplies `rs1[15:0]` and `rs2[15:0]` as signed halfwords and adds the
+32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][15:0])
+b = sext_32(X[rs2][15:0])
+X[rd] = X[rd] + to_bits(32, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACC.H01 (RV32)
+
+Mnemonic::
+
+macc.h01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACC.H01 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (signed×signed).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x3, attr: ['MACC.H01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACC.H01 multiplies `rs1[15:0]` by `rs2[31:16]` as signed halfwords and adds the
+32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][15:0])
+b = sext_32(X[rs2][31:16])
+X[rd] = X[rd] + to_bits(32, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACC.H11 (RV32)
+
+Mnemonic::
+
+macc.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACC.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (signed×signed).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x3, attr: ['MACC.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACC.H11 multiplies `rs1[31:16]` and `rs2[31:16]` as signed halfwords and adds
+the 32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][31:16])
+b = sext_32(X[rs2][31:16])
+X[rd] = X[rd] + to_bits(32, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACC.W00 (RV64)
+
+Mnemonic::
+
+macc.w00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACC.W00 is encoded in the OP-32 major opcode as a scalar word multiply
+accumulate (signed×signed) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x1, attr: ['MACC.W00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACC.W00 multiplies `rs1[31:0]` and `rs2[31:0]` as signed 32-bit values and adds
+the 64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][31:0])
+b = sext_64(X[rs2][31:0])
+X[rd] = X[rd] + to_bits(64, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACC.W01 (RV64)
+
+Mnemonic::
+
+macc.w01 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACC.W01 is encoded in the OP-32 major opcode as a scalar word multiply
+accumulate (signed×signed) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x1 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x3, attr: ['MACC.W01'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACC.W01 multiplies `rs1[31:0]` by `rs2[63:32]` as signed 32-bit values and adds
+the 64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][31:0])
+b = sext_64(X[rs2][63:32])
+X[rd] = X[rd] + to_bits(64, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACC.W11 (RV64)
+
+Mnemonic::
+
+macc.w11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACC.W11 is encoded in the OP-32 major opcode as a scalar word multiply
+accumulate (signed×signed) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x3, attr: ['MACC.W11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACC.W11 multiplies `rs1[63:32]` and `rs2[63:32]` as signed 32-bit values and
+adds the 64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][63:32])
+b = sext_64(X[rs2][63:32])
+X[rd] = X[rd] + to_bits(64, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
 ==== PMACCSU.W.H00 (RV64)
 
 Mnemonic::
@@ -27413,6 +26903,182 @@ d0 = din[31:0]  + to_bits(32, sext_32(s1[31:16]) * zext_32(s2[31:16]))
 d1 = din[63:32] + to_bits(32, sext_32(s1[63:48]) * zext_32(s2[63:48]))
 
 X[rd] = d1 @ d0
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACCSU.H00 (RV32)
+
+Mnemonic::
+
+maccsu.h00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACCSU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (signed×unsigned).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xd, attr: ['MACCSU.H00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACCSU.H00 multiplies `rs1[15:0]` (signed) by `rs2[15:0]` (unsigned) and adds
+the 32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][15:0])
+b = zext_32(X[rs2][15:0])
+X[rd] = X[rd] + to_bits(32, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACCSU.H11 (RV32)
+
+Mnemonic::
+
+maccsu.h11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACCSU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (signed×unsigned).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xf, attr: ['MACCSU.H11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACCSU.H11 multiplies `rs1[31:16]` (signed) by `rs2[31:16]` (unsigned) and adds
+the 32-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_32(X[rs1][31:16])
+b = zext_32(X[rs2][31:16])
+X[rd] = X[rd] + to_bits(32, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACCSU.W00 (RV64)
+
+Mnemonic::
+
+maccsu.w00 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACCSU.W00 is encoded in the OP-32 major opcode as a scalar word multiply
+accumulate (signed×unsigned) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0xd, attr: ['MACCSU.W00'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACCSU.W00 multiplies `rs1[31:0]` (signed) by `rs2[31:0]` (unsigned) and adds the
+64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][31:0])
+b = zext_64(X[rs2][31:0])
+X[rd] = X[rd] + to_bits(64, a * b)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== MACCSU.W11 (RV64)
+
+Mnemonic::
+
+maccsu.w11 _rd_, _rs1_, _rs2_
+
+Encoding::
+
+MACCSU.W11 is encoded in the OP-32 major opcode as a scalar word multiply
+accumulate (signed×unsigned) producing a 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x3 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0xf, attr: ['MACCSU.W11'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+MACCSU.W11 multiplies `rs1[63:32]` (signed) by `rs2[63:32]` (unsigned) and adds
+the 64-bit product to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a = sext_64(X[rs1][63:32])
+b = zext_64(X[rs2][63:32])
+X[rd] = X[rd] + to_bits(64, a * b)
 ----
 
 Notes::
@@ -27568,16 +27234,16 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
-==== MACC.W00 (RV64)
+==== MACCU.H00 (RV32)
 
 Mnemonic::
 
-macc.w00 _rd_, _rs1_, _rs2_
+maccu.h00 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MACC.W00 is encoded in the OP-32 major opcode as a scalar word multiply
-accumulate (signed×signed) producing a 64-bit result.
+MACCU.H00 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (unsigned×unsigned).
 
 [wavedrom, ,svg]
 ....
@@ -27587,24 +27253,24 @@ accumulate (signed×signed) producing a 64-bit result.
     { bits: 3, name: 0x3 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x1, attr: ['MACC.W00'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x5, attr: ['MACCU.H00'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-MACC.W00 multiplies `rs1[31:0]` and `rs2[31:0]` as signed 32-bit values and adds
-the 64-bit product to `rd`.
+MACCU.H00 multiplies `rs1[15:0]` and `rs2[15:0]` as unsigned halfwords and adds
+the 32-bit product to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a = sext_64(X[rs1][31:0])
-b = sext_64(X[rs2][31:0])
-X[rd] = X[rd] + to_bits(64, a * b)
+a = zext_32(X[rs1][15:0])
+b = zext_32(X[rs2][15:0])
+X[rd] = X[rd] + to_bits(32, a * b)
 ----
 
 Notes::
@@ -27612,16 +27278,16 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
-==== MACC.W01 (RV64)
+==== MACCU.H01 (RV32)
 
 Mnemonic::
 
-macc.w01 _rd_, _rs1_, _rs2_
+maccu.h01 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MACC.W01 is encoded in the OP-32 major opcode as a scalar word multiply
-accumulate (signed×signed) producing a 64-bit result.
+MACCU.H01 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (unsigned×unsigned).
 
 [wavedrom, ,svg]
 ....
@@ -27631,24 +27297,24 @@ accumulate (signed×signed) producing a 64-bit result.
     { bits: 3, name: 0x1 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x3, attr: ['MACC.W01'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x7, attr: ['MACCU.H01'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-MACC.W01 multiplies `rs1[31:0]` by `rs2[63:32]` as signed 32-bit values and adds
-the 64-bit product to `rd`.
+MACCU.H01 multiplies `rs1[15:0]` by `rs2[31:16]` as unsigned halfwords and adds
+the 32-bit product to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a = sext_64(X[rs1][31:0])
-b = sext_64(X[rs2][63:32])
-X[rd] = X[rd] + to_bits(64, a * b)
+a = zext_32(X[rs1][15:0])
+b = zext_32(X[rs2][31:16])
+X[rd] = X[rd] + to_bits(32, a * b)
 ----
 
 Notes::
@@ -27656,16 +27322,16 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
-==== MACC.W11 (RV64)
+==== MACCU.H11 (RV32)
 
 Mnemonic::
 
-macc.w11 _rd_, _rs1_, _rs2_
+maccu.h11 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MACC.W11 is encoded in the OP-32 major opcode as a scalar word multiply
-accumulate (signed×signed) producing a 64-bit result.
+MACCU.H11 is encoded in the OP-32 major opcode as a scalar halfword multiply
+accumulate (unsigned×unsigned).
 
 [wavedrom, ,svg]
 ....
@@ -27675,112 +27341,24 @@ accumulate (signed×signed) producing a 64-bit result.
     { bits: 3, name: 0x3 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x3, attr: ['MACC.W11'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x7, attr: ['MACCU.H11'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-MACC.W11 multiplies `rs1[63:32]` and `rs2[63:32]` as signed 32-bit values and
-adds the 64-bit product to `rd`.
+MACCU.H11 multiplies `rs1[31:16]` and `rs2[31:16]` as unsigned halfwords and
+adds the 32-bit product to `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a = sext_64(X[rs1][63:32])
-b = sext_64(X[rs2][63:32])
-X[rd] = X[rd] + to_bits(64, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCSU.W00 (RV64)
-
-Mnemonic::
-
-maccsu.w00 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCSU.W00 is encoded in the OP-32 major opcode as a scalar word multiply
-accumulate (signed×unsigned) producing a 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0xd, attr: ['MACCSU.W00'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCSU.W00 multiplies `rs1[31:0]` (signed) by `rs2[31:0]` (unsigned) and adds the
-64-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_64(X[rs1][31:0])
-b = zext_64(X[rs2][31:0])
-X[rd] = X[rd] + to_bits(64, a * b)
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== MACCSU.W11 (RV64)
-
-Mnemonic::
-
-maccsu.w11 _rd_, _rs1_, _rs2_
-
-Encoding::
-
-MACCSU.W11 is encoded in the OP-32 major opcode as a scalar word multiply
-accumulate (signed×unsigned) producing a 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x3 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0xf, attr: ['MACCSU.W11'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-MACCSU.W11 multiplies `rs1[63:32]` (signed) by `rs2[63:32]` (unsigned) and adds
-the 64-bit product to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-a = sext_64(X[rs1][63:32])
-b = zext_64(X[rs2][63:32])
-X[rd] = X[rd] + to_bits(64, a * b)
+a = zext_32(X[rs1][31:16])
+b = zext_32(X[rs2][31:16])
+X[rd] = X[rd] + to_bits(32, a * b)
 ----
 
 Notes::
@@ -27918,6 +27496,428 @@ X[rd] = X[rd] + to_bits(64, a * b)
 Notes::
 
 * This instruction reads and writes `rd`.
+
+
+<<<
+=== Q-format Horizontal Multiply-Add
+
+==== PMQ2ADD.H
+
+Mnemonic::
+
+pmq2add.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQ2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
+and producing packed 32-bit results (one per halfword pair).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x6, attr: ['PMQ2ADD.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQ2ADD.H instruction computes, for each 32-bit lane, the sum of two
+Q-format multiply-high results: one from the low halfword pair and one from the
+high halfword pair, and writes the packed 32-bit sums to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0)[46:15]
+    q1 = (a1 * b1)[46:15]
+    d[(32*i+31):(32*i)] = q0 + q1
+
+X[rd] = d
+----
+
+
+<<<
+==== PMQ2ADD.W (RV64)
+
+Mnemonic::
+
+pmq2add.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQ2ADD.W is encoded in the OP-32 major opcode as a packed Q-format instruction
+that sums two word products to produce a scalar XLEN result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x6, attr: ['PMQ2ADD.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQ2ADD.W instruction multiplies the low words and the high words of `rs1`
+and `rs2` as signed 32-bit values, extracts bits [94:31] from each product, and
+adds the two extracted values to produce the result in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a0 = sext_95(X[rs1][31:0])
+b0 = sext_95(X[rs2][31:0])
+a1 = sext_95(X[rs1][63:32])
+b1 = sext_95(X[rs2][63:32])
+
+q0 = (a0 * b0)[94:31]
+q1 = (a1 * b1)[94:31]
+
+X[rd] = q0 + q1
+----
+
+
+<<<
+==== PMQR2ADD.H
+
+Mnemonic::
+
+pmqr2add.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQR2ADD.H is encoded in the OP-32 major opcode using packed halfword operands
+and producing packed 32-bit results with rounding.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x6, attr: ['PMQR2ADD.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQR2ADD.H instruction is like PMQ2ADD.H but applies rounding (adding 2^14^)
+to each Q-format product before extracting bits [46:15], and then sums the two
+terms per 32-bit lane.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0 + 2^14)[46:15]
+    q1 = (a1 * b1 + 2^14)[46:15]
+    d[(32*i+31):(32*i)] = q0 + q1
+
+X[rd] = d
+----
+
+Notes::
+
+* Rounding is performed by adding 2^14^.
+
+<<<
+==== PMQR2ADD.W (RV64)
+
+Mnemonic::
+
+pmqr2add.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQR2ADD.W is encoded in the OP-32 major opcode as a rounded form of PMQ2ADD.W.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x6, attr: ['PMQR2ADD.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQR2ADD.W instruction is like PMQ2ADD.W but applies rounding by adding 2^30^
+to each product before extracting bits [94:31], and then sums the two extracted
+values.
+
+Operation::
+
+[source,pseudocode]
+----
+a0 = sext_95(X[rs1][31:0])
+b0 = sext_95(X[rs2][31:0])
+a1 = sext_95(X[rs1][63:32])
+b1 = sext_95(X[rs2][63:32])
+
+q0 = (a0 * b0 + 2^30)[94:31]
+q1 = (a1 * b1 + 2^30)[94:31]
+
+X[rd] = q0 + q1
+----
+
+Notes::
+
+* Rounding is performed by adding 2^30^.
+
+<<<
+==== PMQ2ADDA.H
+
+Mnemonic::
+
+pmq2adda.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQ2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
+PMQ2ADD.H.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x7, attr: ['PMQ2ADDA.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQ2ADDA.H instruction adds the PMQ2ADD.H result into the corresponding
+packed 32-bit elements of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0)[46:15]
+    q1 = (a1 * b1)[46:15]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== PMQ2ADDA.W (RV64)
+
+Mnemonic::
+
+pmq2adda.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQ2ADDA.W is encoded in the OP-32 major opcode as an accumulating form of
+PMQ2ADD.W.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x7, attr: ['PMQ2ADDA.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQ2ADDA.W instruction adds the PMQ2ADD.W result into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a0 = sext_95(X[rs1][31:0])
+b0 = sext_95(X[rs2][31:0])
+a1 = sext_95(X[rs1][63:32])
+b1 = sext_95(X[rs2][63:32])
+
+q0 = (a0 * b0)[94:31]
+q1 = (a1 * b1)[94:31]
+
+X[rd] = X[rd] + q0 + q1
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== PMQR2ADDA.H
+
+Mnemonic::
+
+pmqr2adda.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQR2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
+PMQR2ADD.H.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x7, attr: ['PMQR2ADDA.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQR2ADDA.H instruction adds the PMQR2ADD.H result into the corresponding
+packed 32-bit elements of `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_47(s1[(32*i+15):(32*i)])
+    a1 = sext_47(s1[(32*i+31):(32*i+16)])
+    b0 = sext_47(s2[(32*i+15):(32*i)])
+    b1 = sext_47(s2[(32*i+31):(32*i+16)])
+
+    q0 = (a0 * b0 + 2^14)[46:15]
+    q1 = (a1 * b1 + 2^14)[46:15]
+    d[(32*i+31):(32*i)] = d[(32*i+31):(32*i)] + q0 + q1
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^14^.
+
+<<<
+==== PMQR2ADDA.W (RV64)
+
+Mnemonic::
+
+pmqr2adda.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PMQR2ADDA.W is encoded in the OP-32 major opcode as an accumulating form of
+PMQR2ADD.W.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x7, attr: ['PMQR2ADDA.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PMQR2ADDA.W instruction adds the PMQR2ADD.W result into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+a0 = sext_95(X[rs1][31:0])
+b0 = sext_95(X[rs2][31:0])
+a1 = sext_95(X[rs1][63:32])
+b1 = sext_95(X[rs2][63:32])
+
+q0 = (a0 * b0 + 2^30)[94:31]
+q1 = (a1 * b1 + 2^30)[94:31]
+
+X[rd] = X[rd] + q0 + q1
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+* Rounding is performed by adding 2^30^.
 
 
 <<<
