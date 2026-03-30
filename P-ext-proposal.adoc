@@ -27975,16 +27975,16 @@ X[rd] = d
 
 
 <<<
-==== PM2ADDA.H
+==== PM2ADD.W (RV64)
 
 Mnemonic::
 
-pm2adda.h _rd_, _rs1_, _rs2_
+pm2add.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
-PM2ADD.H.
+PM2ADD.W is encoded in the OP-32 major opcode as a packed word-pair multiply-add
+instruction producing a scalar 64-bit result.
 
 [wavedrom, ,svg]
 ....
@@ -27994,40 +27994,29 @@ PM2ADD.H.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x1, attr: ['PM2ADDA.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x0, attr: ['PM2ADD.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The PM2ADDA.H instruction adds the PM2ADD.H result into the corresponding packed
-32-bit elements of `rd`.
+PM2ADD.W multiplies the low words and high words of `rs1` and `rs2` as signed
+32-bit values and adds the two 64-bit products to produce the result in `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
+a0 = sext_64(X[rs1][31:0])
+b0 = sext_64(X[rs2][31:0])
+a1 = sext_64(X[rs1][63:32])
+b1 = sext_64(X[rs2][63:32])
 
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_32(s1[(32*i+15):(32*i)])
-    a1 = sext_32(s1[(32*i+31):(32*i+16)])
-    b0 = sext_32(s2[(32*i+15):(32*i)])
-    b1 = sext_32(s2[(32*i+31):(32*i+16)])
-
-    d[(32*i+31):(32*i)] =
-        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) + to_bits(32, a1 * b1)
-
-X[rd] = d
+X[rd] = to_bits(64, a0 * b0) + to_bits(64, a1 * b1)
 ----
 
-Notes::
-
-* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADDSU.H
@@ -28082,16 +28071,16 @@ X[rd] = d
 
 
 <<<
-==== PM2ADDASU.H
+==== PM2ADDSU.W (RV64)
 
 Mnemonic::
 
-pm2addasu.h _rd_, _rs1_, _rs2_
+pm2addsu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDASU.H is encoded in the OP-32 major opcode as an accumulating form of
-PM2ADDSU.H.
+PM2ADDSU.W is encoded in the OP-32 major opcode as a packed word-pair
+signed×unsigned multiply-add instruction.
 
 [wavedrom, ,svg]
 ....
@@ -28101,40 +28090,29 @@ PM2ADDSU.H.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xd, attr: ['PM2ADDASU.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xc, attr: ['PM2ADDSU.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The PM2ADDASU.H instruction adds the PM2ADDSU.H result into the corresponding
-packed 32-bit elements of `rd`.
+PM2ADDSU.W multiplies corresponding word pairs as signed×unsigned (low×low and
+high×high) and adds the two 64-bit products to produce the result in `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
+a0 = sext_64(X[rs1][31:0])
+b0 = zext_64(X[rs2][31:0])
+a1 = sext_64(X[rs1][63:32])
+b1 = zext_64(X[rs2][63:32])
 
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_32(s1[(32*i+15):(32*i)])
-    a1 = sext_32(s1[(32*i+31):(32*i+16)])
-    b0 = zext_32(s2[(32*i+15):(32*i)])
-    b1 = zext_32(s2[(32*i+31):(32*i+16)])
-
-    d[(32*i+31):(32*i)] =
-        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) + to_bits(32, a1 * b1)
-
-X[rd] = d
+X[rd] = to_bits(64, a0 * b0) + to_bits(64, a1 * b1)
 ----
 
-Notes::
-
-* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADDU.H
@@ -28189,16 +28167,16 @@ X[rd] = d
 
 
 <<<
-==== PM2ADDAU.H
+==== PM2ADDU.W (RV64)
 
 Mnemonic::
 
-pm2addau.h _rd_, _rs1_, _rs2_
+pm2addu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDAU.H is encoded in the OP-32 major opcode as an accumulating form of
-PM2ADDU.H.
+PM2ADDU.W is encoded in the OP-32 major opcode as a packed word-pair
+unsigned×unsigned multiply-add instruction producing a scalar 64-bit result.
 
 [wavedrom, ,svg]
 ....
@@ -28208,40 +28186,29 @@ PM2ADDU.H.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x5, attr: ['PM2ADDAU.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x4, attr: ['PM2ADDU.W'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The PM2ADDAU.H instruction adds the PM2ADDU.H result into the corresponding
-packed 32-bit elements of `rd`.
+PM2ADDU.W multiplies corresponding word pairs as unsigned×unsigned and adds the
+two 64-bit products to produce the result in `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
+a0 = zext_64(X[rs1][31:0])
+b0 = zext_64(X[rs2][31:0])
+a1 = zext_64(X[rs1][63:32])
+b1 = zext_64(X[rs2][63:32])
 
-for i = 0 .. (XLEN/32 - 1):
-    a0 = zext_32(s1[(32*i+15):(32*i)])
-    a1 = zext_32(s1[(32*i+31):(32*i+16)])
-    b0 = zext_32(s2[(32*i+15):(32*i)])
-    b1 = zext_32(s2[(32*i+31):(32*i+16)])
-
-    d[(32*i+31):(32*i)] =
-        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) + to_bits(32, a1 * b1)
-
-X[rd] = d
+X[rd] = to_bits(64, a0 * b0) + to_bits(64, a1 * b1)
 ----
 
-Notes::
-
-* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADD.HX
@@ -28296,16 +28263,16 @@ X[rd] = d
 
 
 <<<
-==== PM2ADDA.HX
+==== PM2ADD.WX (RV64)
 
 Mnemonic::
 
-pm2adda.hx _rd_, _rs1_, _rs2_
+pm2add.wx _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDA.HX is encoded in the OP-32 major opcode as an accumulating form of
-PM2ADD.HX.
+PM2ADD.WX is encoded in the OP-32 major opcode as a packed word-pair multiply-add
+instruction using cross products.
 
 [wavedrom, ,svg]
 ....
@@ -28315,151 +28282,29 @@ PM2ADD.HX.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x3, attr: ['PM2ADDA.HX'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['PM2ADD.WX'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-The PM2ADDA.HX instruction adds the PM2ADD.HX result into the corresponding
-packed 32-bit elements of `rd`.
+PM2ADD.WX multiplies cross word pairs (low of `rs1` × high of `rs2`, and high of
+`rs1` × low of `rs2`) as signed values and sums the two 64-bit products.
 
 Operation::
 
 [source,pseudocode]
 ----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
+a0 = sext_64(X[rs1][31:0])
+a1 = sext_64(X[rs1][63:32])
+b0 = sext_64(X[rs2][31:0])
+b1 = sext_64(X[rs2][63:32])
 
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_32(s1[(32*i+15):(32*i)])
-    a1 = sext_32(s1[(32*i+31):(32*i+16)])
-    b0 = sext_32(s2[(32*i+15):(32*i)])
-    b1 = sext_32(s2[(32*i+31):(32*i+16)])
-
-    d[(32*i+31):(32*i)] =
-        d[(32*i+31):(32*i)] + to_bits(32, a0 * b1) + to_bits(32, a1 * b0)
-
-X[rd] = d
+X[rd] = to_bits(64, a0 * b1) + to_bits(64, a1 * b0)
 ----
 
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PM2SUBA.H
-
-Mnemonic::
-
-pm2suba.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM2SUBA.H is encoded in the OP-32 major opcode as an accumulating
-multiply-add-subtract instruction using packed halfword operands.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x9, attr: ['PM2SUBA.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PM2SUBA.H instruction updates each packed 32-bit element of `rd` by adding
-the low×low halfword product and subtracting the high×high halfword product.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_32(s1[(32*i+15):(32*i)])
-    a1 = sext_32(s1[(32*i+31):(32*i+16)])
-    b0 = sext_32(s2[(32*i+15):(32*i)])
-    b1 = sext_32(s2[(32*i+31):(32*i+16)])
-
-    d[(32*i+31):(32*i)] =
-        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) - to_bits(32, a1 * b1)
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PM2SUBA.HX
-
-Mnemonic::
-
-pm2suba.hx _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM2SUBA.HX is encoded in the OP-32 major opcode as an accumulating
-multiply-add-subtract instruction using packed halfword operands with cross
-products.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xb, attr: ['PM2SUBA.HX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PM2SUBA.HX instruction updates each packed 32-bit element of `rd` by adding
-the low×high cross product and subtracting the high×low cross product.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-d  = X[rd]
-
-for i = 0 .. (XLEN/32 - 1):
-    a0 = sext_32(s1[(32*i+15):(32*i)])
-    a1 = sext_32(s1[(32*i+31):(32*i+16)])
-    b0 = sext_32(s2[(32*i+15):(32*i)])
-    b1 = sext_32(s2[(32*i+31):(32*i+16)])
-
-    d[(32*i+31):(32*i)] =
-        d[(32*i+31):(32*i)] + to_bits(32, a0 * b1) - to_bits(32, a1 * b0)
-
-X[rd] = d
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2SUB.H
@@ -28512,6 +28357,50 @@ for i = 0 .. (XLEN/32 - 1):
       - sext32(signed(s1_h1) * signed(s2_h1))
 
 X[rd] = d
+----
+
+
+<<<
+==== PM2SUB.W (RV64)
+
+Mnemonic::
+
+pm2sub.w _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM2SUB.W is encoded in the OP-32 major opcode with word elements (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x8, attr: ['PM2SUB.W'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PM2SUB.W (RV64 only) multiplies two pairs of signed 32-bit word elements from
+`rs1` and `rs2`, then subtracts the upper product from the lower product. The
+64-bit difference is written to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Multiply two signed 32-bit word pairs and subtract products
+X[rd] = sext64(signed(s1[31:0])  * signed(s2[31:0]))
+      - sext64(signed(s1[63:32]) * signed(s2[63:32]))
 ----
 
 
@@ -28569,6 +28458,52 @@ for i = 0 .. (XLEN/32 - 1):
       - sext32(signed(s1_h1) * signed(s2_h0))
 
 X[rd] = d
+----
+
+
+<<<
+==== PM2SUB.WX (RV64)
+
+Mnemonic::
+
+pm2sub.wx _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM2SUB.WX is encoded in the OP-32 major opcode with word elements and crossed
+operands (RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xa, attr: ['PM2SUB.WX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PM2SUB.WX (RV64 only) multiplies two pairs of signed 32-bit word elements from
+`rs1` and `rs2` using crossed `rs2` operands, then subtracts the upper product
+from the lower product. The lower word of `rs1` is multiplied with the upper
+word of `rs2`, and vice versa. The 64-bit difference is written to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Cross-multiply two signed 32-bit word pairs and subtract products
+X[rd] = sext64(signed(s1[31:0])  * signed(s2[63:32]))
+      - sext64(signed(s1[63:32]) * signed(s2[31:0]))
 ----
 
 
@@ -28683,16 +28618,16 @@ X[rd] = d
 
 
 <<<
-==== PM2ADD.W (RV64)
+==== PM2ADDA.H
 
 Mnemonic::
 
-pm2add.w _rd_, _rs1_, _rs2_
+pm2adda.h _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADD.W is encoded in the OP-32 major opcode as a packed word-pair multiply-add
-instruction producing a scalar 64-bit result.
+PM2ADDA.H is encoded in the OP-32 major opcode as an accumulating form of
+PM2ADD.H.
 
 [wavedrom, ,svg]
 ....
@@ -28702,29 +28637,40 @@ instruction producing a scalar 64-bit result.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x0, attr: ['PM2ADD.W'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x1, attr: ['PM2ADDA.H'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PM2ADD.W multiplies the low words and high words of `rs1` and `rs2` as signed
-32-bit values and adds the two 64-bit products to produce the result in `rd`.
+The PM2ADDA.H instruction adds the PM2ADD.H result into the corresponding packed
+32-bit elements of `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a0 = sext_64(X[rs1][31:0])
-b0 = sext_64(X[rs2][31:0])
-a1 = sext_64(X[rs1][63:32])
-b1 = sext_64(X[rs2][63:32])
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
 
-X[rd] = to_bits(64, a0 * b0) + to_bits(64, a1 * b1)
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_32(s1[(32*i+15):(32*i)])
+    a1 = sext_32(s1[(32*i+31):(32*i+16)])
+    b0 = sext_32(s2[(32*i+15):(32*i)])
+    b1 = sext_32(s2[(32*i+31):(32*i+16)])
+
+    d[(32*i+31):(32*i)] =
+        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) + to_bits(32, a1 * b1)
+
+X[rd] = d
 ----
 
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADDA.W (RV64)
@@ -28772,16 +28718,16 @@ X[rd] = X[rd]
 
 
 <<<
-==== PM2ADDSU.W (RV64)
+==== PM2ADDASU.H
 
 Mnemonic::
 
-pm2addsu.w _rd_, _rs1_, _rs2_
+pm2addasu.h _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDSU.W is encoded in the OP-32 major opcode as a packed word-pair
-signed×unsigned multiply-add instruction.
+PM2ADDASU.H is encoded in the OP-32 major opcode as an accumulating form of
+PM2ADDSU.H.
 
 [wavedrom, ,svg]
 ....
@@ -28791,29 +28737,40 @@ signed×unsigned multiply-add instruction.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xc, attr: ['PM2ADDSU.W'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xd, attr: ['PM2ADDASU.H'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PM2ADDSU.W multiplies corresponding word pairs as signed×unsigned (low×low and
-high×high) and adds the two 64-bit products to produce the result in `rd`.
+The PM2ADDASU.H instruction adds the PM2ADDSU.H result into the corresponding
+packed 32-bit elements of `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a0 = sext_64(X[rs1][31:0])
-b0 = zext_64(X[rs2][31:0])
-a1 = sext_64(X[rs1][63:32])
-b1 = zext_64(X[rs2][63:32])
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
 
-X[rd] = to_bits(64, a0 * b0) + to_bits(64, a1 * b1)
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_32(s1[(32*i+15):(32*i)])
+    a1 = sext_32(s1[(32*i+31):(32*i+16)])
+    b0 = zext_32(s2[(32*i+15):(32*i)])
+    b1 = zext_32(s2[(32*i+31):(32*i+16)])
+
+    d[(32*i+31):(32*i)] =
+        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) + to_bits(32, a1 * b1)
+
+X[rd] = d
 ----
 
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADDASU.W (RV64)
@@ -28862,16 +28819,16 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
-==== PM2ADDU.W (RV64)
+==== PM2ADDAU.H
 
 Mnemonic::
 
-pm2addu.w _rd_, _rs1_, _rs2_
+pm2addau.h _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDU.W is encoded in the OP-32 major opcode as a packed word-pair
-unsigned×unsigned multiply-add instruction producing a scalar 64-bit result.
+PM2ADDAU.H is encoded in the OP-32 major opcode as an accumulating form of
+PM2ADDU.H.
 
 [wavedrom, ,svg]
 ....
@@ -28881,29 +28838,40 @@ unsigned×unsigned multiply-add instruction producing a scalar 64-bit result.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x4, attr: ['PM2ADDU.W'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x5, attr: ['PM2ADDAU.H'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PM2ADDU.W multiplies corresponding word pairs as unsigned×unsigned and adds the
-two 64-bit products to produce the result in `rd`.
+The PM2ADDAU.H instruction adds the PM2ADDU.H result into the corresponding
+packed 32-bit elements of `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a0 = zext_64(X[rs1][31:0])
-b0 = zext_64(X[rs2][31:0])
-a1 = zext_64(X[rs1][63:32])
-b1 = zext_64(X[rs2][63:32])
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
 
-X[rd] = to_bits(64, a0 * b0) + to_bits(64, a1 * b1)
+for i = 0 .. (XLEN/32 - 1):
+    a0 = zext_32(s1[(32*i+15):(32*i)])
+    a1 = zext_32(s1[(32*i+31):(32*i+16)])
+    b0 = zext_32(s2[(32*i+15):(32*i)])
+    b1 = zext_32(s2[(32*i+31):(32*i+16)])
+
+    d[(32*i+31):(32*i)] =
+        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) + to_bits(32, a1 * b1)
+
+X[rd] = d
 ----
 
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADDAU.W (RV64)
@@ -28951,16 +28919,16 @@ X[rd] = X[rd]
 
 
 <<<
-==== PM2ADD.WX (RV64)
+==== PM2ADDA.HX
 
 Mnemonic::
 
-pm2add.wx _rd_, _rs1_, _rs2_
+pm2adda.hx _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADD.WX is encoded in the OP-32 major opcode as a packed word-pair multiply-add
-instruction using cross products.
+PM2ADDA.HX is encoded in the OP-32 major opcode as an accumulating form of
+PM2ADD.HX.
 
 [wavedrom, ,svg]
 ....
@@ -28970,29 +28938,40 @@ instruction using cross products.
     { bits: 3, name: 0x5 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['PM2ADD.WX'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x3, attr: ['PM2ADDA.HX'] },
     { bits: 1, name: 0x1 },
 ]}
 ....
 
 Description::
 
-PM2ADD.WX multiplies cross word pairs (low of `rs1` × high of `rs2`, and high of
-`rs1` × low of `rs2`) as signed values and sums the two 64-bit products.
+The PM2ADDA.HX instruction adds the PM2ADD.HX result into the corresponding
+packed 32-bit elements of `rd`.
 
 Operation::
 
 [source,pseudocode]
 ----
-a0 = sext_64(X[rs1][31:0])
-a1 = sext_64(X[rs1][63:32])
-b0 = sext_64(X[rs2][31:0])
-b1 = sext_64(X[rs2][63:32])
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
 
-X[rd] = to_bits(64, a0 * b1) + to_bits(64, a1 * b0)
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_32(s1[(32*i+15):(32*i)])
+    a1 = sext_32(s1[(32*i+31):(32*i+16)])
+    b0 = sext_32(s2[(32*i+15):(32*i)])
+    b1 = sext_32(s2[(32*i+31):(32*i+16)])
+
+    d[(32*i+31):(32*i)] =
+        d[(32*i+31):(32*i)] + to_bits(32, a0 * b1) + to_bits(32, a1 * b0)
+
+X[rd] = d
 ----
 
+Notes::
+
+* This instruction reads and writes `rd`.
 
 <<<
 ==== PM2ADDA.WX (RV64)
@@ -29034,6 +29013,61 @@ b0 = sext_64(X[rs2][31:0])
 b1 = sext_64(X[rs2][63:32])
 
 X[rd] = X[rd] + to_bits(64, a0 * b1) + to_bits(64, a1 * b0)
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
+==== PM2SUBA.H
+
+Mnemonic::
+
+pm2suba.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM2SUBA.H is encoded in the OP-32 major opcode as an accumulating
+multiply-add-subtract instruction using packed halfword operands.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x9, attr: ['PM2SUBA.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PM2SUBA.H instruction updates each packed 32-bit element of `rd` by adding
+the low×low halfword product and subtracting the high×high halfword product.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_32(s1[(32*i+15):(32*i)])
+    a1 = sext_32(s1[(32*i+31):(32*i+16)])
+    b0 = sext_32(s2[(32*i+15):(32*i)])
+    b1 = sext_32(s2[(32*i+31):(32*i+16)])
+
+    d[(32*i+31):(32*i)] =
+        d[(32*i+31):(32*i)] + to_bits(32, a0 * b0) - to_bits(32, a1 * b1)
+
+X[rd] = d
 ----
 
 Notes::
@@ -29088,6 +29122,62 @@ Notes::
 * This instruction reads and writes `rd`.
 
 <<<
+==== PM2SUBA.HX
+
+Mnemonic::
+
+pm2suba.hx _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM2SUBA.HX is encoded in the OP-32 major opcode as an accumulating
+multiply-add-subtract instruction using packed halfword operands with cross
+products.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0xb, attr: ['PM2SUBA.HX'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PM2SUBA.HX instruction updates each packed 32-bit element of `rd` by adding
+the low×high cross product and subtracting the high×low cross product.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+d  = X[rd]
+
+for i = 0 .. (XLEN/32 - 1):
+    a0 = sext_32(s1[(32*i+15):(32*i)])
+    a1 = sext_32(s1[(32*i+31):(32*i+16)])
+    b0 = sext_32(s2[(32*i+15):(32*i)])
+    b1 = sext_32(s2[(32*i+31):(32*i+16)])
+
+    d[(32*i+31):(32*i)] =
+        d[(32*i+31):(32*i)] + to_bits(32, a0 * b1) - to_bits(32, a1 * b0)
+
+X[rd] = d
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
 ==== PM2SUBA.WX (RV64)
 
 Mnemonic::
@@ -29133,96 +29223,6 @@ X[rd] = X[rd] + to_bits(64, a0 * b1) - to_bits(64, a1 * b0)
 Notes::
 
 * This instruction reads and writes `rd`.
-
-
-<<<
-==== PM2SUB.W (RV64)
-
-Mnemonic::
-
-pm2sub.w _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM2SUB.W is encoded in the OP-32 major opcode with word elements (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x8, attr: ['PM2SUB.W'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PM2SUB.W (RV64 only) multiplies two pairs of signed 32-bit word elements from
-`rs1` and `rs2`, then subtracts the upper product from the lower product. The
-64-bit difference is written to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Multiply two signed 32-bit word pairs and subtract products
-X[rd] = sext64(signed(s1[31:0])  * signed(s2[31:0]))
-      - sext64(signed(s1[63:32]) * signed(s2[63:32]))
-----
-
-
-<<<
-==== PM2SUB.WX (RV64)
-
-Mnemonic::
-
-pm2sub.wx _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM2SUB.WX is encoded in the OP-32 major opcode with word elements and crossed
-operands (RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xa, attr: ['PM2SUB.WX'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PM2SUB.WX (RV64 only) multiplies two pairs of signed 32-bit word elements from
-`rs1` and `rs2` using crossed `rs2` operands, then subtracts the upper product
-from the lower product. The lower word of `rs1` is multiplied with the upper
-word of `rs2`, and vice versa. The 64-bit difference is written to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Cross-multiply two signed 32-bit word pairs and subtract products
-X[rd] = sext64(signed(s1[31:0])  * signed(s2[63:32]))
-      - sext64(signed(s1[63:32]) * signed(s2[31:0]))
-----
 
 
 <<<
@@ -29285,6 +29285,53 @@ X[rd] = d
 
 
 <<<
+==== PM4ADD.H (RV64)
+
+Mnemonic::
+
+pm4add.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM4ADD.H is encoded in the OP-32 major opcode as a packed halfword-group
+multiply-add instruction producing a scalar 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x0, attr: ['PM4ADD.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PM4ADD.H instruction multiplies the four packed 16-bit halfwords of `rs1`
+and `rs2` as signed values and sums the four 64-bit products to produce the
+result in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+X[rd] =
+      to_bits(64, sext_64(s1[15:0])  * sext_64(s2[15:0]))
+    + to_bits(64, sext_64(s1[31:16]) * sext_64(s2[31:16]))
+    + to_bits(64, sext_64(s1[47:32]) * sext_64(s2[47:32]))
+    + to_bits(64, sext_64(s1[63:48]) * sext_64(s2[63:48]))
+----
+
+
+<<<
 ==== PM4ADDSU.B
 
 Mnemonic::
@@ -29342,6 +29389,53 @@ X[rd] = d
 
 
 <<<
+==== PM4ADDSU.H (RV64)
+
+Mnemonic::
+
+pm4addsu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM4ADDSU.H is encoded in the OP-32 major opcode as a packed halfword-group
+signed×unsigned multiply-add instruction producing a scalar 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0xc, attr: ['PM4ADDSU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PM4ADDSU.H instruction multiplies the four packed halfwords of `rs1` (signed)
+with the four packed halfwords of `rs2` (unsigned) and sums the products to
+produce the 64-bit result in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+X[rd] =
+      to_bits(64, sext_64(s1[15:0])  * zext_64(s2[15:0]))
+    + to_bits(64, sext_64(s1[31:16]) * zext_64(s2[31:16]))
+    + to_bits(64, sext_64(s1[47:32]) * zext_64(s2[47:32]))
+    + to_bits(64, sext_64(s1[63:48]) * zext_64(s2[63:48]))
+----
+
+
+<<<
 ==== PM4ADDU.B
 
 Mnemonic::
@@ -29395,6 +29489,53 @@ for i = 0 .. (XLEN/32 - 1):
         to_bits(32, a0*b0) + to_bits(32, a1*b1) + to_bits(32, a2*b2) + to_bits(32, a3*b3)
 
 X[rd] = d
+----
+
+
+<<<
+==== PM4ADDU.H (RV64)
+
+Mnemonic::
+
+pm4addu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM4ADDU.H is encoded in the OP-32 major opcode as a packed halfword-group
+unsigned×unsigned multiply-add instruction producing a scalar 64-bit result.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x4, attr: ['PM4ADDU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PM4ADDU.H instruction multiplies the four packed 16-bit halfwords of `rs1`
+and `rs2` as unsigned values and sums the products to produce the 64-bit result
+in `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+X[rd] =
+      to_bits(64, zext_64(s1[15:0])  * zext_64(s2[15:0]))
+    + to_bits(64, zext_64(s1[31:16]) * zext_64(s2[31:16]))
+    + to_bits(64, zext_64(s1[47:32]) * zext_64(s2[47:32]))
+    + to_bits(64, zext_64(s1[63:48]) * zext_64(s2[63:48]))
 ----
 
 
@@ -29457,6 +29598,54 @@ for i = 0 .. (XLEN/32 - 1):
         + sext32(signed(s1_b3) * signed(s2_b3))
 
 X[rd] = d
+----
+
+
+<<<
+==== PM4ADDA.H (RV64)
+
+Mnemonic::
+
+pm4adda.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM4ADDA.H is encoded in the OP-32 major opcode with packed halfword elements
+(RV64 only).
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0x1, attr: ['PM4ADDA.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+PM4ADDA.H (RV64 only) multiplies four pairs of signed 16-bit halfword elements
+from `rs1` and `rs2`, sums the four 64-bit products, and accumulates the result
+into `rd`. This instruction is the accumulating variant of PM4ADD.H.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+// Multiply four signed 16-bit halfword pairs and accumulate sum into rd
+X[rd] = X[rd]
+      + sext64(signed(s1[15:0])   * signed(s2[15:0]))
+      + sext64(signed(s1[31:16])  * signed(s2[31:16]))
+      + sext64(signed(s1[47:32])  * signed(s2[47:32]))
+      + sext64(signed(s1[63:48])  * signed(s2[63:48]))
 ----
 
 
@@ -29524,6 +29713,55 @@ X[rd] = d
 
 
 <<<
+==== PM4ADDASU.H (RV64)
+
+Mnemonic::
+
+pm4addasu.h _rd_, _rs1_, _rs2_
+
+Encoding::
+
+PM4ADDASU.H is encoded in the OP-32 major opcode as an accumulating form of
+PM4ADDSU.H.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x3b, attr: ['OP-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x5 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 4, name: 0xd, attr: ['PM4ADDASU.H'] },
+    { bits: 1, name: 0x1 },
+]}
+....
+
+Description::
+
+The PM4ADDASU.H instruction adds the PM4ADDSU.H sum-of-products result into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+X[rd] =
+    X[rd]
+  + to_bits(64, sext_64(s1[15:0])  * zext_64(s2[15:0]))
+  + to_bits(64, sext_64(s1[31:16]) * zext_64(s2[31:16]))
+  + to_bits(64, sext_64(s1[47:32]) * zext_64(s2[47:32]))
+  + to_bits(64, sext_64(s1[63:48]) * zext_64(s2[63:48]))
+----
+
+Notes::
+
+* This instruction reads and writes `rd`.
+
+<<<
 ==== PM4ADDAU.B
 
 Mnemonic::
@@ -29587,196 +29825,6 @@ X[rd] = d
 
 
 <<<
-==== PM4ADD.H (RV64)
-
-Mnemonic::
-
-pm4add.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM4ADD.H is encoded in the OP-32 major opcode as a packed halfword-group
-multiply-add instruction producing a scalar 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x0, attr: ['PM4ADD.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PM4ADD.H instruction multiplies the four packed 16-bit halfwords of `rs1`
-and `rs2` as signed values and sums the four 64-bit products to produce the
-result in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-X[rd] =
-      to_bits(64, sext_64(s1[15:0])  * sext_64(s2[15:0]))
-    + to_bits(64, sext_64(s1[31:16]) * sext_64(s2[31:16]))
-    + to_bits(64, sext_64(s1[47:32]) * sext_64(s2[47:32]))
-    + to_bits(64, sext_64(s1[63:48]) * sext_64(s2[63:48]))
-----
-
-
-<<<
-==== PM4ADDSU.H (RV64)
-
-Mnemonic::
-
-pm4addsu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM4ADDSU.H is encoded in the OP-32 major opcode as a packed halfword-group
-signed×unsigned multiply-add instruction producing a scalar 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0xc, attr: ['PM4ADDSU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PM4ADDSU.H instruction multiplies the four packed halfwords of `rs1` (signed)
-with the four packed halfwords of `rs2` (unsigned) and sums the products to
-produce the 64-bit result in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-X[rd] =
-      to_bits(64, sext_64(s1[15:0])  * zext_64(s2[15:0]))
-    + to_bits(64, sext_64(s1[31:16]) * zext_64(s2[31:16]))
-    + to_bits(64, sext_64(s1[47:32]) * zext_64(s2[47:32]))
-    + to_bits(64, sext_64(s1[63:48]) * zext_64(s2[63:48]))
-----
-
-
-<<<
-==== PM4ADDASU.H (RV64)
-
-Mnemonic::
-
-pm4addasu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM4ADDASU.H is encoded in the OP-32 major opcode as an accumulating form of
-PM4ADDSU.H.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0xd, attr: ['PM4ADDASU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PM4ADDASU.H instruction adds the PM4ADDSU.H sum-of-products result into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-X[rd] =
-    X[rd]
-  + to_bits(64, sext_64(s1[15:0])  * zext_64(s2[15:0]))
-  + to_bits(64, sext_64(s1[31:16]) * zext_64(s2[31:16]))
-  + to_bits(64, sext_64(s1[47:32]) * zext_64(s2[47:32]))
-  + to_bits(64, sext_64(s1[63:48]) * zext_64(s2[63:48]))
-----
-
-Notes::
-
-* This instruction reads and writes `rd`.
-
-<<<
-==== PM4ADDU.H (RV64)
-
-Mnemonic::
-
-pm4addu.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM4ADDU.H is encoded in the OP-32 major opcode as a packed halfword-group
-unsigned×unsigned multiply-add instruction producing a scalar 64-bit result.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x4, attr: ['PM4ADDU.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-The PM4ADDU.H instruction multiplies the four packed 16-bit halfwords of `rs1`
-and `rs2` as unsigned values and sums the products to produce the 64-bit result
-in `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-X[rd] =
-      to_bits(64, zext_64(s1[15:0])  * zext_64(s2[15:0]))
-    + to_bits(64, zext_64(s1[31:16]) * zext_64(s2[31:16]))
-    + to_bits(64, zext_64(s1[47:32]) * zext_64(s2[47:32]))
-    + to_bits(64, zext_64(s1[63:48]) * zext_64(s2[63:48]))
-----
-
-
-<<<
 ==== PM4ADDAU.H (RV64)
 
 Mnemonic::
@@ -29824,54 +29872,6 @@ X[rd] =
 Notes::
 
 * This instruction reads and writes `rd`.
-
-
-<<<
-==== PM4ADDA.H (RV64)
-
-Mnemonic::
-
-pm4adda.h _rd_, _rs1_, _rs2_
-
-Encoding::
-
-PM4ADDA.H is encoded in the OP-32 major opcode with packed halfword elements
-(RV64 only).
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x3b, attr: ['OP-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x5 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 4, name: 0x1, attr: ['PM4ADDA.H'] },
-    { bits: 1, name: 0x1 },
-]}
-....
-
-Description::
-
-PM4ADDA.H (RV64 only) multiplies four pairs of signed 16-bit halfword elements
-from `rs1` and `rs2`, sums the four 64-bit products, and accumulates the result
-into `rd`. This instruction is the accumulating variant of PM4ADD.H.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-// Multiply four signed 16-bit halfword pairs and accumulate sum into rd
-X[rd] = X[rd]
-      + sext64(signed(s1[15:0])   * signed(s2[15:0]))
-      + sext64(signed(s1[31:16])  * signed(s2[31:16]))
-      + sext64(signed(s1[47:32])  * signed(s2[47:32]))
-      + sext64(signed(s1[63:48])  * signed(s2[63:48]))
-----
 
 
 <<<
