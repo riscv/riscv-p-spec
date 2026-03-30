@@ -17424,15 +17424,20 @@ if (rd_p != 0):
 
 
 <<<
-==== PWADDA.B (RV32)
+==== PWADD.H (RV32)
 
 Mnemonic::
 
-pwadda.b _rd_p_, _rs1_, _rs2_
+pwadd.h _rd_p_, _rs1_, _rs2_
+
+Pseudoinstructions::
+
+pwcvt.h _rd_p_, _rs1_ &#8594; pwadd.h _rd_p_, _rs1_, x0
 
 Encoding::
 
-PWADDA.B is available only in RV32. It accumulates into the destination register pair.
+PWADD.H is available only in RV32. It writes results to an even-odd register
+pair specified by `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17443,17 +17448,16 @@ PWADDA.B is available only in RV32. It accumulates into the destination register
     { bits: 3, name: 0x2 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x1, attr: ['PWADDA.B'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x0, attr: ['PWADD.H'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWADDA.B performs the same packed byte-to-halfword signed additions as PWADD.B,
-then adds each 16-bit result into the corresponding 16-bit element of the
-destination register pair.
+PWADD.H sign-extends each 16-bit halfword element of `rs1` and `rs2`, adds them,
+and writes two 32-bit results to the destination register pair when `rd_p != 0`.
 
 Operation::
 
@@ -17461,14 +17465,51 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
+d0 = to_bits(32, signed(s1[15:0])  + signed(s2[15:0]))
+d1 = to_bits(32, signed(s1[31:16]) + signed(s2[31:16]))
 
-d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+if (rd_p != 0):
+    X[2*rd_p]   = d0
+    X[2*rd_p+1] = d1
+----
 
-for i = 0 .. 3:
-    a = s1[(8*i+7):(8*i)]
-    b = s2[(8*i+7):(8*i)]
-    acc = d[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = acc + to_bits(16, signed(a) + signed(b))
+
+<<<
+==== WADD (RV32)
+
+Mnemonic::
+
+wadd _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+WADD is available only in RV32 and writes a 64-bit result to register pair `rd_p`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x0, attr: ['WADD'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WADD adds `rs1` and `rs2` as signed XLEN values and writes the 64-bit sum to the
+destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+d = to_bits(64, signed(X[rs1]) + signed(X[rs2]))
 
 if (rd_p != 0):
     X[2*rd_p]   = d[31:0]
@@ -17528,15 +17569,15 @@ if (rd_p != 0):
 
 
 <<<
-==== PWADDAU.B (RV32)
+==== PWADDU.H (RV32)
 
 Mnemonic::
 
-pwaddau.b _rd_p_, _rs1_, _rs2_
+pwaddu.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDAU.B is available only in RV32. It accumulates into the destination register pair.
+PWADDU.H is available only in RV32.
 
 [wavedrom, ,svg]
 ....
@@ -17547,17 +17588,16 @@ PWADDAU.B is available only in RV32. It accumulates into the destination registe
     { bits: 3, name: 0x2 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x3, attr: ['PWADDAU.B'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x2, attr: ['PWADDU.H'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWADDAU.B performs the same packed byte-to-halfword unsigned additions as PWADDU.B,
-then adds each 16-bit result into the corresponding 16-bit element of the
-destination register pair.
+PWADDU.H zero-extends each 16-bit halfword element of `rs1` and `rs2`, adds them,
+and writes two 32-bit results to the destination register pair when `rd_p != 0`.
 
 Operation::
 
@@ -17565,14 +17605,51 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
+d0 = to_bits(32, unsigned(s1[15:0])  + unsigned(s2[15:0]))
+d1 = to_bits(32, unsigned(s1[31:16]) + unsigned(s2[31:16]))
 
-d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+if (rd_p != 0):
+    X[2*rd_p]   = d0
+    X[2*rd_p+1] = d1
+----
 
-for i = 0 .. 3:
-    a = s1[(8*i+7):(8*i)]
-    b = s2[(8*i+7):(8*i)]
-    acc = d[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = acc + to_bits(16, unsigned(a) + unsigned(b))
+
+<<<
+==== WADDU (RV32)
+
+Mnemonic::
+
+waddu _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+WADDU is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x2, attr: ['WADDU'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WADDU adds `rs1` and `rs2` as unsigned XLEN values and writes the 64-bit sum to
+the destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+d = to_bits(64, unsigned(X[rs1]) + unsigned(X[rs2]))
 
 if (rd_p != 0):
     X[2*rd_p]   = d[31:0]
@@ -17633,16 +17710,15 @@ if (rd_p != 0):
 
 
 <<<
-==== PWSUBA.B (RV32)
+==== PWSUB.H (RV32)
 
 Mnemonic::
 
-pwsuba.b _rd_p_, _rs1_, _rs2_
+pwsub.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBA.B is available only in RV32 and accumulates into the destination
-register pair.
+PWSUB.H is available only in RV32.
 
 [wavedrom, ,svg]
 ....
@@ -17653,17 +17729,16 @@ register pair.
     { bits: 3, name: 0x2 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0x9, attr: ['PWSUBA.B'] },
+    { bits: 2, name: 0x0 },
+    { bits: 4, name: 0x8, attr: ['PWSUB.H'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWSUBA.B performs the same packed byte-to-halfword signed subtraction as
-PWSUB.B, then adds each 16-bit result into the corresponding 16-bit element
-of the destination register pair.
+PWSUB.H sign-extends each 16-bit halfword element, subtracts element-wise, and
+writes two 32-bit results to the destination register pair when `rd_p != 0`.
 
 Operation::
 
@@ -17671,14 +17746,51 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
+d0 = to_bits(32, signed(s1[15:0])  - signed(s2[15:0]))
+d1 = to_bits(32, signed(s1[31:16]) - signed(s2[31:16]))
 
-d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+if (rd_p != 0):
+    X[2*rd_p]   = d0
+    X[2*rd_p+1] = d1
+----
 
-for i = 0 .. 3:
-    a   = s1[(8*i+7):(8*i)]
-    b   = s2[(8*i+7):(8*i)]
-    acc = d[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = acc + to_bits(16, signed(a) - signed(b))
+
+<<<
+==== WSUB (RV32)
+
+Mnemonic::
+
+wsub _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+WSUB is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x8, attr: ['WSUB'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WSUB subtracts `rs2` from `rs1` as signed XLEN values and writes the 64-bit
+difference to the destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+d = to_bits(64, signed(X[rs1]) - signed(X[rs2]))
 
 if (rd_p != 0):
     X[2*rd_p]   = d[31:0]
@@ -17738,74 +17850,15 @@ if (rd_p != 0):
 
 
 <<<
-==== PWSUBAU.B (RV32)
+==== PWSUBU.H (RV32)
 
 Mnemonic::
 
-pwsubau.b _rd_p_, _rs1_, _rs2_
+pwsubu.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBAU.B is available only in RV32 and accumulates into the destination
-register pair.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 4, name: 0xb, attr: ['PWSUBAU.B'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PWSUBAU.B performs the same packed byte-to-halfword unsigned subtraction as
-PWSUBU.B, then adds each 16-bit result into the corresponding 16-bit element
-of the destination register pair.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = X[rs1]
-s2 = X[rs2]
-
-d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
-
-for i = 0 .. 3:
-    a   = s1[(8*i+7):(8*i)]
-    b   = s2[(8*i+7):(8*i)]
-    acc = d[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = acc + to_bits(16, unsigned(a) - unsigned(b))
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== PWADD.H (RV32)
-
-Mnemonic::
-
-pwadd.h _rd_p_, _rs1_, _rs2_
-
-Pseudoinstructions::
-
-pwcvt.h _rd_p_, _rs1_ &#8594; pwadd.h _rd_p_, _rs1_, x0
-
-Encoding::
-
-PWADD.H is available only in RV32. It writes results to an even-odd register
-pair specified by `rd_p`.
+PWSUBU.H is available only in RV32.
 
 [wavedrom, ,svg]
 ....
@@ -17817,15 +17870,16 @@ pair specified by `rd_p`.
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
     { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x0, attr: ['PWADD.H'] },
+    { bits: 4, name: 0xa, attr: ['PWSUBU.H'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWADD.H sign-extends each 16-bit halfword element of `rs1` and `rs2`, adds them,
-and writes two 32-bit results to the destination register pair when `rd_p != 0`.
+PWSUBU.H zero-extends each 16-bit halfword element, subtracts element-wise as
+unsigned values, and writes two 32-bit results to the destination register pair
+when `rd_p != 0`.
 
 Operation::
 
@@ -17833,12 +17887,108 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d0 = to_bits(32, signed(s1[15:0])  + signed(s2[15:0]))
-d1 = to_bits(32, signed(s1[31:16]) + signed(s2[31:16]))
+d0 = to_bits(32, unsigned(s1[15:0])  - unsigned(s2[15:0]))
+d1 = to_bits(32, unsigned(s1[31:16]) - unsigned(s2[31:16]))
 
 if (rd_p != 0):
     X[2*rd_p]   = d0
     X[2*rd_p+1] = d1
+----
+
+
+<<<
+==== WSUBU (RV32)
+
+Mnemonic::
+
+wsubu _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+WSUBU is available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0xa, attr: ['WSUBU'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WSUBU subtracts `rs2` from `rs1` as unsigned XLEN values and writes the 64-bit
+difference to the destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+d = to_bits(64, unsigned(X[rs1]) - unsigned(X[rs2]))
+
+if (rd_p != 0):
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
+----
+
+
+<<<
+==== PWADDA.B (RV32)
+
+Mnemonic::
+
+pwadda.b _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+PWADDA.B is available only in RV32. It accumulates into the destination register pair.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x1, attr: ['PWADDA.B'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWADDA.B performs the same packed byte-to-halfword signed additions as PWADD.B,
+then adds each 16-bit result into the corresponding 16-bit element of the
+destination register pair.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = X[rs1]
+s2 = X[rs2]
+
+d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+
+for i = 0 .. 3:
+    a = s1[(8*i+7):(8*i)]
+    b = s2[(8*i+7):(8*i)]
+    acc = d[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = acc + to_bits(16, signed(a) + signed(b))
+
+if (rd_p != 0):
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
 ----
 
 
@@ -17893,15 +18043,15 @@ if (rd_p != 0):
 
 
 <<<
-==== PWADDU.H (RV32)
+==== WADDA (RV32)
 
 Mnemonic::
 
-pwaddu.h _rd_p_, _rs1_, _rs2_
+wadda _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDU.H is available only in RV32.
+WADDA is available only in RV32 and accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -17912,16 +18062,61 @@ PWADDU.H is available only in RV32.
     { bits: 3, name: 0x2 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x2, attr: ['PWADDU.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x1, attr: ['WADDA'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWADDU.H zero-extends each 16-bit halfword element of `rs1` and `rs2`, adds them,
-and writes two 32-bit results to the destination register pair when `rd_p != 0`.
+WADDA performs WADD and accumulates the 64-bit result into the destination
+register pair.
+
+Operation::
+
+[source,pseudocode]
+----
+acc = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+acc = acc + to_bits(64, signed(X[rs1]) + signed(X[rs2]))
+
+if (rd_p != 0):
+    X[2*rd_p]   = acc[31:0]
+    X[2*rd_p+1] = acc[63:32]
+----
+
+
+<<<
+==== PWADDAU.B (RV32)
+
+Mnemonic::
+
+pwaddau.b _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+PWADDAU.B is available only in RV32. It accumulates into the destination register pair.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x3, attr: ['PWADDAU.B'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWADDAU.B performs the same packed byte-to-halfword unsigned additions as PWADDU.B,
+then adds each 16-bit result into the corresponding 16-bit element of the
+destination register pair.
 
 Operation::
 
@@ -17929,12 +18124,18 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d0 = to_bits(32, unsigned(s1[15:0])  + unsigned(s2[15:0]))
-d1 = to_bits(32, unsigned(s1[31:16]) + unsigned(s2[31:16]))
+
+d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+
+for i = 0 .. 3:
+    a = s1[(8*i+7):(8*i)]
+    b = s2[(8*i+7):(8*i)]
+    acc = d[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = acc + to_bits(16, unsigned(a) + unsigned(b))
 
 if (rd_p != 0):
-    X[2*rd_p]   = d0
-    X[2*rd_p+1] = d1
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
 ----
 
 
@@ -17989,15 +18190,15 @@ if (rd_p != 0):
 
 
 <<<
-==== PWSUB.H (RV32)
+==== WADDAU (RV32)
 
 Mnemonic::
 
-pwsub.h _rd_p_, _rs1_, _rs2_
+waddau _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUB.H is available only in RV32.
+WADDAU is available only in RV32 and accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18008,16 +18209,62 @@ PWSUB.H is available only in RV32.
     { bits: 3, name: 0x2 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0x8, attr: ['PWSUB.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x3, attr: ['WADDAU'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWSUB.H sign-extends each 16-bit halfword element, subtracts element-wise, and
-writes two 32-bit results to the destination register pair when `rd_p != 0`.
+WADDAU performs WADDU and accumulates the 64-bit result into the destination
+register pair.
+
+Operation::
+
+[source,pseudocode]
+----
+acc = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+acc = acc + to_bits(64, unsigned(X[rs1]) + unsigned(X[rs2]))
+
+if (rd_p != 0):
+    X[2*rd_p]   = acc[31:0]
+    X[2*rd_p+1] = acc[63:32]
+----
+
+
+<<<
+==== PWSUBA.B (RV32)
+
+Mnemonic::
+
+pwsuba.b _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+PWSUBA.B is available only in RV32 and accumulates into the destination
+register pair.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0x9, attr: ['PWSUBA.B'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWSUBA.B performs the same packed byte-to-halfword signed subtraction as
+PWSUB.B, then adds each 16-bit result into the corresponding 16-bit element
+of the destination register pair.
 
 Operation::
 
@@ -18025,12 +18272,18 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d0 = to_bits(32, signed(s1[15:0])  - signed(s2[15:0]))
-d1 = to_bits(32, signed(s1[31:16]) - signed(s2[31:16]))
+
+d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+
+for i = 0 .. 3:
+    a   = s1[(8*i+7):(8*i)]
+    b   = s2[(8*i+7):(8*i)]
+    acc = d[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = acc + to_bits(16, signed(a) - signed(b))
 
 if (rd_p != 0):
-    X[2*rd_p]   = d0
-    X[2*rd_p+1] = d1
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
 ----
 
 
@@ -18085,15 +18338,15 @@ if (rd_p != 0):
 
 
 <<<
-==== PWSUBU.H (RV32)
+==== WSUBA (RV32)
 
 Mnemonic::
 
-pwsubu.h _rd_p_, _rs1_, _rs2_
+wsuba _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBU.H is available only in RV32.
+WSUBA is available only in RV32 and accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18104,17 +18357,62 @@ PWSUBU.H is available only in RV32.
     { bits: 3, name: 0x2 },
     { bits: 5, name: 'rs1' },
     { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 4, name: 0xa, attr: ['PWSUBU.H'] },
+    { bits: 2, name: 0x1 },
+    { bits: 4, name: 0x9, attr: ['WSUBA'] },
     { bits: 1, name: 0x0 },
 ]}
 ....
 
 Description::
 
-PWSUBU.H zero-extends each 16-bit halfword element, subtracts element-wise as
-unsigned values, and writes two 32-bit results to the destination register pair
-when `rd_p != 0`.
+WSUBA performs WSUB and accumulates the 64-bit result into the destination
+register pair.
+
+Operation::
+
+[source,pseudocode]
+----
+acc = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+acc = acc + to_bits(64, signed(X[rs1]) - signed(X[rs2]))
+
+if (rd_p != 0):
+    X[2*rd_p]   = acc[31:0]
+    X[2*rd_p+1] = acc[63:32]
+----
+
+
+<<<
+==== PWSUBAU.B (RV32)
+
+Mnemonic::
+
+pwsubau.b _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+PWSUBAU.B is available only in RV32 and accumulates into the destination
+register pair.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 4, name: 0xb, attr: ['PWSUBAU.B'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWSUBAU.B performs the same packed byte-to-halfword unsigned subtraction as
+PWSUBU.B, then adds each 16-bit result into the corresponding 16-bit element
+of the destination register pair.
 
 Operation::
 
@@ -18122,12 +18420,18 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d0 = to_bits(32, unsigned(s1[15:0])  - unsigned(s2[15:0]))
-d1 = to_bits(32, unsigned(s1[31:16]) - unsigned(s2[31:16]))
+
+d = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
+
+for i = 0 .. 3:
+    a   = s1[(8*i+7):(8*i)]
+    b   = s2[(8*i+7):(8*i)]
+    acc = d[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = acc + to_bits(16, unsigned(a) - unsigned(b))
 
 if (rd_p != 0):
-    X[2*rd_p]   = d0
-    X[2*rd_p+1] = d1
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
 ----
 
 
@@ -18178,310 +18482,6 @@ acc1 = acc1 + to_bits(32, unsigned(s1[31:16]) - unsigned(s2[31:16]))
 if (rd_p != 0):
     X[2*rd_p]   = acc0
     X[2*rd_p+1] = acc1
-----
-
-
-<<<
-==== WADD (RV32)
-
-Mnemonic::
-
-wadd _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WADD is available only in RV32 and writes a 64-bit result to register pair `rd_p`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x0, attr: ['WADD'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WADD adds `rs1` and `rs2` as signed XLEN values and writes the 64-bit sum to the
-destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-d = to_bits(64, signed(X[rs1]) + signed(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== WADDA (RV32)
-
-Mnemonic::
-
-wadda _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WADDA is available only in RV32 and accumulates into the destination register pair.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x1, attr: ['WADDA'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WADDA performs WADD and accumulates the 64-bit result into the destination
-register pair.
-
-Operation::
-
-[source,pseudocode]
-----
-acc = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
-acc = acc + to_bits(64, signed(X[rs1]) + signed(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = acc[31:0]
-    X[2*rd_p+1] = acc[63:32]
-----
-
-
-<<<
-==== WADDU (RV32)
-
-Mnemonic::
-
-waddu _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WADDU is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x2, attr: ['WADDU'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WADDU adds `rs1` and `rs2` as unsigned XLEN values and writes the 64-bit sum to
-the destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-d = to_bits(64, unsigned(X[rs1]) + unsigned(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== WADDAU (RV32)
-
-Mnemonic::
-
-waddau _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WADDAU is available only in RV32 and accumulates into the destination register pair.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x3, attr: ['WADDAU'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WADDAU performs WADDU and accumulates the 64-bit result into the destination
-register pair.
-
-Operation::
-
-[source,pseudocode]
-----
-acc = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
-acc = acc + to_bits(64, unsigned(X[rs1]) + unsigned(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = acc[31:0]
-    X[2*rd_p+1] = acc[63:32]
-----
-
-
-<<<
-==== WSUB (RV32)
-
-Mnemonic::
-
-wsub _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WSUB is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x8, attr: ['WSUB'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WSUB subtracts `rs2` from `rs1` as signed XLEN values and writes the 64-bit
-difference to the destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-d = to_bits(64, signed(X[rs1]) - signed(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== WSUBA (RV32)
-
-Mnemonic::
-
-wsuba _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WSUBA is available only in RV32 and accumulates into the destination register pair.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0x9, attr: ['WSUBA'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WSUBA performs WSUB and accumulates the 64-bit result into the destination
-register pair.
-
-Operation::
-
-[source,pseudocode]
-----
-acc = (rd_p == 0) ? 0 : (X[2*rd_p+1] @ X[2*rd_p])
-acc = acc + to_bits(64, signed(X[rs1]) - signed(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = acc[31:0]
-    X[2*rd_p+1] = acc[63:32]
-----
-
-
-<<<
-==== WSUBU (RV32)
-
-Mnemonic::
-
-wsubu _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WSUBU is available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 4, name: 0xa, attr: ['WSUBU'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WSUBU subtracts `rs2` from `rs1` as unsigned XLEN values and writes the 64-bit
-difference to the destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-d = to_bits(64, unsigned(X[rs1]) - unsigned(X[rs2]))
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
 ----
 
 
@@ -18583,6 +18583,99 @@ if (rd_p != 0):
 
 
 <<<
+==== PWSLLI.H (RV32)
+
+Mnemonic::
+
+pwslli.h _rd_p_, _rs1_, _uimm5_
+
+Encoding::
+
+PWSLLI.H is available only in RV32. The shift amount is encoded in `uimm5`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['PWSLLI.H'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWSLLI.H widens each 16-bit element of `rs1` to 32 bits by zero-extension, then
+shifts left by an immediate amount, producing two 32-bit results.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm5[4:0]
+
+d0 = zero_extend(32, s1[15:0])  << shamt
+d1 = zero_extend(32, s1[31:16]) << shamt
+
+if (rd_p != 0):
+    X[2*rd_p]   = d0
+    X[2*rd_p+1] = d1
+----
+
+
+<<<
+==== WSLLI (RV32)
+
+Mnemonic::
+
+wslli _rd_p_, _rs1_, _uimm6_
+
+Encoding::
+
+WSLLI is available only in RV32. The shift amount is encoded in `uimm6`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['WSLLI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WSLLI zero-extends `rs1` to 64 bits, shifts left by an immediate amount, and
+writes the 64-bit result to the destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+shamt = uimm6[5:0]
+d = zero_extend(64, X[rs1]) << shamt
+
+if (rd_p != 0):
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
+----
+
+
+<<<
 ==== PWSLL.BS (RV32)
 
 Mnemonic::
@@ -18624,6 +18717,99 @@ shamt = X[rs2][4:0]
 for i = 0 .. 3:
     a = s1[(8*i+7):(8*i)]
     d[(16*i+15):(16*i)] = (zero_extend(32, a) << shamt)[15:0]
+
+if (rd_p != 0):
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
+----
+
+
+<<<
+==== PWSLL.HS (RV32)
+
+Mnemonic::
+
+pwsll.hs _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+PWSLL.HS is available only in RV32. The shift amount is taken from `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['PWSLL.HS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWSLL.HS widens each 16-bit element of `rs1` to 32 bits by zero-extension, then
+shifts left by the amount in `rs2` (low 5 bits).
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = X[rs2][4:0]
+
+d0 = zero_extend(32, s1[15:0])  << shamt
+d1 = zero_extend(32, s1[31:16]) << shamt
+
+if (rd_p != 0):
+    X[2*rd_p]   = d0
+    X[2*rd_p+1] = d1
+----
+
+
+<<<
+==== WSLL (RV32)
+
+Mnemonic::
+
+wsll _rd_p_, _rs1_, _rs2_
+
+Encoding::
+
+WSLL is available only in RV32. The shift amount is taken from `rs2`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['WSLL'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WSLL zero-extends `rs1` to 64 bits, shifts left by the amount in `rs2` (low 6 bits),
+and writes the 64-bit result to the destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+shamt = X[rs2][5:0]
+d = zero_extend(64, X[rs1]) << shamt
 
 if (rd_p != 0):
     X[2*rd_p]   = d[31:0]
@@ -18681,6 +18867,99 @@ if (rd_p != 0):
 
 
 <<<
+==== PWSLAI.H (RV32)
+
+Mnemonic::
+
+pwslai.h _rd_p_, _rs1_, _uimm5_
+
+Encoding::
+
+PWSLAI.H is available only in RV32. The shift amount is encoded in `uimm5`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['PWSLAI.H'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PWSLAI.H widens each 16-bit element of `rs1` to 32 bits by sign-extension, then
+shifts left by an immediate amount.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = X[rs1]
+shamt = uimm5[4:0]
+
+d0 = sign_extend(32, s1[15:0])  << shamt
+d1 = sign_extend(32, s1[31:16]) << shamt
+
+if (rd_p != 0):
+    X[2*rd_p]   = d0
+    X[2*rd_p+1] = d1
+----
+
+
+<<<
+==== WSLAI (RV32)
+
+Mnemonic::
+
+wslai _rd_p_, _rs1_, _uimm6_
+
+Encoding::
+
+WSLAI is available only in RV32. The shift amount is encoded in `uimm6`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
+    { bits: 3, name: 0x2 },
+    { bits: 5, name: 'rs1' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['WSLAI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+WSLAI sign-extends `rs1` to 64 bits, shifts left by an immediate amount, and
+writes the 64-bit result to the destination register pair when `rd_p != 0`.
+
+Operation::
+
+[source,pseudocode]
+----
+shamt = uimm6[5:0]
+d = sign_extend(64, X[rs1]) << shamt
+
+if (rd_p != 0):
+    X[2*rd_p]   = d[31:0]
+    X[2*rd_p+1] = d[63:32]
+----
+
+
+<<<
 ==== PWSLA.BS (RV32)
 
 Mnemonic::
@@ -18726,150 +19005,6 @@ for i = 0 .. 3:
 if (rd_p != 0):
     X[2*rd_p]   = d[31:0]
     X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== PWSLLI.H (RV32)
-
-Mnemonic::
-
-pwslli.h _rd_p_, _rs1_, _uimm5_
-
-Encoding::
-
-PWSLLI.H is available only in RV32. The shift amount is encoded in `uimm5`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['PWSLLI.H'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PWSLLI.H widens each 16-bit element of `rs1` to 32 bits by zero-extension, then
-shifts left by an immediate amount, producing two 32-bit results.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm5[4:0]
-
-d0 = zero_extend(32, s1[15:0])  << shamt
-d1 = zero_extend(32, s1[31:16]) << shamt
-
-if (rd_p != 0):
-    X[2*rd_p]   = d0
-    X[2*rd_p+1] = d1
-----
-
-
-<<<
-==== PWSLL.HS (RV32)
-
-Mnemonic::
-
-pwsll.hs _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-PWSLL.HS is available only in RV32. The shift amount is taken from `rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['PWSLL.HS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PWSLL.HS widens each 16-bit element of `rs1` to 32 bits by zero-extension, then
-shifts left by the amount in `rs2` (low 5 bits).
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = X[rs2][4:0]
-
-d0 = zero_extend(32, s1[15:0])  << shamt
-d1 = zero_extend(32, s1[31:16]) << shamt
-
-if (rd_p != 0):
-    X[2*rd_p]   = d0
-    X[2*rd_p+1] = d1
-----
-
-
-<<<
-==== PWSLAI.H (RV32)
-
-Mnemonic::
-
-pwslai.h _rd_p_, _rs1_, _uimm5_
-
-Encoding::
-
-PWSLAI.H is available only in RV32. The shift amount is encoded in `uimm5`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['PWSLAI.H'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PWSLAI.H widens each 16-bit element of `rs1` to 32 bits by sign-extension, then
-shifts left by an immediate amount.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = X[rs1]
-shamt = uimm5[4:0]
-
-d0 = sign_extend(32, s1[15:0])  << shamt
-d1 = sign_extend(32, s1[31:16]) << shamt
-
-if (rd_p != 0):
-    X[2*rd_p]   = d0
-    X[2*rd_p+1] = d1
 ----
 
 
@@ -18922,96 +19057,6 @@ if (rd_p != 0):
 
 
 <<<
-==== WSLL (RV32)
-
-Mnemonic::
-
-wsll _rd_p_, _rs1_, _rs2_
-
-Encoding::
-
-WSLL is available only in RV32. The shift amount is taken from `rs2`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['WSLL'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WSLL zero-extends `rs1` to 64 bits, shifts left by the amount in `rs2` (low 6 bits),
-and writes the 64-bit result to the destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-shamt = X[rs2][5:0]
-d = zero_extend(64, X[rs1]) << shamt
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== WSLLI (RV32)
-
-Mnemonic::
-
-wslli _rd_p_, _rs1_, _uimm6_
-
-Encoding::
-
-WSLLI is available only in RV32. The shift amount is encoded in `uimm6`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['WSLLI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WSLLI zero-extends `rs1` to 64 bits, shifts left by an immediate amount, and
-writes the 64-bit result to the destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-shamt = uimm6[5:0]
-d = zero_extend(64, X[rs1]) << shamt
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
 ==== WSLA (RV32)
 
 Mnemonic::
@@ -19048,51 +19093,6 @@ Operation::
 [source,pseudocode]
 ----
 shamt = X[rs2][5:0]
-d = sign_extend(64, X[rs1]) << shamt
-
-if (rd_p != 0):
-    X[2*rd_p]   = d[31:0]
-    X[2*rd_p+1] = d[63:32]
-----
-
-
-<<<
-==== WSLAI (RV32)
-
-Mnemonic::
-
-wslai _rd_p_, _rs1_, _uimm6_
-
-Encoding::
-
-WSLAI is available only in RV32. The shift amount is encoded in `uimm6`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rd_p' },
-    { bits: 3, name: 0x2 },
-    { bits: 5, name: 'rs1' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['WSLAI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-WSLAI sign-extends `rs1` to 64 bits, shifts left by an immediate amount, and
-writes the 64-bit result to the destination register pair when `rd_p != 0`.
-
-Operation::
-
-[source,pseudocode]
-----
-shamt = uimm6[5:0]
 d = sign_extend(64, X[rs1]) << shamt
 
 if (rd_p != 0):
@@ -19276,58 +19276,6 @@ X[rd] = to_bits(32, sum)
 
 
 <<<
-==== PREDSUMU.DBS (RV32)
-
-Mnemonic::
-
-predsumu.dbs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PREDSUMU.DBS is available only in RV32. It reads a 64-bit packed source from the
-even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
-in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['PREDSUMU.DBS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PREDSUMU.DBS adds the eight unsigned 8-bit elements contained in the 64-bit
-source register pair `rs1_p` to the unsigned scalar value in `rs2`, and writes
-the low 32 bits of the resulting sum to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 =
-  (rs1_p == 0) ? 0
-               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
-
-sum = unsigned(X[rs2])                            // scalar accumulator (int)
-
-for i = 0 .. 7:
-    sum += unsigned(s1[(8*i+7) : (8*i)])          // unsigned bytes
-
-X[rd] = to_bits(32, sum)
-----
-
-
-<<<
 ==== PREDSUM.DHS (RV32)
 
 Mnemonic::
@@ -19374,6 +19322,58 @@ sum = signed(X[rs2])                              // scalar accumulator (int)
 
 for i = 0 .. 3:
     sum += signed(s1[(16*i+15) : (16*i)])         // signed halfwords
+
+X[rd] = to_bits(32, sum)
+----
+
+
+<<<
+==== PREDSUMU.DBS (RV32)
+
+Mnemonic::
+
+predsumu.dbs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PREDSUMU.DBS is available only in RV32. It reads a 64-bit packed source from the
+even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
+in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['PREDSUMU.DBS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PREDSUMU.DBS adds the eight unsigned 8-bit elements contained in the 64-bit
+source register pair `rs1_p` to the unsigned scalar value in `rs2`, and writes
+the low 32 bits of the resulting sum to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 =
+  (rs1_p == 0) ? 0
+               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
+
+sum = unsigned(X[rs2])                            // scalar accumulator (int)
+
+for i = 0 .. 7:
+    sum += unsigned(s1[(8*i+7) : (8*i)])          // unsigned bytes
 
 X[rd] = to_bits(32, sum)
 ----
@@ -19492,259 +19492,6 @@ X[rd] = d
 
 
 <<<
-==== PNSRL.BS (RV32)
-
-Mnemonic::
-
-pnsrl.bs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNSRL.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
-from `rs1_p` and uses `rs2[4:0]` as the shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['PNSRL.BS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNSRL.BS performs a per-lane logical right shift of four 16-bit lanes taken from
-a 64-bit register-pair source, using a shift amount from `rs2`. The low byte of
-each shifted lane is packed into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][4:0]
-
-for i = 0 .. 3:
-    h = s1[(16*i+15):(16*i)]
-    d[(8*i+7):(8*i)] = (zext_32(h) >> shamt)[7:0]
-
-X[rd] = d
-----
-
-
-<<<
-==== PNSRAI.B (RV32)
-
-Mnemonic::
-
-pnsrai.b _rd_, _rs1_p_, _uimm4_
-
-Encoding::
-
-PNSRAI.B is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
-from the register pair selected by `rs1_p` and produces a packed byte result in
-`rd`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['PNSRAI.B'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-`uimm4` is the shift amount.
-
-Description::
-
-PNSRAI.B extracts four 16-bit lanes from a 64-bit register-pair source, performs
-an arithmetic right shift by an immediate amount, and packs the low byte of each
-shifted lane into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = uimm4[3:0]
-
-for i = 0 .. 3:
-    h = s1[(16*i+15):(16*i)]
-    d[(8*i+7):(8*i)] = (sext_32(h) >> shamt)[7:0]
-
-X[rd] = d
-----
-
-
-<<<
-==== PNSRA.BS (RV32)
-
-Mnemonic::
-
-pnsra.bs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNSRA.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
-from `rs1_p` and uses `rs2[4:0]` as the shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x4, attr: ['PNSRA.BS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNSRA.BS performs a per-lane arithmetic right shift of four 16-bit lanes taken
-from a 64-bit register-pair source, using a shift amount from `rs2`. The low
-byte of each shifted lane is packed into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][4:0]
-
-for i = 0 .. 3:
-    h = s1[(16*i+15):(16*i)]
-    d[(8*i+7):(8*i)] = (sext_32(h) >> shamt)[7:0]
-
-X[rd] = d
-----
-
-
-<<<
-==== PNSRARI.B (RV32)
-
-Mnemonic::
-
-pnsrari.b _rd_, _rs1_p_, _uimm4_
-
-Encoding::
-
-PNSRARI.B is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
-from `rs1_p` and performs a rounded arithmetic right shift by an immediate amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 4, name: 'uimm4' },
-    { bits: 3, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['PNSRARI.B'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-`uimm4` is the shift amount.
-
-Description::
-
-PNSRARI.B performs a per-lane rounded arithmetic right shift of four 16-bit lanes
-from a 64-bit register-pair source using an immediate shift amount, and packs
-the resulting bytes into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = uimm4[3:0]
-
-for i = 0 .. 3:
-    h  = s1[(16*i+15):(16*i)]
-    // Compute rounded arithmetic shift: ( (h << 1) >> shamt + 1 ) >> 1
-    shx = ((sext_32(h) @ 0b0) >> shamt)[8:0]
-    d[(8*i+7):(8*i)] = (shx + 1)[8:1]
-
-X[rd] = d
-----
-
-
-<<<
-==== PNSRAR.BS (RV32)
-
-Mnemonic::
-
-pnsrar.bs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNSRAR.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
-from `rs1_p` and uses `rs2[4:0]` as the shift amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x5, attr: ['PNSRAR.BS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNSRAR.BS performs a per-lane rounded arithmetic right shift of four 16-bit lanes
-from a 64-bit register-pair source using a shift amount from `rs2`, and packs
-the resulting bytes into `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][4:0]
-
-for i = 0 .. 3:
-    h  = s1[(16*i+15):(16*i)]
-    shx = ((sext_32(h) @ 0b0) >> shamt)[8:0]
-    d[(8*i+7):(8*i)] = (shx + 1)[8:1]
-
-X[rd] = d
-----
-
-
-<<<
 ==== PNSRLI.H (RV32)
 
 Mnemonic::
@@ -19801,6 +19548,101 @@ X[rd] = d
 
 
 <<<
+==== NSRLI (RV32)
+
+Mnemonic::
+
+nsrli _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NSRLI is encoded using the OP-IMM-32 major opcode. It reads a 64-bit register-pair
+source from `rs1_p`, performs a logical right shift by an immediate amount, and
+writes the low 32 bits to `rd`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x0, attr: ['NSRLI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+For NSRLI, `uimm6` is the shift amount.
+
+Description::
+
+NSRLI performs a 64-bit logical right shift of the register-pair source by an
+immediate amount and returns the low 32 bits.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = uimm6[5:0]
+X[rd] = (s1 >> shamt)[31:0]
+----
+
+
+<<<
+==== PNSRL.BS (RV32)
+
+Mnemonic::
+
+pnsrl.bs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNSRL.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
+from `rs1_p` and uses `rs2[4:0]` as the shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['PNSRL.BS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNSRL.BS performs a per-lane logical right shift of four 16-bit lanes taken from
+a 64-bit register-pair source, using a shift amount from `rs2`. The low byte of
+each shifted lane is packed into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][4:0]
+
+for i = 0 .. 3:
+    h = s1[(16*i+15):(16*i)]
+    d[(8*i+7):(8*i)] = (zext_32(h) >> shamt)[7:0]
+
+X[rd] = d
+----
+
+
+<<<
 ==== PNSRL.HS (RV32)
 
 Mnemonic::
@@ -19844,6 +19686,101 @@ shamt = X[rs2][4:0]
 
 d[15:0]  = (s1[31:0]  >> shamt)[15:0]
 d[31:16] = (s1[63:32] >> shamt)[15:0]
+
+X[rd] = d
+----
+
+
+<<<
+==== NSRL (RV32)
+
+Mnemonic::
+
+nsrl _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+NSRL is encoded using the OP-IMM-32 major opcode and uses `rs2[5:0]` as the shift
+amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x0, attr: ['NSRL'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NSRL performs a 64-bit logical right shift of the register-pair source by a shift
+amount from `rs2` and returns the low 32 bits.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][5:0]
+X[rd] = (s1 >> shamt)[31:0]
+----
+
+
+<<<
+==== PNSRAI.B (RV32)
+
+Mnemonic::
+
+pnsrai.b _rd_, _rs1_p_, _uimm4_
+
+Encoding::
+
+PNSRAI.B is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
+from the register pair selected by `rs1_p` and produces a packed byte result in
+`rd`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['PNSRAI.B'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+`uimm4` is the shift amount.
+
+Description::
+
+PNSRAI.B extracts four 16-bit lanes from a 64-bit register-pair source, performs
+an arithmetic right shift by an immediate amount, and packs the low byte of each
+shifted lane into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = uimm4[3:0]
+
+for i = 0 .. 3:
+    h = s1[(16*i+15):(16*i)]
+    d[(8*i+7):(8*i)] = (sext_32(h) >> shamt)[7:0]
 
 X[rd] = d
 ----
@@ -19901,6 +19838,99 @@ X[rd] = d
 
 
 <<<
+==== NSRAI (RV32)
+
+Mnemonic::
+
+nsrai _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NSRAI is encoded using the OP-IMM-32 major opcode. It performs an arithmetic
+right shift by an immediate amount on the 64-bit register-pair source and writes
+the low 32 bits to `rd`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x4, attr: ['NSRAI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NSRAI performs a 64-bit arithmetic right shift of the register-pair source by an
+immediate amount and returns the low 32 bits.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = uimm6[5:0]
+X[rd] = (sext_96(s1) >> shamt)[31:0]
+----
+
+
+<<<
+==== PNSRA.BS (RV32)
+
+Mnemonic::
+
+pnsra.bs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNSRA.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
+from `rs1_p` and uses `rs2[4:0]` as the shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x4, attr: ['PNSRA.BS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNSRA.BS performs a per-lane arithmetic right shift of four 16-bit lanes taken
+from a 64-bit register-pair source, using a shift amount from `rs2`. The low
+byte of each shifted lane is packed into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][4:0]
+
+for i = 0 .. 3:
+    h = s1[(16*i+15):(16*i)]
+    d[(8*i+7):(8*i)] = (sext_32(h) >> shamt)[7:0]
+
+X[rd] = d
+----
+
+
+<<<
 ==== PNSRA.HS (RV32)
 
 Mnemonic::
@@ -19944,6 +19974,102 @@ shamt = X[rs2][4:0]
 
 d[15:0]  = (sext_48(s1[31:0])  >> shamt)[15:0]
 d[31:16] = (sext_48(s1[63:32]) >> shamt)[15:0]
+
+X[rd] = d
+----
+
+
+<<<
+==== NSRA (RV32)
+
+Mnemonic::
+
+nsra _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+NSRA is encoded using the OP-IMM-32 major opcode and uses `rs2[5:0]` as the shift
+amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x4, attr: ['NSRA'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NSRA performs a 64-bit arithmetic right shift of the register-pair source by a
+shift amount from `rs2` and returns the low 32 bits.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][5:0]
+X[rd] = (sext_96(s1) >> shamt)[31:0]
+----
+
+
+<<<
+==== PNSRARI.B (RV32)
+
+Mnemonic::
+
+pnsrari.b _rd_, _rs1_p_, _uimm4_
+
+Encoding::
+
+PNSRARI.B is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
+from `rs1_p` and performs a rounded arithmetic right shift by an immediate amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 4, name: 'uimm4' },
+    { bits: 3, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['PNSRARI.B'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+`uimm4` is the shift amount.
+
+Description::
+
+PNSRARI.B performs a per-lane rounded arithmetic right shift of four 16-bit lanes
+from a 64-bit register-pair source using an immediate shift amount, and packs
+the resulting bytes into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = uimm4[3:0]
+
+for i = 0 .. 3:
+    h  = s1[(16*i+15):(16*i)]
+    // Compute rounded arithmetic shift: ( (h << 1) >> shamt + 1 ) >> 1
+    shx = ((sext_32(h) @ 0b0) >> shamt)[8:0]
+    d[(8*i+7):(8*i)] = (shx + 1)[8:1]
 
 X[rd] = d
 ----
@@ -20001,6 +20127,101 @@ X[rd] = d
 
 
 <<<
+==== NSRARI (RV32)
+
+Mnemonic::
+
+nsrari _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NSRARI is encoded using the OP-IMM-32 major opcode. It performs a *rounded*
+arithmetic right shift by an immediate amount on the 64-bit register-pair source.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x5, attr: ['NSRARI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NSRARI performs a 64-bit *rounded* arithmetic right shift of the register-pair
+source by an immediate amount and returns the rounded low 32-bit result.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = uimm6[5:0]
+
+shx = ((sext_96(s1) @ 0b0) >> shamt)[32:0]
+X[rd] = (shx + 1)[32:1]
+----
+
+
+<<<
+==== PNSRAR.BS (RV32)
+
+Mnemonic::
+
+pnsrar.bs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNSRAR.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
+from `rs1_p` and uses `rs2[4:0]` as the shift amount.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x5, attr: ['PNSRAR.BS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNSRAR.BS performs a per-lane rounded arithmetic right shift of four 16-bit lanes
+from a 64-bit register-pair source using a shift amount from `rs2`, and packs
+the resulting bytes into `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][4:0]
+
+for i = 0 .. 3:
+    h  = s1[(16*i+15):(16*i)]
+    shx = ((sext_32(h) @ 0b0) >> shamt)[8:0]
+    d[(8*i+7):(8*i)] = (shx + 1)[8:1]
+
+X[rd] = d
+----
+
+
+<<<
 ==== PNSRAR.HS (RV32)
 
 Mnemonic::
@@ -20047,227 +20268,6 @@ for i = 0 .. 1:
     d[(16*i+15):(16*i)] = (shx + 1)[16:1]
 
 X[rd] = d
-----
-
-
-<<<
-==== NSRLI (RV32)
-
-Mnemonic::
-
-nsrli _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NSRLI is encoded using the OP-IMM-32 major opcode. It reads a 64-bit register-pair
-source from `rs1_p`, performs a logical right shift by an immediate amount, and
-writes the low 32 bits to `rd`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x0, attr: ['NSRLI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-For NSRLI, `uimm6` is the shift amount.
-
-Description::
-
-NSRLI performs a 64-bit logical right shift of the register-pair source by an
-immediate amount and returns the low 32 bits.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = uimm6[5:0]
-X[rd] = (s1 >> shamt)[31:0]
-----
-
-
-<<<
-==== NSRL (RV32)
-
-Mnemonic::
-
-nsrl _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-NSRL is encoded using the OP-IMM-32 major opcode and uses `rs2[5:0]` as the shift
-amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x0, attr: ['NSRL'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NSRL performs a 64-bit logical right shift of the register-pair source by a shift
-amount from `rs2` and returns the low 32 bits.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][5:0]
-X[rd] = (s1 >> shamt)[31:0]
-----
-
-
-<<<
-==== NSRAI (RV32)
-
-Mnemonic::
-
-nsrai _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NSRAI is encoded using the OP-IMM-32 major opcode. It performs an arithmetic
-right shift by an immediate amount on the 64-bit register-pair source and writes
-the low 32 bits to `rd`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x4, attr: ['NSRAI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NSRAI performs a 64-bit arithmetic right shift of the register-pair source by an
-immediate amount and returns the low 32 bits.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = uimm6[5:0]
-X[rd] = (sext_96(s1) >> shamt)[31:0]
-----
-
-
-<<<
-==== NSRA (RV32)
-
-Mnemonic::
-
-nsra _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-NSRA is encoded using the OP-IMM-32 major opcode and uses `rs2[5:0]` as the shift
-amount.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x4, attr: ['NSRA'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NSRA performs a 64-bit arithmetic right shift of the register-pair source by a
-shift amount from `rs2` and returns the low 32 bits.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][5:0]
-X[rd] = (sext_96(s1) >> shamt)[31:0]
-----
-
-
-<<<
-==== NSRARI (RV32)
-
-Mnemonic::
-
-nsrari _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NSRARI is encoded using the OP-IMM-32 major opcode. It performs a *rounded*
-arithmetic right shift by an immediate amount on the 64-bit register-pair source.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x5, attr: ['NSRARI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NSRARI performs a 64-bit *rounded* arithmetic right shift of the register-pair
-source by an immediate amount and returns the rounded low 32-bit result.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = uimm6[5:0]
-
-shx = ((sext_96(s1) @ 0b0) >> shamt)[32:0]
-X[rd] = (shx + 1)[32:1]
 ----
 
 
@@ -20388,6 +20388,126 @@ Notes::
 * `vxsat` is set if any lane saturates; it is not cleared by this instruction.
 
 <<<
+==== PNCLIPI.H (RV32)
+
+Mnemonic::
+
+pnclipi.h _rd_, _rs1_p_, _uimm5_
+
+Encoding::
+
+PNCLIPI.H is encoded in the OP-IMM-32 major opcode with an immediate shift
+amount and packed halfword narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x6, attr: ['PNCLIPI.H'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIPI.H performs a packed narrowing signed clip from 32-bit word elements
+to 16-bit halfword elements with an immediate shift amount. The 64-bit source
+is read from the register pair designated by `rs1_p`. Each 32-bit element is
+arithmetically right-shifted by the 5-bit immediate, then clamped to the signed
+16-bit range [-32768, 32767]. Two halfword results are packed into `rd`. If any
+element saturates, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = uimm5[4:0]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
+    if (shx <s 0xFFFF8000):
+        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
+    else if (shx >s 0x00007FFF):
+        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
+    else:
+        d[(16*i+15):(16*i)] = shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIPI (RV32)
+
+Mnemonic::
+
+nclipi _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NCLIPI is encoded in the OP-IMM-32 major opcode with an immediate shift amount
+and XLEN-wide narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x6, attr: ['NCLIPI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIPI performs an XLEN-wide narrowing signed clip with an immediate shift
+amount. The 64-bit source is read from the register pair designated by
+`rs1_p`. The value is arithmetically right-shifted by the 6-bit immediate, then
+clamped to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is
+written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = uimm6[5:0]
+
+shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
+
+if (shx <s 0xFFFFFFFF80000000):
+    X[rd] = 0x80000000; vxsat = 1
+else if (shx >s 0x000000007FFFFFFF):
+    X[rd] = 0x7FFFFFFF; vxsat = 1
+else:
+    X[rd] = shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PNCLIP.BS (RV32)
 
 Mnemonic::
@@ -20443,6 +20563,126 @@ for i = 0 .. 3:
         d[(8*i+7):(8*i)] = shx[7:0]
 
 X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PNCLIP.HS (RV32)
+
+Mnemonic::
+
+pnclip.hs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNCLIP.HS is encoded in the OP-IMM-32 major opcode with a scalar shift amount
+and packed halfword narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x6, attr: ['PNCLIP.HS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIP.HS performs a packed narrowing signed clip from 32-bit word elements
+to 16-bit halfword elements with a scalar shift amount. The 64-bit source is
+read from the register pair designated by `rs1_p`. Each 32-bit element is
+arithmetically right-shifted by the amount in `rs2[4:0]`, then clamped to the
+signed 16-bit range [-32768, 32767]. Two halfword results are packed into `rd`.
+If any element saturates, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = X[rs2][4:0]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
+    if (shx <s 0xFFFF8000):
+        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
+    else if (shx >s 0x00007FFF):
+        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
+    else:
+        d[(16*i+15):(16*i)] = shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIP (RV32)
+
+Mnemonic::
+
+nclip _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+NCLIP is encoded in the OP-IMM-32 major opcode with a scalar shift amount and
+XLEN-wide narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x6, attr: ['NCLIP'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIP performs an XLEN-wide narrowing signed clip with a scalar shift amount.
+The 64-bit source is read from the register pair designated by `rs1_p`. The
+value is arithmetically right-shifted by the amount in `rs2[5:0]`, then clamped
+to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is written to
+`rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = X[rs2][5:0]
+
+shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
+
+if (shx <s 0xFFFFFFFF80000000):
+    X[rd] = 0x80000000; vxsat = 1
+else if (shx >s 0x000000007FFFFFFF):
+    X[rd] = 0x7FFFFFFF; vxsat = 1
+else:
+    X[rd] = shx[31:0]
 ----
 
 Notes::
@@ -20524,6 +20764,131 @@ Notes::
 * `vxsat` is set if any lane saturates; it is not cleared by this instruction.
 
 <<<
+==== PNCLIPRI.H (RV32)
+
+Mnemonic::
+
+pnclipri.h _rd_, _rs1_p_, _uimm5_
+
+Encoding::
+
+PNCLIPRI.H is encoded in the OP-IMM-32 major opcode with an immediate shift
+amount, rounding, and packed halfword narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x7, attr: ['PNCLIPRI.H'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIPRI.H performs a packed narrowing signed clip with rounding from 32-bit
+word elements to 16-bit halfword elements using an immediate shift amount. The
+64-bit source is read from the register pair designated by `rs1_p`. Each 32-bit
+element is arithmetically right-shifted with round-to-nearest-up, then clamped
+to the signed 16-bit range [-32768, 32767]. Two halfword results are packed
+into `rd`. If any element saturates, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = uimm5[4:0]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
+    shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
+    round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
+    if (round_shx <s 0xFFFF8000):
+        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
+    else if (round_shx >s 0x00007FFF):
+        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
+    else:
+        d[(16*i+15):(16*i)] = round_shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIPRI (RV32)
+
+Mnemonic::
+
+nclipri _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NCLIPRI is encoded in the OP-IMM-32 major opcode with an immediate shift
+amount, rounding, and XLEN-wide narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x7, attr: ['NCLIPRI'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIPRI performs an XLEN-wide narrowing signed clip with rounding using an
+immediate shift amount. The 64-bit source is read from the register pair
+designated by `rs1_p`. The value is arithmetically right-shifted with
+round-to-nearest-up by the 6-bit immediate, then clamped to the signed 32-bit
+range [-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation
+occurs, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = uimm6[5:0]
+
+// Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
+shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
+round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
+
+if (round_shx <s 0xFFFFFFFF80000000):
+    X[rd] = 0x80000000; vxsat = 1
+else if (round_shx >s 0x000000007FFFFFFF):
+    X[rd] = 0x7FFFFFFF; vxsat = 1
+else:
+    X[rd] = round_shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PNCLIPR.BS (RV32)
 
 Mnemonic::
@@ -20596,6 +20961,132 @@ Notes::
 * `vxsat` is set if any lane saturates; it is not cleared by this instruction.
 
 <<<
+==== PNCLIPR.HS (RV32)
+
+Mnemonic::
+
+pnclipr.hs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNCLIPR.HS is encoded in the OP-IMM-32 major opcode with a scalar shift
+amount, rounding, and packed halfword narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x7, attr: ['PNCLIPR.HS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIPR.HS performs a packed narrowing signed clip with rounding from 32-bit
+word elements to 16-bit halfword elements using a scalar shift amount. The
+64-bit source is read from the register pair designated by `rs1_p`. Each 32-bit
+element is arithmetically right-shifted with round-to-nearest-up by the amount
+in `rs2[4:0]`, then clamped to the signed 16-bit range [-32768, 32767]. Two
+halfword results are packed into `rd`. If any element saturates, `vxsat` is
+set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = X[rs2][4:0]
+
+for i = 0 .. 1:
+    s1_w = s1[(32*i+31):(32*i)]
+    // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
+    shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
+    round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
+    if (round_shx <s 0xFFFF8000):
+        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
+    else if (round_shx >s 0x00007FFF):
+        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
+    else:
+        d[(16*i+15):(16*i)] = round_shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIPR (RV32)
+
+Mnemonic::
+
+nclipr _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+NCLIPR is encoded in the OP-IMM-32 major opcode with a scalar shift amount,
+rounding, and XLEN-wide narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x7, attr: ['NCLIPR'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIPR performs an XLEN-wide narrowing signed clip with rounding using a scalar
+shift amount. The 64-bit source is read from the register pair designated by
+`rs1_p`. The value is arithmetically right-shifted with round-to-nearest-up by
+the amount in `rs2[5:0]`, then clamped to the signed 32-bit range
+[-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation occurs,
+`vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = X[rs2][5:0]
+
+// Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
+shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
+round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
+
+if (round_shx <s 0xFFFFFFFF80000000):
+    X[rd] = 0x80000000; vxsat = 1
+else if (round_shx >s 0x000000007FFFFFFF):
+    X[rd] = 0x7FFFFFFF; vxsat = 1
+else:
+    X[rd] = round_shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PNCLIPIU.B (RV32)
 
 Mnemonic::
@@ -20661,6 +21152,122 @@ Notes::
 * `vxsat` is set if any lane saturates; it is not cleared by this instruction.
 
 <<<
+==== PNCLIPIU.H (RV32)
+
+Mnemonic::
+
+pnclipiu.h _rd_, _rs1_p_, _uimm5_
+
+Encoding::
+
+PNCLIPIU.H is encoded using the OP-IMM-32 major opcode. It performs a per-word
+logical right shift by an immediate amount and clips each result to the unsigned
+16-bit range [0, 65535], setting `vxsat` on saturation.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'uimm5' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['PNCLIPIU.H'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIPIU.H shifts each 32-bit word lane of the 64-bit register-pair source right
+logically by an immediate amount, then clips each shifted value to unsigned
+16-bit and packs the two halfwords into `rd`. The `vxsat` sticky flag is set if
+any lane saturates.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = uimm5[4:0]
+
+for i = 0 .. 1:
+    w   = s1[(32*i+31):(32*i)]
+    shx = zext_64(w) >> shamt
+
+    if (shx >_u 0x0000FFFF):
+        vxsat = 1
+        d[(16*i+15):(16*i)] = 0xFFFF
+    else:
+        d[(16*i+15):(16*i)] = shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIPIU (RV32)
+
+Mnemonic::
+
+nclipiu _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NCLIPIU is encoded in the OP-IMM-32 major opcode with an immediate shift
+amount and unsigned XLEN-wide narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x2, attr: ['NCLIPIU'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIPIU performs an XLEN-wide narrowing unsigned clip with an immediate shift
+amount. The 64-bit source is read from the register pair designated by
+`rs1_p`. The value is logically right-shifted by the 6-bit immediate, then
+clamped to the unsigned 32-bit range [0, 2^32^-1]. The 32-bit result is
+written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = uimm6[5:0]
+
+shx = s1 >> shamt                      // logical shift
+
+if (shx >u 0x00000000FFFFFFFF):
+    X[rd] = 0xFFFFFFFF; vxsat = 1
+else:
+    X[rd] = shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
 ==== PNCLIPU.BS (RV32)
 
 Mnemonic::
@@ -20714,6 +21321,118 @@ for i = 0 .. 3:
         d[(8*i+7):(8*i)] = shx[7:0]
 
 X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PNCLIPU.HS (RV32)
+
+Mnemonic::
+
+pnclipu.hs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNCLIPU.HS is encoded using the OP-IMM-32 major opcode. It uses `rs2[4:0]` as the
+shift amount and clips to unsigned 16-bit.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x1 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x2, attr: ['PNCLIPU.HS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIPU.HS performs a per-word logical right shift of a 64-bit register-pair
+source using `rs2` as the shift amount, clips each lane to unsigned 16-bit, and
+packs the results into `rd`. The `vxsat` sticky flag is set on saturation.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][4:0]
+
+for i = 0 .. 1:
+    w   = s1[(32*i+31):(32*i)]
+    shx = zext_64(w) >> shamt
+
+    if (shx >_u 0x0000FFFF):
+        vxsat = 1
+        d[(16*i+15):(16*i)] = 0xFFFF
+    else:
+        d[(16*i+15):(16*i)] = shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIPU (RV32)
+
+Mnemonic::
+
+nclipu _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+NCLIPU is encoded using the OP-IMM-32 major opcode. It shifts a 64-bit register-pair
+source right logically by a shift amount from `rs2` and clips the result to the
+unsigned 32-bit range, setting `vxsat` on saturation.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x3 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x2, attr: ['NCLIPU'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIPU performs a 64-bit logical right shift of the register-pair source and clips
+the result to 32-bit unsigned. The `vxsat` sticky flag is set if clipping occurs.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][5:0]
+
+shx = s1 >> shamt
+
+if (shx >_u 0x00000000FFFFFFFF):
+    vxsat = 1
+    X[rd] = 0xFFFFFFFF
+else:
+    X[rd] = shx[31:0]
 ----
 
 Notes::
@@ -20786,439 +21505,6 @@ Notes::
 * `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
-==== PNCLIPRU.BS (RV32)
-
-Mnemonic::
-
-pnclipru.bs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNCLIPRU.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
-from the register pair selected by `rs1_p`, uses `rs2[4:0]` as the shift amount,
-and writes packed *rounded unsigned-clipped* bytes to `rd`.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['PNCLIPRU.BS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIPRU.BS performs a per-lane *rounded* logical right shift of four 16-bit lanes
-from a 64-bit register-pair source using a shift amount from `rs2`. Each rounded
-shifted value is clipped to [0, 255] and packed into `rd`. The `vxsat` sticky
-flag is set if any lane saturates.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][4:0]
-
-for i = 0 .. 3:
-    h = s1[(16*i+15):(16*i)]
-
-    shx = ((zext_32(h) @ 0b0) >> shamt)[16:0]
-    r   = (shx + 1)[16:1]
-
-    if (r >_u 0x00FF):
-        vxsat = 1
-        d[(8*i+7):(8*i)] = 0xFF
-    else:
-        d[(8*i+7):(8*i)] = r[7:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PNCLIPI.H (RV32)
-
-Mnemonic::
-
-pnclipi.h _rd_, _rs1_p_, _uimm5_
-
-Encoding::
-
-PNCLIPI.H is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount and packed halfword narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x6, attr: ['PNCLIPI.H'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIPI.H performs a packed narrowing signed clip from 32-bit word elements
-to 16-bit halfword elements with an immediate shift amount. The 64-bit source
-is read from the register pair designated by `rs1_p`. Each 32-bit element is
-arithmetically right-shifted by the 5-bit immediate, then clamped to the signed
-16-bit range [-32768, 32767]. Two halfword results are packed into `rd`. If any
-element saturates, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = uimm5[4:0]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
-    if (shx <s 0xFFFF8000):
-        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (shx >s 0x00007FFF):
-        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
-    else:
-        d[(16*i+15):(16*i)] = shx[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PNCLIP.HS (RV32)
-
-Mnemonic::
-
-pnclip.hs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNCLIP.HS is encoded in the OP-IMM-32 major opcode with a scalar shift amount
-and packed halfword narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x6, attr: ['PNCLIP.HS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIP.HS performs a packed narrowing signed clip from 32-bit word elements
-to 16-bit halfword elements with a scalar shift amount. The 64-bit source is
-read from the register pair designated by `rs1_p`. Each 32-bit element is
-arithmetically right-shifted by the amount in `rs2[4:0]`, then clamped to the
-signed 16-bit range [-32768, 32767]. Two halfword results are packed into `rd`.
-If any element saturates, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = X[rs2][4:0]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
-    if (shx <s 0xFFFF8000):
-        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (shx >s 0x00007FFF):
-        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
-    else:
-        d[(16*i+15):(16*i)] = shx[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PNCLIPRI.H (RV32)
-
-Mnemonic::
-
-pnclipri.h _rd_, _rs1_p_, _uimm5_
-
-Encoding::
-
-PNCLIPRI.H is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount, rounding, and packed halfword narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x7, attr: ['PNCLIPRI.H'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIPRI.H performs a packed narrowing signed clip with rounding from 32-bit
-word elements to 16-bit halfword elements using an immediate shift amount. The
-64-bit source is read from the register pair designated by `rs1_p`. Each 32-bit
-element is arithmetically right-shifted with round-to-nearest-up, then clamped
-to the signed 16-bit range [-32768, 32767]. Two halfword results are packed
-into `rd`. If any element saturates, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = uimm5[4:0]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-    shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
-    round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
-    if (round_shx <s 0xFFFF8000):
-        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (round_shx >s 0x00007FFF):
-        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
-    else:
-        d[(16*i+15):(16*i)] = round_shx[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PNCLIPR.HS (RV32)
-
-Mnemonic::
-
-pnclipr.hs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNCLIPR.HS is encoded in the OP-IMM-32 major opcode with a scalar shift
-amount, rounding, and packed halfword narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x7, attr: ['PNCLIPR.HS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIPR.HS performs a packed narrowing signed clip with rounding from 32-bit
-word elements to 16-bit halfword elements using a scalar shift amount. The
-64-bit source is read from the register pair designated by `rs1_p`. Each 32-bit
-element is arithmetically right-shifted with round-to-nearest-up by the amount
-in `rs2[4:0]`, then clamped to the signed 16-bit range [-32768, 32767]. Two
-halfword results are packed into `rd`. If any element saturates, `vxsat` is
-set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = X[rs2][4:0]
-
-for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-    shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
-    round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
-    if (round_shx <s 0xFFFF8000):
-        d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (round_shx >s 0x00007FFF):
-        d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
-    else:
-        d[(16*i+15):(16*i)] = round_shx[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PNCLIPIU.H (RV32)
-
-Mnemonic::
-
-pnclipiu.h _rd_, _rs1_p_, _uimm5_
-
-Encoding::
-
-PNCLIPIU.H is encoded using the OP-IMM-32 major opcode. It performs a per-word
-logical right shift by an immediate amount and clips each result to the unsigned
-16-bit range [0, 65535], setting `vxsat` on saturation.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'uimm5' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['PNCLIPIU.H'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIPIU.H shifts each 32-bit word lane of the 64-bit register-pair source right
-logically by an immediate amount, then clips each shifted value to unsigned
-16-bit and packs the two halfwords into `rd`. The `vxsat` sticky flag is set if
-any lane saturates.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = uimm5[4:0]
-
-for i = 0 .. 1:
-    w   = s1[(32*i+31):(32*i)]
-    shx = zext_64(w) >> shamt
-
-    if (shx >_u 0x0000FFFF):
-        vxsat = 1
-        d[(16*i+15):(16*i)] = 0xFFFF
-    else:
-        d[(16*i+15):(16*i)] = shx[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== PNCLIPU.HS (RV32)
-
-Mnemonic::
-
-pnclipu.hs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PNCLIPU.HS is encoded using the OP-IMM-32 major opcode. It uses `rs2[4:0]` as the
-shift amount and clips to unsigned 16-bit.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x1 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x2, attr: ['PNCLIPU.HS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PNCLIPU.HS performs a per-word logical right shift of a 64-bit register-pair
-source using `rs2` as the shift amount, clips each lane to unsigned 16-bit, and
-packs the results into `rd`. The `vxsat` sticky flag is set on saturation.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][4:0]
-
-for i = 0 .. 1:
-    w   = s1[(32*i+31):(32*i)]
-    shx = zext_64(w) >> shamt
-
-    if (shx >_u 0x0000FFFF):
-        vxsat = 1
-        d[(16*i+15):(16*i)] = 0xFFFF
-    else:
-        d[(16*i+15):(16*i)] = shx[15:0]
-
-X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
 ==== PNCLIPRIU.H (RV32)
 
 Mnemonic::
@@ -21273,6 +21559,127 @@ for i = 0 .. 1:
         d[(16*i+15):(16*i)] = 0xFFFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = round_shx[15:0]
+
+X[rd] = d
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== NCLIPRIU (RV32)
+
+Mnemonic::
+
+nclipriu _rd_, _rs1_p_, _uimm6_
+
+Encoding::
+
+NCLIPRIU is encoded in the OP-IMM-32 major opcode with an immediate shift
+amount, rounding, and unsigned XLEN-wide narrowing. Available only in RV32.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 6, name: 'uimm6' },
+    { bits: 1, name: 0x1 },
+    { bits: 1, name: 0x0 },
+    { bits: 3, name: 0x3, attr: ['NCLIPRIU'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+NCLIPRIU performs an XLEN-wide narrowing unsigned clip with rounding using an
+immediate shift amount. The 64-bit source is read from the register pair
+designated by `rs1_p`. The value is logically right-shifted with
+round-to-nearest-up by the 6-bit immediate, then clamped to the unsigned
+32-bit range [0, 2^32^-1]. The 32-bit result is written to `rd`. If
+saturation occurs, `vxsat` is set. Available only in RV32.
+
+Operation::
+
+[source,pseudocode]
+----
+// Read 64-bit source from register pair
+s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
+shamt = uimm6[5:0]
+
+// Unsigned shift right with rounding: append guard bit, shift, add 1, drop LSB
+shx       = (s1 @ 0b0) >> shamt              // 65-bit logical shift
+round_shx = (shx + 1)[64:1]                  // round to nearest, ties up
+
+if (round_shx >u 0x00000000FFFFFFFF):
+    X[rd] = 0xFFFFFFFF; vxsat = 1
+else:
+    X[rd] = round_shx[31:0]
+----
+
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
+
+<<<
+==== PNCLIPRU.BS (RV32)
+
+Mnemonic::
+
+pnclipru.bs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PNCLIPRU.BS is encoded using the OP-IMM-32 major opcode. It reads a 64-bit source
+from the register pair selected by `rs1_p`, uses `rs2[4:0]` as the shift amount,
+and writes packed *rounded unsigned-clipped* bytes to `rd`.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x1 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['PNCLIPRU.BS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PNCLIPRU.BS performs a per-lane *rounded* logical right shift of four 16-bit lanes
+from a 64-bit register-pair source using a shift amount from `rs2`. Each rounded
+shifted value is clipped to [0, 255] and packed into `rd`. The `vxsat` sticky
+flag is set if any lane saturates.
+
+Operation::
+
+[source,pseudocode]
+----
+s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+shamt = X[rs2][4:0]
+
+for i = 0 .. 3:
+    h = s1[(16*i+15):(16*i)]
+
+    shx = ((zext_32(h) @ 0b0) >> shamt)[16:0]
+    r   = (shx + 1)[16:1]
+
+    if (r >_u 0x00FF):
+        vxsat = 1
+        d[(8*i+7):(8*i)] = 0xFF
+    else:
+        d[(8*i+7):(8*i)] = r[7:0]
 
 X[rd] = d
 ----
@@ -21339,413 +21746,6 @@ for i = 0 .. 1:
         d[(16*i+15):(16*i)] = round_shx[15:0]
 
 X[rd] = d
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIPI (RV32)
-
-Mnemonic::
-
-nclipi _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NCLIPI is encoded in the OP-IMM-32 major opcode with an immediate shift amount
-and XLEN-wide narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x6, attr: ['NCLIPI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIPI performs an XLEN-wide narrowing signed clip with an immediate shift
-amount. The 64-bit source is read from the register pair designated by
-`rs1_p`. The value is arithmetically right-shifted by the 6-bit immediate, then
-clamped to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is
-written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = uimm6[5:0]
-
-shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
-
-if (shx <s 0xFFFFFFFF80000000):
-    X[rd] = 0x80000000; vxsat = 1
-else if (shx >s 0x000000007FFFFFFF):
-    X[rd] = 0x7FFFFFFF; vxsat = 1
-else:
-    X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIP (RV32)
-
-Mnemonic::
-
-nclip _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-NCLIP is encoded in the OP-IMM-32 major opcode with a scalar shift amount and
-XLEN-wide narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x6, attr: ['NCLIP'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIP performs an XLEN-wide narrowing signed clip with a scalar shift amount.
-The 64-bit source is read from the register pair designated by `rs1_p`. The
-value is arithmetically right-shifted by the amount in `rs2[5:0]`, then clamped
-to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is written to
-`rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = X[rs2][5:0]
-
-shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
-
-if (shx <s 0xFFFFFFFF80000000):
-    X[rd] = 0x80000000; vxsat = 1
-else if (shx >s 0x000000007FFFFFFF):
-    X[rd] = 0x7FFFFFFF; vxsat = 1
-else:
-    X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIPRI (RV32)
-
-Mnemonic::
-
-nclipri _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NCLIPRI is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount, rounding, and XLEN-wide narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x7, attr: ['NCLIPRI'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIPRI performs an XLEN-wide narrowing signed clip with rounding using an
-immediate shift amount. The 64-bit source is read from the register pair
-designated by `rs1_p`. The value is arithmetically right-shifted with
-round-to-nearest-up by the 6-bit immediate, then clamped to the signed 32-bit
-range [-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation
-occurs, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = uimm6[5:0]
-
-// Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
-round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
-
-if (round_shx <s 0xFFFFFFFF80000000):
-    X[rd] = 0x80000000; vxsat = 1
-else if (round_shx >s 0x000000007FFFFFFF):
-    X[rd] = 0x7FFFFFFF; vxsat = 1
-else:
-    X[rd] = round_shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIPR (RV32)
-
-Mnemonic::
-
-nclipr _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-NCLIPR is encoded in the OP-IMM-32 major opcode with a scalar shift amount,
-rounding, and XLEN-wide narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x7, attr: ['NCLIPR'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIPR performs an XLEN-wide narrowing signed clip with rounding using a scalar
-shift amount. The 64-bit source is read from the register pair designated by
-`rs1_p`. The value is arithmetically right-shifted with round-to-nearest-up by
-the amount in `rs2[5:0]`, then clamped to the signed 32-bit range
-[-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation occurs,
-`vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = X[rs2][5:0]
-
-// Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
-round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
-
-if (round_shx <s 0xFFFFFFFF80000000):
-    X[rd] = 0x80000000; vxsat = 1
-else if (round_shx >s 0x000000007FFFFFFF):
-    X[rd] = 0x7FFFFFFF; vxsat = 1
-else:
-    X[rd] = round_shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIPIU (RV32)
-
-Mnemonic::
-
-nclipiu _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NCLIPIU is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount and unsigned XLEN-wide narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x2, attr: ['NCLIPIU'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIPIU performs an XLEN-wide narrowing unsigned clip with an immediate shift
-amount. The 64-bit source is read from the register pair designated by
-`rs1_p`. The value is logically right-shifted by the 6-bit immediate, then
-clamped to the unsigned 32-bit range [0, 2^32^-1]. The 32-bit result is
-written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = uimm6[5:0]
-
-shx = s1 >> shamt                      // logical shift
-
-if (shx >u 0x00000000FFFFFFFF):
-    X[rd] = 0xFFFFFFFF; vxsat = 1
-else:
-    X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIPU (RV32)
-
-Mnemonic::
-
-nclipu _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-NCLIPU is encoded using the OP-IMM-32 major opcode. It shifts a 64-bit register-pair
-source right logically by a shift amount from `rs2` and clips the result to the
-unsigned 32-bit range, setting `vxsat` on saturation.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x3 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x2, attr: ['NCLIPU'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIPU performs a 64-bit logical right shift of the register-pair source and clips
-the result to 32-bit unsigned. The `vxsat` sticky flag is set if clipping occurs.
-
-Operation::
-
-[source,pseudocode]
-----
-s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
-shamt = X[rs2][5:0]
-
-shx = s1 >> shamt
-
-if (shx >_u 0x00000000FFFFFFFF):
-    vxsat = 1
-    X[rd] = 0xFFFFFFFF
-else:
-    X[rd] = shx[31:0]
-----
-
-Notes::
-
-* `vxsat` is set to 1 if saturation occurs in any element.
-
-<<<
-==== NCLIPRIU (RV32)
-
-Mnemonic::
-
-nclipriu _rd_, _rs1_p_, _uimm6_
-
-Encoding::
-
-NCLIPRIU is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount, rounding, and unsigned XLEN-wide narrowing. Available only in RV32.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x1 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 6, name: 'uimm6' },
-    { bits: 1, name: 0x1 },
-    { bits: 1, name: 0x0 },
-    { bits: 3, name: 0x3, attr: ['NCLIPRIU'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-NCLIPRIU performs an XLEN-wide narrowing unsigned clip with rounding using an
-immediate shift amount. The 64-bit source is read from the register pair
-designated by `rs1_p`. The value is logically right-shifted with
-round-to-nearest-up by the 6-bit immediate, then clamped to the unsigned
-32-bit range [0, 2^32^-1]. The 32-bit result is written to `rd`. If
-saturation occurs, `vxsat` is set. Available only in RV32.
-
-Operation::
-
-[source,pseudocode]
-----
-// Read 64-bit source from register pair
-s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
-shamt = uimm6[5:0]
-
-// Unsigned shift right with rounding: append guard bit, shift, add 1, drop LSB
-shx       = (s1 @ 0b0) >> shamt              // 65-bit logical shift
-round_shx = (shx + 1)[64:1]                  // round to nearest, ties up
-
-if (round_shx >u 0x00000000FFFFFFFF):
-    X[rd] = 0xFFFFFFFF; vxsat = 1
-else:
-    X[rd] = round_shx[31:0]
 ----
 
 Notes::
