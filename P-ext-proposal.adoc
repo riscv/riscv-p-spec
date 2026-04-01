@@ -16411,7 +16411,7 @@ if (rd_p != 0):
 
 
 <<<
-=== Zip/Unzip and Byte-Reverse
+=== Zip/Unzip and Bit/Halfword Reverse
 
 ==== ZIP8P (RV64)
 
