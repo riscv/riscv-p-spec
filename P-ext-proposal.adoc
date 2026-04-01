@@ -16896,7 +16896,7 @@ ABS is encoded in the OP-IMM major opcode.
     { bits: 5, name: 'rd' },
     { bits: 3, name: 0x1 },
     { bits: 5, name: 'rs1' },
-    { bits: 12, name: 'imm=0x607' },
+    { bits: 12, name: 0x607 },
 ]}
 ....
 
@@ -16931,7 +16931,7 @@ ABSW is encoded in the OP-IMM-32 major opcode and is available only in RV64.
     { bits: 5, name: 'rd' },
     { bits: 3, name: 0x1 },
     { bits: 5, name: 'rs1' },
-    { bits: 12, name: 'imm=0x607' },
+    { bits: 12, name: 0x607 },
 ]}
 ....
 
@@ -16967,7 +16967,7 @@ CLS is encoded in the OP-IMM major opcode.
     { bits: 5, name: 'rd' },
     { bits: 3, name: 0x1 },
     { bits: 5, name: 'rs1' },
-    { bits: 12, name: 'imm=0x603' },
+    { bits: 12, name: 0x603 },
 ]}
 ....
 
@@ -17010,7 +17010,7 @@ CLSW is encoded in the OP-IMM-32 major opcode and is available only in RV64.
     { bits: 5, name: 'rd' },
     { bits: 3, name: 0x1 },
     { bits: 5, name: 'rs1' },
-    { bits: 12, name: 'imm=0x603' },
+    { bits: 12, name: 0x603 },
 ]}
 ....
 
