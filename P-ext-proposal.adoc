@@ -893,7 +893,7 @@ Description::
 PLI.DB (Packed Load Immediate, Double-wide Byte) loads an 8-bit immediate
 into every byte element of the register pair designated by `rd_p`. This is
 equivalent to performing PLI.B on both the even and odd registers of the
-pair. This instruction is available only on RV32.
+pair.
 
 Operation::
 
@@ -939,8 +939,7 @@ Description::
 PLI.DH (Packed Load Immediate, Double-wide Halfword) sign-extends a 10-bit
 signed immediate to 16 bits and replicates it into every halfword element of
 the register pair designated by `rd_p`. This is equivalent to performing
-PLI.H on both the even and odd registers of the pair. This instruction is
-available only on RV32.
+PLI.H on both the even and odd registers of the pair.
 
 Operation::
 
@@ -1080,7 +1079,7 @@ signed immediate into the most-significant 10 bits of each 16-bit halfword
 element, with the lower 6 bits set to zero, and replicates the result into
 every halfword element of the register pair designated by `rd_p`. This is
 equivalent to performing PLUI.H on both the even and odd registers of the
-pair. This instruction is available only on RV32.
+pair.
 
 Operation::
 
@@ -1272,7 +1271,7 @@ PADD.DB performs packed 8-bit byte addition on double-wide (register-pair)
 operands. It is equivalent to two PADD.B operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-addition wraps modulo 2^8^. Available only in RV32.
+addition wraps modulo 2^8^.
 
 Operation::
 
@@ -1328,7 +1327,7 @@ PADD.DH performs packed 16-bit halfword addition on double-wide (register-pair)
 operands. It is equivalent to two PADD.H operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-addition wraps modulo 2^16^. Available only in RV32.
+addition wraps modulo 2^16^.
 
 Operation::
 
@@ -1384,7 +1383,7 @@ PADD.DW performs 32-bit word addition on double-wide (register-pair) operands.
 It is equivalent to two ADD operations: one on the even registers and one on
 the odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`)
 are register pairs and must specify even register numbers. Each element addition
-wraps modulo 2^32^. Available only in RV32.
+wraps modulo 2^32^.
 
 Operation::
 
@@ -1601,7 +1600,7 @@ across a double-wide (register-pair) source. It is equivalent to two PADD.BS
 operations: one on the even registers and one on the odd registers of each pair.
 The destination (`rd_p`) and first source (`rs1_p`) are register pairs and must
 specify even register numbers; `rs2` is a single register. Each element addition
-wraps modulo 2^8^. Available only in RV32.
+wraps modulo 2^8^.
 
 Operation::
 
@@ -1661,7 +1660,7 @@ element across a double-wide (register-pair) source. It is equivalent to two
 PADD.HS operations: one on the even registers and one on the odd registers of
 each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register. Each
-element addition wraps modulo 2^16^. Available only in RV32.
+element addition wraps modulo 2^16^.
 
 Operation::
 
@@ -1721,7 +1720,7 @@ a double-wide (register-pair) source. It is equivalent to two PADD.WS
 operations: one on the even registers and one on the odd registers of each pair.
 The destination (`rd_p`) and first source (`rs1_p`) are register pairs and must
 specify even register numbers; `rs2` is a single register. Each element addition
-wraps modulo 2^32^. Available only in RV32.
+wraps modulo 2^32^.
 
 Operation::
 
@@ -1934,7 +1933,7 @@ PSUB.DB performs packed 8-bit byte subtraction on double-wide (register-pair)
 operands. It is equivalent to two PSUB.B operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-subtraction wraps modulo 2^8^. Available only in RV32.
+subtraction wraps modulo 2^8^.
 
 Operation::
 
@@ -1994,7 +1993,7 @@ PSUB.DH performs packed 16-bit halfword subtraction on double-wide
 (register-pair) operands. It is equivalent to two PSUB.H operations: one on the
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Each element subtraction wraps modulo 2^16^. Available only in RV32.
+numbers. Each element subtraction wraps modulo 2^16^.
 
 Operation::
 
@@ -2054,7 +2053,7 @@ PSUB.DW performs 32-bit word subtraction on double-wide (register-pair)
 operands. It is equivalent to two SUB operations: one on the even registers and
 one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
 `rs2_p`) are register pairs and must specify even register numbers. Each element
-subtraction wraps modulo 2^32^. Available only in RV32.
+subtraction wraps modulo 2^32^.
 
 Operation::
 
@@ -2329,7 +2328,7 @@ double-wide (register-pair) operands. It is equivalent to two PSADD.B
 operations: one on the even registers and one on the odd registers of each pair.
 All three operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must
 specify even register numbers. Each element result is clamped to the range
-[-128, 127]. Available only in RV32.
+[-128, 127].
 
 Operation::
 
@@ -2392,7 +2391,7 @@ using double-wide (register-pair) operands. It is equivalent to two PSADD.H
 operations: one on the even registers and one on the odd registers of each pair.
 All three operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must
 specify even register numbers. Each element result is clamped to the range
-[-32768, 32767]. Available only in RV32.
+[-32768, 32767].
 
 Operation::
 
@@ -2455,7 +2454,6 @@ PSADD.DW performs signed saturating 32-bit word addition on double-wide
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. Each element result is clamped to the range [-(2^31^), 2^31^-1].
-Available only in RV32.
 
 Operation::
 
@@ -2723,7 +2721,7 @@ using double-wide (register-pair) operands. It is equivalent to two PSADDU.B
 operations: one on the even registers and one on the odd registers of each pair.
 All three operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must
 specify even register numbers. Each element result is clamped to the range
-[0, 255]. Available only in RV32.
+[0, 255].
 
 Operation::
 
@@ -2784,7 +2782,7 @@ PSADDU.DH (Packed Saturating Add Unsigned, Double-wide Halfword) performs
 unsigned saturating addition on corresponding packed 16-bit halfword elements
 across a register pair. This is equivalent to performing PSADDU.H on both the
 even and odd registers of the pair. Each element result is clamped to the
-range [0, 2^16^-1]. Available only on RV32.
+range [0, 2^16^-1].
 
 Operation::
 
@@ -2843,7 +2841,7 @@ PSADDU.DW (Packed Saturating Add Unsigned, Double-wide Word) performs unsigned
 saturating addition on corresponding 32-bit word values across a register
 pair. This is equivalent to performing SADDU on both the even and odd
 registers of the pair. Each element result is clamped to the range
-[0, 2^32^-1]. Available only on RV32.
+[0, 2^32^-1].
 
 Operation::
 
@@ -3121,7 +3119,7 @@ PSSUB.DB (Packed Signed Saturating Subtract, Double-wide Byte) performs signed
 saturating subtraction on corresponding packed 8-bit byte elements across a
 register pair. This is equivalent to performing PSSUB.B on both the even and
 odd registers of the pair. Each element result is clamped to the range
-[-(2^7^), 2^7^-1]. Available only on RV32.
+[-(2^7^), 2^7^-1].
 
 Operation::
 
@@ -3182,7 +3180,7 @@ PSSUB.DH (Packed Signed Saturating Subtract, Double-wide Halfword) performs
 signed saturating subtraction on corresponding packed 16-bit halfword elements
 across a register pair. This is equivalent to performing PSSUB.H on both the
 even and odd registers of the pair. Each element result is clamped to the
-range [-(2^15^), 2^15^-1]. Available only on RV32.
+range [-(2^15^), 2^15^-1].
 
 Operation::
 
@@ -3243,7 +3241,6 @@ PSSUB.DW (Packed Signed Saturating Subtract, Double-wide Word) performs signed
 saturating subtraction on corresponding 32-bit word values across a register
 pair. This is equivalent to performing SSUB on both the even and odd registers
 of the pair. Each element result is clamped to the range [-(2^31^), 2^31^-1].
-Available only on RV32.
 
 Operation::
 
@@ -3454,8 +3451,7 @@ SSUBU is encoded in the OP-32 major opcode and is available only in RV32.
 Description::
 
 SSUBU performs unsigned saturating subtraction of `rs2` from `rs1`, writing
-the result to `rd`. The result is clamped to the range [0, 2^XLEN-1]. This
-instruction is available only on RV32.
+the result to `rd`. The result is clamped to the range [0, 2^XLEN-1].
 
 Operation::
 
@@ -3508,7 +3504,7 @@ PSSUBU.DB (Packed Unsigned Saturating Subtract, Double-wide Byte) performs
 unsigned saturating subtraction on corresponding packed 8-bit byte elements
 across a register pair. This is equivalent to performing PSSUBU.B on both the
 even and odd registers of the pair. Each element result is clamped to the
-range [0, 2^8^-1]. Available only on RV32.
+range [0, 2^8^-1].
 
 Operation::
 
@@ -3567,7 +3563,7 @@ PSSUBU.DH (Packed Unsigned Saturating Subtract, Double-wide Halfword) performs
 unsigned saturating subtraction on corresponding packed 16-bit halfword
 elements across a register pair. This is equivalent to performing PSSUBU.H on
 both the even and odd registers of the pair. Each element result is clamped to
-the range [0, 2^16^-1]. Available only on RV32.
+the range [0, 2^16^-1].
 
 Operation::
 
@@ -3626,7 +3622,7 @@ PSSUBU.DW (Packed Unsigned Saturating Subtract, Double-wide Word) performs
 unsigned saturating subtraction on corresponding 32-bit word values across a
 register pair. This is equivalent to performing SSUBU on both the even and odd
 registers of the pair. Each element result is clamped to the range
-[0, 2^32^-1]. Available only on RV32.
+[0, 2^32^-1].
 
 Operation::
 
@@ -3884,7 +3880,7 @@ Description::
 PAADD.DB (Packed Averaging Add, Double-wide Byte) performs a signed averaging
 addition on packed 8-bit elements across register pairs. It is equivalent to
 performing PAADD.B independently on both the even and odd registers of the
-source and destination pairs. This instruction is available only on RV32.
+source and destination pairs.
 
 Operation::
 
@@ -3941,8 +3937,7 @@ Description::
 PAADD.DH (Packed Averaging Add, Double-wide Halfword) performs a signed
 averaging addition on packed 16-bit halfword elements across register pairs. It
 is equivalent to performing PAADD.H independently on both the even and odd
-registers of the source and destination pairs. This instruction is available
-only on RV32.
+registers of the source and destination pairs.
 
 Operation::
 
@@ -3999,7 +3994,7 @@ Description::
 PAADD.DW (Packed Averaging Add, Double-wide Word) performs a signed averaging
 addition on packed 32-bit word elements across register pairs. It is equivalent
 to performing AADD independently on both the even and odd registers of the
-source and destination pairs. This instruction is available only on RV32.
+source and destination pairs.
 
 Operation::
 
@@ -4252,8 +4247,7 @@ Description::
 PAADDU.DB (Packed Averaging Add Unsigned, Double-wide Byte) performs an unsigned
 averaging addition on packed 8-bit elements across register pairs. It is
 equivalent to performing PAADDU.B independently on both the even and odd
-registers of the source and destination pairs. This instruction is available
-only on RV32.
+registers of the source and destination pairs.
 
 Operation::
 
@@ -4310,8 +4304,7 @@ Description::
 PAADDU.DH (Packed Averaging Add Unsigned, Double-wide Halfword) performs an
 unsigned averaging addition on packed 16-bit halfword elements across register
 pairs. It is equivalent to performing PAADDU.H independently on both the even
-and odd registers of the source and destination pairs. This instruction is
-available only on RV32.
+and odd registers of the source and destination pairs.
 
 Operation::
 
@@ -4368,7 +4361,7 @@ Description::
 PAADDU.DW (Packed Averaging Add Unsigned, Double-wide Word) performs an unsigned
 averaging addition on packed 32-bit word elements across register pairs. It is
 equivalent to performing AADDU independently on both the even and odd registers
-of the source and destination pairs. This instruction is available only on RV32.
+of the source and destination pairs.
 
 Operation::
 
@@ -4626,8 +4619,7 @@ Description::
 PASUB.DB (Packed Averaging Subtract, Double-wide Byte) performs a signed
 averaging subtraction on packed 8-bit elements across register pairs. It is
 equivalent to performing PASUB.B independently on both the even and odd
-registers of the source and destination pairs. This instruction is available
-only on RV32.
+registers of the source and destination pairs.
 
 Operation::
 
@@ -4683,8 +4675,7 @@ Description::
 PASUB.DH (Packed Averaging Subtract, Double-wide Halfword) performs a signed
 averaging subtraction on packed 16-bit halfword elements across register pairs.
 It is equivalent to performing PASUB.H independently on both the even and odd
-registers of the source and destination pairs. This instruction is available
-only on RV32.
+registers of the source and destination pairs.
 
 Operation::
 
@@ -4740,8 +4731,7 @@ Description::
 PASUB.DW (Packed Averaging Subtract, Double-wide Word) performs a signed
 averaging subtraction on packed 32-bit word elements across register pairs. It
 is equivalent to performing ASUB independently on both the even and odd
-registers of the source and destination pairs. This instruction is available
-only on RV32.
+registers of the source and destination pairs.
 
 Operation::
 
@@ -4995,8 +4985,7 @@ Description::
 PASUBU.DB (Packed Averaging Subtract Unsigned, Double-wide Byte) performs an
 unsigned averaging subtraction on packed 8-bit elements across register pairs.
 It is equivalent to performing PASUBU.B independently on both the even and odd
-registers of the source and destination pairs. This instruction is available
-only on RV32.
+registers of the source and destination pairs.
 
 Operation::
 
@@ -5052,8 +5041,7 @@ Description::
 PASUBU.DH (Packed Averaging Subtract Unsigned, Double-wide Halfword) performs
 an unsigned averaging subtraction on packed 16-bit halfword elements across
 register pairs. It is equivalent to performing PASUBU.H independently on both
-the even and odd registers of the source and destination pairs. This instruction
-is available only on RV32.
+the even and odd registers of the source and destination pairs.
 
 Operation::
 
@@ -5109,8 +5097,7 @@ Description::
 PASUBU.DW (Packed Averaging Subtract Unsigned, Double-wide Word) performs an
 unsigned averaging subtraction on packed 32-bit word elements across register
 pairs. It is equivalent to performing ASUBU independently on both the even and
-odd registers of the source and destination pairs. This instruction is available
-only on RV32.
+odd registers of the source and destination pairs.
 
 Operation::
 
@@ -5263,7 +5250,7 @@ packed halfword shift-left-by-1-and-add across register pairs. For each 16-bit
 element, it shifts the element from `rs1` left by 1 and adds the corresponding
 element from `rs2`, wrapping modulo 2^16^. It is equivalent to performing
 PSH1ADD.H independently on both the even and odd registers of the source and
-destination pairs. This instruction is available only on RV32.
+destination pairs.
 
 Operation::
 
@@ -5320,8 +5307,7 @@ PSH1ADD.DW (Packed Shift-left-by-1 and Add, Double-wide Word) performs a 32-bit
 word shift-left-by-1-and-add across register pairs. For each 32-bit element, it
 shifts the element from `rs1` left by 1 and adds the corresponding element from
 `rs2`, wrapping modulo 2^32^. It is equivalent to performing SH1ADD independently
-on both the even and odd registers of the source and destination pairs. This
-instruction is available only on RV32.
+on both the even and odd registers of the source and destination pairs.
 
 Operation::
 
@@ -5581,8 +5567,7 @@ saturating add across register pairs. For each 16-bit element, the value from
 `rs1` is saturating-shifted left by 1 (clamped to [-2^15^, 2^15^-1]), then the
 corresponding element from `rs2` is added with signed saturation. It is
 equivalent to performing PSSH1SADD.H independently on both the even and odd
-registers of the source and destination pairs. Sets `vxsat` on saturation. This
-instruction is available only on RV32.
+registers of the source and destination pairs. Sets `vxsat` on saturation.
 
 Operation::
 
@@ -5654,8 +5639,7 @@ add across register pairs. For each 32-bit element, the value from `rs1` is
 saturating-shifted left by 1 (clamped to [-2^31^, 2^31^-1]), then the
 corresponding element from `rs2` is added with signed saturation. It is
 equivalent to performing SSH1SADD independently on both the even and odd
-registers of the source and destination pairs. Sets `vxsat` on saturation. This
-instruction is available only on RV32.
+registers of the source and destination pairs. Sets `vxsat` on saturation.
 
 Operation::
 
@@ -5840,7 +5824,7 @@ equivalent to two PAS.HX operations: one on the even registers and one on the
 odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`) are
 register pairs and must specify even register numbers. For each pair of
 halfwords, the upper halfword is added cross with the lower halfword of the
-other operand, and vice versa with subtraction. Available only in RV32.
+other operand, and vice versa with subtraction.
 
 Operation::
 
@@ -6016,7 +6000,7 @@ odd registers of each pair. All three operands (`rd_p`, `rs1_p`, `rs2_p`) are
 register pairs and must specify even register numbers. For each pair of
 halfwords, the upper halfword of `rs1` has the lower halfword of `rs2`
 subtracted, and the lower halfword of `rs1` is added with the upper halfword
-of `rs2`. Available only in RV32.
+of `rs2`.
 
 Operation::
 
@@ -6222,7 +6206,7 @@ register pairs. It is equivalent to two PSAS.HX operations: one on the even
 registers and one on the odd registers of each pair. All three operands (`rd_p`,
 `rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
 Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
-occurs, the overflow flag `vxsat` is set. Available only in RV32.
+occurs, the overflow flag `vxsat` is set.
 
 Operation::
 
@@ -6441,7 +6425,7 @@ register pairs. It is equivalent to two PSSA.HX operations: one on the even
 registers and one on the odd registers of each pair. All three operands (`rd_p`,
 `rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
 Results are saturated to the signed 16-bit range [-2^15^, 2^15^-1]. If saturation
-occurs, the overflow flag `vxsat` is set. Available only in RV32.
+occurs, the overflow flag `vxsat` is set.
 
 Operation::
 
@@ -6636,7 +6620,7 @@ register pairs. It is equivalent to two PAAS.HX operations: one on the even
 registers and one on the odd registers of each pair. All three operands (`rd_p`,
 `rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
 Each result is computed at full precision and then shifted right by 1 (toward
-negative infinity). Available only in RV32.
+negative infinity).
 
 Operation::
 
@@ -6820,7 +6804,7 @@ register pairs. It is equivalent to two PASA.HX operations: one on the even
 registers and one on the odd registers of each pair. All three operands (`rd_p`,
 `rs1_p`, `rs2_p`) are register pairs and must specify even register numbers.
 Each result is computed at full precision and then shifted right by 1 (toward
-negative infinity). Available only in RV32.
+negative infinity).
 
 Operation::
 
@@ -6996,8 +6980,7 @@ PABD.DB (Packed Absolute Difference, Double-wide Byte) computes the signed
 absolute difference of packed 8-bit elements across register pairs. It is
 equivalent to performing PABD.B independently on both the even and odd registers
 of the source and destination pairs. For each byte lane, the signed absolute
-difference |rs1[i] - rs2[i]| is computed. This instruction is available only
-on RV32.
+difference |rs1[i] - rs2[i]| is computed.
 
 Operation::
 
@@ -7058,8 +7041,7 @@ PABD.DH (Packed Absolute Difference, Double-wide Halfword) computes the signed
 absolute difference of packed 16-bit halfword elements across register pairs. It
 is equivalent to performing PABD.H independently on both the even and odd
 registers of the source and destination pairs. For each halfword lane, the
-signed absolute difference |rs1[i] - rs2[i]| is computed. This instruction is
-available only on RV32.
+signed absolute difference |rs1[i] - rs2[i]| is computed.
 
 Operation::
 
@@ -7213,8 +7195,7 @@ PABDU.DB (Packed Absolute Difference Unsigned, Double-wide Byte) computes the
 unsigned absolute difference of packed 8-bit elements across register pairs. It
 is equivalent to performing PABDU.B independently on both the even and odd
 registers of the source and destination pairs. For each byte lane, the unsigned
-absolute difference |rs1[i] - rs2[i]| is computed. This instruction is
-available only on RV32.
+absolute difference |rs1[i] - rs2[i]| is computed.
 
 Operation::
 
@@ -7271,8 +7252,7 @@ PABDU.DH (Packed Absolute Difference Unsigned, Double-wide Halfword) computes
 the unsigned absolute difference of packed 16-bit halfword elements across
 register pairs. It is equivalent to performing PABDU.H independently on both the
 even and odd registers of the source and destination pairs. For each halfword
-lane, the unsigned absolute difference |rs1[i] - rs2[i]| is computed. This
-instruction is available only on RV32.
+lane, the unsigned absolute difference |rs1[i] - rs2[i]| is computed.
 
 Operation::
 
@@ -7549,7 +7529,7 @@ saturating absolute value of packed signed 8-bit byte elements across register
 pairs. It is equivalent to performing PSABS.B independently on both the even and
 odd registers of the source and destination pairs. If an element is -128 (the
 most negative value), the result saturates to 127 and the overflow flag `vxsat`
-is set. This instruction is available only on RV32.
+is set.
 
 Operation::
 
@@ -7612,7 +7592,7 @@ saturating absolute value of packed signed 16-bit halfword elements across
 register pairs. It is equivalent to performing PSABS.H independently on both the
 even and odd registers of the source and destination pairs. If an element is
 -32768 (the most negative value), the result saturates to 32767 and the overflow
-flag `vxsat` is set. This instruction is available only on RV32.
+flag `vxsat` is set.
 
 Operation::
 
@@ -8089,8 +8069,7 @@ Description::
 PMIN.DB performs packed signed 8-bit byte minimum on double-wide (register-pair)
 operands. It is equivalent to two PMIN.B operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
-`rs2_p`) are register pairs and must specify even register numbers. Available
-only in RV32.
+`rs2_p`) are register pairs and must specify even register numbers.
 
 Operation::
 
@@ -8146,7 +8125,7 @@ PMIN.DH performs packed signed 16-bit halfword minimum on double-wide
 (register-pair) operands. It is equivalent to two PMIN.H operations: one on the
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8202,7 +8181,7 @@ PMIN.DW performs signed 32-bit word minimum on double-wide (register-pair)
 operands. It is equivalent to two signed MIN operations: one on the even
 registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8395,7 +8374,7 @@ PMINU.DB performs packed unsigned 8-bit byte minimum on double-wide
 (register-pair) operands. It is equivalent to two PMINU.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8451,7 +8430,7 @@ PMINU.DH performs packed unsigned 16-bit halfword minimum on double-wide
 (register-pair) operands. It is equivalent to two PMINU.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8507,7 +8486,7 @@ PMINU.DW performs unsigned 32-bit word minimum on double-wide (register-pair)
 operands. It is equivalent to two unsigned MIN operations: one on the even
 registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8700,7 +8679,7 @@ PMAX.DH performs packed signed 16-bit halfword maximum on double-wide
 (register-pair) operands. It is equivalent to two PMAX.H operations: one on the
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8756,7 +8735,7 @@ PMAX.DW performs signed 32-bit word maximum on double-wide (register-pair)
 operands. It is equivalent to two signed MAX operations: one on the even
 registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -8948,8 +8927,7 @@ Description::
 PMAX.DB performs packed signed 8-bit byte maximum on double-wide (register-pair)
 operands. It is equivalent to two PMAX.B operations: one on the even registers
 and one on the odd registers of each pair. All three operands (`rd_p`, `rs1_p`,
-`rs2_p`) are register pairs and must specify even register numbers. Available
-only in RV32.
+`rs2_p`) are register pairs and must specify even register numbers.
 
 Operation::
 
@@ -9005,7 +8983,7 @@ PMAXU.DB performs packed unsigned 8-bit byte maximum on double-wide
 (register-pair) operands. It is equivalent to two PMAXU.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -9061,7 +9039,7 @@ PMAXU.DH performs packed unsigned 16-bit halfword maximum on double-wide
 (register-pair) operands. It is equivalent to two PMAXU.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -9117,7 +9095,7 @@ PMAXU.DW performs unsigned 32-bit word maximum on double-wide (register-pair)
 operands. It is equivalent to two unsigned MAX operations: one on the even
 registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -9372,7 +9350,7 @@ PMSEQ.DB performs packed 8-bit byte mask-equality comparison on double-wide
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. For each element, the result is all-ones (0xFF) if the elements are
-equal, or all-zeros (0x00) otherwise. Available only in RV32.
+equal, or all-zeros (0x00) otherwise.
 
 Operation::
 
@@ -9433,7 +9411,7 @@ PMSEQ.DH performs packed 16-bit halfword mask-equality comparison on double-wide
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. For each element, the result is all-ones (0xFFFF) if the elements are
-equal, or all-zeros (0x0000) otherwise. Available only in RV32.
+equal, or all-zeros (0x0000) otherwise.
 
 Operation::
 
@@ -9494,7 +9472,7 @@ PMSEQ.DW performs 32-bit word mask-equality comparison on double-wide
 even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. For each element, the result is all-ones (0xFFFFFFFF) if the elements
-are equal, or all-zeros (0x00000000) otherwise. Available only in RV32.
+are equal, or all-zeros (0x00000000) otherwise.
 
 Operation::
 
@@ -9757,7 +9735,7 @@ one on the even registers and one on the odd registers of each pair. All three
 operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even
 register numbers. For each element, the result is all-ones (0xFF) if the signed
 `rs1` element is less than the signed `rs2` element, or all-zeros (0x00)
-otherwise. Available only in RV32.
+otherwise.
 
 Operation::
 
@@ -9821,7 +9799,7 @@ one on the even registers and one on the odd registers of each pair. All three
 operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even
 register numbers. For each element, the result is all-ones (0xFFFF) if the signed
 `rs1` element is less than the signed `rs2` element, or all-zeros (0x0000)
-otherwise. Available only in RV32.
+otherwise.
 
 Operation::
 
@@ -9885,7 +9863,7 @@ even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. For each element, the result is all-ones (0xFFFFFFFF) if the signed
 `rs1` element is less than the signed `rs2` element, or all-zeros (0x00000000)
-otherwise. Available only in RV32.
+otherwise.
 
 Operation::
 
@@ -10145,7 +10123,7 @@ operations: one on the even registers and one on the odd registers of each pair.
 All three operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify
 even register numbers. For each element, the result is all-ones (0xFF) if the
 unsigned `rs1` element is less than the unsigned `rs2` element, or all-zeros
-(0x00) otherwise. Available only in RV32.
+(0x00) otherwise.
 
 Operation::
 
@@ -10208,7 +10186,7 @@ operations: one on the even registers and one on the odd registers of each pair.
 All three operands (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify
 even register numbers. For each element, the result is all-ones (0xFFFF) if the
 unsigned `rs1` element is less than the unsigned `rs2` element, or all-zeros
-(0x0000) otherwise. Available only in RV32.
+(0x0000) otherwise.
 
 Operation::
 
@@ -10271,7 +10249,7 @@ even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
 numbers. For each element, the result is all-ones (0xFFFFFFFF) if the unsigned
 `rs1` element is less than the unsigned `rs2` element, or all-zeros (0x00000000)
-otherwise. Available only in RV32.
+otherwise.
 
 Operation::
 
@@ -10452,7 +10430,6 @@ PSEXT.DH.B performs packed sign-extension of bytes to halfwords on double-wide
 (register-pair) operands. It is equivalent to two PSEXT.H.B operations: one on
 the even registers and one on the odd registers of each pair. Both operands
 (`rd_p`, `rs1_p`) are register pairs and must specify even register numbers.
-Available only in RV32.
 
 Operation::
 
@@ -10504,8 +10481,7 @@ Description::
 PSEXT.DW.B performs sign-extension of bytes to words on double-wide
 (register-pair) operands. It is equivalent to two SEXT.B operations: one on the
 even registers and one on the odd registers of each pair. Both operands (`rd_p`,
-`rs1_p`) are register pairs and must specify even register numbers. Available
-only in RV32.
+`rs1_p`) are register pairs and must specify even register numbers.
 
 Operation::
 
@@ -10556,8 +10532,7 @@ Description::
 PSEXT.DW.H performs sign-extension of halfwords to words on double-wide
 (register-pair) operands. It is equivalent to two SEXT.H operations: one on the
 even registers and one on the odd registers of each pair. Both operands (`rd_p`,
-`rs1_p`) are register pairs and must specify even register numbers. Available
-only in RV32.
+`rs1_p`) are register pairs and must specify even register numbers.
 
 Operation::
 
@@ -10837,7 +10812,7 @@ even registers and one on the odd registers of each pair. Both operands (`rd_p`,
 `rs1_p`) are register pairs and must specify even register numbers. Each halfword
 element is saturated to the signed range [-(2^width-1^), 2^width-1^-1], where
 `width` is specified by `uimm4`+1. When clamping occurs, the `vxsat` overflow
-flag is set. Available only in RV32.
+flag is set.
 
 Operation::
 
@@ -10905,8 +10880,7 @@ PSATI.DW performs signed saturation on each 32-bit element across a double-wide
 registers and one on the odd registers of each pair. Each element is clamped to
 the range [-2^width-1^, 2^width-1^-1] where `width` is specified by `uimm5`+1.
 If saturation occurs, `vxsat` is set. The destination (`rd_p`) and source
-(`rs1_p`) are register pairs and must specify even register numbers. Available
-only in RV32.
+(`rs1_p`) are register pairs and must specify even register numbers.
 
 Operation::
 
@@ -11195,7 +11169,6 @@ one on the even registers and one on the odd registers of each pair. Each
 element is clamped to the range [0, 2^width^-1] where `width` is specified by
 `uimm4`. If saturation occurs, `vxsat` is set. The destination (`rd_p`)
 and source (`rs1_p`) are register pairs and must specify even register numbers.
-Available only in RV32.
 
 Operation::
 
@@ -11262,7 +11235,6 @@ one on the even registers and one on the odd registers of each pair. Each
 element is clamped to the range [0, 2^width^-1] where `n` is specified by
 `uimm5`. If saturation occurs, `vxsat` is set. The destination (`rd_p`)
 and source (`rs1_p`) are register pairs and must specify even register numbers.
-Available only in RV32.
 
 Operation::
 
@@ -11466,7 +11438,6 @@ PSLL.BS operations: one on the even registers and one on the odd registers of
 each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register. Bits
 shifted out are discarded and vacated bit positions are filled with zeros.
-Available only in RV32.
 
 Operation::
 
@@ -11523,7 +11494,6 @@ PSLL.HS operations: one on the even registers and one on the odd registers of
 each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register. Bits
 shifted out are discarded and vacated bit positions are filled with zeros.
-Available only in RV32.
 
 Operation::
 
@@ -11771,7 +11741,7 @@ equivalent to two PSRL.BS operations: one on the even registers and one on the
 odd registers of each pair. The destination (`rd_p`) and first source (`rs1_p`)
 are register pairs and must specify even register numbers; `rs2` is a single
 register. Bits shifted out are discarded and vacated bit positions are filled
-with zeros. Available only in RV32.
+with zeros.
 
 Operation::
 
@@ -11828,7 +11798,7 @@ equivalent to two PSRL.HS operations: one on the even registers and one on the
 odd registers of each pair. The destination (`rd_p`) and first source (`rs1_p`)
 are register pairs and must specify even register numbers; `rs2` is a single
 register. Bits shifted out are discarded and vacated bit positions are filled
-with zeros. Available only in RV32.
+with zeros.
 
 Operation::
 
@@ -11885,7 +11855,6 @@ logical right shift on each 32-bit word element across a double-wide
 to two SRL operations: one on the even registers and one on the odd registers
 of each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register.
-Available only in RV32.
 
 Operation::
 
@@ -12077,8 +12046,7 @@ arithmetic right shift on each packed 8-bit element across a double-wide
 to two PSRA.BS operations: one on the even registers and one on the odd
 registers of each pair. The destination (`rd_p`) and first source (`rs1_p`)
 are register pairs and must specify even register numbers; `rs2` is a single
-register. Each element is sign-extended before shifting. Available only in
-RV32.
+register. Each element is sign-extended before shifting.
 
 Operation::
 
@@ -12135,8 +12103,7 @@ double-wide (register-pair) source by a scalar shift amount from `rs2`. It is
 equivalent to two PSRA.HS operations: one on the even registers and one on
 the odd registers of each pair. The destination (`rd_p`) and first source
 (`rs1_p`) are register pairs and must specify even register numbers; `rs2` is
-a single register. Each element is sign-extended before shifting. Available
-only in RV32.
+a single register. Each element is sign-extended before shifting.
 
 Operation::
 
@@ -12193,7 +12160,7 @@ arithmetic right shift on each 32-bit word element across a double-wide
 to two SRA operations: one on the even registers and one on the odd registers
 of each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register.
-Each element is sign-extended before shifting. Available only in RV32.
+Each element is sign-extended before shifting.
 
 Operation::
 
@@ -12394,7 +12361,7 @@ packed 8-bit element left by a 3-bit unsigned immediate across a double-wide
 (register-pair) source. It is equivalent to two PSLLI.B operations: one on
 the even registers and one on the odd registers of each pair. The destination
 (`rd_p`) and source (`rs1_p`) are register pairs and must specify even register
-numbers. Vacated bits are filled with zeros. Available only in RV32.
+numbers. Vacated bits are filled with zeros.
 
 Operation::
 
@@ -12451,7 +12418,6 @@ double-wide (register-pair) source. It is equivalent to two PSLLI.H
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and source (`rs1_p`) are register pairs and
 must specify even register numbers. Vacated bits are filled with zeros.
-Available only in RV32.
 
 Operation::
 
@@ -12507,7 +12473,7 @@ PSLLI.DW (Packed Shift Left Logical Immediate, Double-wide Word) shifts each
 (register-pair) source. It is equivalent to two SLLI operations: one on the
 even registers and one on the odd registers of each pair. The destination
 (`rd_p`) and source (`rs1_p`) are register pairs and must specify even register
-numbers. Vacated bits are filled with zeros. Available only in RV32.
+numbers. Vacated bits are filled with zeros.
 
 Operation::
 
@@ -12711,7 +12677,6 @@ double-wide (register-pair) source. It is equivalent to two PSRLI.B
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and source (`rs1_p`) are register pairs and
 must specify even register numbers. Vacated bits are filled with zeros.
-Available only in RV32.
 
 Operation::
 
@@ -12768,7 +12733,6 @@ across a double-wide (register-pair) source. It is equivalent to two PSRLI.H
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and source (`rs1_p`) are register pairs and
 must specify even register numbers. Vacated bits are filled with zeros.
-Available only in RV32.
 
 Operation::
 
@@ -12824,8 +12788,7 @@ PSRLI.DW (Packed Shift Right Logical Immediate, Double-wide Word) shifts each
 double-wide (register-pair) source. It is equivalent to two SRLI operations:
 one on the even registers and one on the odd registers of each pair. The
 destination (`rd_p`) and source (`rs1_p`) are register pairs and must specify
-even register numbers. Vacated bits are filled with zeros. Available only in
-RV32.
+even register numbers. Vacated bits are filled with zeros.
 
 Operation::
 
@@ -13029,7 +12992,7 @@ immediate across a double-wide (register-pair) source. It is equivalent to
 two PSRAI.B operations: one on the even registers and one on the odd registers
 of each pair. The destination (`rd_p`) and source (`rs1_p`) are register pairs
 and must specify even register numbers. Each element is sign-extended before
-shifting. Available only in RV32.
+shifting.
 
 Operation::
 
@@ -13086,7 +13049,7 @@ unsigned immediate across a double-wide (register-pair) source. It is
 equivalent to two PSRAI.H operations: one on the even registers and one on
 the odd registers of each pair. The destination (`rd_p`) and source (`rs1_p`)
 are register pairs and must specify even register numbers. Each element is
-sign-extended before shifting. Available only in RV32.
+sign-extended before shifting.
 
 Operation::
 
@@ -13143,7 +13106,7 @@ immediate across a double-wide (register-pair) source. It is equivalent to
 two SRAI operations: one on the even registers and one on the odd registers of
 each pair. The destination (`rd_p`) and source (`rs1_p`) are register pairs
 and must specify even register numbers. Each element is sign-extended before
-shifting. Available only in RV32.
+shifting.
 
 Operation::
 
@@ -13524,8 +13487,7 @@ range [-2^15^, 2^15^-1]; on saturation the `vxsat` flag is set. When negative,
 elements are arithmetically shifted right. It is equivalent to two PSSHA.HS
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
-and must specify even register numbers; `rs2` is a single register. Available
-only in RV32.
+and must specify even register numbers; `rs2` is a single register.
 
 Operation::
 
@@ -13599,8 +13561,7 @@ range [-2^31^, 2^31^-1]; on saturation the `vxsat` flag is set. When negative,
 elements are arithmetically shifted right. It is equivalent to two SSHA
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
-and must specify even register numbers; `rs2` is a single register. Available
-only in RV32.
+and must specify even register numbers; `rs2` is a single register.
 
 Operation::
 
@@ -13882,7 +13843,6 @@ set. When negative, elements are arithmetically shifted right with rounding
 PSSHAR.HS operations: one on the even registers and one on the odd registers
 of each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register.
-Available only in RV32.
 
 Operation::
 
@@ -13959,8 +13919,7 @@ set. When negative, elements are arithmetically shifted right with rounding
 (the shifted-out bit below the LSB is added). It is equivalent to two SSHAR
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
-and must specify even register numbers; `rs2` is a single register. Available
-only in RV32.
+and must specify even register numbers; `rs2` is a single register.
 
 Operation::
 
@@ -14236,8 +14195,7 @@ range [0, 2^16^-1]; on saturation the `vxsat` flag is set. When negative,
 elements are logically shifted right. It is equivalent to two PSSHL.HS
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
-and must specify even register numbers; `rs2` is a single register. Available
-only in RV32.
+and must specify even register numbers; `rs2` is a single register.
 
 Operation::
 
@@ -14308,8 +14266,7 @@ range [0, 2^32^-1]; on saturation the `vxsat` flag is set. When negative,
 elements are logically shifted right. It is equivalent to two SSHL
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
-and must specify even register numbers; `rs2` is a single register. Available
-only in RV32.
+and must specify even register numbers; `rs2` is a single register.
 
 Operation::
 
@@ -14517,7 +14474,6 @@ set. When negative, elements are logically shifted right with rounding
 PSSHLR.HS operations: one on the even registers and one on the odd registers
 of each pair. The destination (`rd_p`) and first source (`rs1_p`) are register
 pairs and must specify even register numbers; `rs2` is a single register.
-Available only in RV32.
 
 Operation::
 
@@ -14591,8 +14547,7 @@ set. When negative, elements are logically shifted right with rounding
 (the shifted-out bit below the LSB is added). It is equivalent to two SSHLR
 operations: one on the even registers and one on the odd registers of each
 pair. The destination (`rd_p`) and first source (`rs1_p`) are register pairs
-and must specify even register numbers; `rs2` is a single register. Available
-only in RV32.
+and must specify even register numbers; `rs2` is a single register.
 
 Operation::
 
@@ -14846,7 +14801,7 @@ on double-wide (register-pair) operands. It is equivalent to two PSSLAI.H
 operations: one on the even registers and one on the odd registers of each pair.
 Both operands (`rd_p`, `rs1_p`) are register pairs and must specify even register
 numbers. If any result overflows the signed 16-bit range, it is saturated and the
-`vxsat` flag is set. Available only in RV32.
+`vxsat` flag is set.
 
 Operation::
 
@@ -14913,7 +14868,7 @@ on double-wide (register-pair) operands. It is equivalent to two SSLAI
 operations: one on the even registers and one on the odd registers of each pair.
 Both operands (`rd_p`, `rs1_p`) are register pairs and must specify even register
 numbers. If any result overflows the signed 32-bit range, it is saturated and the
-`vxsat` flag is set. Available only in RV32.
+`vxsat` flag is set.
 
 Operation::
 
@@ -15333,7 +15288,7 @@ source. It is equivalent to two PSRARI.H operations: one on the even
 registers and one on the odd registers of each pair. The destination (`rd_p`)
 and source (`rs1_p`) are register pairs and must specify even register numbers.
 The shifted-out bit immediately below the least-significant result bit is
-added for rounding. Available only in RV32.
+added for rounding.
 
 Operation::
 
@@ -15397,7 +15352,7 @@ source. It is equivalent to two SRARI operations: one on the even registers
 and one on the odd registers of each pair. The destination (`rd_p`) and source
 (`rs1_p`) are register pairs and must specify even register numbers. The
 shifted-out bit immediately below the least-significant result bit is added
-for rounding. Available only in RV32.
+for rounding.
 
 Operation::
 
@@ -15566,7 +15521,7 @@ PPAIRE.DB performs packed byte even-element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -15626,7 +15581,7 @@ PPAIRE.DH performs packed halfword even-element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -15824,7 +15779,7 @@ PPAIREO.DB performs packed byte even-odd element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIREO.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -15880,7 +15835,7 @@ PPAIREO.DH performs packed halfword even-odd element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIREO.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -16078,7 +16033,7 @@ PPAIROE.DB performs packed byte odd-even element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIROE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -16134,7 +16089,7 @@ PPAIROE.DH performs packed halfword odd-even element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIROE.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -16333,7 +16288,7 @@ PPAIRO.DB performs packed byte odd-element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRO.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -16389,7 +16344,7 @@ PPAIRO.DH performs packed halfword odd-element packing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRO.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -17309,7 +17264,7 @@ on RV32. The 64-bit source values are formed by concatenating the odd (high) and
 even (low) registers of each pair. The 64-bit sum wraps modulo 2^64^ and is
 written back to the register pair designated by `rd_p`. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
-numbers. Available only in RV32.
+numbers.
 
 Operation::
 
@@ -17365,7 +17320,7 @@ SUBD performs a 64-bit integer subtraction using register pairs on RV32.
 The source operands `rs1_p` and `rs2_p` each designate a register pair
 forming a 64-bit value (even register = low word, odd register = high word).
 The 64-bit difference is written to the register pair designated by `rd_p`.
-All pair operands must specify even register numbers. Available only in RV32.
+All pair operands must specify even register numbers.
 
 Operation::
 
@@ -20438,7 +20393,7 @@ to 16-bit halfword elements with an immediate shift amount. The 64-bit source
 is read from the register pair designated by `rs1_p`. Each 32-bit element is
 arithmetically right-shifted by the 5-bit immediate, then clamped to the signed
 16-bit range [-32768, 32767]. Two halfword results are packed into `rd`. If any
-element saturates, `vxsat` is set. Available only in RV32.
+element saturates, `vxsat` is set.
 
 Operation::
 
@@ -20499,7 +20454,7 @@ NCLIPI performs an XLEN-wide narrowing signed clip with an immediate shift
 amount. The 64-bit source is read from the register pair designated by
 `rs1_p`. The value is arithmetically right-shifted by the 6-bit immediate, then
 clamped to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is
-written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
+written to `rd`. If saturation occurs, `vxsat` is set.
 
 Operation::
 
@@ -20558,7 +20513,7 @@ to 8-bit byte elements with a scalar shift amount. The 64-bit source is read
 from the register pair designated by `rs1_p`. Each 16-bit element is
 arithmetically right-shifted by the amount in `rs2[4:0]`, then clamped to the
 signed 8-bit range [-128, 127]. Four byte results are packed into `rd`. If any
-element saturates, `vxsat` is set. Available only in RV32.
+element saturates, `vxsat` is set.
 
 Operation::
 
@@ -20620,7 +20575,7 @@ to 16-bit halfword elements with a scalar shift amount. The 64-bit source is
 read from the register pair designated by `rs1_p`. Each 32-bit element is
 arithmetically right-shifted by the amount in `rs2[4:0]`, then clamped to the
 signed 16-bit range [-32768, 32767]. Two halfword results are packed into `rd`.
-If any element saturates, `vxsat` is set. Available only in RV32.
+If any element saturates, `vxsat` is set.
 
 Operation::
 
@@ -20681,7 +20636,7 @@ NCLIP performs an XLEN-wide narrowing signed clip with a scalar shift amount.
 The 64-bit source is read from the register pair designated by `rs1_p`. The
 value is arithmetically right-shifted by the amount in `rs2[5:0]`, then clamped
 to the signed 32-bit range [-2^31^, 2^31^-1]. The 32-bit result is written to
-`rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
+`rd`. If saturation occurs, `vxsat` is set.
 
 Operation::
 
@@ -20814,7 +20769,7 @@ word elements to 16-bit halfword elements using an immediate shift amount. The
 64-bit source is read from the register pair designated by `rs1_p`. Each 32-bit
 element is arithmetically right-shifted with round-to-nearest-up, then clamped
 to the signed 16-bit range [-32768, 32767]. Two halfword results are packed
-into `rd`. If any element saturates, `vxsat` is set. Available only in RV32.
+into `rd`. If any element saturates, `vxsat` is set.
 
 Operation::
 
@@ -20878,7 +20833,7 @@ immediate shift amount. The 64-bit source is read from the register pair
 designated by `rs1_p`. The value is arithmetically right-shifted with
 round-to-nearest-up by the 6-bit immediate, then clamped to the signed 32-bit
 range [-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation
-occurs, `vxsat` is set. Available only in RV32.
+occurs, `vxsat` is set.
 
 Operation::
 
@@ -21012,7 +20967,7 @@ word elements to 16-bit halfword elements using a scalar shift amount. The
 element is arithmetically right-shifted with round-to-nearest-up by the amount
 in `rs2[4:0]`, then clamped to the signed 16-bit range [-32768, 32767]. Two
 halfword results are packed into `rd`. If any element saturates, `vxsat` is
-set. Available only in RV32.
+set.
 
 Operation::
 
@@ -21076,7 +21031,7 @@ shift amount. The 64-bit source is read from the register pair designated by
 `rs1_p`. The value is arithmetically right-shifted with round-to-nearest-up by
 the amount in `rs2[5:0]`, then clamped to the signed 32-bit range
 [-2^31^, 2^31^-1]. The 32-bit result is written to `rd`. If saturation occurs,
-`vxsat` is set. Available only in RV32.
+`vxsat` is set.
 
 Operation::
 
@@ -21261,7 +21216,7 @@ NCLIPIU performs an XLEN-wide narrowing unsigned clip with an immediate shift
 amount. The 64-bit source is read from the register pair designated by
 `rs1_p`. The value is logically right-shifted by the 6-bit immediate, then
 clamped to the unsigned 32-bit range [0, 2^32^-1]. The 32-bit result is
-written to `rd`. If saturation occurs, `vxsat` is set. Available only in RV32.
+written to `rd`. If saturation occurs, `vxsat` is set.
 
 Operation::
 
@@ -21556,7 +21511,7 @@ word elements to 16-bit halfword elements using an immediate shift amount. The
 64-bit source is read from the register pair designated by `rs1_p`. Each 32-bit
 element is logically right-shifted with round-to-nearest-up, then clamped to
 the unsigned 16-bit range [0, 65535]. Two halfword results are packed into
-`rd`. If any element saturates, `vxsat` is set. Available only in RV32.
+`rd`. If any element saturates, `vxsat` is set.
 
 Operation::
 
@@ -21618,7 +21573,7 @@ immediate shift amount. The 64-bit source is read from the register pair
 designated by `rs1_p`. The value is logically right-shifted with
 round-to-nearest-up by the 6-bit immediate, then clamped to the unsigned
 32-bit range [0, 2^32^-1]. The 32-bit result is written to `rd`. If
-saturation occurs, `vxsat` is set. Available only in RV32.
+saturation occurs, `vxsat` is set.
 
 Operation::
 
@@ -21741,7 +21696,6 @@ word elements to 16-bit halfword elements using a scalar shift amount. The
 element is logically right-shifted with round-to-nearest-up by the amount in
 `rs2[4:0]`, then clamped to the unsigned 16-bit range [0, 65535]. Two halfword
 results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV32.
 
 Operation::
 
@@ -21803,7 +21757,7 @@ scalar shift amount. The 64-bit source is read from the register pair
 designated by `rs1_p`. The value is logically right-shifted with
 round-to-nearest-up by the amount in `rs2[5:0]`, then clamped to the unsigned
 32-bit range [0, 2^32^-1]. The 32-bit result is written to `rd`. If
-saturation occurs, `vxsat` is set. Available only in RV32.
+saturation occurs, `vxsat` is set.
 
 Operation::
 
