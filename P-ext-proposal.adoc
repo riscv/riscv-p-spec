@@ -827,7 +827,7 @@ pli.w _rd_, _simm10_
 Encoding::
 
 PLI.W is encoded in the OP-IMM-32 major opcode with a 10-bit signed immediate
-and packed word elements. This instruction exists only for RV64.
+and packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -844,8 +844,7 @@ and packed word elements. This instruction exists only for RV64.
 Description::
 
 PLI.W (Packed Load Immediate, Word) sign-extends a 10-bit signed immediate
-to 32 bits and replicates it into every word element of `rd`. This instruction
-is available only on RV64.
+to 32 bits and replicates it into every word element of `rd`.
 
 Operation::
 
@@ -1010,8 +1009,7 @@ plui.w _rd_, _simm10_
 Encoding::
 
 PLUI.W is encoded in the OP-IMM-32 major opcode with a 10-bit immediate
-loaded into the upper bits of each word element. This instruction exists
-only for RV64.
+loaded into the upper bits of each word element.
 
 [wavedrom, ,svg]
 ....
@@ -1030,7 +1028,7 @@ Description::
 PLUI.W (Packed Load Upper Immediate, Word) loads a 10-bit signed immediate
 into the most-significant 10 bits of each 32-bit word element, with the
 lower 22 bits set to zero, and replicates the result into every word element
-of `rd`. This instruction is available only on RV64.
+of `rd`.
 
 Operation::
 
@@ -1200,7 +1198,7 @@ padd.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PADD.W is encoded in the OP-32 major opcode and is available only in RV64.
+PADD.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -1220,7 +1218,6 @@ Description::
 
 PADD.W adds corresponding packed 32-bit word elements of `rs1` and `rs2` and
 writes the packed word results to `rd`. Each element addition wraps modulo 2^32^.
-Available only in RV64.
 
 Operation::
 
@@ -1523,7 +1520,7 @@ pmv.ws _rd_, _rs2_ &#8594; padd.ws _rd_, x0, _rs2_
 
 Encoding::
 
-PADD.WS is encoded in the OP-IMM-32 major opcode and is available only in RV64.
+PADD.WS is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -1858,7 +1855,7 @@ pneg.w _rd_, _rs2_ &#8594; psub.w _rd_, x0, _rs2_
 
 Encoding::
 
-PSUB.W is encoded in the OP-32 major opcode and is available only in RV64.
+PSUB.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -1878,7 +1875,7 @@ Description::
 
 PSUB.W subtracts corresponding packed 32-bit word elements of `rs2` from `rs1`
 and writes the packed word results to `rd`. Each element subtraction wraps
-modulo 2^32^. Available only in RV64.
+modulo 2^32^.
 
 Operation::
 
@@ -2194,7 +2191,6 @@ psadd.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PSADD.W is encoded in the OP-32 major opcode with packed word elements.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -2215,7 +2211,7 @@ Description::
 PSADD.W performs signed saturating addition on packed 32-bit word elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
 the range [-(2^31^), 2^31^-1]. Corresponds to KADD32 in the earlier P extension
-draft. Available only in RV64.
+draft.
 
 Operation::
 
@@ -2593,7 +2589,6 @@ psaddu.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PSADDU.W is encoded in the OP-32 major opcode with packed word elements.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -2614,7 +2609,6 @@ Description::
 PSADDU.W performs unsigned saturating addition on packed 32-bit word elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
 the range [0, 2^32^-1]. Corresponds to UKADD32 in the earlier P extension draft.
-Available only in RV64.
 
 Operation::
 
@@ -2980,7 +2974,7 @@ pssub.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSSUB.W is encoded in the OP-32 major opcode and is available only in RV64.
+PSSUB.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -3000,7 +2994,7 @@ Description::
 
 PSSUB.W performs signed saturating subtraction on corresponding packed 32-bit
 word elements of `rs1` and `rs2`, writing the results to `rd`. Each element
-result is clamped to the range [-(2^31^), 2^31^-1]. Available only in RV64.
+result is clamped to the range [-(2^31^), 2^31^-1].
 
 Operation::
 
@@ -3374,7 +3368,7 @@ pssubu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSSUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
+PSSUBU.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -3394,7 +3388,7 @@ Description::
 
 PSSUBU.W performs unsigned saturating subtraction on corresponding packed
 32-bit word elements of `rs1` and `rs2`, writing the results to `rd`. Each
-element result is clamped to the range [0, 2^32^-1]. Available only in RV64.
+element result is clamped to the range [0, 2^32^-1].
 
 Operation::
 
@@ -3755,7 +3749,7 @@ paadd.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PAADD.W is encoded in the OP-32 major opcode and is available only in RV64.
+PAADD.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -3777,7 +3771,6 @@ PAADD.W performs a signed averaging addition on packed 32-bit word elements.
 For each word lane, it adds the signed elements from `rs1` and `rs2` at full
 precision (33 bits), then shifts the result right by 1 (toward negative
 infinity), and writes the lower 32 bits to the corresponding word of `rd`.
-Available only in RV64.
 
 Operation::
 
@@ -4123,7 +4116,7 @@ paaddu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PAADDU.W is encoded in the OP-32 major opcode and is available only in RV64.
+PAADDU.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -4144,7 +4137,7 @@ Description::
 PAADDU.W performs an unsigned averaging addition on packed 32-bit word elements.
 For each word lane, it adds the unsigned elements from `rs1` and `rs2` at full
 precision (33 bits), then shifts the result right by 1, and writes the lower
-32 bits to the corresponding word of `rd`. Available only in RV64.
+32 bits to the corresponding word of `rd`.
 
 Operation::
 
@@ -4495,7 +4488,7 @@ pasub.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PASUB.W is encoded in the OP-32 major opcode and is available only in RV64.
+PASUB.W is encoded in the OP-32 major opcoded.
 
 [wavedrom, ,svg]
 ....
@@ -4517,7 +4510,7 @@ PASUB.W performs a signed averaging subtraction on packed 32-bit word elements.
 For each word lane, it subtracts the signed element in `rs2` from the signed
 element in `rs1` at full precision (33 bits), then shifts the result right by 1
 (toward negative infinity), and writes the lower 32 bits to the corresponding
-word of `rd`. Available only in RV64.
+word of `rd`.
 
 Operation::
 
@@ -4861,7 +4854,7 @@ pasubu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PASUBU.W is encoded in the OP-32 major opcode and is available only in RV64.
+PASUBU.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -4883,7 +4876,7 @@ PASUBU.W performs an unsigned averaging subtraction on packed 32-bit word
 elements. For each word lane, it subtracts the unsigned element in `rs2` from
 the unsigned element in `rs1` at full precision (33 bits), then shifts the
 result right by 1, and writes the lower 32 bits to the corresponding word of
-`rd`. Available only in RV64.
+`rd`.
 
 Operation::
 
@@ -5177,7 +5170,7 @@ psh1add.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSH1ADD.W is encoded in the OP-32 major opcode and is available only in RV64.
+PSH1ADD.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -5409,7 +5402,7 @@ pssh1sadd.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSSH1SADD.W is encoded in the OP-32 major opcode and is available only in RV64.
+PSSH1SADD.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -5742,7 +5735,7 @@ pas.wx _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PAS.WX is encoded in the OP-32 major opcode and is available only in RV64.
+PAS.WX is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -5764,7 +5757,7 @@ PAS.WX (Packed Add-Subtract Cross, Word) performs a cross add-subtract on
 packed 32-bit word pairs. The even (lower) word of `rs1` has the odd (upper)
 word of `rs2` subtracted from it, while the odd (upper) word of `rs1` is added
 to the even (lower) word of `rs2`. Results wrap modulo 2^32^. This instruction
-is useful for complex number arithmetic. Available only in RV64.
+is useful for complex number arithmetic.
 
 Operation::
 
@@ -5917,7 +5910,7 @@ psa.wx _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSA.WX is encoded in the OP-32 major opcode and is available only in RV64.
+PSA.WX is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -5939,7 +5932,7 @@ PSA.WX (Packed Subtract-Add Cross, Word) performs a cross subtract-add on
 packed 32-bit word pairs. The even (lower) word of `rs1` is added to the odd
 word of `rs2`, while the odd (upper) word of `rs1` has the even (lower) word of
 `rs2` subtracted from it. Results wrap modulo 2^32^. This instruction is useful
-for complex number arithmetic. Available only in RV64.
+for complex number arithmetic.
 
 Operation::
 
@@ -6108,7 +6101,7 @@ psas.wx _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSAS.WX is encoded in the OP-32 major opcode and is available only in RV64.
+PSAS.WX is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -6133,7 +6126,6 @@ signed saturating subtraction of the even (lower) word of `rs1` and the odd
 saturating addition of the odd (upper) word of `rs2` and the even (lower)
 word of `rs2`. Results are clamped to the range [-2^31^, 2^31^-1]. Sets `vxsat`
 on saturation. This instruction is useful for complex number arithmetic.
-Available only in RV64.
 
 Operation::
 
@@ -6327,7 +6319,7 @@ pssa.wx _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSSA.WX is encoded in the OP-32 major opcode and is available only in RV64.
+PSSA.WX is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -6351,8 +6343,7 @@ signed saturating addition of the even (lower) word of `rs1` and the odd
 (upper) word of `rs2`, while the odd (upper) word is computed as a signed
 saturating subtraction of the odd (upper) word of `rs1` and the even (lower)
 word of `rs2`. Results are clamped to the range [-2^31^, 2^31^-1]. Sets `vxsat` on
-saturation. This instruction is useful for complex number arithmetic. Available
-only in RV64.
+saturation. This instruction is useful for complex number arithmetic.
 
 Operation::
 
@@ -6534,7 +6525,6 @@ paas.wx _rd_, _rs1_, _rs2_
 Encoding::
 
 PAAS.WX is encoded in the OP-32 major opcode with packed word cross operations.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -6557,8 +6547,7 @@ cross add-subtract on packed 32-bit word elements within a 64-bit register. The
 upper word of `rs1` is added to the lower word of `rs2` at full precision and
 the result is shifted right by 1, while the lower word of `rs1` has the upper
 word of `rs2` subtracted at full precision and the result is shifted right by 1.
-The truncated results are written to the corresponding words of `rd`. Available
-only in RV64.
+The truncated results are written to the corresponding words of `rd`.
 
 Operation::
 
@@ -6718,7 +6707,6 @@ pasa.wx _rd_, _rs1_, _rs2_
 Encoding::
 
 PASA.WX is encoded in the OP-32 major opcode with packed word cross operations.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -6741,8 +6729,7 @@ cross subtract-add on packed 32-bit word elements within a 64-bit register. The
 upper word of `rs1` has the lower word of `rs2` subtracted at full precision and
 the result is shifted right by 1, while the lower word of `rs1` is added to the
 upper word of `rs2` at full precision and the result is shifted right by 1. The
-truncated results are written to the corresponding words of `rd`. Available only
-in RV64.
+truncated results are written to the corresponding words of `rd`.
 
 Operation::
 
@@ -7725,7 +7712,7 @@ predsum.ws _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PREDSUM.WS is encoded in the OP-IMM-32 major opcode and is available only in RV64.
+PREDSUM.WS is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -7861,7 +7848,7 @@ predsumu.ws _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PREDSUMU.WS is encoded in the OP-IMM-32 major opcode and is available only in RV64.
+PREDSUMU.WS is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -7999,7 +7986,7 @@ pmin.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMIN.W is encoded in the OP-32 major opcode and is available only in RV64.
+PMIN.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -8018,8 +8005,7 @@ PMIN.W is encoded in the OP-32 major opcode and is available only in RV64.
 Description::
 
 PMIN.W computes the signed minimum of corresponding packed 32-bit word elements
-of `rs1` and `rs2` and writes the packed word results to `rd`. Available only
-in RV64.
+of `rs1` and `rs2` and writes the packed word results to `rd`.
 
 Operation::
 
@@ -8303,7 +8289,7 @@ pminu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMINU.W is encoded in the OP-32 major opcode and is available only in RV64.
+PMINU.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -8323,7 +8309,6 @@ Description::
 
 PMINU.W computes the unsigned minimum of corresponding packed 32-bit word
 elements of `rs1` and `rs2` and writes the packed word results to `rd`.
-Available only in RV64.
 
 Operation::
 
@@ -8608,7 +8593,7 @@ pmax.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMAX.W is encoded in the OP-32 major opcode and is available only in RV64.
+PMAX.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -8627,8 +8612,7 @@ PMAX.W is encoded in the OP-32 major opcode and is available only in RV64.
 Description::
 
 PMAX.W computes the signed maximum of corresponding packed 32-bit word elements
-of `rs1` and `rs2` and writes the packed word results to `rd`. Available only
-in RV64.
+of `rs1` and `rs2` and writes the packed word results to `rd`.
 
 Operation::
 
@@ -8857,7 +8841,7 @@ pmaxu.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMAXU.W is encoded in the OP-32 major opcode and is available only in RV64.
+PMAXU.W is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -8877,7 +8861,6 @@ Description::
 
 PMAXU.W computes the unsigned maximum of corresponding packed 32-bit word
 elements of `rs1` and `rs2` and writes the packed word results to `rd`.
-Available only in RV64.
 
 Operation::
 
@@ -9234,8 +9217,6 @@ Pseudoinstructions::
 pmseqz.w _rd_, _rs1_ &#8594; pmseq.w _rd_, _rs1_, x0
 
 Encoding::
-
-PMSEQ.W is available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -9615,8 +9596,6 @@ pmsltz.w _rd_, _rs1_ &#8594; pmslt.w _rd_, _rs1_, x0 +
 pmsgtz.w _rd_, _rs2_ &#8594; pmslt.w _rd_, x0, _rs2_
 
 Encoding::
-
-PMSLT.W is available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -10004,8 +9983,6 @@ pmsnez.w _rd_, _rs2_ &#8594; pmsltu.w _rd_, x0, _rs2_
 
 Encoding::
 
-PMSLTU.W is available only in RV64.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -10328,8 +10305,6 @@ psext.w.b _rd_, _rs1_
 
 Encoding::
 
-PSEXT.W.B is available only in RV64.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -10365,8 +10340,6 @@ Mnemonic::
 psext.w.h _rd_, _rs1_
 
 Encoding::
-
-PSEXT.W.H is available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -10624,7 +10597,7 @@ psati.w _rd_, _rs1_, _width_
 Encoding::
 
 PSATI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format for
-packed word elements with a 5-bit unsigned immediate. Available only in RV64.
+packed word elements with a 5-bit unsigned immediate.
 
 [wavedrom, ,svg]
 ....
@@ -10647,7 +10620,7 @@ PSATI.W saturates each packed 32-bit word element of `rs1` to the signed range
 [-(2^width-1^), 2^width-1^-1], where `width` is specified by `uimm5`+1. If an
 element exceeds the range, the result is clamped to the nearest bound and the
 `vxsat` overflow flag is set. Elements already within range are passed through
-unchanged. Available only in RV64.
+unchanged.
 
 Operation::
 
@@ -10982,7 +10955,7 @@ pusati.w _rd_, _rs1_, _uimm5_
 Encoding::
 
 PUSATI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format for
-packed word elements with a 5-bit unsigned immediate. Available only in RV64.
+packed word elements with a 5-bit unsigned immediate.
 
 [wavedrom, ,svg]
 ....
@@ -11005,7 +10978,7 @@ PUSATI.W performs unsigned saturation on each packed 32-bit word element of `rs1
 to the range [0, 2^width^-1], where `width` is specified by `uimm5`.
 Negative values are clamped to zero and values exceeding the maximum are clamped
 to 2^width^-1. When clamping occurs, the `vxsat` overflow flag is set. Elements
-already within range are passed through unchanged. Available only in RV64.
+already within range are passed through unchanged.
 
 Operation::
 
@@ -11364,7 +11337,7 @@ psll.ws _rd_, _rs1_, _rs2_
 Encoding::
 
 PSLL.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
-and word elements. Available only in RV64.
+and word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11385,8 +11358,7 @@ Description::
 
 PSLL.WS shifts each packed 32-bit element of `rs1` left by the scalar shift
 amount in `rs2[4:0]` and writes the packed word result to `rd`. Bits shifted
-out are discarded and vacated bit positions are filled with zeros. Available
-only in RV64.
+out are discarded and vacated bit positions are filled with zeros.
 
 Operation::
 
@@ -11667,7 +11639,7 @@ psrl.ws _rd_, _rs1_, _rs2_
 Encoding::
 
 PSRL.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
-and word elements. Available only in RV64.
+and word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11689,7 +11661,6 @@ Description::
 PSRL.WS logically shifts each packed 32-bit element of `rs1` right by the
 scalar shift amount in `rs2[4:0]` and writes the packed word result to `rd`.
 Bits shifted out are discarded and vacated bit positions are filled with zeros.
-Available only in RV64.
 
 Operation::
 
@@ -11972,7 +11943,7 @@ psra.ws _rd_, _rs1_, _rs2_
 Encoding::
 
 PSRA.WS is encoded in the OP-IMM-32 major opcode with scalar shift amount
-and word elements. Available only in RV64.
+and word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11994,7 +11965,7 @@ Description::
 PSRA.WS arithmetically shifts each packed 32-bit element of `rs1` right by the
 scalar shift amount in `rs2[4:0]` and writes the packed word result to `rd`.
 Bits shifted out are discarded and vacated bit positions are filled with copies
-of the sign bit. Available only in RV64.
+of the sign bit.
 
 Operation::
 
@@ -12286,7 +12257,7 @@ pslli.w _rd_, _rs1_, _uimm5_
 Encoding::
 
 PSLLI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
+and an immediate shift amount.
 
 [wavedrom, ,svg]
 ....
@@ -12310,7 +12281,6 @@ Description::
 PSLLI.W shifts each packed 32-bit element of `rs1` left by the immediate shift
 amount encoded in `uimm5` and writes the packed word result to `rd`. Bits
 shifted out are discarded and vacated bit positions are filled with zeros.
-Available only in RV64.
 
 Operation::
 
@@ -12601,7 +12571,7 @@ psrli.w _rd_, _rs1_, _uimm5_
 Encoding::
 
 PSRLI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
+and an immediate shift amount.
 
 [wavedrom, ,svg]
 ....
@@ -12625,7 +12595,7 @@ Description::
 PSRLI.W logically shifts each packed 32-bit element of `rs1` right by the
 immediate shift amount encoded in `uimm5` and writes the packed word result
 to `rd`. Bits shifted out are discarded and vacated bit positions are filled
-with zeros. Available only in RV64.
+with zeros.
 
 Operation::
 
@@ -12916,7 +12886,7 @@ psrai.w _rd_, _rs1_, _uimm5_
 Encoding::
 
 PSRAI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
+and an immediate shift amount.
 
 [wavedrom, ,svg]
 ....
@@ -12940,7 +12910,7 @@ Description::
 PSRAI.W arithmetically shifts each packed 32-bit element of `rs1` right by the
 immediate shift amount encoded in `uimm5` and writes the packed word result
 to `rd`. Bits shifted out are discarded and vacated bit positions are filled
-with copies of the sign bit. Available only in RV64.
+with copies of the sign bit.
 
 Operation::
 
@@ -13135,7 +13105,7 @@ sha _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHA is encoded in the OP-32 major opcode and is available only in RV64.
+SHA is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -13189,7 +13159,7 @@ shl _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHL is encoded in the OP-32 major opcode and is available only in RV64.
+SHL is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -13321,8 +13291,6 @@ Mnemonic::
 pssha.ws _rd_, _rs1_, _rs2_
 
 Encoding::
-
-PSSHA.WS is available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -13676,8 +13644,6 @@ Mnemonic::
 psshar.ws _rd_, _rs1_, _rs2_
 
 Encoding::
-
-PSSHAR.WS is available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -14037,8 +14003,6 @@ psshl.ws _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSSHL.WS is available only in RV64.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -14377,8 +14341,6 @@ psshlr.ws _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PSSHLR.WS is available only in RV64.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -14653,7 +14615,7 @@ psslai.w _rd_, _rs1_, _uimm5_
 Encoding::
 
 PSSLAI.W is encoded in the OP-IMM-32 major opcode with the w-uimm format
-and word elements. Available only in RV64.
+and word elements.
 
 [wavedrom, ,svg]
 ....
@@ -14678,7 +14640,7 @@ PSSLAI.W (Packed Saturating Shift Left Arithmetic Immediate, Word) shifts each
 packed signed 32-bit element of `rs1` left by a 5-bit unsigned immediate. If
 the shifted result overflows the signed 32-bit range [-2^31^, 2^31^-1], the
 result is saturated to the nearest boundary and the `vxsat` flag is set. The
-packed word results are written to `rd`. Available only in RV64.
+packed word results are written to `rd`.
 
 Operation::
 
@@ -14968,7 +14930,7 @@ shar _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHAR is encoded in the OP-32 major opcode and is available only in RV64.
+SHAR is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -15024,7 +14986,7 @@ shlr _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHLR is encoded in the OP-32 major opcode and is available only in RV64.
+SHLR is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -15131,7 +15093,7 @@ psrari.w _rd_, _rs1_, _uimm5_
 Encoding::
 
 PSRARI.W is encoded in the OP-IMM-32 major opcode with packed word elements
-and an immediate shift amount. Available only in RV64.
+and an immediate shift amount.
 
 [wavedrom, ,svg]
 ....
@@ -15156,7 +15118,6 @@ PSRARI.W arithmetically shifts each packed 32-bit element of `rs1` right by
 the immediate shift amount encoded in `uimm5` with rounding and writes the
 packed word result to `rd`. A rounding bit is added before the shift so that the
 result is rounded to the nearest integer (round-to-nearest, ties round up).
-Available only in RV64.
 
 Operation::
 
@@ -15729,7 +15690,7 @@ Description::
 PPAIREO.W (Pack Pair Even-Odd Words) extracts the even (lower) 32-bit word from
 `rs1` and the odd (upper) 32-bit word from `rs2`, and packs them into `rd`. The
 lower word of the result comes from the even position of `rs1` and the upper word
-comes from the odd position of `rs2`. Available only in RV64.
+comes from the odd position of `rs2`.
 
 Operation::
 
@@ -15983,7 +15944,7 @@ Description::
 PPAIROE.W (Pack Pair Odd-Even Words) extracts the odd (upper) 32-bit word from
 `rs1` and the even (lower) 32-bit word from `rs2`, and packs them into `rd`. The
 lower word of the result comes from the odd position of `rs1` and the upper word
-comes from the even position of `rs2`. Available only in RV64.
+comes from the even position of `rs2`.
 
 Operation::
 
@@ -16238,7 +16199,7 @@ Description::
 PPAIRO.W (Pack Pair Odd Words) extracts the odd (upper) 32-bit word from both
 `rs1` and `rs2`, and packs them into `rd`. The lower word of the result comes
 from the odd position of `rs1` and the upper word comes from the odd position of
-`rs2`. Available only in RV64.
+`rs2`.
 
 Operation::
 
@@ -16381,7 +16342,7 @@ pwcvth.b _rd_, _rs2_ &#8594; zip8p _rd_, x0, _rs2_
 
 Encoding::
 
-ZIP8P is encoded in the OP-32 major opcode and is available only in RV64.
+ZIP8P is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16425,7 +16386,7 @@ zip8hp _rd_, _rs1_, _rs2_
 
 Encoding::
 
-ZIP8HP is encoded in the OP-32 major opcode and is available only in RV64.
+ZIP8HP is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16474,7 +16435,7 @@ pwcvth.h _rd_, _rs2_ &#8594; zip16p _rd_, x0, _rs2_
 
 Encoding::
 
-ZIP16P is encoded in the OP-32 major opcode and is available only in RV64.
+ZIP16P is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16516,7 +16477,7 @@ zip16hp _rd_, _rs1_, _rs2_
 
 Encoding::
 
-ZIP16HP is encoded in the OP-32 major opcode and is available only in RV64.
+ZIP16HP is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16562,7 +16523,7 @@ pncvt.b _rd_, _rs1_ &#8594; unzip8p _rd_, _rs1_, x0
 
 Encoding::
 
-UNZIP8P is encoded in the OP-32 major opcode and is available only in RV64.
+UNZIP8P is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16610,7 +16571,7 @@ pncvth.b _rd_, _rs1_ &#8594; unzip8hp _rd_, _rs1_, x0
 
 Encoding::
 
-UNZIP8HP is encoded in the OP-32 major opcode and is available only in RV64.
+UNZIP8HP is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16658,7 +16619,7 @@ pncvt.h _rd_, _rs1_ &#8594; unzip16p _rd_, _rs1_, x0
 
 Encoding::
 
-UNZIP16P is encoded in the OP-32 major opcode and is available only in RV64.
+UNZIP16P is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16704,7 +16665,7 @@ pncvth.h _rd_, _rs1_ &#8594; unzip16hp _rd_, _rs1_, x0
 
 Encoding::
 
-UNZIP16HP is encoded in the OP-32 major opcode and is available only in RV64.
+UNZIP16HP is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16746,7 +16707,7 @@ rev16 _rd_, _rs1_
 
 Encoding::
 
-REV16 is a scalar instruction encoded in the OP-IMM major opcode and is available only in RV64.
+REV16 is a scalar instruction encoded in the OP-IMM major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16877,7 +16838,7 @@ absw _rd_, _rs1_, _simm12_
 
 Encoding::
 
-ABSW is encoded in the OP-IMM-32 major opcode and is available only in RV64.
+ABSW is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -16956,7 +16917,7 @@ clsw _rd_, _rs1_, _imm12_
 
 Encoding::
 
-CLSW is encoded in the OP-IMM-32 major opcode and is available only in RV64.
+CLSW is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -21814,7 +21775,6 @@ PNCLIPP.B performs packed narrowing signed clip from 16-bit halfword elements
 to 8-bit byte elements. The 128-bit source is read from `rs2` and `rs1`. Each
 16-bit element is clamped to the signed 8-bit range [-128, 127]. Eight byte
 results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV64.
 
 Operation::
 
@@ -21849,7 +21809,6 @@ pnclipp.h _rd_, _rs1_, _rs2_
 Encoding::
 
 PNCLIPP.H is encoded in the OP-32 major opcode with packed halfword narrowing.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -21872,7 +21831,6 @@ PNCLIPP.H performs packed narrowing signed clip from 32-bit word elements
 to 16-bit halfword elements. The 128-bit source is read from `rs2` and `rs1`.
 Each 32-bit element is clamped to the signed 16-bit range [-32768, 32767]. Four
 halfword results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV64.
 
 Operation::
 
@@ -21907,7 +21865,6 @@ pnclipp.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PNCLIPP.W is encoded in the OP-32 major opcode with packed word narrowing.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -21930,7 +21887,6 @@ PNCLIPP.W performs packed narrowing signed clip from 64-bit doubleword elements
 to 32-bit word elements. The 128-bit source is read from `rs2` and `rs1`.
 Each 64-bit element is clamped to the signed 32-bit range [-2^31^, 2^31^-1].
 Two word results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV64.
 
 Operation::
 
@@ -21965,7 +21921,6 @@ pnclipup.b _rd_, _rs1_, _rs2_
 Encoding::
 
 PNCLIPUP.B is encoded in the OP-32 major opcode with packed byte narrowing.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -21988,7 +21943,6 @@ PNCLIPUP.B performs packed narrowing unsigned clip from 16-bit halfword elements
 to 8-bit byte elements. The 128-bit source is read from `rs2` and `rs1`. Each
 16-bit element is clamped to the unsigned 8-bit range [0, 255]. Eight byte
 results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV64.
 
 Operation::
 
@@ -22021,7 +21975,6 @@ pnclipup.h _rd_, _rs1_, _rs2_
 Encoding::
 
 PNCLIPUP.H is encoded in the OP-32 major opcode with packed halfword narrowing.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -22044,7 +21997,6 @@ PNCLIPUP.H performs packed narrowing unsigned clip from 32-bit word elements
 to 16-bit halfword elements. The 128-bit source is read from `rs2` and `rs1`.
 Each 32-bit element is clamped to the unsigned 16-bit range [0, 65535]. Four
 halfword results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV64.
 
 Operation::
 
@@ -22077,7 +22029,6 @@ pnclipup.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PNCLIPUP.W is encoded in the OP-32 major opcode with packed word narrowing.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -22100,7 +22051,6 @@ PNCLIPUP.W performs packed narrowing unsigned clip from 64-bit doubleword elemen
 to 32-bit word elements. The 128-bit source is read from `rs2` and `rs1`.
 Each 64-bit element is clamped to the unsigned 32-bit range [0, 2^32^-1].
 Two word results are packed into `rd`. If any element saturates, `vxsat` is set.
-Available only in RV64.
 
 Operation::
 
@@ -22188,7 +22138,7 @@ pmulh.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULH.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMULH.W is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -22208,8 +22158,7 @@ Description::
 
 PMULH.W multiplies corresponding signed packed 32-bit word elements of `rs1`
 and `rs2`, producing 64-bit intermediate products, and writes the upper 32 bits
-of each product to the corresponding word element of `rd`. This instruction is
-available only on RV64.
+of each product to the corresponding word element of `rd`.
 
 Operation::
 
@@ -22488,7 +22437,7 @@ pmulhr.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULHR.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMULHR.W is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -22509,7 +22458,7 @@ Description::
 PMULHR.W multiplies corresponding signed packed 32-bit word elements of `rs1`
 and `rs2`, producing 64-bit intermediate products, adds a rounding constant
 of 2^31^, and writes the upper 32 bits of each rounded product to the
-corresponding word element of `rd`. This instruction is available only on RV64.
+corresponding word element of `rd`.
 
 Operation::
 
@@ -22935,7 +22884,7 @@ pmulq.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULQ.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMULQ.W is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -22956,8 +22905,7 @@ Description::
 PMULQ.W performs a Q-format multiply on corresponding signed packed 32-bit
 word elements of `rs1` and `rs2`. It computes `(a * b) << 1` and keeps the
 upper 32 bits. When both inputs are the most negative value (0x80000000), the
-result saturates to 0x7FFFFFFF and the `vxsat` overflow flag is set. This
-instruction is available only on RV64.
+result saturates to 0x7FFFFFFF and the `vxsat` overflow flag is set.
 
 Operation::
 
@@ -23103,7 +23051,7 @@ pmulqr.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULQR.W is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMULQR.W is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -23125,8 +23073,7 @@ PMULQR.W performs a rounding Q-format multiply on corresponding signed packed
 32-bit word elements of `rs1` and `rs2`. It computes `(a * b) << 1`, adds a
 rounding constant of 2^30^ before the shift, and keeps the upper 32 bits. When
 both inputs are the most negative value (0x80000000), the result saturates to
-0x7FFFFFFF and the `vxsat` overflow flag is set. This instruction is available
-only on RV64.
+0x7FFFFFFF and the `vxsat` overflow flag is set.
 
 Operation::
 
@@ -25131,7 +25078,7 @@ pmul.w.h00 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMUL.W.H00 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMUL.W.H00 is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -25152,7 +25099,7 @@ Description::
 PMUL.W.H00 multiplies the low halfword (h0) of each packed 32-bit word element
 in `rs1` by the low halfword (h0) of the corresponding word element in `rs2`,
 both treated as signed, producing a 32-bit product per element that is written
-to the corresponding word of `rd`. This instruction is available only on RV64.
+to the corresponding word of `rd`.
 
 Operation::
 
@@ -25175,7 +25122,7 @@ pmul.w.h01 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMUL.W.H01 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMUL.W.H01 is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -25196,7 +25143,7 @@ Description::
 PMUL.W.H01 multiplies the low halfword (h0) of each packed 32-bit word element
 in `rs1` by the high halfword (h1) of the corresponding word element in `rs2`,
 both treated as signed, producing a 32-bit product per element that is written
-to the corresponding word of `rd`. This instruction is available only on RV64.
+to the corresponding word of `rd`.
 
 Operation::
 
@@ -25219,7 +25166,7 @@ pmul.w.h11 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMUL.W.H11 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMUL.W.H11 is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -25240,8 +25187,7 @@ Description::
 PMUL.W.H11 multiplies the high halfword (h1) of each packed 32-bit word
 element in `rs1` by the high halfword (h1) of the corresponding word element in
 `rs2`, both treated as signed, producing a 32-bit product per element that is
-written to the corresponding word of `rd`. This instruction is available only
-on RV64.
+written to the corresponding word of `rd`.
 
 Operation::
 
@@ -25387,7 +25333,7 @@ mul.w00 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MUL.W00 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+MUL.W00 is encoded in the OP-32 major opcode as a cross-word multiply.
 
 [wavedrom, ,svg]
 ....
@@ -25407,7 +25353,7 @@ Description::
 
 MUL.W00 multiplies the low 32-bit word (w0) of `rs1` by the low 32-bit word
 (w0) of `rs2`, both treated as signed, producing a full 64-bit signed product
-that is written to `rd`. This instruction is available only on RV64.
+that is written to `rd`.
 
 Operation::
 
@@ -25428,7 +25374,7 @@ mul.w01 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MUL.W01 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+MUL.W01 is encoded in the OP-32 major opcode as a cross-word multiply.
 
 [wavedrom, ,svg]
 ....
@@ -25448,7 +25394,7 @@ Description::
 
 MUL.W01 multiplies the low 32-bit word (w0) of `rs1` by the high 32-bit word
 (w1) of `rs2`, both treated as signed, producing a full 64-bit signed product
-that is written to `rd`. This instruction is available only on RV64.
+that is written to `rd`.
 
 Operation::
 
@@ -25469,7 +25415,7 @@ mul.w11 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-MUL.W11 is encoded in the OP-32 major opcode as a cross-word multiply (RV64 only).
+MUL.W11 is encoded in the OP-32 major opcode as a cross-word multiply.
 
 [wavedrom, ,svg]
 ....
@@ -25489,7 +25435,7 @@ Description::
 
 MUL.W11 multiplies the high 32-bit word (w1) of `rs1` by the high 32-bit word
 (w1) of `rs2`, both treated as signed, producing a full 64-bit signed product
-that is written to `rd`. This instruction is available only on RV64.
+that is written to `rd`.
 
 Operation::
 
@@ -28339,7 +28285,7 @@ pm2sub.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2SUB.W is encoded in the OP-32 major opcode with word elements (RV64 only).
+PM2SUB.W is encoded in the OP-32 major opcode with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -28357,7 +28303,7 @@ PM2SUB.W is encoded in the OP-32 major opcode with word elements (RV64 only).
 
 Description::
 
-PM2SUB.W (RV64 only) multiplies two pairs of signed 32-bit word elements from
+PM2SUB.W multiplies two pairs of signed 32-bit word elements from
 `rs1` and `rs2`, then subtracts the upper product from the lower product. The
 64-bit difference is written to `rd`.
 
@@ -28441,7 +28387,7 @@ pm2sub.wx _rd_, _rs1_, _rs2_
 Encoding::
 
 PM2SUB.WX is encoded in the OP-32 major opcode with word elements and crossed
-operands (RV64 only).
+operands.
 
 [wavedrom, ,svg]
 ....
@@ -28459,7 +28405,7 @@ operands (RV64 only).
 
 Description::
 
-PM2SUB.WX (RV64 only) multiplies two pairs of signed 32-bit word elements from
+PM2SUB.WX multiplies two pairs of signed 32-bit word elements from
 `rs1` and `rs2` using crossed `rs2` operands, then subtracts the upper product
 from the lower product. The lower word of `rs1` is multiplied with the upper
 word of `rs2`, and vice versa. The 64-bit difference is written to `rd`.
@@ -28651,7 +28597,7 @@ pm2adda.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDA.W is encoded in the OP-32 major opcode with word elements (RV64 only).
+PM2ADDA.W is encoded in the OP-32 major opcode with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -28669,7 +28615,7 @@ PM2ADDA.W is encoded in the OP-32 major opcode with word elements (RV64 only).
 
 Description::
 
-PM2ADDA.W (RV64 only) multiplies two pairs of signed 32-bit word elements from
+PM2ADDA.W multiplies two pairs of signed 32-bit word elements from
 `rs1` and `rs2`, sums the two 64-bit products, and accumulates the result into
 `rd`. This instruction is the accumulating variant of PM2ADD.W.
 
@@ -28852,7 +28798,7 @@ pm2addau.w _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM2ADDAU.W is encoded in the OP-32 major opcode with word elements (RV64 only).
+PM2ADDAU.W is encoded in the OP-32 major opcode with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -28870,7 +28816,7 @@ PM2ADDAU.W is encoded in the OP-32 major opcode with word elements (RV64 only).
 
 Description::
 
-PM2ADDAU.W (RV64 only) multiplies two pairs of unsigned 32-bit word elements
+PM2ADDAU.W multiplies two pairs of unsigned 32-bit word elements
 from `rs1` and `rs2`, sums the two 64-bit products, and accumulates the result
 into `rd`. This instruction is the unsigned accumulating variant of PM2ADDU.W.
 
@@ -29580,8 +29526,7 @@ pm4adda.h _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PM4ADDA.H is encoded in the OP-32 major opcode with packed halfword elements
-(RV64 only).
+PM4ADDA.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -29599,7 +29544,7 @@ PM4ADDA.H is encoded in the OP-32 major opcode with packed halfword elements
 
 Description::
 
-PM4ADDA.H (RV64 only) multiplies four pairs of signed 16-bit halfword elements
+PM4ADDA.H multiplies four pairs of signed 16-bit halfword elements
 from `rs1` and `rs2`, sums the four 64-bit products, and accumulates the result
 into `rd`. This instruction is the accumulating variant of PM4ADD.H.
 
@@ -29957,7 +29902,7 @@ pmulh.w.h0 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULH.W.H0 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMULH.W.H0 is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -29978,8 +29923,7 @@ Description::
 PMULH.W.H0 multiplies each signed packed 32-bit word element of `rs1` by the
 low halfword (h0) of the corresponding word element of `rs2` treated as signed,
 producing a 48-bit intermediate product per element, and writes bits [47:16] of
-each product to the corresponding word of `rd`. This instruction is available
-only on RV64.
+each product to the corresponding word of `rd`.
 
 Operation::
 
@@ -30002,7 +29946,7 @@ pmulh.w.h1 _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PMULH.W.H1 is encoded in the OP-32 major opcode with packed word elements (RV64 only).
+PMULH.W.H1 is encoded in the OP-32 major opcode with packed word elements.
 
 [wavedrom, ,svg]
 ....
@@ -30023,8 +29967,7 @@ Description::
 PMULH.W.H1 multiplies each signed packed 32-bit word element of `rs1` by the
 high halfword (h1) of the corresponding word element of `rs2` treated as
 signed, producing a 48-bit intermediate product per element, and writes bits
-[47:16] of each product to the corresponding word of `rd`. This instruction is
-available only on RV64.
+[47:16] of each product to the corresponding word of `rd`.
 
 Operation::
 
