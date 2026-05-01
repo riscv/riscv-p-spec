@@ -28472,11 +28472,20 @@ for i = 0 .. (XLEN/32 - 1):
     s2_h1 = s2[(i*32+31):(i*32+16)]
     // Multiply pairs, add products, and saturate to 32-bit signed range
     sum = signed(s1_h0) * signed(s2_h0) + signed(s1_h1) * signed(s2_h1)
-    d[(i*32+31):(i*32)] = SAT.W(sum)
+    if sum > 2147483647:
+      vxsat = 1
+      sum = 2147483647
+    else if sum < -2147483648:
+      vxsat = 1
+      sum = -2147483648
+    d[(i*32+31):(i*32)] = sum
 
 X[rd] = d
 ----
 
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
 ==== PM2SADD.HX
@@ -28528,11 +28537,20 @@ for i = 0 .. (XLEN/32 - 1):
     s2_h1 = s2[(i*32+31):(i*32+16)]
     // Cross-multiply pairs, add products, and saturate to 32-bit signed range
     sum = signed(s1_h0) * signed(s2_h1) + signed(s1_h1) * signed(s2_h0)
-    d[(i*32+31):(i*32)] = SAT.W(sum)
+    if sum > 2147483647:
+      vxsat = 1
+      sum = 2147483647
+    else if sum < -2147483648:
+      vxsat = 1
+      sum = -2147483648
+    d[(i*32+31):(i*32)] = sum
 
 X[rd] = d
 ----
 
+Notes::
+
+* `vxsat` is set to 1 if saturation occurs in any element.
 
 <<<
 ==== PM2ADDA.H
