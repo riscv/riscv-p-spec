@@ -1,4 +1,4 @@
-= Preliminary in-progress RISC-V "P" Extension
+= Preliminary in-progress RISC-V Packed SIMD "P" Extension
 :doctype: book
 :toc:
 :toclevels: 3
@@ -719,7 +719,7 @@ operand fields:
 
 === Register-Pair Notation for RV32
 
-For many double-wide Base P instructions in RV32, instruction behavior
+For many double-wide P instructions in RV32, instruction behavior
 is described as equivalent to the execution of two corresponding
 single-wide instructions.
 
@@ -32672,7 +32672,7 @@ if (rd_p != 0):
 <<<
 === RV32 Double-Register Equivalences
 
-Some RV32 Base P instructions operate on a double-wide packed value held in an
+Some RV32 P instructions operate on a double-wide packed value held in an
 even-odd register pair. In the Sail reference, these instructions are defined
 by equivalence to two single-wide instructions operating on the even register
 and the corresponding odd register.
@@ -32794,13 +32794,13 @@ REV, and REV16) are encoded alongside other ordinary RISC-V "scalar"
 instructions in the major opcodes known as OP (binary code `0110011`), OP-IMM
 (`0010011`), and OP-IMM-32 (`0011011`).
 
-All other Base P instructions are encoded either: (a) within major opcode OP-32
+All other P instructions are encoded either: (a) within major opcode OP-32
 (binary code `0111011`) with instruction bit 31 = 1; or (b) within OP-IMM-32 with
 bits 14:12 (funct3) = binary `010`, `100`, or `110`.
 
 Apart from the subset of non-SIMD instructions already mentioned plus a few
-other special cases, the following instruction formats are used for all Base
-P instructions that have no register-pair operands, only single registers:
+other special cases, the following instruction formats are used for all P
+instructions that have no register-pair operands, only single registers:
 
 [wavedrom, ,svg]
 ....
@@ -33052,7 +33052,7 @@ The third format listed above, with an R bit, encodes widening adds,
 subtracts, and multiplies that may optionally read the destination for an
 accumulate operation (WADDA, WSUBA, WMACC, etc.).
 
-The following format is not used by Base P but is recommended for a Zp*
+The following format is not used by P but is recommended for a Zp*
 extension that adds double-wide multiply instructions:
 
 [wavedrom, ,svg]
