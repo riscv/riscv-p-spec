@@ -19052,7 +19052,7 @@ Encoding::
 
 WZIP8P is available only in RV32. It writes its 64-bit result to the even-odd
 register pair specified by `rd_p` (no write occurs if `rd_p = 0`).
-It is encoded in the RV32 register-pair OP-IMM-32 format with `f=111` and `w=10`.
+It is encoded in the RV32 register-pair OP-IMM-32 format with `f=111` and `w=00`.
 
 [wavedrom, ,svg]
 ....
@@ -19109,7 +19109,7 @@ Encoding::
 
 WZIP16P is available only in RV32. It writes its 64-bit result to the even-odd
 register pair specified by `rd_p` (no write occurs if `rd_p = 0`).
-It is encoded in the RV32 register-pair OP-IMM-32 format with `f=111` and `w=11`.
+It is encoded in the RV32 register-pair OP-IMM-32 format with `f=111` and `w=01`.
 
 [wavedrom, ,svg]
 ....
