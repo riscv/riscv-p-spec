@@ -869,8 +869,8 @@ pli.db _rd_p_, _imm8_
 Encoding::
 
 PLI.DB is encoded in the OP-IMM-32 major opcode (register-pair variant)
-with an 8-bit immediate and packed byte elements. This instruction exists
-only for RV32 and uses a register-pair destination `rd_p`.
+with an 8-bit immediate and packed byte elements. This instruction uses a
+register-pair destination `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -918,7 +918,7 @@ Encoding::
 
 PLI.DH is encoded in the OP-IMM-32 major opcode (register-pair variant)
 with a 10-bit signed immediate and packed halfword elements. This instruction
-exists only for RV32 and uses a register-pair destination `rd_p`.
+uses a register-pair destination `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -1054,8 +1054,7 @@ Encoding::
 
 PLUI.DH is encoded in the OP-IMM-32 major opcode (register-pair variant)
 with a 10-bit immediate loaded into the upper bits of each halfword element.
-This instruction exists only for RV32 and uses a register-pair destination
-`rd_p`.
+This instruction uses a register-pair destination `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -1243,7 +1242,7 @@ padd.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PADD.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -1299,7 +1298,7 @@ padd.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PADD.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -1355,7 +1354,7 @@ padd.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -1571,7 +1570,7 @@ pmv.dbs _rd_p_, _rs2_ &#8594; padd.dbs _rd_p_, x0, _rs2_
 Encoding::
 
 PADD.DBS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed byte elements. Available only in RV32.
+scalar format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -1631,7 +1630,7 @@ pmv.dhs _rd_p_, _rs2_ &#8594; padd.dhs _rd_p_, x0, _rs2_
 Encoding::
 
 PADD.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -1691,7 +1690,7 @@ pmv.dws _rd_p_, _rs2_ &#8594; padd.dws _rd_p_, x0, _rs2_
 Encoding::
 
 PADD.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -1905,7 +1904,7 @@ pneg.db _rd_p_, _rs2_p_ &#8594; psub.db _rd_p_, x0, _rs2_p_
 Encoding::
 
 PSUB.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -1965,7 +1964,7 @@ pneg.dh _rd_p_, _rs2_p_ &#8594; psub.dh _rd_p_, x0, _rs2_p_
 Encoding::
 
 PSUB.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -2025,7 +2024,7 @@ pneg.dw _rd_p_, _rs2_p_ &#8594; psub.dw _rd_p_, x0, _rs2_p_
 Encoding::
 
 PSUB.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -2246,7 +2245,7 @@ sadd _rd_, _rs1_, _rs2_
 Encoding::
 
 SADD is encoded in the OP-32 major opcode as a scalar XLEN-wide signed
-saturating addition. This instruction is available only in RV32.
+saturating addition.
 
 [wavedrom, ,svg]
 ....
@@ -2298,7 +2297,7 @@ psadd.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSADD.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -2361,7 +2360,7 @@ psadd.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSADD.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -2424,7 +2423,7 @@ psadd.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -2640,7 +2639,7 @@ saddu _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SADDU is encoded in the OP-32 major opcode and is available only in RV32.
+SADDU is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -2689,7 +2688,7 @@ psaddu.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSADDU.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -2750,8 +2749,8 @@ psaddu.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSADDU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. This instruction exists
-only for RV32 and uses register pairs `rd_p`, `rs1_p`, and `rs2_p`.
+register-pair format with packed halfword elements. This instruction usesu
+register pairs `rd_p`, `rs1_p`, and `rs2_p`.
 
 [wavedrom, ,svg]
 ....
@@ -2809,8 +2808,8 @@ psaddu.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSADDU.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. This instruction exists only for RV32 and uses register
-pairs `rd_p`, `rs1_p`, and `rs2_p`.
+register-pair format. This instruction uses register pairs `rd_p`, `rs1_p`, and
+`rs2_p`.
 
 [wavedrom, ,svg]
 ....
@@ -3086,8 +3085,8 @@ pssub.db _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PSSUB.DB is encoded in the OP-IMM-32 major opcode using the double-wide register-pair format with
-packed byte elements. This instruction exists only for RV32 and uses register
+PSSUB.DB is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed byte elements. This instruction uses register
 pairs `rd_p`, `rs1_p`, and `rs2_p`.
 
 [wavedrom, ,svg]
@@ -3148,8 +3147,8 @@ pssub.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSSUB.DH is encoded in the OP-IMM-32 major opcode using the double-wide register-pair format with
-packed halfword elements. This instruction exists only for RV32 and uses
-register pairs `rd_p`, `rs1_p`, and `rs2_p`.
+packed halfword elements. This instruction uses register pairs `rd_p`, `rs1_p`,
+and `rs2_p`.
 
 [wavedrom, ,svg]
 ....
@@ -3208,8 +3207,8 @@ pssub.dw _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PSSUB.DW is encoded in the OP-IMM-32 major opcode using the double-wide register-pair format. This
-instruction exists only for RV32 and uses register pairs `rd_p`, `rs1_p`, and
+PSSUB.DW is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. This instruction uses register pairs `rd_p`, `rs1_p`, and
 `rs2_p`.
 
 [wavedrom, ,svg]
@@ -3426,7 +3425,7 @@ ssubu _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SSUBU is encoded in the OP-32 major opcode and is available only in RV32.
+SSUBU is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -3472,8 +3471,8 @@ pssubu.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSSUBU.DB is encoded in the OP-IMM-32 major opcode using the double-wide register-pair format with
-packed byte elements. This instruction exists only for RV32 and uses register
-pairs `rd_p`, `rs1_p`, and `rs2_p`.
+packed byte elements. This instruction uses register pairs `rd_p`, `rs1_p`, and
+`rs2_p`.
 
 [wavedrom, ,svg]
 ....
@@ -3530,8 +3529,8 @@ pssubu.dh _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PSSUBU.DH is encoded in the OP-IMM-32 major opcode using the double-wide register-pair format with
-packed halfword elements. This instruction exists only for RV32 and uses
+PSSUBU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format with packed halfword elements. This instruction uses
 register pairs `rd_p`, `rs1_p`, and `rs2_p`.
 
 [wavedrom, ,svg]
@@ -3589,8 +3588,8 @@ pssubu.dw _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PSSUBU.DW is encoded in the OP-IMM-32 major opcode using the double-wide register-pair format. This
-instruction exists only for RV32 and uses register pairs `rd_p`, `rs1_p`, and
+PSSUBU.DW is encoded in the OP-IMM-32 major opcode using the double-wide
+register-pair format. This instruction uses register pairs `rd_p`, `rs1_p`, and
 `rs2_p`.
 
 [wavedrom, ,svg]
@@ -3803,7 +3802,7 @@ aadd _rd_, _rs1_, _rs2_
 
 Encoding::
 
-AADD is encoded in the OP-32 major opcode and is available only in RV32.
+AADD is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -3824,7 +3823,7 @@ Description::
 AADD performs a signed averaging addition on a single XLEN-wide value. It adds
 the signed values in `rs1` and `rs2` at full precision (33 bits), then shifts
 the result right by 1 (toward negative infinity), and writes the lower 32 bits
-to `rd`. Available only in RV32; the RV64 counterpart is PAADD.W.
+to `rd`. The RV64 counterpart is PAADD.W.
 
 Operation::
 
@@ -3847,9 +3846,9 @@ paadd.db _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PAADD.DB is the register-pair (double-wide) variant of PAADD.B and is available
-only in RV32. It is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with register-pair operands.
+PAADD.DB is the register-pair (double-wide) variant of PAADD.B. It is encoded in
+the OP-IMM-32 major opcode using the double-wide register-pair format with
+register-pair operands.
 
 [wavedrom, ,svg]
 ....
@@ -3904,9 +3903,9 @@ paadd.dh _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PAADD.DH is the register-pair (double-wide) variant of PAADD.H and is available
-only in RV32. It is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with register-pair operands.
+PAADD.DH is the register-pair (double-wide) variant of PAADD.H. It is encoded ino
+the OP-IMM-32 major opcode using the double-wide register-pair format with
+register-pair operands.
 
 [wavedrom, ,svg]
 ....
@@ -3961,9 +3960,9 @@ paadd.dw _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PAADD.DW is the register-pair (double-wide) variant of PAADD.W and is available
-only in RV32. It is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with register-pair operands.
+PAADD.DW is the register-pair (double-wide) variant of PAADD.W. It is encoded in
+the OP-IMM-32 major opcode using the double-wide register-pair format with
+register-pair operands.
 
 [wavedrom, ,svg]
 ....
@@ -4170,7 +4169,7 @@ aaddu _rd_, _rs1_, _rs2_
 
 Encoding::
 
-AADDU is encoded in the OP-32 major opcode and is available only in RV32.
+AADDU is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -4190,8 +4189,8 @@ Description::
 
 AADDU performs an unsigned averaging addition on a single XLEN-wide value. It
 adds the unsigned values in `rs1` and `rs2` at full precision (33 bits), then
-shifts the result right by 1, and writes the lower 32 bits to `rd`. Available
-only in RV32; the RV64 counterpart is PAADDU.W.
+shifts the result right by 1, and writes the lower 32 bits to `rd`. The RV64
+counterpart is PAADDU.W.
 
 Operation::
 
@@ -4214,9 +4213,7 @@ paaddu.db _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PAADDU.DB is the register-pair (double-wide) variant of PAADDU.B and is
-available only in RV32. It shares the same encoding as PAADDU.B with
-register-pair operands.
+PAADDU.DB is the register-pair (double-wide) variant of PAADDU.B.
 
 [wavedrom, ,svg]
 ....
@@ -4271,9 +4268,9 @@ paaddu.dh _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PAADDU.DH is the register-pair (double-wide) variant of PAADDU.H and is
-available only in RV32. It is encoded in the OP-IMM-32 major opcode using the
-double-wide register-pair format with register-pair operands.
+PAADDU.DH is the register-pair (double-wide) variant of PAADDU.H. It is encoded
+in the OP-IMM-32 major opcode using the double-wide register-pair format with
+register-pair operands.
 
 [wavedrom, ,svg]
 ....
@@ -4328,9 +4325,9 @@ paaddu.dw _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PAADDU.DW is the register-pair (double-wide) variant of PAADDU.W and is
-available only in RV32. It is encoded in the OP-IMM-32 major opcode using the
-double-wide register-pair format with register-pair operands.
+PAADDU.DW is the register-pair (double-wide) variant of PAADDU.W. It is encoded
+in the OP-IMM-32 major opcode using the double-wide register-pair format with
+register-pair operands.
 
 [wavedrom, ,svg]
 ....
@@ -4543,7 +4540,7 @@ asub _rd_, _rs1_, _rs2_
 
 Encoding::
 
-ASUB is encoded in the OP-32 major opcode and is available only in RV32.
+ASUB is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -4564,7 +4561,7 @@ Description::
 ASUB performs a signed averaging subtraction on a single XLEN-wide value. It
 subtracts the signed value in `rs2` from `rs1` at full precision (33 bits), then
 shifts the result right by 1 (toward negative infinity), and writes the lower
-32 bits to `rd`. Available only in RV32; the RV64 counterpart is PASUB.W.
+32 bits to `rd`. The RV64 counterpart is PASUB.W.
 
 Operation::
 
@@ -4588,7 +4585,7 @@ pasub.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASUB.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -4644,7 +4641,7 @@ pasub.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASUB.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -4700,7 +4697,7 @@ pasub.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASUB.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -4909,7 +4906,7 @@ asubu _rd_, _rs1_, _rs2_
 
 Encoding::
 
-ASUBU is encoded in the OP-32 major opcode and is available only in RV32.
+ASUBU is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -4930,7 +4927,7 @@ Description::
 ASUBU performs an unsigned averaging subtraction on a single XLEN-wide value. It
 subtracts the unsigned value in `rs2` from `rs1` at full precision (33 bits),
 then shifts the result right by 1, and writes the lower 32 bits to `rd`.
-Available only in RV32; the RV64 counterpart is PASUBU.W.
+The RV64 counterpart is PASUBU.W.
 
 Operation::
 
@@ -4954,7 +4951,7 @@ pasubu.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASUBU.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5010,7 +5007,7 @@ pasubu.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASUBU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5066,7 +5063,7 @@ pasubu.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASUBU.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5216,7 +5213,7 @@ psh1add.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSH1ADD.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5274,7 +5271,7 @@ psh1add.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSH1ADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5471,7 +5468,7 @@ ssh1sadd _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SSH1SADD is encoded in the OP-32 major opcode and is available only in RV32.
+SSH1SADD is encoded in the OP-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -5532,7 +5529,7 @@ pssh1sadd.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSSH1SADD.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5604,7 +5601,7 @@ pssh1sadd.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSSH1SADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5790,7 +5787,7 @@ pas.dhx _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -5965,7 +5962,7 @@ psa.dhx _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -6171,7 +6168,7 @@ psas.dhx _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -6389,7 +6386,7 @@ pssa.dhx _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PSSA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -6582,7 +6579,7 @@ paas.dhx _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PAAS.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -6764,7 +6761,7 @@ pasa.dhx _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PASA.DHX is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -6940,9 +6937,7 @@ pabs.db _rd_p_, _rs1_p_ &#8594; pabd.db _rd_p_, _rs1_p_, x0
 
 Encoding::
 
-PABD.DB is the register-pair (double-wide) variant of PABD.B and is available
-only in RV32. It shares the same encoding as PABD.B with register-pair
-operands.
+PABD.DB is the register-pair (double-wide) variant of PABD.B.
 
 [wavedrom, ,svg]
 ....
@@ -7001,9 +6996,7 @@ pabs.dh _rd_p_, _rs1_p_ &#8594; pabd.dh _rd_p_, _rs1_p_, x0
 
 Encoding::
 
-PABD.DH is the register-pair (double-wide) variant of PABD.H and is available
-only in RV32. It shares the same encoding as PABD.H with register-pair
-operands.
+PABD.DH is the register-pair (double-wide) variant of PABD.H.
 
 [wavedrom, ,svg]
 ....
@@ -7155,9 +7148,7 @@ pabdu.db _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PABDU.DB is the register-pair (double-wide) variant of PABDU.B and is available
-only in RV32. It shares the same encoding as PABDU.B with register-pair
-operands.
+PABDU.DB is the register-pair (double-wide) variant of PABDU.B.
 
 [wavedrom, ,svg]
 ....
@@ -7212,9 +7203,7 @@ pabdu.dh _rd_p_, _rs1_p_, _rs2_p_
 
 Encoding::
 
-PABDU.DH is the register-pair (double-wide) variant of PABDU.H and is available
-only in RV32. It shares the same encoding as PABDU.H with register-pair
-operands.
+PABDU.DH is the register-pair (double-wide) variant of PABDU.H.
 
 [wavedrom, ,svg]
 ....
@@ -7490,9 +7479,9 @@ psabs.db _rd_p_, _rs1_p_
 
 Encoding::
 
-PSABS.DB is the register-pair (double-wide) variant of PSABS.B and is available
-only in RV32. It is encoded as a unary instruction in the OP-IMM-32 major
-opcode using the double-wide register-pair format.
+PSABS.DB is the register-pair (double-wide) variant of PSABS.B. It is encoded as
+a unary instruction in the OP-IMM-32 major opcode using the double-wide
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -7553,9 +7542,9 @@ psabs.dh _rd_p_, _rs1_p_
 
 Encoding::
 
-PSABS.DH is the register-pair (double-wide) variant of PSABS.H and is available
-only in RV32. It is encoded as a unary instruction in the OP-IMM-32 major
-opcode using the double-wide register-pair format.
+PSABS.DH is the register-pair (double-wide) variant of PSABS.H. It is encoded as
+a unary instruction in the OP-IMM-32 major opcode using the double-wide
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8031,7 +8020,7 @@ pmin.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMIN.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8086,7 +8075,7 @@ pmin.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMIN.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8142,7 +8131,7 @@ pmin.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMIN.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8334,7 +8323,7 @@ pminu.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMINU.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8390,7 +8379,7 @@ pminu.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMINU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8446,7 +8435,7 @@ pminu.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMINU.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8638,7 +8627,7 @@ pmax.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMAX.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8694,7 +8683,7 @@ pmax.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMAX.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8886,7 +8875,7 @@ pmax.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMAX.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8941,7 +8930,7 @@ pmaxu.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMAXU.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -8997,7 +8986,7 @@ pmaxu.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMAXU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9053,7 +9042,7 @@ pmaxu.dw _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PMAXU.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9262,8 +9251,6 @@ mseqz _rd_, _rs1_ &#8594; mseq _rd_, _rs1_, x0
 
 Encoding::
 
-MSEQ is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -9305,7 +9292,7 @@ pmseqz.db _rd_p_, _rs1_p_ &#8594; pmseq.db _rd_p_, _rs1_p_, x0
 Encoding::
 
 PMSEQ.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9366,7 +9353,7 @@ pmseqz.dh _rd_p_, _rs1_p_ &#8594; pmseq.dh _rd_p_, _rs1_p_, x0
 Encoding::
 
 PMSEQ.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9427,7 +9414,7 @@ pmseqz.dw _rd_p_, _rs1_p_ &#8594; pmseq.dw _rd_p_, _rs1_p_, x0
 Encoding::
 
 PMSEQ.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9642,8 +9629,6 @@ msltz _rd_, _rs1_ &#8594; mslt _rd_, _rs1_, x0
 
 Encoding::
 
-MSLT is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -9687,7 +9672,7 @@ pmsgtz.db _rd_p_, _rs2_p_ &#8594; pmslt.db _rd_p_, x0, _rs2_p_
 Encoding::
 
 PMSLT.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9751,7 +9736,7 @@ pmsgtz.dh _rd_p_, _rs2_p_ &#8594; pmslt.dh _rd_p_, x0, _rs2_p_
 Encoding::
 
 PMSLT.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -9815,7 +9800,7 @@ pmsgtz.dw _rd_p_, _rs2_p_ &#8594; pmslt.dw _rd_p_, x0, _rs2_p_
 Encoding::
 
 PMSLT.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -10028,8 +10013,6 @@ msnez _rd_, _rs2_ &#8594; msltu _rd_, x0, _rs2_
 
 Encoding::
 
-MSLTU is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -10073,7 +10056,7 @@ pmsnez.db _rd_p_, _rs2_p_ &#8594; pmsltu.db _rd_p_, x0, _rs2_p_
 Encoding::
 
 PMSLTU.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -10136,7 +10119,7 @@ pmsnez.dh _rd_p_, _rs2_p_ &#8594; pmsltu.dh _rd_p_, x0, _rs2_p_
 Encoding::
 
 PMSLTU.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -10199,7 +10182,7 @@ pmsnez.dw _rd_p_, _rs2_p_ &#8594; pmsltu.dw _rd_p_, x0, _rs2_p_
 Encoding::
 
 PMSLTU.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -10379,7 +10362,7 @@ psext.dh.b _rd_p_, _rs1_p_
 Encoding::
 
 PSEXT.DH.B is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair unary format. Available only in RV32.
+register-pair unary format.
 
 [wavedrom, ,svg]
 ....
@@ -10431,7 +10414,7 @@ psext.dw.b _rd_p_, _rs1_p_
 Encoding::
 
 PSEXT.DW.B is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair unary format. Available only in RV32.
+register-pair unary format.
 
 [wavedrom, ,svg]
 ....
@@ -10482,7 +10465,7 @@ psext.dw.h _rd_p_, _rs1_p_
 Encoding::
 
 PSEXT.DW.H is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair unary format. Available only in RV32.
+register-pair unary format.
 
 [wavedrom, ,svg]
 ....
@@ -10758,7 +10741,7 @@ psati.dh _rd_p_, _rs1_p_, _width_
 Encoding::
 
 PSATI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair w-uimm format. Available only in RV32.
+register-pair w-uimm format.
 
 [wavedrom, ,svg]
 ....
@@ -10827,7 +10810,7 @@ psati.dw _rd_p_, _rs1_p_, _width_
 Encoding::
 
 PSATI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-immediate format with word elements. Available only in RV32.
+immediate format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11115,7 +11098,7 @@ pusati.dh _rd_p_, _rs1_p_, _uimm4_
 Encoding::
 
 PUSATI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-immediate format with packed halfword elements. Available only in RV32.
+immediate format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -11181,7 +11164,7 @@ pusati.dw _rd_p_, _rs1_p_, _uimm5_
 Encoding::
 
 PUSATI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-immediate format with word elements. Available only in RV32.
+immediate format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11383,7 +11366,7 @@ psll.dbs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSLL.DBS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed byte elements. Available only in RV32.
+scalar format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -11439,7 +11422,7 @@ psll.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSLL.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -11495,7 +11478,7 @@ psll.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSLL.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11685,7 +11668,7 @@ psrl.dbs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSRL.DBS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed byte elements. Available only in RV32.
+scalar format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -11742,7 +11725,7 @@ psrl.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSRL.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -11799,7 +11782,7 @@ psrl.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSRL.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -11990,7 +11973,7 @@ psra.dbs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSRA.DBS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed byte elements. Available only in RV32.
+scalar format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -12047,7 +12030,7 @@ psra.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSRA.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -12104,7 +12087,7 @@ psra.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSRA.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -12305,7 +12288,7 @@ pslli.db _rd_p_, _rs1_p_, _uimm3_
 Encoding::
 
 PSLLI.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed byte elements. Available only in RV32.
+w-uimm format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -12361,7 +12344,7 @@ pslli.dh _rd_p_, _rs1_p_, _uimm4_
 Encoding::
 
 PSLLI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed halfword elements. Available only in RV32.
+w-uimm format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -12417,7 +12400,7 @@ pslli.dw _rd_p_, _rs1_p_, _uimm5_
 Encoding::
 
 PSLLI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with word elements. Available only in RV32.
+w-uimm format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -12620,7 +12603,7 @@ psrli.db _rd_p_, _rs1_p_, _uimm3_
 Encoding::
 
 PSRLI.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed byte elements. Available only in RV32.
+w-uimm format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -12676,7 +12659,7 @@ psrli.dh _rd_p_, _rs1_p_, _uimm4_
 Encoding::
 
 PSRLI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed halfword elements. Available only in RV32.
+w-uimm format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -12732,7 +12715,7 @@ psrli.dw _rd_p_, _rs1_p_, _uimm5_
 Encoding::
 
 PSRLI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with word elements. Available only in RV32.
+w-uimm format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -12935,7 +12918,7 @@ psrai.db _rd_p_, _rs1_p_, _uimm3_
 Encoding::
 
 PSRAI.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed byte elements. Available only in RV32.
+w-uimm format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -12992,7 +12975,7 @@ psrai.dh _rd_p_, _rs1_p_, _uimm4_
 Encoding::
 
 PSRAI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed halfword elements. Available only in RV32.
+w-uimm format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -13049,7 +13032,7 @@ psrai.dw _rd_p_, _rs1_p_, _uimm5_
 Encoding::
 
 PSRAI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with word elements. Available only in RV32.
+w-uimm format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -13362,7 +13345,7 @@ ssha _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SSHA is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+SSHA is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -13426,7 +13409,7 @@ pssha.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHA.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -13500,7 +13483,7 @@ pssha.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHA.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -13712,7 +13695,7 @@ sshar _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SSHAR is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+SSHAR is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -13778,7 +13761,7 @@ psshar.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHAR.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -13855,7 +13838,7 @@ psshar.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHAR.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -14070,7 +14053,7 @@ sshl _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SSHL is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+SSHL is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -14131,7 +14114,7 @@ psshl.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHL.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -14202,7 +14185,7 @@ psshl.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHL.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -14406,7 +14389,7 @@ psshlr.dhs _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHLR.DHS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with packed halfword elements. Available only in RV32.
+scalar format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -14480,7 +14463,7 @@ psshlr.dws _rd_p_, _rs1_p_, _rs2_
 Encoding::
 
 PSSHLR.DWS is encoded in the OP-IMM-32 major opcode using the double-wide
-scalar format with word elements. Available only in RV32.
+scalar format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -14735,7 +14718,7 @@ psslai.dh _rd_p_, _rs1_p_, _uimm4_
 Encoding::
 
 PSSLAI.DH is encoded in the OP-IMM-32 major opcode using the register-pair
-immediate format with packed halfword elements. Available only in RV32.
+immediate format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -14802,7 +14785,7 @@ psslai.dw _rd_p_, _rs1_p_, _uimm5_
 Encoding::
 
 PSSLAI.DW is encoded in the OP-IMM-32 major opcode using the register-pair
-immediate format with word elements. Available only in RV32.
+immediate format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -14868,7 +14851,7 @@ sshlr _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SSHLR is encoded in the OP-IMM-32 major opcode and is available only in RV32.
+SSHLR is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -15221,7 +15204,7 @@ psrari.dh _rd_p_, _rs1_p_, _uimm4_
 Encoding::
 
 PSRARI.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with packed halfword elements. Available only in RV32.
+w-uimm format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -15283,7 +15266,7 @@ psrari.dw _rd_p_, _rs1_p_, _uimm5_
 Encoding::
 
 PSRARI.DW is encoded in the OP-IMM-32 major opcode using the double-wide
-w-uimm format with word elements. Available only in RV32.
+w-uimm format with word elements.
 
 [wavedrom, ,svg]
 ....
@@ -15457,7 +15440,7 @@ pzext.dh.b _rd_p_, _rs1_p_ &#8594; ppaire.db _rd_p_, _rs1_p_, x0
 Encoding::
 
 PPAIRE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
+register-pair format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -15517,7 +15500,7 @@ pzext.dw.h _rd_p_, _rs1_p_ &#8594; ppaire.dh _rd_p_, _rs1_p_, x0
 Encoding::
 
 PPAIRE.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
+register-pair format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -15669,7 +15652,6 @@ ppaireo.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PPAIREO.W is encoded in the OP-32 major opcode with packed word elements.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -15715,7 +15697,7 @@ ppaireo.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PPAIREO.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
+register-pair format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -15771,7 +15753,7 @@ ppaireo.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PPAIREO.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
+register-pair format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -15923,7 +15905,6 @@ ppairoe.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PPAIROE.W is encoded in the OP-32 major opcode with packed word elements.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -15969,7 +15950,7 @@ ppairoe.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PPAIROE.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
+register-pair format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -16025,7 +16006,7 @@ ppairoe.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PPAIROE.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
+register-pair format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -16178,7 +16159,6 @@ ppairo.w _rd_, _rs1_, _rs2_
 Encoding::
 
 PPAIRO.W is encoded in the OP-32 major opcode with packed word elements.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
@@ -16224,7 +16204,7 @@ ppairo.db _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PPAIRO.DB is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed byte elements. Available only in RV32.
+register-pair format with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -16280,7 +16260,7 @@ ppairo.dh _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 PPAIRO.DH is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format with packed halfword elements. Available only in RV32.
+register-pair format with packed halfword elements.
 
 [wavedrom, ,svg]
 ....
@@ -17199,7 +17179,7 @@ addd _rd_p_, _rs1_p_, _rs2_p_
 Encoding::
 
 ADDD is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -17256,7 +17236,7 @@ negd _rd_p_, _rs2_p_ &#8594; subd _rd_p_, x0, _rs2_p_
 Encoding::
 
 SUBD is encoded in the OP-IMM-32 major opcode using the double-wide
-register-pair format. Available only in RV32.
+register-pair format.
 
 [wavedrom, ,svg]
 ....
@@ -17313,8 +17293,7 @@ pwcvt.b _rd_p_, _rs1_ &#8594; pwadd.b _rd_p_, _rs1_, x0
 
 Encoding::
 
-PWADD.B is available only in RV32. It writes a 64-bit result to an even-odd
-register pair specified by `rd_p`.
+PWADD.B writes a 64-bit result to an even-odd register pair specified by `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17368,8 +17347,7 @@ pwcvt.h _rd_p_, _rs1_ &#8594; pwadd.h _rd_p_, _rs1_, x0
 
 Encoding::
 
-PWADD.H is available only in RV32. It writes results to an even-odd register
-pair specified by `rd_p`.
+PWADD.H writes results to an even-odd register pair specified by `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17415,7 +17393,7 @@ wadd _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WADD is available only in RV32 and writes a 64-bit result to register pair `rd_p`.
+WADD writes a 64-bit result to register pair `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17458,8 +17436,8 @@ pwaddu.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDU.B is available only in RV32. It writes a 64-bit result to an even-odd
-register pair specified by `rd_p`.
+PWADDU.B writes a 64-bit result to an even-odd register pair specified by
+`rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17509,8 +17487,6 @@ pwaddu.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDU.H is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -17555,8 +17531,6 @@ waddu _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WADDU is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -17598,8 +17572,7 @@ pwsub.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUB.B is available only in RV32. It writes a 64-bit result to an even-odd
-register pair specified by `rd_p`.
+PWSUB.B writes a 64-bit result to an even-odd register pair specified by `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17650,8 +17623,6 @@ pwsub.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUB.H is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -17696,8 +17667,6 @@ wsub _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WSUB is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -17739,8 +17708,8 @@ pwsubu.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBU.B is available only in RV32. It writes a 64-bit result to an even-odd
-register pair specified by `rd_p`.
+PWSUBU.B writes a 64-bit result to an even-odd register pair specified by
+`rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -17790,8 +17759,6 @@ pwsubu.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBU.H is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -17837,8 +17804,6 @@ wsubu _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WSUBU is available only in RV32.
-
 [wavedrom, ,svg]
 ....
 {reg:[
@@ -17880,7 +17845,7 @@ pwadda.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDA.B is available only in RV32. It accumulates into the destination register pair.
+PWADDA.B accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -17933,7 +17898,7 @@ pwadda.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDA.H is available only in RV32 and accumulates into the destination register pair.
+PWADDA.H accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -17983,7 +17948,7 @@ wadda _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WADDA is available only in RV32 and accumulates into the destination register pair.
+WADDA accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18027,7 +17992,7 @@ pwaddau.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDAU.B is available only in RV32. It accumulates into the destination register pair.
+PWADDAU.B accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18080,7 +18045,7 @@ pwaddau.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWADDAU.H is available only in RV32 and accumulates into the destination register pair.
+PWADDAU.H accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18130,7 +18095,7 @@ waddau _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WADDAU is available only in RV32 and accumulates into the destination register pair.
+WADDAU accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18174,8 +18139,7 @@ pwsuba.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBA.B is available only in RV32 and accumulates into the destination
-register pair.
+PWSUBA.B accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18228,7 +18192,7 @@ pwsuba.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBA.H is available only in RV32 and accumulates into the destination register pair.
+PWSUBA.H accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18278,7 +18242,7 @@ wsuba _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WSUBA is available only in RV32 and accumulates into the destination register pair.
+WSUBA accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18322,8 +18286,7 @@ pwsubau.b _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBAU.B is available only in RV32 and accumulates into the destination
-register pair.
+PWSUBAU.B accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18376,7 +18339,7 @@ pwsubau.h _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSUBAU.H is available only in RV32 and accumulates into the destination register pair.
+PWSUBAU.H accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18426,7 +18389,7 @@ wsubau _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WSUBAU is available only in RV32 and accumulates into the destination register pair.
+WSUBAU accumulates into the destination register pair.
 
 [wavedrom, ,svg]
 ....
@@ -18473,8 +18436,8 @@ pwslli.b _rd_p_, _rs1_, _uimm4_
 
 Encoding::
 
-PWSLLI.B is available only in RV32. The shift amount is encoded in the `uimm4`
-field. The destination is a register pair `rd_p`.
+The shift amount is encoded in the `uimm4` field. The destination is a register
+pair `rd_p`.
 
 [wavedrom, ,svg]
 ....
@@ -18523,7 +18486,7 @@ pwslli.h _rd_p_, _rs1_, _uimm5_
 
 Encoding::
 
-PWSLLI.H is available only in RV32. The shift amount is encoded in `uimm5`.
+The shift amount is encoded in `uimm5`.
 
 [wavedrom, ,svg]
 ....
@@ -18571,7 +18534,7 @@ wslli _rd_p_, _rs1_, _uimm6_
 
 Encoding::
 
-WSLLI is available only in RV32. The shift amount is encoded in `uimm6`.
+The shift amount is encoded in `uimm6`.
 
 [wavedrom, ,svg]
 ....
@@ -18616,7 +18579,7 @@ pwsll.bs _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSLL.BS is available only in RV32. The shift amount is taken from `rs2`.
+The shift amount is taken from `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -18665,7 +18628,7 @@ pwsll.hs _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSLL.HS is available only in RV32. The shift amount is taken from `rs2`.
+The shift amount is taken from `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -18713,7 +18676,7 @@ wsll _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WSLL is available only in RV32. The shift amount is taken from `rs2`.
+The shift amount is taken from `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -18758,7 +18721,7 @@ pwslai.b _rd_p_, _rs1_, _uimm4_
 
 Encoding::
 
-PWSLAI.B is available only in RV32. The shift amount is encoded in `uimm4`.
+The shift amount is encoded in `uimm4`.
 
 [wavedrom, ,svg]
 ....
@@ -18807,7 +18770,7 @@ pwslai.h _rd_p_, _rs1_, _uimm5_
 
 Encoding::
 
-PWSLAI.H is available only in RV32. The shift amount is encoded in `uimm5`.
+The shift amount is encoded in `uimm5`.
 
 [wavedrom, ,svg]
 ....
@@ -18855,7 +18818,7 @@ wslai _rd_p_, _rs1_, _uimm6_
 
 Encoding::
 
-WSLAI is available only in RV32. The shift amount is encoded in `uimm6`.
+The shift amount is encoded in `uimm6`.
 
 [wavedrom, ,svg]
 ....
@@ -18900,7 +18863,7 @@ pwsla.bs _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSLA.BS is available only in RV32. The shift amount is taken from `rs2`.
+The shift amount is taken from `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -18949,7 +18912,7 @@ pwsla.hs _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-PWSLA.HS is available only in RV32. The shift amount is taken from `rs2`.
+The shift amount is taken from `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -18997,7 +18960,7 @@ wsla _rd_p_, _rs1_, _rs2_
 
 Encoding::
 
-WSLA is available only in RV32. The shift amount is taken from `rs2`.
+The shift amount is taken from `rs2`.
 
 [wavedrom, ,svg]
 ....
@@ -19050,9 +19013,9 @@ pwcvth.b _rd_p_, _rs2_ &#8594; wzip8p _rd_p_, x0, _rs2_
 
 Encoding::
 
-WZIP8P is available only in RV32. It writes its 64-bit result to the even-odd
-register pair specified by `rd_p` (no write occurs if `rd_p = 0`).
-It is encoded in the RV32 register-pair OP-IMM-32 format with `f=111` and `w=10`.
+WZIP8P writes its 64-bit result to the even-odd register pair specified by
+`rd_p` (no write occurs if `rd_p = 0`). It is encoded in the RV32 register-pair
+OP-IMM-32 format with `f=111` and `w=10`.
 
 [wavedrom, ,svg]
 ....
@@ -19107,9 +19070,9 @@ pwcvth.h _rd_p_, _rs2_ &#8594; wzip16p _rd_p_, x0, _rs2_
 
 Encoding::
 
-WZIP16P is available only in RV32. It writes its 64-bit result to the even-odd
-register pair specified by `rd_p` (no write occurs if `rd_p = 0`).
-It is encoded in the RV32 register-pair OP-IMM-32 format with `f=111` and `w=11`.
+WZIP16P writes its 64-bit result to the even-odd register pair specified by
+`rd_p` (no write occurs if `rd_p = 0`).  It is encoded in the RV32 register-pair
+OP-IMM-32 format with `f=111` and `w=11`.
 
 [wavedrom, ,svg]
 ....
@@ -19161,9 +19124,9 @@ predsum.dbs _rd_, _rs1_p_, _rs2_
 
 Encoding::
 
-PREDSUM.DBS is available only in RV32. It reads a 64-bit packed source from the
-even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
-in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
+PREDSUM.DBS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
 
 PREDSUM.DBS is encoded in the OP-IMM-32 major opcode with `funct3=100`, bit 28
 set to 1, and `rs1_p` selecting the source register pair.
@@ -19216,9 +19179,9 @@ predsum.dhs _rd_, _rs1_p_, _rs2_
 
 Encoding::
 
-PREDSUM.DHS is available only in RV32. It reads a 64-bit packed source from the
-even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
-in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
+PREDSUM.DHS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
 
 [wavedrom, ,svg]
 ....
@@ -19268,9 +19231,9 @@ predsumu.dbs _rd_, _rs1_p_, _rs2_
 
 Encoding::
 
-PREDSUMU.DBS is available only in RV32. It reads a 64-bit packed source from the
-even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
-in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
+PREDSUMU.DBS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
 
 [wavedrom, ,svg]
 ....
@@ -19320,9 +19283,9 @@ predsumu.dhs _rd_, _rs1_p_, _rs2_
 
 Encoding::
 
-PREDSUMU.DHS is available only in RV32. It reads a 64-bit packed source from the
-even-odd register pair specified by `rs1_p` and produces a 32-bit scalar result
-in `rd`. If `rs1_p = 0`, the source pair is treated as zero.
+PREDSUMU.DHS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
 
 [wavedrom, ,svg]
 ....
@@ -20329,7 +20292,7 @@ pnclipi.h _rd_, _rs1_p_, _uimm5_
 Encoding::
 
 PNCLIPI.H is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount and packed halfword narrowing. Available only in RV32.
+amount and packed halfword narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20391,7 +20354,7 @@ nclipi _rd_, _rs1_p_, _uimm6_
 Encoding::
 
 NCLIPI is encoded in the OP-IMM-32 major opcode with an immediate shift amount
-and XLEN-wide narrowing. Available only in RV32.
+and XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20449,7 +20412,7 @@ pnclip.bs _rd_, _rs1_p_, _rs2_
 Encoding::
 
 PNCLIP.BS is encoded in the OP-IMM-32 major opcode with a scalar shift amount
-and packed byte narrowing. Available only in RV32.
+and packed byte narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20511,7 +20474,7 @@ pnclip.hs _rd_, _rs1_p_, _rs2_
 Encoding::
 
 PNCLIP.HS is encoded in the OP-IMM-32 major opcode with a scalar shift amount
-and packed halfword narrowing. Available only in RV32.
+and packed halfword narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20573,7 +20536,7 @@ nclip _rd_, _rs1_p_, _rs2_
 Encoding::
 
 NCLIP is encoded in the OP-IMM-32 major opcode with a scalar shift amount and
-XLEN-wide narrowing. Available only in RV32.
+XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20705,7 +20668,7 @@ pnclipri.h _rd_, _rs1_p_, _uimm5_
 Encoding::
 
 PNCLIPRI.H is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount, rounding, and packed halfword narrowing. Available only in RV32.
+amount, rounding, and packed halfword narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20769,7 +20732,7 @@ nclipri _rd_, _rs1_p_, _uimm6_
 Encoding::
 
 NCLIPRI is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount, rounding, and XLEN-wide narrowing. Available only in RV32.
+amount, rounding, and XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20902,7 +20865,7 @@ pnclipr.hs _rd_, _rs1_p_, _rs2_
 Encoding::
 
 PNCLIPR.HS is encoded in the OP-IMM-32 major opcode with a scalar shift
-amount, rounding, and packed halfword narrowing. Available only in RV32.
+amount, rounding, and packed halfword narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -20967,7 +20930,7 @@ nclipr _rd_, _rs1_p_, _rs2_
 Encoding::
 
 NCLIPR is encoded in the OP-IMM-32 major opcode with a scalar shift amount,
-rounding, and XLEN-wide narrowing. Available only in RV32.
+rounding, and XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -21153,7 +21116,7 @@ nclipiu _rd_, _rs1_p_, _uimm6_
 Encoding::
 
 NCLIPIU is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount and unsigned XLEN-wide narrowing. Available only in RV32.
+amount and unsigned XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -21509,7 +21472,7 @@ nclipriu _rd_, _rs1_p_, _uimm6_
 Encoding::
 
 NCLIPRIU is encoded in the OP-IMM-32 major opcode with an immediate shift
-amount, rounding, and unsigned XLEN-wide narrowing. Available only in RV32.
+amount, rounding, and unsigned XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -21693,7 +21656,7 @@ nclipru _rd_, _rs1_p_, _rs2_
 Encoding::
 
 NCLIPRU is encoded in the OP-IMM-32 major opcode with a scalar shift amount,
-rounding, and unsigned XLEN-wide narrowing. Available only in RV32.
+rounding, and unsigned XLEN-wide narrowing.
 
 [wavedrom, ,svg]
 ....
@@ -21752,7 +21715,6 @@ pnclipp.b _rd_, _rs1_, _rs2_
 Encoding::
 
 PNCLIPP.B is encoded in the OP-32 major opcode with packed byte narrowing.
-Available only in RV64.
 
 [wavedrom, ,svg]
 ....
