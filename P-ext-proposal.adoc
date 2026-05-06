@@ -13323,14 +13323,14 @@ sshamt = signed(shamt)
 
 for i = 0 .. (XLEN/32 - 1):
     w  = s1[(32*i+31):(32*i)]
-    xw = sign_extend(32, w)
+    xw = sign_extend(64, w)
 
     if sshamt < 0:
         // arithmetic shift right by (-sshamt), saturating not required
         if sshamt <= -32:
-            r = xh[63:32]
+            r = xw[63:32]
         else
-            r = (xh >> (0 - shamt)[4:0])[31:0]
+            r = (xw >> (0 - shamt)[4:0])[31:0]
     else:
         // shift left with signed saturation to 32-bit range
         if sshamt >= 32:
@@ -14039,9 +14039,9 @@ for i = 0 .. (XLEN/32 - 1):
     if sshamt < 0:
         // logical shift right by (-sshamt), saturating not required
         if sshamt <= -32:
-            r = xh[63:32]
+            r = xw[63:32]
         else
-            r = (xh >> (0 - shamt)[4:0])[31:0]
+            r = (xw >> (0 - shamt)[4:0])[31:0]
     else:
         // shift left with unsigned saturation to 32-bit range
         if sshamt >= 32:
