@@ -11003,9 +11003,9 @@ maxval = (1 << n) - 1                  // 2^n - 1
 
 for i = 0 .. 1:
     e = signed(s1[(32*i+31):(32*i)])
-    if (e <s minval):
+    if (e <_s minval):
         d[(32*i+31):(32*i)] = minval; vxsat = 1
-    else if (e >s maxval):
+    else if (e >_s maxval):
         d[(32*i+31):(32*i)] = maxval; vxsat = 1
     else:
         d[(32*i+31):(32*i)] = s1[(32*i+31):(32*i)]
@@ -11290,9 +11290,9 @@ maxval = (1 << n) - 1                  // 2^n - 1
 
 for i = 0 .. 3:
     h = s1[(16*i+15):(16*i)]
-    if (h <s 0):
+    if (h <_s 0):
         d[(16*i+15):(16*i)] = 0; vxsat = 1
-    else if (h >s maxval):
+    else if (h >_s maxval):
         d[(16*i+15):(16*i)] = maxval; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = h
@@ -11356,9 +11356,9 @@ maxval = (1 << n) - 1                  // 2^n - 1
 
 for i = 0 .. 1:
     e = signed(s1[(32*i+31):(32*i)])
-    if (e <s 0):
+    if (e <_s 0):
         d[(32*i+31):(32*i)] = 0; vxsat = 1
-    else if (e >s maxval):
+    else if (e >_s maxval):
         d[(32*i+31):(32*i)] = maxval; vxsat = 1
     else:
         d[(32*i+31):(32*i)] = s1[(32*i+31):(32*i)]
@@ -20482,9 +20482,9 @@ shamt = uimm5[4:0]
 for i = 0 .. 1:
     s1_w = s1[(32*i+31):(32*i)]
     shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
-    if (shx <s 0xFFFF8000):
+    if (shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (shx >s 0x00007FFF):
+    else if (shx >_s 0x00007FFF):
         d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = shx[15:0]
@@ -20542,9 +20542,9 @@ shamt = uimm6[5:0]
 
 shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
 
-if (shx <s 0xFFFFFFFF80000000):
+if (shx <_s 0xFFFFFFFF80000000):
     X[rd] = 0x80000000; vxsat = 1
-else if (shx >s 0x000000007FFFFFFF):
+else if (shx >_s 0x000000007FFFFFFF):
     X[rd] = 0x7FFFFFFF; vxsat = 1
 else:
     X[rd] = shx[31:0]
@@ -20602,9 +20602,9 @@ shamt = X[rs2][4:0]
 for i = 0 .. 3:
     s1_h = s1[(16*i+15):(16*i)]
     shx  = sign_extend(48, s1_h) >> shamt    // arithmetic shift, take low 16 bits
-    if (shx <s 0xFF80):
+    if (shx <_s 0xFF80):
         d[(8*i+7):(8*i)] = 0x80; vxsat = 1
-    else if (shx >s 0x007F):
+    else if (shx >_s 0x007F):
         d[(8*i+7):(8*i)] = 0x7F; vxsat = 1
     else:
         d[(8*i+7):(8*i)] = shx[7:0]
@@ -20664,9 +20664,9 @@ shamt = X[rs2][4:0]
 for i = 0 .. 1:
     s1_w = s1[(32*i+31):(32*i)]
     shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
-    if (shx <s 0xFFFF8000):
+    if (shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (shx >s 0x00007FFF):
+    else if (shx >_s 0x00007FFF):
         d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = shx[15:0]
@@ -20724,9 +20724,9 @@ shamt = X[rs2][5:0]
 
 shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
 
-if (shx <s 0xFFFFFFFF80000000):
+if (shx <_s 0xFFFFFFFF80000000):
     X[rd] = 0x80000000; vxsat = 1
-else if (shx >s 0x000000007FFFFFFF):
+else if (shx >_s 0x000000007FFFFFFF):
     X[rd] = 0x7FFFFFFF; vxsat = 1
 else:
     X[rd] = shx[31:0]
@@ -20860,9 +20860,9 @@ for i = 0 .. 1:
     // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
     shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
     round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
-    if (round_shx <s 0xFFFF8000):
+    if (round_shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (round_shx >s 0x00007FFF):
+    else if (round_shx >_s 0x00007FFF):
         d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = round_shx[15:0]
@@ -20923,9 +20923,9 @@ shamt = uimm6[5:0]
 shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
 round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
 
-if (round_shx <s 0xFFFFFFFF80000000):
+if (round_shx <_s 0xFFFFFFFF80000000):
     X[rd] = 0x80000000; vxsat = 1
-else if (round_shx >s 0x000000007FFFFFFF):
+else if (round_shx >_s 0x000000007FFFFFFF):
     X[rd] = 0x7FFFFFFF; vxsat = 1
 else:
     X[rd] = round_shx[31:0]
@@ -21058,9 +21058,9 @@ for i = 0 .. 1:
     // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
     shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
     round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
-    if (round_shx <s 0xFFFF8000):
+    if (round_shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
-    else if (round_shx >s 0x00007FFF):
+    else if (round_shx >_s 0x00007FFF):
         d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = round_shx[15:0]
@@ -21121,9 +21121,9 @@ shamt = X[rs2][5:0]
 shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
 round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
 
-if (round_shx <s 0xFFFFFFFF80000000):
+if (round_shx <_s 0xFFFFFFFF80000000):
     X[rd] = 0x80000000; vxsat = 1
-else if (round_shx >s 0x000000007FFFFFFF):
+else if (round_shx >_s 0x000000007FFFFFFF):
     X[rd] = 0x7FFFFFFF; vxsat = 1
 else:
     X[rd] = round_shx[31:0]
@@ -21304,7 +21304,7 @@ shamt = uimm6[5:0]
 
 shx = s1 >> shamt                      // logical shift
 
-if (shx >u 0x00000000FFFFFFFF):
+if (shx >_u 0x00000000FFFFFFFF):
     X[rd] = 0xFFFFFFFF; vxsat = 1
 else:
     X[rd] = shx[31:0]
@@ -21602,7 +21602,7 @@ for i = 0 .. 1:
     // Unsigned shift right with rounding: append guard bit, shift, add 1, drop LSB
     shx       = (s1_w @ 0b0) >> shamt        // 33-bit logical shift
     round_shx = (shx + 1)[32:1]              // round to nearest, ties up
-    if (round_shx >u 0x0000FFFF):
+    if (round_shx >_u 0x0000FFFF):
         d[(16*i+15):(16*i)] = 0xFFFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = round_shx[15:0]
@@ -21663,7 +21663,7 @@ shamt = uimm6[5:0]
 shx       = (s1 @ 0b0) >> shamt              // 65-bit logical shift
 round_shx = (shx + 1)[64:1]                  // round to nearest, ties up
 
-if (round_shx >u 0x00000000FFFFFFFF):
+if (round_shx >_u 0x00000000FFFFFFFF):
     X[rd] = 0xFFFFFFFF; vxsat = 1
 else:
     X[rd] = round_shx[31:0]
@@ -21786,7 +21786,7 @@ for i = 0 .. 1:
     // Unsigned shift right with rounding: append guard bit, shift, add 1, drop LSB
     shx       = (zero_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit logical shift
     round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
-    if (round_shx >u 0x0000FFFF):
+    if (round_shx >_u 0x0000FFFF):
         d[(16*i+15):(16*i)] = 0xFFFF; vxsat = 1
     else:
         d[(16*i+15):(16*i)] = round_shx[15:0]
@@ -21847,7 +21847,7 @@ shamt = X[rs2][5:0]
 shx       = (s1 @ 0b0) >> shamt              // 65-bit logical shift
 round_shx = (shx + 1)[64:1]                  // round to nearest, ties up
 
-if (round_shx >u 0x00000000FFFFFFFF):
+if (round_shx >_u 0x00000000FFFFFFFF):
     X[rd] = 0xFFFFFFFF; vxsat = 1
 else:
     X[rd] = round_shx[31:0]
@@ -21901,7 +21901,7 @@ for i = 0 .. 7:
     h = s[(16*i+15):(16*i)]
     if (h < 0xFF80):
       d[(8*i+7):(8*i)] = 0x80; vxsat = 1;
-    else if (h >s 0x007F):
+    else if (h >_s 0x007F):
       d[(8*i+7):(8*i)] = 0x7F; vxsat = 1;
     else:
        d[(8*i+7):(8*i)] = h[7:0];
@@ -21957,7 +21957,7 @@ for i = 0 .. 3:
     w = s[(32*i+32):(32*i)]
     if (w < 0xFFFF8000):
       d[(16*i+15):(16*i)] = 0x8000; vxsat = 1;
-    else if (w >s 0x00007FFF):
+    else if (w >_s 0x00007FFF):
       d[(16*i+15):(16*i)] = 0x7FFF; vxsat = 1;
     else:
        d[(16*i+15):(16*i)] = w[15:0];
@@ -22013,7 +22013,7 @@ for i = 0 .. 1:
     d = s[(64*i+64):(64*i)]
     if (d < 0xFFFFFFFF80000000):
       d[(32*i+31):(32*i)] = 0x80000000; vxsat = 1;
-    else if (d >s 0x000000007FFFFFFF):
+    else if (d >_s 0x000000007FFFFFFF):
       d[(32*i+31):(32*i)] = 0x7FFFFFFF; vxsat = 1;
     else:
        d[(32*i+31):(32*i)] = d[31:0];
@@ -22121,7 +22121,7 @@ s = X[rs2] @ X[rs1]
 
 for i = 0 .. 3:
     w = s[(32*i+32):(32*i)]
-    if (w >u 0x0000FFFF):
+    if (w >_u 0x0000FFFF):
       d[(16*i+15):(16*i)] = 0xFFFF; vxsat = 1;
     else:
        d[(16*i+15):(16*i)] = w[15:0];
@@ -22175,7 +22175,7 @@ s = X[rs2] @ X[rs1]
 
 for i = 0 .. 1:
     d = s[(64*i+64):(64*i)]
-    else if (d >u 0x00000000FFFFFFFF):
+    else if (d >_u 0x00000000FFFFFFFF):
       d[(32*i+31):(32*i)] = 0xFFFFFFFF; vxsat = 1;
     else:
        d[(32*i+31):(32*i)] = d[31:0];
