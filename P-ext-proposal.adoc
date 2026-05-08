@@ -14516,12 +14516,12 @@ for i = 0 .. (XLEN/32 - 1):
         r  = (y + 1)[32:1]
     else:
         // shift left with unsigned saturation to 32-bit range
-        shx = (sshamt >= 32) ? (h @ 0x00000000)
-                             : (zero_extend(32, w) << shamt[4:0])
+        shx = (sshamt >= 32) ? (w @ 0x00000000)
+                             : (zero_extend(64, w) << shamt[4:0])
 
-        if shx >_u 0x00000000FFFFFFFF:
+        if shx >_u 0xFFFFFFFF:
             vxsat = 1
-            r = 0xFFFF0000
+            r = 0xFFFFFFFF
         else
             r = shx[31:0]
 
