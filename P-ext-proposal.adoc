@@ -22923,7 +22923,9 @@ multiply-high rounded sub-encoding.
 
 Description::
 
-The MULHRU instruction multiplie
+The MULHRU multiplies the unsigned 32-bit values in `rs1` and
+`rs2`, adds 2^31^ to the full 64-bit product, and writes the upper 32 bits
+of the rounded result to `rd`.
 
 Operation::
 
