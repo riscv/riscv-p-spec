@@ -16936,7 +16936,7 @@ X[rd] = d
 
 Mnemonic::
 
-abs _rd_, _rs1_, _imm12_
+abs _rd_, _rs1_
 
 Encoding::
 
@@ -16971,7 +16971,7 @@ X[rd] = (signed(s1) < 0) ? (0 - s1) : s1
 
 Mnemonic::
 
-absw _rd_, _rs1_, _simm12_
+absw _rd_, _rs1_
 
 Encoding::
 
@@ -17007,7 +17007,7 @@ X[rd] = sign_extend(64, (signed(w) <_s 0) ? (0 - w) : w)
 
 Mnemonic::
 
-cls _rd_, _rs1_, _imm12_
+cls _rd_, _rs1_
 
 Encoding::
 
@@ -17050,7 +17050,7 @@ X[rd] = to_bits(XLEN, c)
 
 Mnemonic::
 
-clsw _rd_, _rs1_, _imm12_
+clsw _rd_, _rs1_
 
 Encoding::
 
