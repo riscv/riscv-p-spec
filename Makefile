@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-DOCS := P-ext-proposal.adoc
+DOCS := P-ext-proposal.adoc P-ext-intrinsics.adoc
 
 DATE ?= $(shell date +%Y-%m-%d)
 DOCKER_IMG := ghcr.io/riscv/riscv-docs-base-container-image:latest
