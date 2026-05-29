@@ -7892,6 +7892,113 @@ X[rd] = X[rs2]
 
 
 <<<
+==== PREDSUM.DBS (RV32)
+
+Mnemonic::
+
+predsum.dbs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PREDSUM.DBS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
+
+PREDSUM.DBS is encoded in the OP-IMM-32 major opcode with `funct3=100`, bit 28
+set to 1, and `rs1_p` selecting the source register pair.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x1, attr: ['PREDSUM.DBS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PREDSUM.DBS adds the eight signed 8-bit elements contained in the 64-bit source
+register pair `rs1_p` to the signed scalar value in `rs2`, and writes the low
+32 bits of the resulting sum to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 =
+  (rs1_p == 0) ? 0
+               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
+
+sum = signed(X[rs2])                              // scalar accumulator (int)
+
+for i = 0 .. 7:
+    sum += signed(s1[(8*i+7) : (8*i)])            // signed bytes
+
+X[rd] = to_bits(32, sum)
+----
+
+
+<<<
+==== PREDSUM.DHS (RV32)
+
+Mnemonic::
+
+predsum.dhs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PREDSUM.DHS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x1, attr: ['PREDSUM.DHS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PREDSUM.DHS adds the four signed 16-bit elements contained in the 64-bit source
+register pair `rs1_p` to the signed scalar value in `rs2`, and writes the low
+32 bits of the resulting sum to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 =
+  (rs1_p == 0) ? 0
+               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
+
+sum = signed(X[rs2])                              // scalar accumulator (int)
+
+for i = 0 .. 3:
+    sum += signed(s1[(16*i+15) : (16*i)])         // signed halfwords
+
+X[rd] = to_bits(32, sum)
+----
+
+
+<<<
 ==== PREDSUMU.BS
 
 Mnemonic::
@@ -8024,6 +8131,110 @@ s1 = X[rs1]
 X[rd] = X[rs2]
         + zero_extend(64, s1[31:0])
         + zero_extend(64, s1[63:32])
+----
+
+
+<<<
+==== PREDSUMU.DBS (RV32)
+
+Mnemonic::
+
+predsumu.dbs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PREDSUMU.DBS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x2 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['PREDSUMU.DBS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PREDSUMU.DBS adds the eight unsigned 8-bit elements contained in the 64-bit
+source register pair `rs1_p` to the unsigned scalar value in `rs2`, and writes
+the low 32 bits of the resulting sum to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 =
+  (rs1_p == 0) ? 0
+               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
+
+sum = unsigned(X[rs2])                            // scalar accumulator (int)
+
+for i = 0 .. 7:
+    sum += unsigned(s1[(8*i+7) : (8*i)])          // unsigned bytes
+
+X[rd] = to_bits(32, sum)
+----
+
+
+<<<
+==== PREDSUMU.DHS (RV32)
+
+Mnemonic::
+
+predsumu.dhs _rd_, _rs1_p_, _rs2_
+
+Encoding::
+
+PREDSUMU.DHS reads a 64-bit packed source from the even-odd register pair
+specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
+`rs1_p = 0`, the source pair is treated as zero.
+
+[wavedrom, ,svg]
+....
+{reg:[
+    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
+    { bits: 5, name: 'rd' },
+    { bits: 3, name: 0x4 },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rs1_p' },
+    { bits: 5, name: 'rs2' },
+    { bits: 2, name: 0x0 },
+    { bits: 1, name: 0x1 },
+    { bits: 3, name: 0x3, attr: ['PREDSUMU.DHS'] },
+    { bits: 1, name: 0x0 },
+]}
+....
+
+Description::
+
+PREDSUMU.DHS adds the four unsigned 16-bit elements contained in the 64-bit
+source register pair `rs1_p` to the unsigned scalar value in `rs2`, and writes
+the low 32 bits of the resulting sum to `rd`.
+
+Operation::
+
+[source,pseudocode]
+----
+s1 =
+  (rs1_p == 0) ? 0
+               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
+
+sum = unsigned(X[rs2])                            // scalar accumulator (int)
+
+for i = 0 .. 3:
+    sum += unsigned(s1[(16*i+15) : (16*i)])       // unsigned halfwords
+
+X[rd] = to_bits(32, sum)
 ----
 
 
@@ -19266,220 +19477,6 @@ hi = s2[31:16] @ s1[31:16]
 if (rd_p != 0):
     X[2*rd_p]   = lo
     X[2*rd_p+1] = hi
-----
-
-
-
-<<<
-=== Reduction Sum (double-wide)
-
-==== PREDSUM.DBS (RV32)
-
-Mnemonic::
-
-predsum.dbs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PREDSUM.DBS reads a 64-bit packed source from the even-odd register pair
-specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
-`rs1_p = 0`, the source pair is treated as zero.
-
-PREDSUM.DBS is encoded in the OP-IMM-32 major opcode with `funct3=100`, bit 28
-set to 1, and `rs1_p` selecting the source register pair.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x1, attr: ['PREDSUM.DBS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PREDSUM.DBS adds the eight signed 8-bit elements contained in the 64-bit source
-register pair `rs1_p` to the signed scalar value in `rs2`, and writes the low
-32 bits of the resulting sum to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 =
-  (rs1_p == 0) ? 0
-               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
-
-sum = signed(X[rs2])                              // scalar accumulator (int)
-
-for i = 0 .. 7:
-    sum += signed(s1[(8*i+7) : (8*i)])            // signed bytes
-
-X[rd] = to_bits(32, sum)
-----
-
-
-<<<
-==== PREDSUM.DHS (RV32)
-
-Mnemonic::
-
-predsum.dhs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PREDSUM.DHS reads a 64-bit packed source from the even-odd register pair
-specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
-`rs1_p = 0`, the source pair is treated as zero.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x1, attr: ['PREDSUM.DHS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PREDSUM.DHS adds the four signed 16-bit elements contained in the 64-bit source
-register pair `rs1_p` to the signed scalar value in `rs2`, and writes the low
-32 bits of the resulting sum to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 =
-  (rs1_p == 0) ? 0
-               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
-
-sum = signed(X[rs2])                              // scalar accumulator (int)
-
-for i = 0 .. 3:
-    sum += signed(s1[(16*i+15) : (16*i)])         // signed halfwords
-
-X[rd] = to_bits(32, sum)
-----
-
-
-<<<
-==== PREDSUMU.DBS (RV32)
-
-Mnemonic::
-
-predsumu.dbs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PREDSUMU.DBS reads a 64-bit packed source from the even-odd register pair
-specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
-`rs1_p = 0`, the source pair is treated as zero.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x2 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['PREDSUMU.DBS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PREDSUMU.DBS adds the eight unsigned 8-bit elements contained in the 64-bit
-source register pair `rs1_p` to the unsigned scalar value in `rs2`, and writes
-the low 32 bits of the resulting sum to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 =
-  (rs1_p == 0) ? 0
-               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
-
-sum = unsigned(X[rs2])                            // scalar accumulator (int)
-
-for i = 0 .. 7:
-    sum += unsigned(s1[(8*i+7) : (8*i)])          // unsigned bytes
-
-X[rd] = to_bits(32, sum)
-----
-
-
-<<<
-==== PREDSUMU.DHS (RV32)
-
-Mnemonic::
-
-predsumu.dhs _rd_, _rs1_p_, _rs2_
-
-Encoding::
-
-PREDSUMU.DHS reads a 64-bit packed source from the even-odd register pair
-specified by `rs1_p` and produces a 32-bit scalar result in `rd`. If
-`rs1_p = 0`, the source pair is treated as zero.
-
-[wavedrom, ,svg]
-....
-{reg:[
-    { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
-    { bits: 3, name: 0x4 },
-    { bits: 1, name: 0x0 },
-    { bits: 4, name: 'rs1_p' },
-    { bits: 5, name: 'rs2' },
-    { bits: 2, name: 0x0 },
-    { bits: 1, name: 0x1 },
-    { bits: 3, name: 0x3, attr: ['PREDSUMU.DHS'] },
-    { bits: 1, name: 0x0 },
-]}
-....
-
-Description::
-
-PREDSUMU.DHS adds the four unsigned 16-bit elements contained in the 64-bit
-source register pair `rs1_p` to the unsigned scalar value in `rs2`, and writes
-the low 32 bits of the resulting sum to `rd`.
-
-Operation::
-
-[source,pseudocode]
-----
-s1 =
-  (rs1_p == 0) ? 0
-               : (X[2*rs1_p+1] @ X[2*rs1_p])      // 64-bit
-
-sum = unsigned(X[rs2])                            // scalar accumulator (int)
-
-for i = 0 .. 3:
-    sum += unsigned(s1[(16*i+15) : (16*i)])       // unsigned halfwords
-
-X[rd] = to_bits(32, sum)
 ----
 
 
