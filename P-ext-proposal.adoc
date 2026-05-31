@@ -40,6 +40,26 @@ The P extension depends on Zmmul, Zba and Zbb extensions.
 
 The P extension is defined for RV32 (RV32E?) and RV64.
 
+==  Access to the vxsat CSR
+
+The P extension defines instructions which can write to the vxsat CSR (introduced in the vector specification).
+
+This specification does not require that the `mstatus.VS` field be implemented.
+However, if the `mstatus.VS` field is implemented (e.g., because a Zve* extension is implemented), then instructions in this specification that access the vxsat register raise illegal-instruction exceptions when `mstatus.VS=Off`.
+Furthermore, if `mstatus.VS=`Initial or Clean, instructions in this specification which write `vxsat` cause `mstatus.VS` to be set to Dirty.
+
+Similarly, this specification does not require that the `vsstatus.VS` field be implemented.
+However, if the `vsstatus.VS` field is implemented and the current virtualization mode, V, is 1, the same rules additionally apply to `vsstatus.VS` field.
+
+Note: Forcing the `mstatus.vs` to be implemented simply to save/restore `vxsat` would mean adding more bits than the actual state requiring saving/restoring.
+
+When the `*stateen*` CSRs are implemented and P is supported but not the V extension, a VXSAT bit is added to `*stateen0`.
+
+The `*stateen*` VXSAT bit controls access to vxsat for the case when P extension is implemented without `*status.VS` being implemented.
+Whenever `misa.V` = 1, VXSAT bit of `mstateen0` is read-only zero (and hence read-only zero in hstateen0 and sstateen0 too).
+For convenience, when the stateen CSRs are implemented and misa.V = 0, then if the VXSAT bit of a controlling stateen0 CSR is zero, all P instructions in the OP-32 and OP-IMM-32 encoding space cause an illegal-instruction exception (or virtual-instruction exception, if relevant), as though they all access `vxsat`, regardless of whether they really do.
+
+Note: The P extension defines instruction with different prefixes: OP-32, OP-IMM-32, OP, and OP-IMM; none of the instructions with a prefix different from OP-32 or OP-IMM-32 can raise vxsat and some of the instructions whose encodings is prefixed by OP-32 or OP-IMM-32 can set vxsat, to facilitate implementation of the *stateen VXSAT bit, the whole set of P instructions with OP-32 or OP-IMM-32 prefix is expected to trap is expected to trap when misa.V=0 and *stateen.VXSAT=0.
 
 == Instruction Mnemonic Naming Conventions
 
