@@ -60,7 +60,7 @@ The `*stateen*` VXSAT bit controls access to vxsat for the case when P extension
 Whenever `misa.V` = 1, VXSAT bit of `mstateen0` is read-only zero (and hence read-only zero in hstateen0 and sstateen0 too).
 For convenience, when the stateen CSRs are implemented and misa.V = 0, then if the VXSAT bit of a controlling stateen0 CSR is zero, all P instructions in the OP-32 and OP-IMM-32 encoding space cause an illegal-instruction exception (or virtual-instruction exception, if relevant), as though they all access `vxsat`, regardless of whether they really do.
 
-Note: The P extension defines instruction with different prefixes: OP-32, OP-IMM-32, OP, and OP-IMM; none of the instructions with a prefix different from OP-32 or OP-IMM-32 can raise vxsat and some of the instructions whose encodings is prefixed by OP-32 or OP-IMM-32 can set vxsat, to facilitate implementation of the *stateen VXSAT bit, the whole set of P instructions with OP-32 or OP-IMM-32 prefix is expected to trap is expected to trap when misa.V=0 and *stateen.VXSAT=0.
+Note: The P extension defines instructions with different major opcodes: OP-32, OP-IMM-32, OP, and OP-IMM; none of the instructions with a major opcode different from OP-32 or OP-IMM-32 can raise vxsat and some of the instructions with major opcode OP-32 or OP-IMM-32 can set vxsat, to facilitate implementation of the *stateen VXSAT bit, the whole set of P instructions with OP-32 or OP-IMM-32 prefix is expected to trap when misa.V=0 and *stateen.VXSAT=0.
 
 == Instruction Mnemonic Naming Conventions
 
