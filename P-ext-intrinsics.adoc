@@ -1050,27 +1050,27 @@ Adds a scalar to every element of a packed value.
 
 | `int32x2_t __riscv_pas_x_i32x2(int32x2_t rs1, int32x2_t rs2);`
 | `pas.wx`(RV64), +
-  `pas.wx`+`pas.wx`(RV32)
+  `add`+`sub`(RV32)
 
 | `int32x2_t __riscv_psa_x_i32x2(int32x2_t rs1, int32x2_t rs2);`
 | `psa.wx`(RV64), +
-  `psa.wx`+`psa.wx`(RV32)
+  `add`+`sub`(RV32)
 
 | `int32x2_t __riscv_psas_x_i32x2(int32x2_t rs1, int32x2_t rs2);`
 | `psas.wx`(RV64), +
-  `psas.wx`+`psas.wx`(RV32)
+  `sadd`+`ssub`(RV32)
 
 | `int32x2_t __riscv_pssa_x_i32x2(int32x2_t rs1, int32x2_t rs2);`
 | `pssa.wx`(RV64), +
-  `pssa.wx`+`pssa.wx`(RV32)
+  `sadd`+`ssub`(RV32)
 
 | `int32x2_t __riscv_paas_x_i32x2(int32x2_t rs1, int32x2_t rs2);`
 | `paas.wx`(RV64), +
-  `paas.wx`+`paas.wx`(RV32)
+  `aadd`+`asub`(RV32)
 
 | `int32x2_t __riscv_pasa_x_i32x2(int32x2_t rs1, int32x2_t rs2);`
 | `pasa.wx`(RV64), +
-  `pasa.wx`+`pasa.wx`(RV32)
+  `aadd`+`asub`(RV32)
 |===
 
 
