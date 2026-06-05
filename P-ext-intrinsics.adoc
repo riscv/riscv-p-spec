@@ -3473,49 +3473,49 @@ l|
 int64_t
 __riscv_mul_w00_i64(int32x2_t rs1, int32x2_t rs2);
 | `mul.w00`(RV64), +
-  2x `mul.w00`(RV32)
+  `wmul`(RV32)
 
 l|
 int64_t
 __riscv_mul_w01_i64(int32x2_t rs1, int32x2_t rs2);
 | `mul.w01`(RV64), +
-  2x `mul.w01`(RV32)
+  `wmul`(RV32)
 
 l|
 int64_t
 __riscv_mul_w11_i64(int32x2_t rs1, int32x2_t rs2);
 | `mul.w11`(RV64), +
-  2x `mul.w11`(RV32)
+  `wmul`(RV32)
 
 l|
 uint64_t
 __riscv_mulu_w00_i64(uint32x2_t rs1, uint32x2_t rs2);
 | `mulu.w00`(RV64), +
-  2x `mulu.w00`(RV32)
+  `wmulu`(RV32)
 
 l|
 uint64_t
 __riscv_mulu_w01_i64(uint32x2_t rs1, uint32x2_t rs2);
 | `mulu.w01`(RV64), +
-  2x `mulu.w01`(RV32)
+  `wmulu`(RV32)
 
 l|
 uint64_t
 __riscv_mulu_w11_i64(uint32x2_t rs1, uint32x2_t rs2);
 | `mulu.w11`(RV64), +
-  2x `mulu.w11`(RV32)
+  `wmulu`(RV32)
 
 l|
 int64_t
 __riscv_mulsu_w00_i64(int32x2_t rs1, uint32x2_t rs2);
 | `mulsu.w00`(RV64), +
-  2x `mulsu.w00`(RV32)
+  `wmulsu`(RV32)
 
 l|
 int64_t
 __riscv_mulsu_w11_i64(int32x2_t rs1, uint32x2_t rs2);
 | `mulsu.w11`(RV64), +
-  2x `mulsu.w11`(RV32)
+  `wmulsu`(RV32)
 |===
 
 
@@ -3646,49 +3646,49 @@ l|
 int64_t
 __riscv_macc_w00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `macc.w00`(RV64), +
-  2x `macc.w00`(RV32)
+  `wmacc`(RV32)
 
 l|
 int64_t
 __riscv_macc_w01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `macc.w01`(RV64), +
-  2x `macc.w01`(RV32)
+  `wmacc`(RV32)
 
 l|
 int64_t
 __riscv_macc_w11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `macc.w11`(RV64), +
-  2x `macc.w11`(RV32)
+  `wmacc`(RV32)
 
 l|
 uint64_t
 __riscv_maccu_w00_u64(uint64_t rd, uint32x2_t rs1, uint32x2_t rs2);
 | `maccu.w00`(RV64), +
-  2x `maccu.w00`(RV32)
+  `wmaccu`(RV32)
 
 l|
 uint64_t
 __riscv_maccu_w01_u64(uint64_t rd, uint32x2_t rs1, uint32x2_t rs2);
 | `maccu.w01`(RV64), +
-  2x `maccu.w01`(RV32)
+  `wmaccu`(RV32)
 
 l|
 uint64_t
 __riscv_maccu_w11_u64(uint64_t rd, uint32x2_t rs1, uint32x2_t rs2);
 | `maccu.w11`(RV64), +
-  2x `maccu.w11`(RV32)
+  `wmaccu`(RV32)
 
 l|
 int64_t
 __riscv_maccsu_w00_i64(int64_t rd, int32x2_t rs1, uint32x2_t rs2);
 | `maccsu.w00`(RV64), +
-  2x `maccsu.w00`(RV32)
+  `wmaccsu`(RV32)
 
 l|
 int64_t
 __riscv_maccsu_w11_i64(int64_t rd, int32x2_t rs1, uint32x2_t rs2);
 | `maccsu.w11`(RV64), +
-  2x `maccsu.w11`(RV32)
+  `wmaccsu`(RV32)
 |===
 
 
