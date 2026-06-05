@@ -3204,79 +3204,79 @@ __riscv_mqracc_h11_i32(int32_t rd, int16x2_t rs1, int16x2_t rs2);
 
 l|
 int32x2_t
-__riscv_pmqacc_h00_i32x2(int32x2_t rd, int16x2_t rs1,
-                         int16x2_t rs2);
+__riscv_pmqacc_h00_i32x2(int32x2_t rd, int16x4_t rs1,
+                         int16x4_t rs2);
 | `pmqacc.w.h00`(RV64), +
   2x `pmqacc.w.h00`(RV32)
 
 l|
 int32x2_t
-__riscv_pmqacc_h01_i32x2(int32x2_t rd, int16x2_t rs1,
-                         int16x2_t rs2);
+__riscv_pmqacc_h01_i32x2(int32x2_t rd, int16x4_t rs1,
+                         int16x4_t rs2);
 | `pmqacc.w.h01`(RV64), +
   2x `pmqacc.w.h01`(RV32)
 
 l|
 int32x2_t
-__riscv_pmqacc_h11_i32x2(int32x2_t rd, int16x2_t rs1,
-                         int16x2_t rs2);
+__riscv_pmqacc_h11_i32x2(int32x2_t rd, int16x4_t rs1,
+                         int16x4_t rs2);
 | `pmqacc.w.h11`(RV64), +
   2x `pmqacc.w.h11`(RV32)
 
 l|
 int32x2_t
-__riscv_pmqracc_h00_i32x2(int32x2_t rd, int16x2_t rs1,
-                          int16x2_t rs2);
+__riscv_pmqracc_h00_i32x2(int32x2_t rd, int16x4_t rs1,
+                          int16x4_t rs2);
 | `pmqracc.w.h00`(RV64), +
   2x `pmqracc.w.h00`(RV32)
 
 l|
 int32x2_t
-__riscv_pmqracc_h01_i32x2(int32x2_t rd, int16x2_t rs1,
-                          int16x2_t rs2);
+__riscv_pmqracc_h01_i32x2(int32x2_t rd, int16x4_t rs1,
+                          int16x4_t rs2);
 | `pmqracc.w.h01`(RV64), +
   2x `pmqracc.w.h01`(RV32)
 
 l|
 int32x2_t
-__riscv_pmqracc_h11_i32x2(int32x2_t rd, int16x2_t rs1,
-                          int16x2_t rs2);
+__riscv_pmqracc_h11_i32x2(int32x2_t rd, int16x4_t rs1,
+                          int16x4_t rs2);
 | `pmqracc.w.h11`(RV64), +
   2x `pmqracc.w.h11`(RV32)
 
 l|
 int64_t
-__riscv_mqacc_h00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
+__riscv_mqacc_w00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqacc.w00`(RV64), +
   2x `mqacc.w00`(RV32)
 
 l|
 int64_t
-__riscv_mqacc_h01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
+__riscv_mqacc_w01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqacc.w01`(RV64), +
   2x `mqacc.w01`(RV32)
 
 l|
 int64_t
-__riscv_mqacc_h11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
+__riscv_mqacc_w11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqacc.w11`(RV64), +
   2x `mqacc.w11`(RV32)
 
 l|
 int64_t
-__riscv_mqracc_h00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
+__riscv_mqracc_w00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqracc.w00`(RV64), +
   2x `mqracc.w00`(RV32)
 
 l|
 int64_t
-__riscv_mqracc_h01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
+__riscv_mqracc_w01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqracc.w01`(RV64), +
   2x `mqracc.w01`(RV32)
 
 l|
 int64_t
-__riscv_mqracc_h11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
+__riscv_mqracc_w11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqracc.w11`(RV64), +
   2x `mqracc.w11`(RV32)
 |===
