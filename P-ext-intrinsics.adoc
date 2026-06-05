@@ -3207,42 +3207,42 @@ int32x2_t
 __riscv_pmqacc_h00_i32x2(int32x2_t rd, int16x2_t rs1,
                          int16x2_t rs2);
 | `pmqacc.w.h00`(RV64), +
-  2x `pmqacc.w.h00`(RV32)
+  2x `mqacc.h00`(RV32)
 
 l|
 int32x2_t
 __riscv_pmqacc_h01_i32x2(int32x2_t rd, int16x2_t rs1,
                          int16x2_t rs2);
 | `pmqacc.w.h01`(RV64), +
-  2x `pmqacc.w.h01`(RV32)
+  2x `mqacc.h01`(RV32)
 
 l|
 int32x2_t
 __riscv_pmqacc_h11_i32x2(int32x2_t rd, int16x2_t rs1,
                          int16x2_t rs2);
 | `pmqacc.w.h11`(RV64), +
-  2x `pmqacc.w.h11`(RV32)
+  2x `mqacc.h11`(RV32)
 
 l|
 int32x2_t
 __riscv_pmqracc_h00_i32x2(int32x2_t rd, int16x2_t rs1,
                           int16x2_t rs2);
 | `pmqracc.w.h00`(RV64), +
-  2x `pmqracc.w.h00`(RV32)
+  2x `mqracc.h00`(RV32)
 
 l|
 int32x2_t
 __riscv_pmqracc_h01_i32x2(int32x2_t rd, int16x2_t rs1,
                           int16x2_t rs2);
 | `pmqracc.w.h01`(RV64), +
-  2x `pmqracc.w.h01`(RV32)
+  2x `mqracc.h01`(RV32)
 
 l|
 int32x2_t
 __riscv_pmqracc_h11_i32x2(int32x2_t rd, int16x2_t rs1,
                           int16x2_t rs2);
 | `pmqracc.w.h11`(RV64), +
-  2x `pmqracc.w.h11`(RV32)
+  2x `mqracc.h11`(RV32)
 
 l|
 int64_t
@@ -3425,49 +3425,49 @@ l|
 int32x2_t
 __riscv_pmul_h00_i32x2(int16x4_t rs1, int16x4_t rs2);
 | `pmul.w.h00`(RV64), +
-  2x `pmul.w.h00`(RV32)
+  2x `mul.h00`(RV32)
 
 l|
 int32x2_t
 __riscv_pmul_h01_i32x2(int16x4_t rs1, int16x4_t rs2);
 | `pmul.w.h01`(RV64), +
-  2x `pmul.w.h01`(RV32)
+  2x `mul.h01`(RV32)
 
 l|
 int32x2_t
 __riscv_pmul_h11_i32x2(int16x4_t rs1, int16x4_t rs2);
 | `pmul.w.h11`(RV64), +
-  2x `pmul.w.h11`(RV32)
+  2x `mul.h11`(RV32)
 
 l|
 uint32x2_t
 __riscv_pmulu_h00_u32x2(uint16x4_t rs1, uint16x4_t rs2);
 | `pmulu.w.h00`(RV64), +
-  2x `pmulu.w.h00`(RV32)
+  2x `mulu.h00`(RV32)
 
 l|
 uint32x2_t
 __riscv_pmulu_h01_u32x2(uint16x4_t rs1, uint16x4_t rs2);
 | `pmulu.w.h01`(RV64), +
-  2x `pmulu.w.h01`(RV32)
+  2x `mulu.h01`(RV32)
 
 l|
 uint32x2_t
 __riscv_pmulu_h11_u32x2(uint16x4_t rs1, uint16x4_t rs2);
 | `pmulu.w.h11`(RV64), +
-  2x `pmulu.w.h11`(RV32)
+  2x `mulu.h11`(RV32)
 
 l|
 int32x2_t
 __riscv_pmulsu_h00_i32x2(int16x4_t rs1, uint16x4_t rs2);
 | `pmulsu.w.h00`(RV64), +
-  2x `pmulsu.w.h00`(RV32)
+  2x `mulsu.h00`(RV32)
 
 l|
 int32x2_t
 __riscv_pmulsu_h11_i32x2(int16x4_t rs1, uint16x4_t rs2);
 | `pmulsu.w.h11`(RV64), +
-  2x `pmulsu.w.h11`(RV32)
+  2x `mulsu.h11`(RV32)
 
 l|
 int64_t
@@ -3591,56 +3591,56 @@ int32x2_t
 __riscv_pmacc_h00_i32x2(int32x2_t rd, int16x4_t rs1,
                         int16x4_t rs2);
 | `pmacc.w.h00`(RV64), +
-  2x +`pmacc.w.h00`(RV32)
+  2x `macc.h00`(RV32)
 
 l|
 int32x2_t
 __riscv_pmacc_h01_i32x2(int32x2_t rd, int16x4_t rs1,
                         int16x4_t rs2);
 | `pmacc.w.h01`(RV64), +
-  2x `pmacc.w.h01`(RV32)
+  2x `macc.h01`(RV32)
 
 l|
 int32x2_t
 __riscv_pmacc_h11_i32x2(int32x2_t rd, int16x4_t rs1,
                         int16x4_t rs2);
 | `pmacc.w.h11`(RV64), +
-  2x `pmacc.w.h11`(RV32)
+  2x `macc.h11`(RV32)
 
 l|
 uint32x2_t
 __riscv_pmaccu_h00_u32x2(uint32x2_t rd, uint16x4_t rs1,
                          uint16x4_t rs2);
 | `pmaccu.w.h00`(RV64), +
-  2x `pmaccu.w.h00`(RV32)
+  2x `maccu.h00`(RV32)
 
 l|
 uint32x2_t
 __riscv_pmaccu_h01_u32x2(uint32x2_t rd, uint16x4_t rs1,
                          uint16x4_t rs2);
 | `pmaccu.w.h01`(RV64), +
-  2x `pmaccu.w.h01`(RV32)
+  2x `maccu.h01`(RV32)
 
 l|
 uint32x2_t
 __riscv_pmaccu_h11_u32x2(uint32x2_t rd, uint16x4_t rs1,
                          uint16x4_t rs2);
 | `pmaccu.w.h11`(RV64), +
-  2x `pmaccu.w.h11`(RV32)
+  2x `maccu.h11`(RV32)
 
 l|
 int32x2_t
 __riscv_pmaccsu_h00_i32x2(int32x2_t rd, int16x4_t rs1,
                           uint16x4_t rs2);
 | `pmaccsu.w.h00`(RV64), +
-  2x `pmaccsu.w.h00`(RV32)
+  2x `maccsu.h00`(RV32)
 
 l|
 int32x2_t
 __riscv_pmaccsu_h11_i32x2(int32x2_t rd, int16x4_t rs1,
                           uint16x4_t rs2);
 | `pmaccsu.w.h11`(RV64), +
-  2x `pmaccsu.w.h11`(RV32)
+  2x `maccsu.h11`(RV32)
 
 l|
 int64_t
@@ -4207,25 +4207,25 @@ l|
 int32x2_t
 __riscv_pmulh_h0_i32x2(int32x2_t rs1, int16x4_t rs2);
 | `pmulh.w.h0`(RV64), +
-  2x `pmulh.w.h0`(RV32)
+  2x `mulh.h0`(RV32)
 
 l|
 int32x2_t
 __riscv_pmulh_h1_i32x2(int32x2_t rs1, int16x4_t rs2);
 | `pmulh.w.h1`(RV64), +
-  2x `pmulh.w.h1`(RV32)
+  2x `mulh.h1`(RV32)
 
 l|
 int32x2_t
 __riscv_pmulhsu_h0_i32x2(int32x2_t rs1, uint16x4_t rs2);
 | `pmulhsu.w.h0`(RV64), +
-  2x `pmulhsu.w.h0`(RV32)
+  2x `mulhsu.h0`(RV32)
 
 l|
 int32x2_t
 __riscv_pmulhsu_h1_i32x2(int32x2_t rs1, uint16x4_t rs2);
 | `pmulhsu.w.h1`(RV64), +
-  2x `pmulhsu.w.h1`(RV32)
+  2x `mulhsu.h1`(RV32)
 |===
 
 
@@ -4329,28 +4329,28 @@ int32x2_t
 __riscv_pmhacc_h0_i32x2(int32x2_t rd, int32x2_t rs1,
                         int16x4_t rs2);
 | `pmhacc.w.h0`(RV64), +
-  2x `pmhacc.w.h0`(RV32)
+  2x `mhacc.h0`(RV32)
 
 l|
 int32x2_t
 __riscv_pmhacc_h1_i32x2(int32x2_t rd, int32x2_t rs1,
                         int16x4_t rs2);
 | `pmhacc.w.h1`(RV64), +
-  2x `pmhacc.w.h1`(RV32)
+  2x `mhacc.h1`(RV32)
 
 l|
 int32x2_t
 __riscv_pmhaccsu_h0_i32x2(int32x2_t rd, int32x2_t rs1,
                           uint16x4_t rs2);
 | `pmhaccsu.w.h0`(RV64), +
-  2x `pmhaccsu.w.h0`(RV32)
+  2x `mhaccsu.h0`(RV32)
 
 l|
 int32x2_t
 __riscv_pmhaccsu_h1_i32x2(int32x2_t rd, int32x2_t rs1,
                           uint16x4_t rs2);
 | `pmhaccsu.w.h1`(RV64), +
-  2x `pmhaccsu.w.h1`(RV32)
+  2x `mhaccsu.h1`(RV32)
 |===
 
 
