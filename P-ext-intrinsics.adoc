@@ -2929,7 +2929,7 @@ int16x4_t __riscv_pmulh_i16x4(int16x4_t rs1, int16x4_t rs2);
 l|
 int32x2_t __riscv_pmulh_i32x2(int32x2_t rs1, int32x2_t rs2);
 | `pmulh.w`(RV64), +
-  2x `pmulh.w`(RV32)
+  2x `mulh`(RV32)
 
 l|
 int16x4_t __riscv_pmulhr_i16x4(int16x4_t rs1, int16x4_t rs2);
@@ -2939,7 +2939,7 @@ int16x4_t __riscv_pmulhr_i16x4(int16x4_t rs1, int16x4_t rs2);
 l|
 int32x2_t __riscv_pmulhr_i32x2(int32x2_t rs1, int32x2_t rs2);
 | `pmulhr.w`(RV64), +
-  2x `pmulhr.w`(RV32)
+  2x `mulhr`(RV32)
 
 l|
 uint16x4_t __riscv_pmulhu_u16x4(uint16x4_t rs1, uint16x4_t rs2);
@@ -2949,7 +2949,7 @@ uint16x4_t __riscv_pmulhu_u16x4(uint16x4_t rs1, uint16x4_t rs2);
 l|
 uint32x2_t __riscv_pmulhu_u32x2(uint32x2_t rs1, uint32x2_t rs2);
 | `pmulhu.w`(RV64), +
-  2x `pmulhu.w`(RV32)
+  2x `mulhu`(RV32)
 
 l|
 uint16x4_t __riscv_pmulhru_u16x4(uint16x4_t rs1, uint16x4_t rs2);
@@ -2959,7 +2959,7 @@ uint16x4_t __riscv_pmulhru_u16x4(uint16x4_t rs1, uint16x4_t rs2);
 l|
 uint32x2_t __riscv_pmulhru_u32x2(uint32x2_t rs1, uint32x2_t rs2);
 | `pmulhru.w`(RV64), +
-  2x `pmulhru.w`(RV32)
+  2x `mulhru`(RV32)
 
 l|
 int16x4_t __riscv_pmulhsu_i16x4(int16x4_t rs1, uint16x4_t rs2);
@@ -2969,7 +2969,7 @@ int16x4_t __riscv_pmulhsu_i16x4(int16x4_t rs1, uint16x4_t rs2);
 l|
 int32x2_t __riscv_pmulhsu_i32x2(int32x2_t rs1, uint32x2_t rs2);
 | `pmulhsu.w`(RV64), +
-  2x `pmulhsu.w`(RV32)
+  2x `mulhsu`(RV32)
 
 l|
 int16x4_t __riscv_pmulhrsu_i16x4(int16x4_t rs1, uint16x4_t rs2);
@@ -2979,9 +2979,8 @@ int16x4_t __riscv_pmulhrsu_i16x4(int16x4_t rs1, uint16x4_t rs2);
 l|
 int32x2_t __riscv_pmulhrsu_i32x2(int32x2_t rs1, uint32x2_t rs2);
 | `pmulhrsu.w`(RV64), +
-  2x `pmulhrsu.w`(RV32)
+  2x `mulhrsu`(RV32)
 |===
-
 
 <<<
 === Packed Multiply High Accumulate
@@ -3042,7 +3041,7 @@ l|
 int32x2_t
 __riscv_pmhacc_i32x2(int32x2_t rd, int32x2_t rs1, int32x2_t rs2);
 | `pmhacc.w`(RV64), +
-  2x `pmhacc.w`(RV32)
+  2x `mhacc`(RV32)
 
 l|
 int16x4_t
@@ -3054,7 +3053,7 @@ l|
 int32x2_t
 __riscv_pmhracc_i32x2(int32x2_t rd, int32x2_t rs1, int32x2_t rs2);
 | `pmhracc.w`(RV64), +
-  2x `pmhracc.w`(RV32)
+  2x `mhracc`(RV32)
 
 l|
 uint16x4_t
@@ -3066,7 +3065,7 @@ l|
 uint32x2_t
 __riscv_pmhaccu_u32x2(uint32x2_t rd, uint32x2_t rs1, uint32x2_t rs2);
 | `pmhaccu.w`(RV64), +
-  2x `pmhaccu.w`(RV32)
+  2x `mhaccu`(RV32)
 
 l|
 uint16x4_t
@@ -3078,7 +3077,7 @@ l|
 uint32x2_t
 __riscv_pmhraccu_u32x2(uint32x2_t rd, uint32x2_t rs1, uint32x2_t rs2);
 | `pmhraccu.w`(RV64), +
-  2x `pmhraccu.w`(RV32)
+  2x `mhraccu`(RV32)
 
 l|
 int16x4_t
@@ -3090,7 +3089,7 @@ l|
 int32x2_t
 __riscv_pmhaccsu_i32x2(int32x2_t rd, int32x2_t rs1, uint32x2_t rs2);
 | `pmhaccsu.w`(RV64), +
-  2x `pmhaccsu.w`(RV32)
+  2x `mhaccsu`(RV32)
 
 l|
 int16x4_t
@@ -3102,9 +3101,8 @@ l|
 int32x2_t
 __riscv_pmhraccsu_i32x2(int32x2_t rd, int32x2_t rs1, uint32x2_t rs2);
 | `pmhraccsu.w`(RV64), +
-  2x `pmhraccsu.w`(RV32)
+  2x `mhraccsu`(RV32)
 |===
-
 
 <<<
 === Packed "Q-format" Multiplication
