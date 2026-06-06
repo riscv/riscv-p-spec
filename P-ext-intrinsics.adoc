@@ -3248,39 +3248,38 @@ l|
 int64_t
 __riscv_mqacc_w00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqacc.w00`(RV64), +
-  2x `mqacc.w00`(RV32)
+  `mqwacc`(RV32)
 
 l|
 int64_t
 __riscv_mqacc_w01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqacc.w01`(RV64), +
-  2x `mqacc.w01`(RV32)
+  `mqwacc`(RV32)
 
 l|
 int64_t
 __riscv_mqacc_w11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqacc.w11`(RV64), +
-  2x `mqacc.w11`(RV32)
+  `mqwacc`(RV32)
 
 l|
 int64_t
 __riscv_mqracc_w00_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqracc.w00`(RV64), +
-  2x `mqracc.w00`(RV32)
+  `mqrwacc`(RV32)
 
 l|
 int64_t
 __riscv_mqracc_w01_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqracc.w01`(RV64), +
-  2x `mqracc.w01`(RV32)
+  `mqrwacc`(RV32)
 
 l|
 int64_t
 __riscv_mqracc_w11_i64(int64_t rd, int32x2_t rs1, int32x2_t rs2);
 | `mqracc.w11`(RV64), +
-  2x `mqracc.w11`(RV32)
+  `mqrwacc`(RV32)
 |===
-
 
 <<<
 === Packed Multiply Parts
