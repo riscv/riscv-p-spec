@@ -1490,7 +1490,7 @@ uint16x2_t __riscv_pmsne_i16x2_u16x2(int16x2_t rs1, int16x2_t rs2);
 | `pmseq.h`+`not`
 
 l|
-uint16x2_t__riscv_pmsne_u16x2_u16x2(uint16x2_t rs1, uint16x2_t rs2);
+uint16x2_t __riscv_pmsne_u16x2_u16x2(uint16x2_t rs1, uint16x2_t rs2);
 | `pmseq.h`+`not`
 
 l|
@@ -1510,20 +1510,20 @@ uint16x2_t __riscv_pmsle_u16x2(int16x2_t rs1, int16x2_t rs2);
 | `pmsgt.h`+`not`
 
 l|
-uint8x4_t __riscv_pmsleu_u8x4(uint8x4_t rs1, uint8x4_t rs2);
+uint8x4_t __riscv_pmsgeu_u8x4(uint8x4_t rs1, uint8x4_t rs2);
 | `pmsltu.b`+`not`
 
 l|
-uint16x2_t __riscv_pmsleu_u16x2(uint16x2_t rs1, uint16x2_t rs2);
+uint16x2_t __riscv_pmsgeu_u16x2(uint16x2_t rs1, uint16x2_t rs2);
 | `pmsltu.h`+`not`
 
 l|
 uint8x4_t __riscv_pmsleu_u8x4(uint8x4_t rs1, uint8x4_t rs2);
-| `pmsgtu.b`
+| `pmsgtu.b`+`not`
 
 l|
 uint16x2_t __riscv_pmsleu_u16x2(uint16x2_t rs1, uint16x2_t rs2);
-| `pmsgtu.h`
+| `pmsgtu.h`+`not`
 |===
 
 
