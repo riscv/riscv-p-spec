@@ -4874,11 +4874,11 @@ uint8_t __riscv_pget_u8x4_u8(uint8x4_t v, const unsigned idx);
 | `srli`+`zext.b`
 
 l|
-int16_t __riscv_pget_i16x2_i16(int16x4_t v, const unsigned idx);
+int16_t __riscv_pget_i16x2_i16(int16x2_t v, const unsigned idx);
 | `srli`+`sext.h`
 
 l|
-uint16_t __riscv_pget_u16x2_u16(uint16x4_t v, const unsigned idx);
+uint16_t __riscv_pget_u16x2_u16(uint16x2_t v, const unsigned idx);
 | `srli`+`zext.h`
 |===
 
@@ -5043,13 +5043,13 @@ l|
 int32x2_t
 __riscv_pjoin2_i32x2(int32_t e0, int32_t e1);
 | `mv`(RV32), +
-  `ppaire.h`(RV64)
+  `ppaire.w`(RV64)
 
 l|
 uint32x2_t
 __riscv_pjoin2_u32x2(uint32_t e0, uint32_t e1);
 | `mv`(RV32), +
-  `ppaire.h`(RV64)
+  `ppaire.w`(RV64)
 |===
 
 
@@ -5094,7 +5094,7 @@ __riscv_pget_u16x4_u16x2(uint16x4_t v, const unsigned idx);
 === Packed Subvector Insert
 
 Intrinsics to insert a 32-bit packed subvector into a 64-bit packed vectors. The
-index must be a constant and specifies which subvector to extract.  0 - low, 1 - high.
+index must be a constant and specifies which subvector to insert.  0 - low, 1 - high.
 
 [cols="75%,25%"]
 |===
