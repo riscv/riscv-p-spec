@@ -10013,7 +10013,8 @@ mslt _rd_, _rs1_, _rs2_
 Pseudoinstructions::
 
 msgt _rd_, _rs2_, _rs1_ &#8594; mslt _rd_, _rs1_, _rs2_ +
-msltz _rd_, _rs1_ &#8594; mslt _rd_, _rs1_, x0
+msltz _rd_, _rs1_ &#8594; mslt _rd_, _rs1_, x0 +
+msgtz _rd_, _rs1_ &#8594; mslt _rd_, x0, _rs2_
 
 Encoding::
 
