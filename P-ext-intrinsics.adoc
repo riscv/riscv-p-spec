@@ -2298,29 +2298,35 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 
 | `int16x4_t __riscv_pwcvt_i16x4(int8x4_t rs1);`
 | `pwcvt.b`(RV32), +
-  `pwcvtu.b`+`psext.h.b`(RV64)
+  `pwcvtu.wb`+`psext.h.b`(RV64)
 
 | `int32x2_t __riscv_pwcvt_i32x2(int16x2_t rs1);`
 | `pwcvt.h`(RV32), +
-  `pwcvtu.h`+`psext.w.h`(RV64)
+  `pwcvtu.wh`+`psext.w.h`(RV64)
 
 | `uint16x4_t __riscv_pwcvtu_u16x4(uint8x4_t rs1);`
-| `pwcvtu.b`
+| `pwcvtu.b`(RV32), +
+  `pwcvtu.wb`(RV64)
 
 | `uint32x2_t __riscv_pwcvtu_u32x2(uint16x2_t rs1);`
-| `pwcvtu.h`
+| `pwcvtu.h`(RV32), +
+  `pwcvtu.wh`(RV64)
 
 | `int16x4_t __riscv_pwcvth_i16x4(int8x4_t rs1);`
-| `pwcvth.b`
+| `pwcvth.b`(RV32), +
+  `pwcvth.wb`(RV64)
 
 | `uint16x4_t __riscv_pwcvth_u16x4(uint8x4_t rs1);`
-| `pwcvth.b`
+| `pwcvth.b`(RV32), +
+  `pwcvth.wb`(RV64)
 
 | `int32x2_t __riscv_pwcvth_i32x2(int16x2_t rs1);`
-| `pwcvth.h`
+| `pwcvth.h`(RV32), +
+  `pwcvth.wh`(RV64)
 
 | `uint32x2_t __riscv_pwcvth_u32x2(uint16x2_t rs1);`
-| `pwcvth.h`
+| `pwcvth.h`(RV32), +
+  `pwcvth.wh`(RV64)
 |===
 
 
@@ -2333,28 +2339,36 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | Instruction
 
 | `int8x4_t __riscv_pncvt_i8x4(int16x4_t rs1);`
-| `pncvt.b`
+| `pncvt.b`(RV32), +
+  `pncvt.wb`(RV64)
 
 | `uint8x4_t __riscv_pncvt_u8x4(uint16x4_t rs1);`
-| `pncvt.b`
+| `pncvt.b`(RV32), +
+  `pncvt.wb`(RV64)
 
 | `int16x2_t __riscv_pncvt_i16x2(int32x2_t rs1);`
-| `pncvt.h`
+| `pncvt.h`(RV32), +
+  `pncvt.wh`(RV64)
 
 | `uint16x2_t __riscv_pncvt_u16x2(uint32x2_t rs1);`
-| `pncvt.h`
+| `pncvt.h`(RV32), +
+  `pncvt.wh`(RV64)
 
 | `int8x4_t __riscv_pncvth_i8x4(int16x4_t rs1);`
-| `pncvth.b`
+| `pncvth.b`(RV32), +
+  `pncvth.wb`(RV64)
 
 | `uint8x4_t __riscv_pncvth_u8x4(uint16x4_t rs1);`
-| `pncvth.b`
+| `pncvth.b`(RV32), +
+  `pncvth.wb`(RV64)
 
 | `int16x2_t __riscv_pncvth_i16x2(int32x2_t rs1);`
-| `pncvth.h`
+| `pncvth.h`(RV32), +
+  `pncvth.wh`(RV64)
 
 | `uint16x2_t __riscv_pncvth_u16x2(uint32x2_t rs1);`
-| `pncvth.h`
+| `pncvth.h`(RV32), +
+  `pncvth.wh`(RV64)
 |===
 
 
@@ -2393,28 +2407,36 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | Instruction
 
 | `int8x4_t __riscv_punzipe_i8x4(int8x8_t rs1);`
-| `pncvt.b`
+| `pncvt.b`(RV32), +
+  `pncvt.wb`(RV64)
 
 | `int8x4_t __riscv_punzipo_i8x4(int8x8_t rs1);`
-| `pncvth.b`
+| `pncvth.b`(RV32), +
+  `pncvth.wb`(RV64)
 
 | `uint8x4_t __riscv_punzipe_u8x4(uint8x8_t rs1);`
-| `pncvt.b`
+| `pncvt.b`(RV32), +
+  `pncvt.wb`(RV64)
 
 | `uint8x4_t __riscv_punzipo_u8x4(uint8x8_t rs1);`
-| `pncvth.b`
+| `pncvth.b`(RV32), +
+  `pncvth.wb`(RV64)
 
 | `int16x2_t __riscv_punzipe_i16x2(int16x4_t rs1);`
-| `pncvt.h`
+| `pncvt.h`(RV32), +
+  `pncvt.wh`(RV64)
 
 | `int16x2_t __riscv_punzipo_i16x2(int16x4_t rs1);`
-| `pncvth.h`
+| `pncvth.h`(RV32), +
+  `pncvth.wh`(RV64)
 
 | `uint16x2_t __riscv_punzipe_u16x2(uint16x4_t rs1);`
-| `pncvt.h`
+| `pncvt.h`(RV32), +
+  `pncvt.wh`(RV64)
 
 | `uint16x2_t __riscv_punzipo_u16x2(uint16x4_t rs1);`
-| `pncvth.h`
+| `pncvth.h`(RV32), +
+  `pncvth.wh`(RV64)
 |===
 
 
@@ -2602,7 +2624,7 @@ l|
 uint16x4_t
 __riscv_pwaddu_u16x4(uint8x4_t rs1, uint8x4_t rs2);
 | `pwaddu.b`(RV32), +
-  `pwcvtu.b`\+`pwcvtu.b`+`padd.h`(RV64)
+  `pwcvtu.wb`\+`pwcvtu.wb`+`padd.h`(RV64)
 
 l|
 uint32x2_t
@@ -2626,13 +2648,13 @@ l|
 uint16x4_t
 __riscv_pwsubu_u16x4(uint8x4_t rs1, uint8x4_t rs2);
 | `pwsubu.b`(RV32), +
-  `pwcvtu.b`\+`pwcvtu.b`+`psub.h`(RV64)
+  `pwcvtu.wb`\+`pwcvtu.wb`+`psub.h`(RV64)
 
 l|
 uint32x2_t
 __riscv_pwsubu_u32x2(uint16x2_t rs1, uint16x2_t rs2);
 | `pwsubu.h`(RV32), +
-  `pwcvtu.h`\+`pwcvtu.h`+`psub.w`(RV64)
+  `pwcvtu.wh`\+`pwcvtu.wh`+`psub.w`(RV64)
 |===
 
 
@@ -2668,7 +2690,7 @@ __riscv_pwaddau_u16x4(uint16x4_t rd,
                       uint8x4_t rs1,
                       uint8x4_t rs2);
 | `pwaddau.b`(RV32), +
-  `pwcvtu.b`\+`pwcvtu.b`+`padd.h`+`padd.h`(RV64)
+  `pwcvtu.wb`\+`pwcvtu.wb`+`padd.h`+`padd.h`(RV64)
 
 l|
 uint32x2_t
@@ -2700,7 +2722,7 @@ __riscv_pwsubau_u16x4(uint16x4_t rd,
                       uint8x4_t rs1,
                       uint8x4_t rs2);
 | `pwsubau.b`(RV32), +
-  `pwcvtu.b`\+`pwcvtu.b`+`psub.h`+`padd.h`(RV64)
+  `pwcvtu.wb`\+`pwcvtu.wb`+`psub.h`+`padd.h`(RV64)
 
 l|
 uint32x2_t
@@ -2708,7 +2730,7 @@ __riscv_pwsubau_u32x2(uint32x2_t rd,
                       uint16x2_t rs1,
                       uint16x2_t rs2);
 | `pwsubau.h`(RV32), +
-  `pwcvtu.h`\+`pwcvtu.h`+`psub.w`+`padd.w`(RV64)
+  `pwcvtu.wh`\+`pwcvtu.wh`+`psub.w`+`padd.w`(RV64)
 |===
 
 
@@ -2724,31 +2746,31 @@ l|
 uint16x4_t
 __riscv_pwsll_s_u16x4(uint8x4_t rs1, unsigned shamt);
 | `pwslli.b`, `pwsll.bs`(RV32), +
-  `pwcvtu.b`\+`pslli.h`, +
-  `pwcvtu.b`+`psll.hs`(RV64)
+  `pwcvtu.wb`\+`pslli.h`, +
+  `pwcvtu.wb`+`psll.hs`(RV64)
 
 l|
 uint32x2_t
 __riscv_pwsll_s_u32x2(uint16x2_t rs1, unsigned shamt);
 | `pwslli.h`, `pwsll.hs`(RV32), +
-  `pwcvtu.h`\+`pslli.w`, +
-  `pwcvtu.h`+`psll.ws`(RV64)
+  `pwcvtu.wh`\+`pslli.w`, +
+  `pwcvtu.wh`+`psll.ws`(RV64)
 
 l|
 int16x4_t
 __riscv_pwsla_s_i16x4(int8x4_t rs1, unsigned shamt);
 | `pwslai.b`, `pwsla.bs`(RV32), +
-  `pwcvth.b`\+`psrai.h`, +
-  `pwcvth.b`+`pslli.h`, +
-  `pwcvtu.b`\+`psext.h.b`+`psll.hs`(RV64)
+  `pwcvth.wb`\+`psrai.h`, +
+  `pwcvth.wb`+`pslli.h`, +
+  `pwcvtu.wb`\+`psext.h.b`+`psll.hs`(RV64)
 
 l|
 int32x2_t
 __riscv_pwsla_s_i32x2(int16x2_t rs1, unsigned shamt);
 | `pwslai.h`, `pwsla.hs`(RV32), +
-  `pwcvth.h`\+`psrai.w`, +
-  `pwcvth.h`+`pslli.w`, +
-  `pwcvtu.h`\+`psext.w.h`+`psll.ws`(RV64)
+  `pwcvth.wh`\+`psrai.w`, +
+  `pwcvth.wh`+`pslli.w`, +
+  `pwcvtu.wh`\+`psext.w.h`+`psll.ws`(RV64)
 |===
 
 
@@ -4391,13 +4413,13 @@ l|
 int16x4_t
 __riscv_pwmulsu_i16x4(int8x4_t rs1, uint8x4_t rs2);
 | `pwmulsu.b`(RV32), +
-  `pwcvtu.b`\+`pwcvtu.b`+`pmulsu.h.b00`(RV64)
+  `pwcvtu.wb`\+`pwcvtu.wb`+`pmulsu.h.b00`(RV64)
 
 l|
 int32x2_t
 __riscv_pwmulsu_i32x2(int16x2_t rs1, uint16x2_t rs2);
 | `pwmulsu.h`(RV32), +
-  `pwcvtu.h`\+`pwcvtu.h`+`pmulsu.w.h00`(RV64)
+  `pwcvtu.wh`\+`pwcvtu.wh`+`pmulsu.w.h00`(RV64)
 |===
 
 
@@ -4433,7 +4455,7 @@ __riscv_pwmaccsu_i32x2(int32x2_t rd,
                        int16x2_t rs1,
                        uint16x2_t rs2);
 | `pwmaccsu.h`(RV32), +
-  `pwcvtu.h`\+`pwcvtu.h`+`zip16p`+`pmaccsu.w.h00`(RV64)
+  `pwcvtu.wh`\+`pwcvtu.wh`+`zip16p`+`pmaccsu.w.h00`(RV64)
 |===
 
 
