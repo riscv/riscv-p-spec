@@ -393,6 +393,15 @@ distance. As with widening instructions, the appearance of the narrowing
 operation in the name (NSRL, NCLIPR, NSRAR) is the indication that the
 first source operand is a register pair.
 
+==== RV64 word-sized conversion pseudo-instructions
+
+NOTE: The `.WB` and `.WH` suffixes are used for these RV64
+pseudo-instructions because the source or destination is a word-sized packed
+vector held in the low 32 bits of a 64-bit register. This avoids using the
+bare RV64 `PWCVT*` and `PNCVT*` names, leaving them available for possible
+future RV64 extensions that provide true register-pair widening or narrowing
+operations.
+
 ==== Double-wide packed-SIMD instructions
 
 In addition to widening and narrowing instructions, other double-wide
@@ -16708,13 +16717,6 @@ Pseudoinstructions::
 
 pwcvtu.wb _rd_, _rs1_ &#8594; zip8p _rd_, _rs1_, x0 +
 pwcvth.wb _rd_, _rs2_ &#8594; zip8p _rd_, x0, _rs2_
-
-NOTE: The `.WB` and `.WH` suffixes are used for these RV64
-pseudo-instructions because the source or destination is a word-sized packed
-vector held in the low 32 bits of a 64-bit register.  This avoids using the
-bare RV64 `PWCVT*` and `PNCVT*` names, leaving them available for possible
-future RV64 extensions that provide true register-pair widening or narrowing
-operations.
 
 Encoding::
 
