@@ -1371,6 +1371,10 @@ Mnemonic::
 
 padd.dw _rd_p_, _rs1_p_, _rs2_p_
 
+Pseudoinstructions::
+
+mvd _rd_p_, _rs_p_ &#8594; padd.dw _rd_p_, zero, _rs_p_
+
 Encoding::
 
 PADD.DW is encoded in the OP-IMM-32 major opcode using the double-wide
