@@ -4789,14 +4789,9 @@ These are convenience functions to allow bitwise and/or/xor/not on packed vector
 <<<
 === Packed Load
 
-Load intrinsics. These assume the pointer is aligned to the element
-size. If target CPU does not support unaligned scalar accesses and the compiler
-cannot prove the pointer is more aligned, this will be broken down into multiple
-loads.
-
-Compiler hints like `__builtin_assume_aligned` can help.
-
-* TODO: Do we need aligned load intrinsics?
+Packed load intrinsics work for arbitrarily aligned addresses. These intrinsics
+do not require the pointer to be aligned to the packed object size or to the
+element size.
 
 ==== 32-bit
 
@@ -4849,14 +4844,9 @@ Compiler hints like `__builtin_assume_aligned` can help.
 <<<
 === Packed Store
 
-Store intrinsics. These assume the pointer is aligned to the element
-size. If target CPU does not support unaligned scalar accesses and the compiler
-cannot prove the pointer is more aligned, this will be broken down into multiple
-stores.
-
-Compiler hints like `__builtin_assume_aligned` can help.
-
-* TODO: Do we need aligned store intrinsics?
+Packed store intrinsics work for arbitrarily aligned addresses. These
+intrinsics do not require the pointer to be aligned to the packed object size or
+to the element size.
 
 ==== 32-bit
 
