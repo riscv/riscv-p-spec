@@ -30,7 +30,6 @@ precede it.
 <<<
 == Scalar Intrinsics
 
-* TODO: Do we need intrinsics for MERGE?
 * TODO: Do we need intrinsics for ADDD or SUBD? Or can compiler figure it out?
 * TODO: Do we need intrinsics for ADDD or SUBD? Or can compiler figure it out?
 
@@ -264,6 +263,39 @@ and do not include the `u` in their type suffix.
   `pmsgtu.w`+`not`(RV64)
 |===
 
+
+<<<
+=== Merge
+
+==== 32-bit
+
+[cols="3,1"]
+|===
+| Prototype
+| Instruction
+
+| `int32_t __riscv_merge_i32(int32_t rs1, int32_t rs2, uint32_t rd);`
+| `merge`, `mvm`, `mvmn`
+
+| `uint32_t __riscv_merge_u32(uint32_t rs1, uint32_t rs2, uint32_t rd);`
+| `merge`, `mvm`, `mvmn`
+|===
+
+==== 64-bit
+
+[cols="3,1"]
+|===
+| Prototype
+| Instruction
+
+| `int64_t __riscv_merge_i64(int64_t rs1, int64_t rs2, uint64_t rd);`
+| `merge`, `mvm`, `mvmn`(RV64), +
+  2x `merge`, `mvm`, `mvmn`(RV32)
+
+| `uint64_t __riscv_merge_u64(uint64_t rs1, uint64_t rs2, uint64_t rd);`
+| `merge`, `mvm`, `mvmn`(RV64), +
+  2x `merge`, `mvm`, `mvmn`(RV32)
+|===
 
 <<<
 === Saturation
