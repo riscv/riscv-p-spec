@@ -314,32 +314,38 @@ and do not include the `u` in their type suffix.
 
 ==== 32-bit
 
-[cols="3,1"]
+[cols="3,1,1"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 | `int32_t __riscv_sati_i32(int32_t rs1, const unsigned width);`
 | `sati`(RV32), +
   `psati.w`(RV64)
+| 1 ≤ width ≤ 32
 
 | `uint32_t __riscv_usati_u32(int32_t rs1, const unsigned width);`
 | `usati`(RV32), +
   `pusati.w`(RV64)
+| 0 ≤ width ≤ 31
 |===
 
 ==== 64-bit (RV64 only)
 
-[cols="3,1"]
+[cols="3,1,1"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 | `int64_t __riscv_sati_i64(int64_t rs1, const unsigned width);`
 | `sati`
+| 1 ≤ width ≤ 64
 
 | `uint64_t __riscv_usati_u64(int64_t rs1, const unsigned width);`
 | `usati`
+| 0 ≤ width ≤ 63
 |===
 
 
@@ -1939,37 +1945,45 @@ Saturate every element to the specified width.
 
 ==== 32-bit
 
-[cols="4,1"]
+[cols="4,1,1"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 | `uint16x2_t __riscv_pusati_u16x2(int16x2_t rs1, const unsigned width);`
 | `pusati.h`
+| 0 ≤ width ≤ 15
 
 | `int16x2_t __riscv_psati_i16x2(int16x2_t rs1, const unsigned width);`
 | `psati.h`
+| 1 ≤ width ≤ 16
 |===
 
 
 ==== 64-bit
 
-[cols="4,1"]
+[cols="4,1,1"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 | `uint16x4_t __riscv_pusati_u16x4(int16x4_t rs1, const unsigned width);`
 | `pusati.h`(RV64), `pusati.dh`(RV32)
+| 0 ≤ width ≤ 15
 
 | `uint32x2_t __riscv_pusati_u32x2(int32x2_t rs1, const unsigned width);`
 | `pusati.w`(RV64), `pusati.dw`(RV32)
+| 0 ≤ width ≤ 31
 
 | `int16x4_t __riscv_psati_i16x4(int16x4_t rs1, const unsigned width);`
 | `psati.h`(RV64), `psati.dh`(RV32)
+| 1 ≤ width ≤ 16
 
 | `int32x2_t __riscv_psati_i32x2(int32x2_t rs1, const unsigned width);`
 | `psati.w`(RV64), `psati.dw`(RV32)
+| 1 ≤ width ≤ 32
 |===
 
 
@@ -4926,53 +4940,65 @@ and/or/xor. Index must be a constant.
 
 ==== 32-bit
 
-[cols="80%,20%"]
+[cols="68%,20%,12%"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 l|
 int8_t __riscv_pget_i8x4_i8(int8x4_t v, const unsigned idx);
 | `srli`+`sext.b`
+| 0 ≤ idx ≤ 3
 
 l|
 uint8_t __riscv_pget_u8x4_u8(uint8x4_t v, const unsigned idx);
 | `srli`+`zext.b`
+| 0 ≤ idx ≤ 3
 
 l|
 int16_t __riscv_pget_i16x2_i16(int16x2_t v, const unsigned idx);
 | `srli`+`sext.h`
+| 0 ≤ idx ≤ 1
 
 l|
 uint16_t __riscv_pget_u16x2_u16(uint16x2_t v, const unsigned idx);
 | `srli`+`zext.h`
+| 0 ≤ idx ≤ 1
 |===
 
 
 ==== 64-bit
 
-[cols="80%,20%"]
+[cols="68%,20%,12%"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 | `int8_t __riscv_pget_i8x8_i8(int8x8_t v, const unsigned idx);`
 | `srli`+`sext.b`
+| 0 ≤ idx ≤ 7
 
 | `uint8_t __riscv_pget_u8x8_u8(uint8x8_t v, const unsigned idx);`
 | `srli`+`zext.b`
+| 0 ≤ idx ≤ 7
 
 | `int16_t __riscv_pget_i16x4_i16(int16x4_t v, const unsigned idx);`
 | `srli`+`sext.h`
+| 0 ≤ idx ≤ 3
 
 | `uint16_t __riscv_pget_u16x4_u16(uint16x4_t v, const unsigned idx);`
 | `srli`+`zext.h`
+| 0 ≤ idx ≤ 3
 
 | `int32_t __riscv_pget_i32x2_i32(int32x2_t v, const unsigned idx);`
 | `srai`/`sext.w`(RV64), Free(RV32)
+| 0 ≤ idx ≤ 1
 
 | `uint32_t __riscv_pget_u32x2_u32(uint32x2_t v, const unsigned idx);`
 | `srli`/`zext.w`(RV64), Free(RV32)
+| 0 ≤ idx ≤ 1
 |===
 
 
@@ -4984,71 +5010,83 @@ ISA shifts and and/or/xor/merge. Index must be a constant.
 
 ==== 32-bit
 
-[cols="80%,20%"]
+[cols="68%,20%,12%"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 l|
 int8x4_t
 __riscv_pset_i8_i8x4(int8x4_t v, int8_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 3
 
 l|
 uint8x4_t
 __riscv_pset_u8_u8x4(uint8x4_t v, uint8_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 3
 
 l|
 int16x2_t
 __riscv_pset_i16_i16x2(int16x2_t v, int16_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 1
 
 l|
 uint16x2_t
 __riscv_pset_u16_u16x2(uint16x2_t v, uint16_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 1
 |===
 
 
 ==== 64-bit
 
-[cols="80%,20%"]
+[cols="68%,20%,12%"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 l|
 int8x8_t
 __riscv_pset_i8_i8x8(int8x8_t v, int8_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 7
 
 l|
 uint8x8_t
 __riscv_pset_u8_u8x8(uint8x8_t v, uint8_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 7
 
 l|
 int16x4_t
 __riscv_pset_i16_i16x4(int16x4_t v, int16_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 3
 
 l|
 uint16x4_t
 __riscv_pset_u16_u16x4(uint16x4_t v, uint16_t e, const unsigned idx);
 | Multiple
+| 0 ≤ idx ≤ 3
 
 l|
 int32x2_t
 __riscv_pset_i32_i32x2(int32x2_t v, int32_t e, const unsigned idx);
 | Multiple(RV64), +
   `mv`(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 uint32x2_t
 __riscv_pset_u32_u32x2(uint32x2_t v, uint32_t e, const unsigned idx);
 | Multiple(RV64), +
   `mv`(RV32)
+| 0 ≤ idx ≤ 1
 |===
 
 
@@ -5125,34 +5163,39 @@ __riscv_pjoin2_u32x2(uint32_t e0, uint32_t e1);
 Intrinsics to extract a 32-bit packed subvector from a 64-bit packed vector. The
 index must be a constant and specifies which subvector to extract.  0 - low, 1 - high.
 
-[cols="80%,20%"]
+[cols="68%,20%,12%"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 l|
 int8x4_t
 __riscv_pget_i8x8_i8x4(int8x8_t v, const unsigned idx);
 | `srli`, `zext.w`(RV64), +
   Free(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 uint8x4_t
 __riscv_pget_u8x8_u8x4(uint8x8_t v, const unsigned idx);
 | `srli`, `zext.w`(RV64), +
   Free(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 int16x2_t
 __riscv_pget_i16x4_i16x2(int16x4_t v, const unsigned idx);
 | `srli`, `zext.w`(RV64), +
   Free(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 uint16x2_t
 __riscv_pget_u16x4_u16x2(uint16x4_t v, const unsigned idx);
 | `srli`, `zext.w`(RV64), +
   Free(RV32)
+| 0 ≤ idx ≤ 1
 |===
 
 
@@ -5162,34 +5205,39 @@ __riscv_pget_u16x4_u16x2(uint16x4_t v, const unsigned idx);
 Intrinsics to insert a 32-bit packed subvector into a 64-bit packed vectors. The
 index must be a constant and specifies which subvector to insert.  0 - low, 1 - high.
 
-[cols="75%,25%"]
+[cols="63%,25%,12%"]
 |===
 | Prototype
 | Instruction
+| Constraint
 
 l|
 int8x8_t
 __riscv_pset_i8x4_i8x8(int8x8_t v, int8x4_t s,
                        const unsigned idx);
 | `pack`, `ppaireo.w`(RV64), `mv`(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 uint8x8_t
 __riscv_pset_u8x4_u8x8(uint8x8_t v, uint8x4_t s,
                        const unsigned idx);
 | `pack`, `ppaireo.w`(RV64), `mv`(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 int16x4_t
 __riscv_pset_i16x2_i16x4(int16x4_t v, int16x2_t s,
                          const unsigned idx);
 | `pack`, `ppaireo.w`(RV64), `mv`(RV32)
+| 0 ≤ idx ≤ 1
 
 l|
 uint16x4_t
 __riscv_pset_u16x2_u16x4(uint16x4_t v, uint16x2_t s,
                          const unsigned idx);
 | `pack`, `ppaireo.w`(RV64), `mv`(RV32)
+| 0 ≤ idx ≤ 1
 |===
 
 
