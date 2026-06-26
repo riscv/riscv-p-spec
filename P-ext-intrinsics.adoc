@@ -23,6 +23,18 @@ value with `i` meaning signed and `u` meaning unsigned. When this suffix is not
 sufficient to disambiguate the intrinsic, additional type suffixes may
 precede it.
 
+=== Explicit and implicit intrinsics
+
+This document currently defines the explicit, non-overloaded P-extension
+intrinsics. Explicit intrinsic names include type suffixes to identify the
+operand and result types, following the naming scheme described above.
+
+A future revision of this document is expected to define implicit, overloaded
+intrinsics following the same general model as the RISC-V vector intrinsic
+specification. The implicit forms are intended to provide shorter names for
+source-level use, while the explicit forms provide the underlying
+non-overloaded interfaces.
+
 === VXSAT
 
 * TODO: How to handle VXSAT?
