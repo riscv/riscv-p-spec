@@ -4801,18 +4801,17 @@ element size.
 | Instruction
 
 | `int8x4_t __riscv_pld_i8x4(int8_t *p);`
-| `lw` or multiple loads and packs
+| `lw`
 
 | `uint8x4_t __riscv_pld_u8x4(uint8_t *p);`
-| `lw` or multiple loads and packs
+| `lw`
 
 | `int16x2_t __riscv_pld_i16x2(int16_t *p);`
-| `lw` or multiple loads and packs
+| `lw`
 
 | `uint16x2_t __riscv_pld_u16x2(uint16_t *p);`
-| `lw` or multiple loads and packs
+| `lw`
 |===
-
 
 ==== 64-bit
 
@@ -4822,22 +4821,22 @@ element size.
 | Instruction
 
 | `int8x8_t __riscv_pld_i8x8(int8_t *p);`
-| `ld` or multiple loads and pack
+| `ld`
 
 | `uint8x8_t __riscv_pld_u8x8(uint8_t *p);`
-| `ld` or multiple loads and pack
+| `ld`
 
 | `int16x4_t __riscv_pld_i16x4(int16_t *p);`
-| `ld` or multiple loads and pack
+| `ld`
 
 | `uint16x4_t __riscv_pld_u16x4(uint16_t *p);`
-| `ld` or multiple loads and pack
+| `ld`
 
 | `int32x2_t __riscv_pld_i32x2(int32_t *p);`
-| `ld` or multiple loads and pack
+| `ld`
 
 | `uint32x2_t __riscv_pld_u32x2(uint32_t *p);`
-| `ld` or multiple loads and pack
+| `ld`
 |===
 
 
@@ -4856,16 +4855,16 @@ to the element size.
 | Instruction
 
 | `void __riscv_pst_i8x4(int8_t *p, int8x4_t v);`
-| `sw` or multiple stores and shifts
+| `sw`
 
 | `void __riscv_pst_u8x4(uint8_t *p, uint8x4_t v);`
-| `sw` or multiple stores and shifts
+| `sw`
 
 | `void __riscv_pst_i16x2(int16_t *p, int16x2_t v);`
-| `sw` or multiple stores and shifts
+| `sw`
 
 | `void __riscv_pst_u16x2(uint16_t *p, uint16x2_t v);`
-| `sw` or multiple stores and shifts
+| `sw`
 |===
 
 
@@ -4877,24 +4876,23 @@ to the element size.
 | Instruction
 
 | `void __riscv_pst_i8x8(int8_t *p, int8x8_t v);`
-| `sd` or multiple stores and shifts
+| `sd`
 
 | `void __riscv_pst_u8x8(uint8_t *p, uint8x8_t v);`
-| `sd` or multiple stores and shifts
+| `sd`
 
 | `void __riscv_pst_i16x4(int16_t *p, int16x4_t v);`
-| `sd` or multiple stores and shifts
+| `sd`
 
 | `void __riscv_pst_u16x4(uint16_t *p, uint16x4_t v);`
-| `sd` or multiple stores and shifts
+| `sd`
 
 | `void __riscv_pst_i32x2(int32_t *p, int32x2_t v);`
-| `sd` or multiple stores and shifts
+| `sd`
 
 | `void __riscv_pst_u32x2(uint32_t *p, uint32x2_t v);`
-| `sd` or multiple stores and shifts
+| `sd`
 |===
-
 
 <<<
 === Packed Element Extract
