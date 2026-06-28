@@ -2795,7 +2795,7 @@ __riscv_pwsubau_u32x2(uint32x2_t rd,
 <<<
 === Packed Widening Shift
 
-[cols="64%,36%"]
+[cols="63%,37%"]
 |===
 | Prototype
 | Instruction
@@ -2955,6 +2955,158 @@ __riscv_pnclipr_s_i16x2(int32x2_t rs1,
 | `pnclipri.h`, `pnclipr.hs`(RV32), +
   `psrari.w`\+`pnclipp.h`, +
   `andi`+`neg`\+`psshar.ws`+`pnclipp.h`(RV64)
+|===
+
+
+<<<
+=== Packed Narrowing Clip Pair
+
+==== 32-bit
+
+[cols="70%,30%"]
+|===
+| Prototype
+| Instruction
+
+l|
+int8x4_t
+__riscv_pnclipp_i8x4(int16x2_t rs1, int16x2_t rs2);
+| `mv`\+`mv`+`pnclipi.b`(RV32), +
+  `pnclipp.b`(RV64)
+
+l|
+uint8x4_t
+__riscv_pnclipup_u8x4(uint16x2_t rs1, uint16x2_t rs2);
+| `mv`\+`mv`+`pnclipiu.b`(RV32), +
+  `pnclipup.b`(RV64)
+
+l|
+int16x2_t
+__riscv_pnclipp_i16x2(int32_t rs1, int32_t rs2);
+| `mv`\+`mv`+`pnclipi.h`(RV32), +
+  `pnclipp.h`(RV64)
+
+l|
+uint16x2_t
+__riscv_pnclipup_u16x2(uint32_t rs1, uint32_t rs2);
+| `mv`\+`mv`+`pnclipiu.h`(RV32), +
+  `pnclipup.h`(RV64)
+|===
+
+
+==== 64-bit
+
+[cols="70%,30%"]
+|===
+| Prototype
+| Instruction
+
+l|
+int8x8_t
+__riscv_pnclipp_i8x8(int16x4_t rs1, int16x4_t rs2);
+| `pnclipp.b`(RV64), +
+  2x `pnclipi.b`(RV32)
+
+l|
+uint8x8_t
+__riscv_pnclipup_u8x8(uint16x4_t rs1, uint16x4_t rs2);
+| `pnclipup.b`(RV64), +
+  2x `pnclipiu.b`(RV32)
+
+l|
+int16x4_t
+__riscv_pnclipp_i16x4(int32x2_t rs1, int32x2_t rs2);
+| `pnclipp.h`(RV64), +
+  2x `pnclipi.h`(RV32)
+
+l|
+uint16x4_t
+__riscv_pnclipup_u16x4(uint32x2_t rs1, uint32x2_t rs2);
+| `pnclipup.h`(RV64), +
+  2x `pnclipiu.h`(RV32)
+
+l|
+int32x2_t
+__riscv_pnclipp_i32x2(int64_t rs1, int64_t rs2);
+| `pnclipp.w`(RV64), +
+  2x `nclipi`(RV32)
+
+l|
+uint32x2_t
+__riscv_pnclipup_u32x2(uint64_t rs1, uint64_t rs2);
+| `pnclipup.w`(RV64), +
+  2x `nclipiu`(RV32)
+|===
+
+
+<<<
+=== Packed Reverse
+
+Reverse the order of elements in a packed vector.
+
+==== 32-bit
+
+[cols="75%,25%"]
+|===
+| Prototype
+| Instruction
+
+l|
+int8x4_t __riscv_prev_i8x4(int8x4_t rs1);
+| `rev8`(RV32), +
+  `rev8`+`srli`(RV64)
+
+l|
+uint8x4_t __riscv_prev_u8x4(uint8x4_t rs1);
+| `rev8`(RV32), +
+  `rev8`+`srli`(RV64)
+
+l|
+int16x2_t __riscv_prev_i16x2(int16x2_t rs1);
+| `ppairoe.h`
+
+l|
+uint16x2_t __riscv_prev_u16x2(uint16x2_t rs1);
+| `ppairoe.h`
+|===
+
+
+==== 64-bit
+
+[cols="75%,25%"]
+|===
+| Prototype
+| Instruction
+
+l|
+int8x8_t __riscv_prev_i8x8(int8x8_t rs1);
+| `rev8`(RV64), +
+  2x `rev8`(RV32)
+
+l|
+uint8x8_t __riscv_prev_u8x8(uint8x8_t rs1);
+| `rev8`(RV64), +
+  2x `rev8`(RV32)
+
+l|
+int16x4_t __riscv_prev_i16x4(int16x4_t rs1);
+| `rev16`(RV64), +
+  2x `ppairoe.h`(RV32)
+
+l|
+uint16x4_t __riscv_prev_u16x4(uint16x4_t rs1);
+| `rev16`(RV64), +
+  2x `ppairoe.h`(RV32)
+
+l|
+int32x2_t __riscv_prev_i32x2(int32x2_t rs1);
+| `ppairoe.w`(RV64), +
+  2x `mv`(RV32)
+
+l|
+uint32x2_t __riscv_prev_u32x2(uint32x2_t rs1);
+| `ppairoe.w`(RV64), +
+  2x `mv`(RV32)
 |===
 
 
