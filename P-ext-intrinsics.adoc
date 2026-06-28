@@ -3026,7 +3026,7 @@ __riscv_pnclipup_u16x4(uint32x2_t rs1, uint32x2_t rs2);
   2x `pnclipiu.h`(RV32)
 
 l|
-int32x2_tk
+int32x2_t
 __riscv_pnclipp_i32x2(int64_t rs1, int64_t rs2);
 | `pnclipp.w`(RV64), +
   2x `nclipi`(RV32)
@@ -3101,12 +3101,12 @@ uint16x4_t __riscv_prev_u16x4(uint16x4_t rs1);
 l|
 int32x2_t __riscv_prev_i32x2(int32x2_t rs1);
 | `ppairoe.w`(RV64), +
-  2x `mv` (RV32)
+  2x `mv`(RV32)
 
 l|
 uint32x2_t __riscv_prev_u32x2(uint32x2_t rs1);
 | `ppairoe.w`(RV64), +
-  2x `mv` (RV32)
+  2x `mv`(RV32)
 |===
 
 
