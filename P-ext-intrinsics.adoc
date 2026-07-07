@@ -4967,14 +4967,15 @@ These are convenience functions to allow bitwise and/or/xor/not on packed vector
 <<<
 === Packed Load
 
-Load intrinsics. These assume the pointer is aligned to the element
-size. If target CPU does not support unaligned scalar accesses and the compiler
-cannot prove the pointer is more aligned, this will be broken down into multiple
-loads.
+Load intrinsics.
 
-Compiler hints like `__builtin_assume_aligned` can help.
-
-* TODO: Do we need aligned load intrinsics?
+These intrinsics allow the pointer to have arbitrary alignment rather than
+requiring strict element, word, or dword alignment. The P extension recommends
+implementations support efficient misaligned GPR loads, but does not
+require it. Compilers may split these intrinsics into multiple loads if
+the target CPU or profile is not known to support misaligned accesses and the
+compiler cannot be prove the access is aligned. Compiler hints like
+`__builtin_assume_aligned` may help.
 
 ==== 32-bit
 
@@ -5027,14 +5028,15 @@ Compiler hints like `__builtin_assume_aligned` can help.
 <<<
 === Packed Store
 
-Store intrinsics. These assume the pointer is aligned to the element
-size. If target CPU does not support unaligned scalar accesses and the compiler
-cannot prove the pointer is more aligned, this will be broken down into multiple
-stores.
+Store intrinsics.
 
-Compiler hints like `__builtin_assume_aligned` can help.
-
-* TODO: Do we need aligned store intrinsics?
+These intrinsics allow the pointer to have arbitrary alignment rather than
+requiring strict element, word, or dword alignment. The P extension recommends
+implementations support efficient misaligned GPR stores, but does not
+require it. Compilers may split these intrinsics into multiple stores if
+the target CPU or profile is not known to support misaligned accesses and the
+compiler cannot be prove the access is aligned. Compiler hints like
+`__builtin_assume_aligned` may help.
 
 ==== 32-bit
 

@@ -41,6 +41,16 @@ The P extension depends on Zmmul, Zba and Zbb extensions.
 
 The P extension is defined for RV32 (RV32E?) and RV64.
 
+== Loads and Stores
+
+The P extension does not define any new load or store instructions. Instead, it
+relies on the existing GPR load/store instructions defined in the base ISA.
+
+Misaligned accesses will be common in software using P extension instructions.
+It is therefore recommended (but not required) that implementations support
+misaligned accesses more efficiently than alternative code sequences that avoid
+the misalignment.
+
 ==  Access to the vxsat CSR
 
 The P extension defines instructions which can write to the vxsat CSR (introduced in the vector specification).
