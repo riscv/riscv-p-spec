@@ -4970,7 +4970,7 @@ These are convenience functions to allow bitwise and/or/xor/not on packed vector
 Load intrinsics.
 
 These intrinsics allow the pointer to have arbitrary alignment rather than
-requiring strict word or dword alignment. The P extension recommends
+requiring strict element, word, or dword alignment. The P extension recommends
 implementations support efficient misaligned GPR loads, but does not
 require it. Compilers may split these intrinsics into multiple loads if
 the target CPU or profile is not known to support misaligned accesses and the
@@ -5031,7 +5031,7 @@ compiler cannot be prove the access is aligned. Compiler hints like
 Store intrinsics.
 
 These intrinsics allow the pointer to have arbitrary alignment rather than
-requiring strict word or dword alignment. The P extension recommends
+requiring strict element, word, or dword alignment. The P extension recommends
 implementations support efficient misaligned GPR stores, but does not
 require it. Compilers may split these intrinsics into multiple stores if
 the target CPU or profile is not known to support misaligned accesses and the
