@@ -3404,7 +3404,7 @@ for i = 0 .. 1:
     a = signed(s1[(32*i+31):(32*i)])
     b = signed(s2[(32*i+31):(32*i)])
     res = a - b
-    if resi > 2^31 - 1:
+    if res > 2^31 - 1:
         vxsat = 1
         res = 2^31 - 1
     else if res < -(2^31):
