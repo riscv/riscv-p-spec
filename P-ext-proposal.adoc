@@ -3404,7 +3404,7 @@ for i = 0 .. 1:
     a = signed(s1[(32*i+31):(32*i)])
     b = signed(s2[(32*i+31):(32*i)])
     res = a - b
-    if resi > 2^31 - 1:
+    if res > 2^31 - 1:
         vxsat = 1
         res = 2^31 - 1
     else if res < -(2^31):
@@ -22000,7 +22000,7 @@ Operation::
 s = X[rs2] @ X[rs1]
 
 for i = 0 .. 3:
-    w = s[(32*i+32):(32*i)]
+    w = s[(32*i+31):(32*i)]
     if (w <_s 0xFFFF8000):
       d[(16*i+15):(16*i)] = 0x8000; vxsat = 1;
     else if (w >_s 0x00007FFF):
@@ -22056,7 +22056,7 @@ Operation::
 s = X[rs2] @ X[rs1]
 
 for i = 0 .. 1:
-    d = s[(64*i+64):(64*i)]
+    d = s[(64*i+63):(64*i)]
     if (d <_s 0xFFFFFFFF80000000):
       d[(32*i+31):(32*i)] = 0x80000000; vxsat = 1;
     else if (d >_s 0x000000007FFFFFFF):
@@ -22166,7 +22166,7 @@ Operation::
 s = X[rs2] @ X[rs1]
 
 for i = 0 .. 3:
-    w = s[(32*i+32):(32*i)]
+    w = s[(32*i+31):(32*i)]
     if (w >_u 0x0000FFFF):
       d[(16*i+15):(16*i)] = 0xFFFF; vxsat = 1;
     else:
@@ -22220,8 +22220,8 @@ Operation::
 s = X[rs2] @ X[rs1]
 
 for i = 0 .. 1:
-    d = s[(64*i+64):(64*i)]
-    else if (d >_u 0x00000000FFFFFFFF):
+    d = s[(64*i+63):(64*i)]
+    if (d >_u 0x00000000FFFFFFFF):
       d[(32*i+31):(32*i)] = 0xFFFFFFFF; vxsat = 1;
     else:
        d[(32*i+31):(32*i)] = d[31:0];
