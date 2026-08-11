@@ -2145,7 +2145,7 @@ Description::
 
 PSADD.B performs signed saturating addition on packed 8-bit byte elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [-128, 127]. Corresponds to KADD8 in the earlier P extension draft.
+the range [-128, 127].
 
 Operation::
 
@@ -2204,8 +2204,7 @@ Description::
 
 PSADD.H performs signed saturating addition on packed 16-bit halfword elements
 of `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped
-to the range [-32768, 32767]. Corresponds to KADD16 in the earlier P extension
-draft.
+to the range [-32768, 32767].
 
 Operation::
 
@@ -2264,8 +2263,7 @@ Description::
 
 PSADD.W performs signed saturating addition on packed 32-bit word elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [-(2^31^), 2^31^-1]. Corresponds to KADD32 in the earlier P extension
-draft.
+the range [-(2^31^), 2^31^-1].
 
 Operation::
 
@@ -2326,8 +2324,7 @@ Description::
 
 SADD performs signed saturating addition of the full XLEN-wide values in `rs1`
 and `rs2`, writing the result to `rd`. The result is clamped to the range
-[-(2^(XLEN-1)), 2^(XLEN-1)-1]. Corresponds to KADDW in the earlier P extension
-draft.
+[-(2^(XLEN-1)), 2^(XLEN-1)-1].
 
 Operation::
 
@@ -2589,7 +2586,7 @@ Description::
 
 PSADDU.B performs unsigned saturating addition on packed 8-bit byte elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [0, 255]. Corresponds to UKADD8 in the earlier P extension draft.
+the range [0, 255].
 
 Operation::
 
@@ -2645,8 +2642,7 @@ Description::
 
 PSADDU.H performs unsigned saturating addition on packed 16-bit halfword
 elements of `rs1` and `rs2`, writing the results to `rd`. Each element result is
-clamped to the range [0, 65535]. Corresponds to UKADD16 in the earlier P
-extension draft.
+clamped to the range [0, 65535].
 
 Operation::
 
@@ -2702,7 +2698,7 @@ Description::
 
 PSADDU.W performs unsigned saturating addition on packed 32-bit word elements of
 `rs1` and `rs2`, writing the results to `rd`. Each element result is clamped to
-the range [0, 2^32^-1]. Corresponds to UKADD32 in the earlier P extension draft.
+the range [0, 2^32^-1].
 
 Operation::
 
@@ -2759,7 +2755,7 @@ Description::
 
 SADDU performs unsigned saturating addition of the full XLEN-wide values in
 `rs1` and `rs2`, writing the result to `rd`. The result is clamped to the range
-[0, 2^XLEN-1]. Corresponds to UKADDW in the earlier P extension draft.
+[0, 2^XLEN-1].
 
 Operation::
 
