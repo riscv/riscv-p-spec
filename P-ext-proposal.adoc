@@ -14428,7 +14428,7 @@ shamt = X[rs2][7:0]
 sshamt = signed(shamt)
 
 for i = 0 .. (XLEN/32 - 1):
-    w  = s1[(32*i+32):(32*i)]
+    w  = s1[(32*i+31):(32*i)]
     xw = zero_extend(64, w)
 
     if sshamt < 0:
