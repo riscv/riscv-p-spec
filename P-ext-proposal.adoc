@@ -733,6 +733,13 @@ model, are used throughout the Sail code in this specification:
 * `<_s`, `<=_s`, `>_s`, `>=_s` — signed comparisons of bit-vectors.
 * `<_u`, `>_u` — unsigned comparisons of bit-vectors.
 
+The following shorthand notations are also used:
+
+* `zext_N(bv)` — shorthand for `zero_extend(N, bv)`; `N` is the width
+  of the resulting bit-vector.
+* `sext_N(bv)` — shorthand for `sign_extend(N, bv)`; `N` is the width
+  of the resulting bit-vector.
+
 Arithmetic right shifts are modeled by first sign-extending the operand
 to a larger size and then applying the logical right shift operator.
 
