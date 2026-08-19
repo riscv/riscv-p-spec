@@ -33179,7 +33179,8 @@ when operands are even-odd register pairs:
 ....
 {reg:[
     { bits: 7, name: 0x1b, attr: ['OP-IMM-32'] },
-    { bits: 5, name: 'rd' },
+    { bits: 1, name: 0x0 },
+    { bits: 4, name: 'rd_p' },
     { bits: 3, name: 0x6 },
     { bits: 1, name: 'x' },
     { bits: 4, name: 'rs1_p' },
