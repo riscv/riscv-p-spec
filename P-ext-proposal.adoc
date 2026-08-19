@@ -147,12 +147,12 @@ never overflow.)
 |===
 |*Name* |*Precedent* |*Function*
 |AADD |V |averaging addition, (a+b)/2
-|ABS |{nbsp} |absolute value (giving unsigned result, not saturated)
+|ABD |Zvabd |absolute difference [a -b]
+|ABS |Common |absolute value (giving unsigned result, not saturated)
 |ADD |Common |addition
-|ASUB |Common |averaging subtraction (a – b)/2
-|CLS |V |count leading redundant sign bits
-|CLZ |{nbsp} |count leading zero bits
-|DIF |Zbb |absolute difference [a -b]
+|ASUB |V |averaging subtraction (a – b)/2
+|CLS |{nbsp} |count leading redundant sign bits
+|CLZ |Zbb |count leading zero bits
 |MAX |Common |maximum
 |MIN |Common |minimum
 |MSEQ |V |mask-set if equal (result value is all 1s or all 0s)
@@ -614,7 +614,7 @@ Examples of this last rule are these instructions:
 
 PREDSUM.HS = P REDSUM .HS
 
-PDIFSUMAU.B = P {DIF + SUM + Accum} U .B
+PABDSUMAU.B = P {ABD + SUM + Accum} U .B
 
 __________________________________________________________________________
 
