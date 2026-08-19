@@ -17627,13 +17627,14 @@ Operation::
 [source,pseudocode]
 ----
 // 64-bit addition using register pairs
-s1 = X[rs1_p * 2 + 1] @ X[rs1_p * 2]   // 64-bit value from register pair
-s2 = X[rs2_p * 2 + 1] @ X[rs2_p * 2]   // 64-bit value from register pair
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+s2 = (rs2_p == 0) ? 0 : (X[2*rs2_p+1] @ X[2*rs2_p])
 
-d = s1 + s2                              // 64-bit addition, wraps modulo 2^64
+d = s1 + s2
 
-X[rd_p * 2]     = d[31:0]
-X[rd_p * 2 + 1] = d[63:32]
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
 ----
 
 
@@ -17683,13 +17684,14 @@ Operation::
 [source,pseudocode]
 ----
 // 64-bit subtract using register pairs
-s1 = X[rs1_p * 2 + 1] @ X[rs1_p * 2]   // 64-bit source from pair
-s2 = X[rs2_p * 2 + 1] @ X[rs2_p * 2]   // 64-bit source from pair
+s1 = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
+s2 = (rs2_p == 0) ? 0 : (X[2*rs2_p+1] @ X[2*rs2_p])
 
-d = s1 - s2                              // 64-bit subtraction
+d = s1 - s2
 
-X[rd_p * 2]     = d[31:0]
-X[rd_p * 2 + 1] = d[63:32]
+if (rd_p != 0):
+    X[rd_p*2]   = d[31:0]
+    X[rd_p*2+1] = d[63:32]
 ----
 
 
