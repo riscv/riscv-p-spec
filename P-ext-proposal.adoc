@@ -290,7 +290,7 @@ and compute each lane’s result entirely independently of the other
 lanes, all lanes in parallel. The names of instructions of this kind
 usually follow a common form:
 
-Basic packed-SIMD instructions: If a packed-SIMD instruction has
+*Basic packed-SIMD instructions*: If a packed-SIMD instruction has
 operands that are all single registers, and if the instruction’s
 computation has the simple structure that each lane (whether bytes,
 halfwords, or words) is entirely self-contained and not dependent on
@@ -330,7 +330,7 @@ not packed-SIMD.
 In some cases, the second operand of a packed-SIMD instruction is a
 scalar value that is applied equally to all lanes:
 
-Packed-SIMD instructions with a scalar second operand: If the second
+*Packed-SIMD instructions with a scalar second operand*: If the second
 operand of a packed-SIMD instruction is a scalar value from a register,
 and the instruction otherwise acts as basic packed-SIMD in all other
 respects, then the instruction name usually takes the form
