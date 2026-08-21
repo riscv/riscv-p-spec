@@ -763,17 +763,6 @@ operand fields:
   pair operands.
 * `uimm3`, `uimm4`, `uimm5`, `uimm6` — an immediate field.
 
-=== Register-Pair Notation for RV32
-
-For many double-wide P instructions in RV32, instruction behavior
-is described as equivalent to the execution of two corresponding
-single-wide instructions.
-
-In such descriptions, if `rd`, `rs1`, or `rs2` specifies an even-numbered
-register other than `x0`, the notation `rd+`, `rs1+`, or `rs2+` denotes
-the next higher-numbered (odd) register. If the register is `x0`, the
-corresponding `rd+`, `rs1+`, or `rs2+` also denotes `x0`.
-
 <<<
 == Detailed Instruction Descriptions
 
@@ -32863,8 +32852,9 @@ by equivalence to two single-wide instructions operating on the even register
 and the corresponding odd register.
 
 In the notation below, operands `rd`, `rs1`, and `rs2` are required to be even
-register numbers (with `x0` permitted). The meaning of `rd+`, `rs1+`, and `rs2+`
-is defined in <<sail-code-conventions>> (in particular, `x0+ = x0`).
+register numbers (with `x0` permitted). The notation `rd+`, `rs1+`, or `rs2+`
+denotes the next higher-numbered (odd) register. If the register is `x0`, the
+corresponding `rd+`, `rs1+`, or `rs2+` also denotes `x0`.
 
 ==== Double-wide immediate forms
 
