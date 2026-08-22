@@ -5,6 +5,7 @@
 :imagesdir: docs-resources/images
 :title-logo-image: image:risc-v_logo.png["RISC-V International Logo",pdfwidth=3.25in,align=center]
 :revnumber: 0.21-draft
+:xrefstyle: short
 
 This document is in the Development state. Assume anything can change.
 
@@ -80,10 +81,10 @@ here now to aid in understanding.
 === Element Operation Names
 
 The functions of many instructions include common elemental operations
-such as addition and multiplication. Table 1 lists names used for some
-of these elemental operations. In the simple cases where an instruction
-performs just a single elemental operation, the full instruction name
-may be just the elemental name, like ADD or CLZ. More complex
+such as addition and multiplication. <<standard-operations>> lists names
+used for some of these elemental operations. In the simple cases where an
+instruction performs just a single elemental operation, the full instruction
+name may be just the elemental name, like ADD or CLZ. More complex
 instructions may be defined as combinations of elemental operations,
 with instruction names that contain within them one or more elemental
 names. As noted in the table, some of these elemental names (AADD, CLZ,
@@ -102,8 +103,8 @@ __________________________________________________________________________
 
 Unlike the base RISC-V comparison instructions SEQ, SLT, etc., which
 have a result value of either 1 (true) or 0 (false), the mask-set
-operations of Table 1 are defined to set all bits of the result the
-same, either all ones for true, or all zeros for false.
+operations of <<standard-operations>> are defined to set all bits of the
+result the same, either all ones for true, or all zeros for false.
 
 __________________________________________________________________________
 
@@ -115,8 +116,8 @@ individual bit of a mask vector destination register to 1 for true or 0
 for false. These instructions can be said to set “all result bits the
 same” for each elemental comparison, taking into account that each
 elemental result is only a single bit. However, while this is true
-enough, the affinity of the mask-set operations of Table 1 with these
-V-extension instructions is really more in the purpose of the
+enough, the affinity of the mask-set operations of <<standard-operations>>
+with these V-extension instructions is really more in the purpose of the
 comparisons, to construct a mask vector for subsequent instructions
 (vector or packed-SIMD).
 ____
@@ -142,10 +143,13 @@ overflow (possible only when multiplying two minimum negative values
 maximum positive value, 2^w−1^ − 1. (In contrast, MULH and MULHR can
 never overflow.)
 
+[[standard-operations]]
 .Standard operations
 [width="100%",cols="17%,17%,66%",options="header",]
 |===
+
 |*Name* |*Precedent* |*Function*
+
 |AADD |V |averaging addition, (a+b)/2
 |ABD |Zvabd |absolute difference [a -b]
 |ABS |Common |absolute value (giving unsigned result, not saturated)
@@ -180,23 +184,17 @@ never overflow.)
 |SSLA |{nbsp} |saturating shift left, arithmetic (signed)
 |SSUB |V |saturating subtraction
 |SUB |Common |subtraction
-|===
 
-.Widening operations
-[width="100%",cols="17%,17%,66%",options="header",]
-|===
-|*Name* |*Precedent* |*Function*
+3+^| Widening Operations
+
 |WADD |V |widening addition (double-width result)
 |WMUL |V |widening multiplication (double-width result)
 |WSLA |{nbsp} |widening shift left, arithmetic (signed) (double-width result)
 |WSLL |{nbsp} |widening shift left, logical (double-width result)
 |WSUB |V |widening subtraction (double-width result)
-|===
 
-.Narrowing operations
-[width="100%",cols="17%,17%,66%",options="header",]
-|===
-|*Name* |*Precedent* |*Function*
+3+^| Narrowing Operations
+
 |NCLIP |V |narrowing shift right and saturate (double-width input)
 |NCLIPR |{nbsp} |NCLIP with rounding (double-width input)
 |NSRA |V |narrowing shift right, arithmetic (double-width input)
@@ -225,10 +223,10 @@ MHRACC = MHR (high multiplication with rounding, first op) + ACC
 WADDA = WADD (widening addition, first op) + A (accumulate, second op)
 
 The names used for the component operations in a chain may be taken
-verbatim from Table 1, or they may be alternative or abbreviated names
-following additional rules. In the two examples above, only one of the
-four component names is directly from Table 1 (‘WADD’, but not MHR’,
-‘ACC’, or ‘A’). The other three are explained below.
+verbatim from <<standard-operations>>, or they may be alternative or
+abbreviated names following additional rules. In the two examples above,
+only one of the four component names is directly from <<standard-operations>>
+(‘WADD’, but not MHR’, ‘ACC’, or ‘A’). The other three are explained below.
 
 *Abbreviation of MUL in chains*: When a chain of operations includes
 multiplication, ‘MUL’ is usually abbreviated as just ‘M’, so MUL, MULH,
@@ -653,9 +651,11 @@ addition or subtraction.
 There is a special category of instructions that swap pairs of elements
 of the second source operand and then perform additions in half the
 element positions and subtractions in the other half. All forms of these
-instructions are listed in Table 2.
+instructions are listed in <<add-sub-table>>.
 
 [width="100%",cols="18%,46%,36%",options="header",]
+[[add-sub-table]]
+.Packed-SIMD instructions that perform additions in half the element positions and subtractions in the other half. The element width <S> can be either ‘H’ or ‘W’.
 |===
 |Name |Function at odd positions |Function at even positions
 a|
