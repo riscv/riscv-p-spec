@@ -348,6 +348,7 @@ Instruction PADD.HS, for instance, adds the value of the second source
 register to each halfword of the first source register. For PSLL.BS and
 PSSHAR.WS, the shift distance is a scalar common to all lanes.
 
+[[widening-and-narrowing-packed-simd]]
 ==== Widening and narrowing packed-SIMD instructions
 
 Some packed-SIMD instructions have double-width operands held in
@@ -538,11 +539,12 @@ On the other hand, the multiplications done by PMQRACC.W.H00 are not
 described above as widening, because a “Q-format” multiplication, MULQR,
 performs a function different than a widening multiplication. The ‘MQR’
 in the instruction name explicitly indicates that the lower bits of the
-full 32-bit products will be shifted off, with rounding, as specified in
-Section 1. To perform the same function without shifting down the
-products, the correct instruction would be PMACC.W.H00, with MULQR
-(‘MQR’) replaced by MUL (‘M’, implicitly widening).
+full 32-bit products will be shifted off, with rounding, as specified for
+MULQR in <<standard-operations>>. To perform the same function without
+shifting down the products, the correct instruction would be PMACC.W.H00,
+with MULQR (‘MQR’) replaced by MUL (‘M’, implicitly widening).
 
+[[horizontal-add-sub]]
 ==== Packed-SIMD instructions with horizontal addition/subtraction
 
 A number of packed-SIMD instructions perform horizontal additions or
@@ -585,16 +587,17 @@ PM2WADD.H = P {widening Mul + 2-WADD} .H
 
 Concerning instruction PMQR2ADDA.H, it was noted earlier that “Q-format”
 multiplications are, by definition, not widening but rather always shift
-down their products as specified in Section 1. Consequently, the
-subsequent 32-bit horizontal additions and accumulates (2-ADD + Accum,
-at twice the element width of the source operands) have nearly 16 bits
-of headroom to avoid overflow.
+down their products as specified for MULQR in <<standard-operations>>.
+Consequently, the subsequent 32-bit horizontal additions and accumulates
+(2-ADD + Accum, at twice the element width of the source operands) have
+nearly 16 bits of headroom to avoid overflow.
 
 The last example, PM2WADD.H, involves two widenings of element width,
 the first implicitly due to the horizontal reduction by a factor of two,
 and the second explicitly due to the reduction additions themselves
 (WADD). Because the additions explicitly widen also, the destination
-operand is an even/odd register pair as explained in Section 3.3.
+operand is an even/odd register pair as explained in
+<<widening-and-narrowing-packed-simd>>.
 
 A different group of packed-SIMD instructions perform summations across
 all lanes without any multiplications.
@@ -645,8 +648,8 @@ PM2ADDA.HX = P {widening Mul + 2-ADD + Accum} .HX
 PM2SUB.HX = P {widening Mul + 2-SUB} .HX
 
 Apart from the ‘X’ at the end, the names of these two examples follow
-the rules specified in Section 3.6 for instructions with horizontal
-addition or subtraction.
+the rules for instructions with horizontal addition or subtraction specified
+in <<horizontal-add-sub>>.
 
 There is a special category of instructions that swap pairs of elements
 of the second source operand and then perform additions in half the
