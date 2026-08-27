@@ -1019,7 +1019,7 @@ Operation::
 
 [source,pseudocode]
 ----
-imm_h = sign_extend(16, imm[9:0] << 6)
+imm_h = zero_extend(16, imm[9:0]) << 6
 
 for i = 0 .. (XLEN/16 - 1):
     d[(16*i+15):(16*i)] = imm_h
@@ -1063,7 +1063,7 @@ Operation::
 
 [source,pseudocode]
 ----
-imm_w = sign_extend(32, imm[9:0] << 22)
+imm_w = zero_extend(32, imm[9:0]) << 22
 
 for i = 0 .. (XLEN/32 - 1):
     d[(32*i+31):(32*i)] = imm_w
@@ -1111,7 +1111,7 @@ Operation::
 
 [source,pseudocode]
 ----
-imm_h = sign_extend(16, imm[9:0] << 6)
+imm_h = zero_extend(16, imm[9:0]) << 6
 
 for i = 0 .. 3:
     d[(16*i+15):(16*i)] = imm_h
