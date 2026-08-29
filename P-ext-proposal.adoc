@@ -6236,7 +6236,7 @@ saturating add-subtract on packed 16-bit halfword pairs. Within each 32-bit
 word, the even (lower) halfword is computed as a signed saturating subtraction
 of the even (lower) halfword of `rs1` and the odd (upper) halfword of `rs2`,
 while the odd (upper) halfword is computed as a signed saturating addition of
-the odd (upper) halfword of `rs2` and the even (lower) halfword of `rs2`.
+the odd (upper) halfword of `rs1` and the even (lower) halfword of `rs2`.
 Results are clamped to the range [-2^15^, 2^15^-1]. Sets `vxsat` on saturation.
 This instruction is useful for complex number arithmetic.
 
@@ -6306,7 +6306,7 @@ PSAS.WX (Packed Saturating Add-Subtract Cross, Word) performs a cross saturating
 add-subtract on packed 32-bit word pairs. The even (lower) word is computed as a
 signed saturating subtraction of the even (lower) word of `rs1` and the odd
 (upper) word of `rs2`, while the odd (upper) word is computed as a signed
-saturating addition of the odd (upper) word of `rs2` and the even (lower)
+saturating addition of the odd (upper) word of `rs1` and the even (lower)
 word of `rs2`. Results are clamped to the range [-2^31^, 2^31^-1]. Sets `vxsat`
 on saturation. This instruction is useful for complex number arithmetic.
 
