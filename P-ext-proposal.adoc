@@ -33256,7 +33256,12 @@ extension that adds double-wide multiply instructions:
 If the Zkt extension is implemented, these instruction's timing is independent
 of the data values in _rs1_ and _rs2_.
 
-This section is still in progress.
+All instructions that write VXSAT are excluded. Averaging, count sign bits,
+maximum, minimum, reductions, and horizontal multiply-add are also excluded.
+
+The RV32 and RV64 columns below indicate the required XLEN for the instructions.
+There is no case where an instruction is supported for both XLEN values, but
+only part of Zkt for one of the XLen value.
 
 [%header,cols="^1,^1,4"]
 |===
