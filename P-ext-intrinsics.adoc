@@ -253,24 +253,24 @@ and do not include the `u` in their type suffix.
 | `uint32_t __riscv_msgtu_u32(uint32_t rs1, uint32_t rs2);`
 | `msgtu`(RV32), `pmsgtu.w`(RV64)
 
-| `uint32_t __riscv_mseq_i32_u32(int32_t rs1, int32_t rs2);`
+| `uint32_t __riscv_msne_i32_u32(int32_t rs1, int32_t rs2);`
 | `mseq`\+`not`(RV32), `pmseq.w`+`not`(RV64)
 
-| `uint32_t __riscv_mseq_u32_u32(uint32_t rs1, uint32_t rs2);`
+| `uint32_t __riscv_msne_u32_u32(uint32_t rs1, uint32_t rs2);`
 | `mseq`\+`not`(RV32), `pmseq.w`+`not`(RV64)
 
-| `uint32_t __riscv_mslt_u32(int32_t rs1, int32_t rs2);`
+| `uint32_t __riscv_msge_u32(int32_t rs1, int32_t rs2);`
 | `mslt`\+`not`(RV32), `pmslt.w`+`not`(RV64)
 
-| `uint32_t __riscv_msgt_u32(int32_t rs1, int32_t rs2);`
+| `uint32_t __riscv_msle_u32(int32_t rs1, int32_t rs2);`
 | `msgt`\+`not`(RV32), +
   `pmsgt.w`+`not`(RV64)
 
-| `uint32_t __riscv_msltu_u32(uint32_t rs1, uint32_t rs2);`
+| `uint32_t __riscv_msgeu_u32(uint32_t rs1, uint32_t rs2);`
 | `msltu`\+`not`(RV32), +
   `pmsltu.w`+`not`(RV64)
 
-| `uint32_t __riscv_msgtu_u32(uint32_t rs1, uint32_t rs2);`
+| `uint32_t __riscv_msleu_u32(uint32_t rs1, uint32_t rs2);`
 | `msgtu`\+`not`(RV32), +
   `pmsgtu.w`+`not`(RV64)
 |===
