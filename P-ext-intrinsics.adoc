@@ -4081,7 +4081,7 @@ l|
 int64_t
 __riscv_pmq2add_i32x2(int32x2_t rs1, int32x2_t rs2);
 | `pmq2add.w`(RV64), +
-  `mqwacc`(rd_p=x0)+`mqwacc`(RV32)
+  `mvd`(rs1_p=x0)\+`mqwacc`+`mqwacc`(RV32)
 
 l|
 int64_t
@@ -4105,7 +4105,7 @@ l|
 int64_t
 __riscv_pmqr2add_i32x2(int32x2_t rs1, int32x2_t rs2);
 | `pmqr2add.w`(RV64), +
-  `mqrwacc`(rd_p=x0)+`mqrwacc`(RV32)
+  `mvd`(rs1_p=x0)\+`mqrwacc`+`mqrwacc`(RV32)
 
 l|
 int64_t
