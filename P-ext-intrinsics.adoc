@@ -4665,7 +4665,7 @@ __riscv_pwmaccsu_i32x2(int32x2_t rd,
                        int16x2_t rs1,
                        uint16x2_t rs2);
 | `pwmaccsu.h`(RV32), +
-  `pwcvtu.wh`\+`pwcvtu.wh`+`zip16p`+`pmaccsu.w.h00`(RV64)
+  `pwcvtu.wh`\+`pwcvtu.wh`+`pmaccsu.w.h00`(RV64)
 |===
 
 
