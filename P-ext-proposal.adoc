@@ -11450,7 +11450,7 @@ RV32:
 s1 = X[rs1]
 n  = uimm5[4:0]
 
-maxval = ~(FFFF_FFFF << n)
+maxval = ~(0xFFFF_FFFF << n)
 
 if (s1 <_s 0):
     vxsat = 1
