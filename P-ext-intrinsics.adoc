@@ -367,11 +367,11 @@ and do not include the `u` in their type suffix.
 | `sshar`, `sslai`, `srari`(RV32), +
   `psshar.ws`, `psslai.w`, `psrari.w`(RV64)
 
-| `uint32_t __riscv_sshl_u32(int32_t rs1, int rs2);`
+| `uint32_t __riscv_sshl_u32(uint32_t rs1, int rs2);`
 | `sshl`(RV32), +
   `psshl.ws`(RV64)
 
-| `uint32_t __riscv_sshlr_u32(int32_t rs1, int rs2);`
+| `uint32_t __riscv_sshlr_u32(uint32_t rs1, int rs2);`
 | `sshlr`(RV32), +
   `psshlr.ws`(RV64)
 |===
