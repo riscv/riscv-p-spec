@@ -15858,7 +15858,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIRE.DB performs packed byte even-element packing on double-wide
+PPAIRE.DB performs packed byte even-element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -15918,7 +15918,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIRE.DH performs packed halfword even-element packing on double-wide
+PPAIRE.DH performs packed halfword even-element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16113,7 +16113,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIREO.DB performs packed byte even-odd element packing on double-wide
+PPAIREO.DB performs packed byte even-odd element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIREO.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16169,7 +16169,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIREO.DH performs packed halfword even-odd element packing on double-wide
+PPAIREO.DH performs packed halfword even-odd element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIREO.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16364,7 +16364,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIROE.DB performs packed byte odd-even element packing on double-wide
+PPAIROE.DB performs packed byte odd-even element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIROE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16420,7 +16420,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIROE.DH performs packed halfword odd-even element packing on double-wide
+PPAIROE.DH performs packed halfword odd-even element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIROE.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16616,7 +16616,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIRO.DB performs packed byte odd-element packing on double-wide
+PPAIRO.DB performs packed byte odd-element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRO.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16672,7 +16672,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIRO.DH performs packed halfword odd-element packing on double-wide
+PPAIRO.DH performs packed halfword odd-element pairing on double-wide
 (register-pair) operands. It is equivalent to two PPAIRO.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
