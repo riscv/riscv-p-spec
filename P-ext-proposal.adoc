@@ -15731,7 +15731,7 @@ pzext.h.b _rd_, _rs1_ &#8594; ppaire.b _rd_, _rs1_, x0
 
 Encoding::
 
-PPAIRE.B is encoded in the OP-32 major opcode with packed-byte pairing.
+PPAIRE.B is encoded in the OP-32 major opcode with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -15750,9 +15750,9 @@ PPAIRE.B is encoded in the OP-32 major opcode with packed-byte pairing.
 
 Description::
 
-The PPAIRE.B instruction forms packed 16-bit elements by pairing the low byte of each
-halfword element of `rs2` as the high byte with the low byte of the corresponding
-halfword element of `rs1` as the low byte.
+PPAIRE.B (Pack Pair Even Bytes) interleaves packed 8-bit byte element pairs.
+Within each 16-bit pair, the even (lower) byte comes from the even (lower) byte
+of `rs1`, while the odd (upper) byte comes from the even (lower) byte of `rs2`.
 
 Operation::
 
@@ -15762,9 +15762,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = b[7:0] @ a[7:0]
+    a_even = s1[(16*i+7):(16*i)]
+    b_even = s2[(16*i+7):(16*i)]
+    d[(16*i+7):(16*i)] = a_even
+    d[(16*i+15):(16*i+8)] = b_even
 
 X[rd] = d
 ----
@@ -15802,11 +15803,10 @@ On RV32, PPAIRE.H is a pseudoinstruction aliased to PACK.
 
 Description::
 
-PPAIRE.H (Pack Pair Even Halfwords) extracts the even (lower) halfword from
-each 32-bit word of `rs1` and `rs2`, and packs them together into the
-corresponding 32-bit word of `rd`. Within each 32-bit group, the lower halfword
-comes from `rs1` and the upper halfword comes from `rs2`. On RV32, this
-mnemonic is an alias for PACK.
+PPAIRE.H (Pack Pair Even Halfwords) interleaves packed 16-bit halfword element
+pairs. Within each 32-bit pair, the even (lower) halfword comes from the even
+(lower) halfword of `rs1`, while the odd (upper) halfword comes from the even
+(lower) halfword of `rs2`. On RV32, this mnemonic is an alias for PACK.
 
 Operation::
 
@@ -15816,9 +15816,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/32 - 1):
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[15:0]
+    a_even = s1[(32*i+15):(32*i)]
+    b_even = s2[(32*i+15):(32*i)]
+    d[(32*i+15):(32*i)] = a_even
+    d[(32*i+31):(32*i+16)] = b_even
 
 X[rd] = d
 ----
@@ -15859,7 +15860,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIRE.DB performs packed byte even-element packing on double-wide
+PPAIRE.DB performs packed byte even-element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -15874,9 +15875,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[7:0] @ s1_h[7:0]
+    a_even = s1[(16*i+7):(16*i)]
+    b_even = s2[(16*i+7):(16*i)]
+    d[(16*i+7):(16*i)] = a_even
+    d[(16*i+15):(16*i+8)] = b_even
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -15919,7 +15921,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIRE.DH performs packed halfword even-element packing on double-wide
+PPAIRE.DH performs packed halfword even-element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -15934,9 +15936,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[15:0]
+    a_even = s1[(32*i+15):(32*i)]
+    b_even = s2[(32*i+15):(32*i)]
+    d[(32*i+15):(32*i)] = a_even
+    d[(32*i+31):(32*i+16)] = b_even
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -15953,7 +15956,7 @@ ppaireo.b _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PPAIREO.B is encoded in the OP-32 major opcode with packed-byte pairing.
+PPAIREO.B is encoded in the OP-32 major opcode with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -15972,8 +15975,10 @@ PPAIREO.B is encoded in the OP-32 major opcode with packed-byte pairing.
 
 Description::
 
-The PPAIREO.B instruction pairs the high byte of each halfword element of `rs2` with
-the low byte of the corresponding halfword element of `rs1`, producing packed halfwords.
+PPAIREO.B (Pack Pair Even-Odd Bytes) interleaves packed 8-bit byte element
+pairs. Within each 16-bit pair, the even (lower) byte comes from the even
+(lower) byte of `rs1`, while the odd (upper) byte comes from the odd (upper)
+byte of `rs2`.
 
 Operation::
 
@@ -15983,9 +15988,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = b[15:8] @ a[7:0]
+    a_even = s1[(16*i+7):(16*i)]
+    b_odd = s2[(16*i+15):(16*i+8)]
+    d[(16*i+7):(16*i)] = a_even
+    d[(16*i+15):(16*i+8)] = b_odd
 
 X[rd] = d
 ----
@@ -16018,11 +16024,10 @@ PPAIREO.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIREO.H (Pack Pair Even-Odd Halfwords) extracts the even (lower) halfword
-from each 32-bit word of `rs1` and the odd (upper) halfword from each 32-bit
-word of `rs2`, and packs them together into the corresponding 32-bit word of
-`rd`. Within each 32-bit group, the lower halfword comes from the even position
-of `rs1` and the upper halfword comes from the odd position of `rs2`.
+PPAIREO.H (Pack Pair Even-Odd Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+even (lower) halfword of `rs1`, while the odd (upper) halfword comes from the
+odd (upper) halfword of `rs2`.
 
 Operation::
 
@@ -16032,9 +16037,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/32 - 1):
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[31:16] @ s1_w[15:0]
+    a_even = s1[(32*i+15):(32*i)]
+    b_odd = s2[(32*i+31):(32*i+16)]
+    d[(32*i+15):(32*i)] = a_even
+    d[(32*i+31):(32*i+16)] = b_odd
 
 X[rd] = d
 ----
@@ -16067,10 +16073,10 @@ PPAIREO.W is encoded in the OP-32 major opcode with packed word elements.
 
 Description::
 
-PPAIREO.W (Pack Pair Even-Odd Words) extracts the even (lower) 32-bit word from
-`rs1` and the odd (upper) 32-bit word from `rs2`, and packs them into `rd`. The
-lower word of the result comes from the even position of `rs1` and the upper word
-comes from the odd position of `rs2`.
+PPAIREO.W (Pack Pair Even-Odd Words) interleaves a packed 32-bit word element
+pair. Within the 32-bit pair, the even (lower) word comes from the even (lower)
+word of `rs1`, while the odd (upper) word comes from the odd (upper) word of
+`rs2`.
 
 Operation::
 
@@ -16079,7 +16085,8 @@ Operation::
 s1 = X[rs1]
 s2 = X[rs2]
 
-d = s2[63:32] @ s1[31:0]
+d[31:0] = s1[31:0]
+d[63:32] = s2[63:32]
 
 X[rd] = d
 ----
@@ -16116,7 +16123,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIREO.DB performs packed byte even-odd element packing on double-wide
+PPAIREO.DB performs packed byte even-odd element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIREO.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16131,9 +16138,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[15:8] @ s1_h[7:0]
+    a_even = s1[(16*i+7):(16*i)]
+    b_odd = s2[(16*i+15):(16*i+8)]
+    d[(16*i+7):(16*i)] = a_even
+    d[(16*i+15):(16*i+8)] = b_odd
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -16172,7 +16180,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIREO.DH performs packed halfword even-odd element packing on double-wide
+PPAIREO.DH performs packed halfword even-odd element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIREO.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16187,9 +16195,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[31:16] @ s1_w[15:0]
+    a_even = s1[(32*i+15):(32*i)]
+    b_odd = s2[(32*i+31):(32*i+16)]
+    d[(32*i+15):(32*i)] = a_even
+    d[(32*i+31):(32*i+16)] = b_odd
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -16206,7 +16215,7 @@ ppairoe.b _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PPAIROE.B is encoded in the OP-32 major opcode with packed-byte pairing.
+PPAIROE.B is encoded in the OP-32 major opcode with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -16225,8 +16234,10 @@ PPAIROE.B is encoded in the OP-32 major opcode with packed-byte pairing.
 
 Description::
 
-The PPAIROE.B instruction pairs the low byte of each halfword element of `rs2` with
-the high byte of the corresponding halfword element of `rs1`, producing packed halfwords.
+PPAIROE.B (Pack Pair Odd-Even Bytes) interleaves packed 8-bit byte element
+pairs. Within each 16-bit pair, the even (lower) byte comes from the odd
+(upper) byte of `rs1`, while the odd (upper) byte comes from the even (lower)
+byte of `rs2`.
 
 Operation::
 
@@ -16236,9 +16247,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = b[7:0] @ a[15:8]
+    a_odd = s1[(16*i+15):(16*i+8)]
+    b_even = s2[(16*i+7):(16*i)]
+    d[(16*i+7):(16*i)] = a_odd
+    d[(16*i+15):(16*i+8)] = b_even
 
 X[rd] = d
 ----
@@ -16271,11 +16283,10 @@ PPAIROE.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIROE.H (Pack Pair Odd-Even Halfwords) extracts the odd (upper) halfword from
-each 32-bit word of `rs1` and the even (lower) halfword from each 32-bit word
-of `rs2`, and packs them together into the corresponding 32-bit word of `rd`.
-Within each 32-bit group, the lower halfword comes from the odd position of
-`rs1` and the upper halfword comes from the even position of `rs2`.
+PPAIROE.H (Pack Pair Odd-Even Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+odd (upper) halfword of `rs1`, while the odd (upper) halfword comes from the
+even (lower) halfword of `rs2`.
 
 Operation::
 
@@ -16285,9 +16296,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/32 - 1):
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[31:16]
+    a_odd = s1[(32*i+31):(32*i+16)]
+    b_even = s2[(32*i+15):(32*i)]
+    d[(32*i+15):(32*i)] = a_odd
+    d[(32*i+31):(32*i+16)] = b_even
 
 X[rd] = d
 ----
@@ -16320,10 +16332,10 @@ PPAIROE.W is encoded in the OP-32 major opcode with packed word elements.
 
 Description::
 
-PPAIROE.W (Pack Pair Odd-Even Words) extracts the odd (upper) 32-bit word from
-`rs1` and the even (lower) 32-bit word from `rs2`, and packs them into `rd`. The
-lower word of the result comes from the odd position of `rs1` and the upper word
-comes from the even position of `rs2`.
+PPAIROE.W (Pack Pair Odd-Even Words) interleaves a packed 32-bit word element
+pair. Within the 32-bit pair, the even (lower) word comes from the odd (upper)
+word of `rs1`, while the odd (upper) word comes from the even (lower) word of
+`rs2`.
 
 Operation::
 
@@ -16332,7 +16344,8 @@ Operation::
 s1 = X[rs1]
 s2 = X[rs2]
 
-d = s2[31:0] @ s1[63:32]
+d[31:0] = s1[63:32]
+d[63:32] = s2[31:0]
 
 X[rd] = d
 ----
@@ -16369,7 +16382,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIROE.DB performs packed byte odd-even element packing on double-wide
+PPAIROE.DB performs packed byte odd-even element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIROE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16384,9 +16397,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[7:0] @ s1_h[15:8]
+    a_odd = s1[(16*i+15):(16*i+8)]
+    b_even = s2[(16*i+7):(16*i)]
+    d[(16*i+7):(16*i)] = a_odd
+    d[(16*i+15):(16*i+8)] = b_even
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -16425,7 +16439,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIROE.DH performs packed halfword odd-even element packing on double-wide
+PPAIROE.DH performs packed halfword odd-even element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIROE.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16440,9 +16454,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[15:0] @ s1_w[31:16]
+    a_odd = s1[(32*i+31):(32*i+16)]
+    b_even = s2[(32*i+15):(32*i)]
+    d[(32*i+15):(32*i)] = a_odd
+    d[(32*i+31):(32*i+16)] = b_even
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -16459,7 +16474,7 @@ ppairo.b _rd_, _rs1_, _rs2_
 
 Encoding::
 
-PPAIRO.B is encoded in the OP-32 major opcode with packed-byte pairing.
+PPAIRO.B is encoded in the OP-32 major opcode with packed byte elements.
 
 [wavedrom, ,svg]
 ....
@@ -16478,20 +16493,21 @@ PPAIRO.B is encoded in the OP-32 major opcode with packed-byte pairing.
 
 Description::
 
-The PPAIRO.B instruction pairs the high byte of each halfword element of `rs2` with
-the high byte of the corresponding halfword element of `rs1`, producing packed halfwords.
+PPAIRO.B (Pack Pair Odd Bytes) interleaves packed 8-bit byte element pairs.
+Within each 16-bit pair, the even (lower) byte comes from the odd (upper) byte
+of `rs1`, while the odd (upper) byte comes from the odd (upper) byte of `rs2`.
 
 Operation::
 
-[source,pseudocode]
-----
+[source,pseudocode] ----
 s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/16 - 1):
-    a = s1[(16*i+15):(16*i)]
-    b = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = b[15:8] @ a[15:8]
+    a_odd = s1[(16*i+15):(16*i+8)]
+    b_odd = s2[(16*i+15):(16*i+8)]
+    d[(16*i+7):(16*i)] = a_odd
+    d[(16*i+15):(16*i+8)] = b_odd
 
 X[rd] = d
 ----
@@ -16525,11 +16541,10 @@ PPAIRO.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIRO.H (Pack Pair Odd Halfwords) extracts the odd (upper) halfword from each
-32-bit word of `rs1` and `rs2`, and packs them together into the corresponding
-32-bit word of `rd`. Within each 32-bit group, the lower halfword comes from the
-odd position of `rs1` and the upper halfword comes from the odd position of
-`rs2`.
+PPAIRO.H (Pack Pair Odd-Even Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+odd (upper) halfword of `rs1`, while the odd (upper) halfword comes from the
+odd (upper) halfword of `rs2`.
 
 Operation::
 
@@ -16539,9 +16554,10 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 for i = 0 .. (XLEN/32 - 1):
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[31:16] @ s1_w[31:16]
+    a_odd = s1[(32*i+31):(32*i+16)]
+    b_odd = s2[(32*i+31):(32*i+16)]
+    d[(32*i+15):(32*i)] = a_odd
+    d[(32*i+31):(32*i+16)] = b_odd
 
 X[rd] = d
 ----
@@ -16574,9 +16590,9 @@ PPAIRO.W is encoded in the OP-32 major opcode with packed word elements.
 
 Description::
 
-PPAIRO.W (Pack Pair Odd Words) extracts the odd (upper) 32-bit word from both
-`rs1` and `rs2`, and packs them into `rd`. The lower word of the result comes
-from the odd position of `rs1` and the upper word comes from the odd position of
+PPAIRO.W (Pack Pair Odd Words) interleaves a packed 32-bit word element pair.
+Within the 32-bit pair, the even (lower) word comes from the odd (upper)
+word of `rs1`, while the odd (upper) word comes from the odd (upper) word of
 `rs2`.
 
 Operation::
@@ -16586,7 +16602,8 @@ Operation::
 s1 = X[rs1]
 s2 = X[rs2]
 
-d = s2[63:32] @ s1[63:32]
+d[31:0] = s1[63:32]
+d[63:32] = s2[63:32]
 
 X[rd] = d
 ----
@@ -16623,7 +16640,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIRO.DB performs packed byte odd-element packing on double-wide
+PPAIRO.DB performs packed byte odd-element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIRO.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16638,9 +16655,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 3:
-    s1_h = s1[(16*i+15):(16*i)]
-    s2_h = s2[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = s2_h[15:8] @ s1_h[15:8]
+    a_odd = s1[(16*i+15):(16*i+8)]
+    b_odd = s2[(16*i+15):(16*i+8)]
+    d[(16*i+7):(16*i)] = a_odd
+    d[(16*i+15):(16*i+8)] = b_odd
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -16679,7 +16697,7 @@ register-pair format with packed halfword elements.
 
 Description::
 
-PPAIRO.DH performs packed halfword odd-element packing on double-wide
+PPAIRO.DH performs packed halfword odd-element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIRO.H operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -16694,9 +16712,10 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 s2 = (rs2_p == 0) ? 0 : X[rs2_p*2+1] @ X[rs2_p*2]
 
 for i = 0 .. 1:
-    s1_w = s1[(32*i+31):(32*i)]
-    s2_w = s2[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = s2_w[31:16] @ s1_w[31:16]
+    a_odd = s1[(32*i+31):(32*i+16)]
+    b_odd = s2[(32*i+31):(32*i+16)]
+    d[(32*i+15):(32*i)] = a_odd
+    d[(32*i+31):(32*i+16)] = b_odd
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
