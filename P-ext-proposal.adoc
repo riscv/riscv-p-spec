@@ -15750,9 +15750,9 @@ PPAIRE.B is encoded in the OP-32 major opcode with packed byte elements.
 
 Description::
 
-PPAIRE.B (Pack Pair Even Bytes) interleaves byte elements from `rs1` and `rs2`.
-The even elements of the result come from the even elements of `rs1` and the odd
-elements of the result come from the even elements of `rs2`.
+PPAIRE.B (Pack Pair Even Bytes) interleaves packed 8-bit byte element pairs.
+Within each 16-bit pair, the even (lower) byte comes from the even (lower) byte
+of `rs1`, while the odd (upper) byte comes from the even (lower) byte of `rs2`.
 
 Operation::
 
@@ -15803,10 +15803,10 @@ On RV32, PPAIRE.H is a pseudoinstruction aliased to PACK.
 
 Description::
 
-PPAIRE.H (Pack Pair Even Halfwords) interleaves halfword elements from `rs1` and
-`rs2`. The even elements of the result come from the even elements of `rs1` and
-the odd elements of the result come from the even elements of `rs2`. On RV32,
-this mnemonic is an alias for PACK.
+PPAIRE.H (Pack Pair Even Halfwords) interleaves packed 16-bit halfword element
+pairs. Within each 32-bit pair, the even (lower) halfword comes from the even
+(lower) halfword of `rs1`, while the odd (upper) halfword comes from the even
+(lower) halfword of `rs2`. On RV32, this mnemonic is an alias for PACK.
 
 Operation::
 
@@ -15860,7 +15860,7 @@ register-pair format with packed byte elements.
 
 Description::
 
-PPAIRE.DB performs packed byte even-element interleav on double-wide
+PPAIRE.DB performs packed byte even-element interleave on double-wide
 (register-pair) operands. It is equivalent to two PPAIRE.B operations: one on
 the even registers and one on the odd registers of each pair. All three operands
 (`rd_p`, `rs1_p`, `rs2_p`) are register pairs and must specify even register
@@ -15975,9 +15975,10 @@ PPAIREO.B is encoded in the OP-32 major opcode with packed byte elements.
 
 Description::
 
-PPAIREO.B (Pack Pair Even-Odd Bytes) interleaves byte elements from `rs1` and
-`rs2`. The even elements of the result come from the even elements of `rs1` and
-the odd elements of the result come from the odd elements of `rs2`.
+PPAIREO.B (Pack Pair Even-Odd Bytes) interleaves packed 8-bit byte element
+pairs. Within each 16-bit pair, the even (lower) byte comes from the even
+(lower) byte of `rs1`, while the odd (upper) byte comes from the odd (upper)
+byte of `rs2`.
 
 Operation::
 
@@ -16023,9 +16024,10 @@ PPAIREO.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIREO.H (Pack Pair Even-Odd Halfwords) interleaves halfword elements from
-`rs1` and `rs2`. The even elements of the result come from the even elements of
-`rs1` and the odd elements of the result come from the odd elements of `rs2`.
+PPAIREO.H (Pack Pair Even-Odd Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+even (lower) halfword of `rs1`, while the odd (upper) halfword comes from the
+odd (upper) halfword of `rs2`.
 
 Operation::
 
@@ -16071,9 +16073,10 @@ PPAIREO.W is encoded in the OP-32 major opcode with packed word elements.
 
 Description::
 
-PPAIREO.W (Pack Pair Even-Odd Words) interleaves word elements from `rs1` and
-`rs2`. The even element of the result comes from the even element of `rs1` and
-the odd element of the result comes from the odd element of `rs2`.
+PPAIREO.W (Pack Pair Even-Odd Words) interleaves a packed 32-bit word element
+pair. Within the 32-bit pair, the even (lower) word comes from the even (lower)
+word of `rs1`, while the odd (upper) word comes from the odd (upper) word of
+`rs2`.
 
 Operation::
 
@@ -16231,9 +16234,10 @@ PPAIROE.B is encoded in the OP-32 major opcode with packed byte elements.
 
 Description::
 
-PPAIROE.B (Pack Pair Odd-Even Bytes) interleaves byte elements from `rs1` and
-`rs2`. The even elements of the result come from the odd elements of `rs1` and
-the odd elements of the result come from the even elements of `rs2`.
+PPAIROE.B (Pack Pair Odd-Even Bytes) interleaves packed 8-bit byte element
+pairs. Within each 16-bit pair, the even (lower) byte comes from the odd
+(upper) byte of `rs1`, while the odd (upper) byte comes from the even (lower)
+byte of `rs2`.
 
 Operation::
 
@@ -16279,9 +16283,10 @@ PPAIROE.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIROE.H (Pack Pair Odd-Even Halfwords) interleaves halfword elements from
-`rs1` and `rs2`. The even elements of the result come from the odd elements of
-`rs1` and the odd elements of the result come from the even elements of `rs2`.
+PPAIROE.H (Pack Pair Odd-Even Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+odd (upper) halfword of `rs1`, while the odd (upper) halfword comes from the
+even (lower) halfword of `rs2`.
 
 Operation::
 
@@ -16327,9 +16332,10 @@ PPAIROE.W is encoded in the OP-32 major opcode with packed word elements.
 
 Description::
 
-PPAIROE.W (Pack Pair Odd-Even Words) interleaves word elements from `rs1` and
-`rs2`. The even element of the result comes from the odd element of
-`rs1` and the odd element of the result comes from the even elements of `rs2`.
+PPAIROE.W (Pack Pair Odd-Even Words) interleaves a packed 32-bit word element
+pair. Within the 32-bit pair, the even (lower) word comes from the odd (upper)
+word of `rs1`, while the odd (upper) word comes from the even (lower) word of
+`rs2`.
 
 Operation::
 
@@ -16487,14 +16493,13 @@ PPAIRO.B is encoded in the OP-32 major opcode with packed byte elements.
 
 Description::
 
-PPAIRO.B (Pack Pair Odd Bytes) interleaves byte elements from `rs1` and `rs2`.
-The even elements of the result come from the odd elements of `rs1` and
-the odd elements of the result come from the odd elements of `rs2`.
+PPAIRO.B (Pack Pair Odd Bytes) interleaves packed 8-bit byte element pairs.
+Within each 16-bit pair, the even (lower) byte comes from the odd (upper) byte
+of `rs1`, while the odd (upper) byte comes from the odd (upper) byte of `rs2`.
 
 Operation::
 
-[source,pseudocode]
-----
+[source,pseudocode] ----
 s1 = X[rs1]
 s2 = X[rs2]
 
@@ -16536,9 +16541,10 @@ PPAIRO.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIRO.H (Pack Pair Odd Halfwords) interleaves halfword elements from `rs1` and
-`rs2`. The even elements of the result come from the odd elements of `rs1` and
-the odd elements of the result come from the odd elements of `rs2`.
+PPAIRO.H (Pack Pair Odd-Even Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+odd (upper) halfword of `rs1`, while the odd (upper) halfword comes from the
+odd (upper) halfword of `rs2`.
 
 Operation::
 
@@ -16584,9 +16590,10 @@ PPAIRO.W is encoded in the OP-32 major opcode with packed word elements.
 
 Description::
 
-PPAIRO.W (Pack Pair Odd Words) interleaves word elements from `rs1` and `rs2`.
-The even element of the result comes from the odd element of `rs1` and
-the odd element of the result comes from the odd element of `rs2`.
+PPAIRO.W (Pack Pair Odd Words) interleaves a packed 32-bit word element pair.
+Within the 32-bit pair, the even (lower) word comes from the odd (upper)
+word of `rs1`, while the odd (upper) word comes from the odd (upper) word of
+`rs2`.
 
 Operation::
 
