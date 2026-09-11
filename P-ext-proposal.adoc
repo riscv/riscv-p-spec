@@ -723,7 +723,11 @@ model, are used throughout the Sail code in this specification:
 * `zero_extend(size, bv)` — zero-extend a bit-vector to the given size.
 * `sign_extend(size, bv)` — sign-extend a bit-vector to the given size.
 * `<<` — logical left shift of a bit-vector.
-* `>>` — logical right shift of a bit-vector.
+* `>>` — logical right shift of a bit-vector, filling vacated bits with zeros.
+* `shift_bits_right_arith(bv, shamt)` — arithmetic right shift of a
+  bit-vector, filling vacated bits with copies of its most-significant bit.
+  The result has the same width as `bv`. The shift amount is non-negative;
+  an amount greater than or equal to the width produces all sign bits.
 * `<_s`, `<=_s`, `>_s`, `>=_s` — signed comparisons of bit-vectors.
 * `<_u`, `>_u` — unsigned comparisons of bit-vectors.
 
@@ -734,8 +738,17 @@ The following shorthand notations are also used:
 * `sext_N(bv)` — shorthand for `sign_extend(N, bv)`; `N` is the width
   of the resulting bit-vector.
 
-Arithmetic right shifts are modeled by first sign-extending the operand
-to a larger size and then applying the logical right shift operator.
+Arithmetic right shifts of bit-vectors use `shift_bits_right_arith`.
+Sign-extending a bit-vector, logically shifting it right, and extracting
+the low result bits is equivalent only when enough sign bits were added
+for the shift amount and the required result width. Sign extension alone
+does not change `>>` into an arithmetic shift.
+
+For integer operands in the pseudocode, `x << n` denotes multiplication
+by 2^n^, and `x >> n` denotes division by 2^n^ rounded toward negative
+infinity, for non-negative `n`. These operations produce integer results
+with no fixed bit-width. The function `to_bits(size, value)` converts an
+integer to a bit-vector of the specified width.
 
 === XLEN-Related Names
 
@@ -12264,7 +12277,7 @@ s1    = X[rs1]
 shamt = X[rs2][4:0]
 for i = 0 .. (XLEN/8 - 1):
     b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (sign_extend(40, b) >> shamt)[7:0]
+    d[(8*i+7):(8*i)] = shift_bits_right_arith(b, shamt)
 X[rd] = d
 ----
 
@@ -12308,7 +12321,7 @@ s1    = X[rs1]
 shamt = X[rs2][4:0]
 for i = 0 .. (XLEN/16 - 1):
     h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (sign_extend(48, h) >> shamt)[15:0]
+    d[(16*i+15):(16*i)] = shift_bits_right_arith(h, shamt)
 X[rd] = d
 ----
 
@@ -12356,7 +12369,7 @@ s1    = X[rs1]
 shamt = X[rs2][4:0]
 for i = 0 .. (XLEN/32 - 1):
     w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (sign_extend(64, w) >> shamt)[31:0]
+    d[(32*i+31):(32*i)] = shift_bits_right_arith(w, shamt)
 X[rd] = d
 ----
 
@@ -12409,8 +12422,8 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = X[rs2][4:0]
 
 for i = 0 .. 7:
-    a = signed(s1[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a >> shamt)[7:0]
+    a = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = shift_bits_right_arith(a, shamt)
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -12466,8 +12479,8 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = X[rs2][4:0]
 
 for i = 0 .. 3:
-    a = signed(s1[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a >> shamt)[15:0]
+    a = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = shift_bits_right_arith(a, shamt)
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -12523,8 +12536,8 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = X[rs2][4:0]
 
 for i = 0 .. 1:
-    a = signed(s1[(32*i+31):(32*i)])
-    d[(32*i+31):(32*i)] = (a >> shamt)[31:0]
+    a = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = shift_bits_right_arith(a, shamt)
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -13203,7 +13216,7 @@ s1    = X[rs1]
 shamt = uimm3[2:0]
 for i = 0 .. (XLEN/8 - 1):
     b = s1[(8*i+7):(8*i)]
-    d[(8*i+7):(8*i)] = (sign_extend(40, b) >> shamt)[7:0]
+    d[(8*i+7):(8*i)] = shift_bits_right_arith(b, shamt)
 X[rd] = d
 ----
 
@@ -13252,7 +13265,7 @@ s1    = X[rs1]
 shamt = uimm4[3:0]
 for i = 0 .. (XLEN/16 - 1):
     h = s1[(16*i+15):(16*i)]
-    d[(16*i+15):(16*i)] = (sign_extend(48, h) >> shamt)[15:0]
+    d[(16*i+15):(16*i)] = shift_bits_right_arith(h, shamt)
 X[rd] = d
 ----
 
@@ -13301,7 +13314,7 @@ s1    = X[rs1]
 shamt = uimm5[4:0]
 for i = 0 .. (XLEN/32 - 1):
     w = s1[(32*i+31):(32*i)]
-    d[(32*i+31):(32*i)] = (sign_extend(64, w) >> shamt)[31:0]
+    d[(32*i+31):(32*i)] = shift_bits_right_arith(w, shamt)
 X[rd] = d
 ----
 
@@ -13354,8 +13367,8 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = uimm3[2:0]          // 3-bit shift amount for bytes
 
 for i = 0 .. 7:
-    a = signed(s1[(8*i+7):(8*i)])
-    d[(8*i+7):(8*i)] = (a >> shamt)[7:0]
+    a = s1[(8*i+7):(8*i)]
+    d[(8*i+7):(8*i)] = shift_bits_right_arith(a, shamt)
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -13411,8 +13424,8 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = uimm4[3:0]          // 4-bit shift amount for halfwords
 
 for i = 0 .. 3:
-    a = signed(s1[(16*i+15):(16*i)])
-    d[(16*i+15):(16*i)] = (a >> shamt)[15:0]
+    a = s1[(16*i+15):(16*i)]
+    d[(16*i+15):(16*i)] = shift_bits_right_arith(a, shamt)
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -13468,8 +13481,8 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = uimm5[4:0]          // 5-bit shift amount for words
 
 for i = 0 .. 1:
-    a = signed(s1[(32*i+31):(32*i)])
-    d[(32*i+31):(32*i)] = (a >> shamt)[31:0]
+    a = s1[(32*i+31):(32*i)]
+    d[(32*i+31):(32*i)] = shift_bits_right_arith(a, shamt)
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -13522,7 +13535,7 @@ if (sshamt < 0):
     if (sshamt <= -64):
         X[rd] = xs1[127:64]
     else:
-        X[rd] = (xs1 >> (0 - shamt)[5:0])[63:0]
+        X[rd] = shift_bits_right_arith(xs1, (0 - shamt)[5:0])[63:0]
 else:
     if (sshamt >= 64):
         X[rd] = 0
@@ -13638,7 +13651,7 @@ for i = 0 .. (XLEN/16 - 1):
         if sshamt <= -16:
             r = xh[31:16]
         else
-            r = (xh >> (0 - shamt)[3:0])[15:0]
+            r = shift_bits_right_arith(xh, (0 - shamt)[3:0])[15:0]
     else:
         // shift left with signed saturation to 16-bit range
         if sshamt >= 16:
@@ -13711,7 +13724,7 @@ for i = 0 .. (XLEN/32 - 1):
         if sshamt <= -32:
             r = xw[63:32]
         else
-            r = (xw >> (0 - shamt)[4:0])[31:0]
+            r = shift_bits_right_arith(xw, (0 - shamt)[4:0])[31:0]
     else:
         // shift left with signed saturation to 32-bit range
         if sshamt >= 32:
@@ -13778,7 +13791,7 @@ if sshamt < 0:
     if sshamt <= -32:
         X[rd] = xs1[63:32]
     else
-        X[rd] = (xs1 >> (0 - shamt)[4:0])[31:0]
+        X[rd] = shift_bits_right_arith(xs1, (0 - shamt)[4:0])[31:0]
 else:
     shx = (sshamt >= 32) ? (s1 @ 0x00000000)
                          : (xs1 << shamt[4:0])
@@ -13851,7 +13864,7 @@ for i = 0 .. 3:
     a = signed(s1[(16*i+15):(16*i)])
     if sshamt < 0:
         // Right shift
-        do[(16*i+15):(16*i)] = (a >> (-sshamt))[15:0]
+        do[(16*i+15):(16*i)] = shift_bits_right_arith(to_bits(16, a), -sshamt)
     else:
         // Left shift with saturation
         result = a << sshamt
@@ -13925,7 +13938,7 @@ for i = 0 .. 1:
     a = signed(s1[(32*i+31):(32*i)])
     if sshamt < 0:
         // Right shift
-        d[(32*i+31):(32*i)] = (a >> (-sshamt))[31:0]
+        d[(32*i+31):(32*i)] = shift_bits_right_arith(to_bits(32, a), -sshamt)
     else:
         // Left shift with saturation
         result = a << sshamt
@@ -13992,7 +14005,7 @@ for i = 0 .. (XLEN/16 - 1):
         // arithmetic right shift with rounding
         x  = sign_extend(32, h) @ 0b0          // 33-bit
         y  = (sshamt <= -16) ? x[32:16]
-                             : (x >> (0 - shamt)[3:0])[16:0]
+                             : shift_bits_right_arith(x, (0 - shamt)[3:0])[16:0]
         r  = (y + 1)[16:1]
     else:
         // shift left with signed saturation to 16-bit range
@@ -14062,7 +14075,7 @@ for i = 0 .. (XLEN/32 - 1):
         // arithmetic right shift with rounding
         x  = sign_extend(64, w) @ 0b0          // 65-bit
         y  = (sshamt <= -32) ? x[64:32]
-                             : (x >> (0 - shamt)[4:0])[32:0]
+                             : shift_bits_right_arith(x, (0 - shamt)[4:0])[32:0]
         r  = (y + 1)[32:1]
     else:
         // shift left with signed saturation to 32-bit range
@@ -14128,7 +14141,7 @@ if sshamt < 0:
     // arithmetic right shift with rounding
     x  = sign_extend(64, s1) @ 0b0            // 65-bit
     y  = (sshamt <= -32) ? x[64:32]
-                         : (x >> (0 - shamt)[4:0])[32:0]
+                         : shift_bits_right_arith(x, (0 - shamt)[4:0])[32:0]
     X[rd] = (y + 1)[32:1]
 else:
     // shift left with signed saturation to 32-bit range
@@ -14204,9 +14217,9 @@ for i = 0 .. 3:
     a = signed(s1[(16*i+15):(16*i)])
     if sshamt < 0:
         // Right shift with rounding
-        xa = a << 1
-        shifted = xa >> (-sshamt)
-        d[(16*i+15):(16*i)] = ((shifted + 1) >> 1)[15:0]
+        xa = to_bits(16, a) @ 0b0
+        shifted = shift_bits_right_arith(xa, -sshamt)
+        d[(16*i+15):(16*i)] = (shifted + 1)[16:1]
     else:
         // Left shift with saturation
         result = a << sshamt
@@ -14281,9 +14294,9 @@ for i = 0 .. 1:
     a = signed(s1[(32*i+31):(32*i)])
     if sshamt < 0:
         // Right shift with rounding
-        xa = a << 1
-        shifted = xa >> (-sshamt)
-        d[(32*i+31):(32*i)] = ((shifted + 1) >> 1)[31:0]
+        xa = to_bits(32, a) @ 0b0
+        shifted = shift_bits_right_arith(xa, -sshamt)
+        d[(32*i+31):(32*i)] = (shifted + 1)[32:1]
     else:
         // Left shift with saturation
         result = a << sshamt
@@ -15347,7 +15360,7 @@ if (sshamt < 0):
     if (sshamt <= -64):
         shx = xs1[128:64]
     else:
-        shx = (xs1 >> (0 - shamt)[5:0])[64:0]
+        shx = shift_bits_right_arith(xs1, (0 - shamt)[5:0])[64:0]
     X[rd] = (shx + 1)[64:1]
 else:
     if (sshamt >= 64):
@@ -15458,7 +15471,7 @@ shamt = uimm4[3:0]
 for i = 0 .. (XLEN/16 - 1):
     h = s1[(16*i+15):(16*i)]
     // Append rounding bit, shift, then extract rounded result
-    shx[(16+1):0] = ((sign_extend(48, h) @ 0b0) >> shamt)[(16+1):0]
+    shx = shift_bits_right_arith(h @ 0b0, shamt)
     d[(16*i+15):(16*i)] = (shx + 1)[16:1]
 X[rd] = d
 ----
@@ -15509,7 +15522,7 @@ shamt = uimm5[4:0]
 for i = 0 .. (XLEN/32 - 1):
     w = s1[(32*i+31):(32*i)]
     // Append rounding bit, shift, then extract rounded result
-    shx[(32+1):0] = ((sign_extend(64, w) @ 0b0) >> shamt)[(32+1):0]
+    shx = shift_bits_right_arith(w @ 0b0, shamt)
     d[(32*i+31):(32*i)] = (shx + 1)[32:1]
 X[rd] = d
 ----
@@ -15585,7 +15598,7 @@ if shamt == 0:
     d = a
 else:
     // Append rounding bit, shift, then extract rounded result
-    shx[(XLEN+1):0] = ((sign_extend(2*XLEN, a) @ 0b0) >> shamt)[(XLEN+1):0]
+    shx = shift_bits_right_arith(a @ 0b0, shamt)
     d = (shx + 1)[XLEN:1]
 
 X[rd] = d
@@ -15641,12 +15654,12 @@ s1 = (rs1_p == 0) ? 0 : X[rs1_p*2+1] @ X[rs1_p*2]
 shamt = uimm4[3:0]          // 4-bit shift amount for halfwords
 
 for i = 0 .. 3:
-    a = signed(s1[(16*i+15):(16*i)])
+    a = s1[(16*i+15):(16*i)]
     if shamt == 0:
         d[(16*i+15):(16*i)] = a[15:0]
     else:
         round = a[shamt-1]
-        d[(16*i+15):(16*i)] = ((a >> shamt) + round)[15:0]
+        d[(16*i+15):(16*i)] = (shift_bits_right_arith(a, shamt) + round)[15:0]
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -15710,7 +15723,7 @@ for i = 0 .. 1:
         d[(32*i+31):(32*i)] = w
     else:
         round = w[shamt-1]
-        d[(32*i+31):(32*i)] = (signed(w) >> shamt) + round
+        d[(32*i+31):(32*i)] = shift_bits_right_arith(w, shamt) + round
 
 if (rd_p != 0):
     X[rd_p*2]   = d[31:0]
@@ -19887,7 +19900,7 @@ shamt = uimm4[3:0]
 
 for i = 0 .. 3:
     h = s1[(16*i+15):(16*i)]
-    d[(8*i+7):(8*i)] = (sext_32(h) >> shamt)[7:0]
+    d[(8*i+7):(8*i)] = shift_bits_right_arith(h, shamt)[7:0]
 
 X[rd] = d
 ----
@@ -19937,8 +19950,8 @@ Operation::
 s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
 shamt = uimm5[4:0]
 
-d[15:0]  = (sext_48(s1[31:0])  >> shamt)[15:0]
-d[31:16] = (sext_48(s1[63:32]) >> shamt)[15:0]
+d[15:0]  = shift_bits_right_arith(s1[31:0], shamt)[15:0]
+d[31:16] = shift_bits_right_arith(s1[63:32], shamt)[15:0]
 
 X[rd] = d
 ----
@@ -19984,7 +19997,7 @@ Operation::
 ----
 s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
 shamt = uimm6[5:0]
-X[rd] = (sext_96(s1) >> shamt)[31:0]
+X[rd] = shift_bits_right_arith(s1, shamt)[31:0]
 ----
 
 
@@ -20031,7 +20044,7 @@ shamt = X[rs2][4:0]
 
 for i = 0 .. 3:
     h = s1[(16*i+15):(16*i)]
-    d[(8*i+7):(8*i)] = (sext_32(h) >> shamt)[7:0]
+    d[(8*i+7):(8*i)] = shift_bits_right_arith(h, shamt)[7:0]
 
 X[rd] = d
 ----
@@ -20079,8 +20092,8 @@ Operation::
 s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
 shamt = X[rs2][4:0]
 
-d[15:0]  = (sext_48(s1[31:0])  >> shamt)[15:0]
-d[31:16] = (sext_48(s1[63:32]) >> shamt)[15:0]
+d[15:0]  = shift_bits_right_arith(s1[31:0], shamt)[15:0]
+d[31:16] = shift_bits_right_arith(s1[63:32], shamt)[15:0]
 
 X[rd] = d
 ----
@@ -20125,7 +20138,7 @@ Operation::
 ----
 s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
 shamt = X[rs2][5:0]
-X[rd] = (sext_96(s1) >> shamt)[31:0]
+X[rd] = shift_bits_right_arith(s1, shamt)[31:0]
 ----
 
 
@@ -20174,8 +20187,8 @@ shamt = uimm4[3:0]
 
 for i = 0 .. 3:
     h  = s1[(16*i+15):(16*i)]
-    // Compute rounded arithmetic shift: ( (h << 1) >> shamt + 1 ) >> 1
-    shx = ((sext_32(h) @ 0b0) >> shamt)[8:0]
+    // Append a rounding bit, shift arithmetically, then add 1 and drop the LSB
+    shx = shift_bits_right_arith(h @ 0b0, shamt)[8:0]
     d[(8*i+7):(8*i)] = (shx + 1)[8:1]
 
 X[rd] = d
@@ -20226,7 +20239,7 @@ shamt = uimm5[4:0]
 
 for i = 0 .. 1:
     w   = s1[(32*i+31):(32*i)]
-    shx = ((sext_48(w) @ 0b0) >> shamt)[16:0]
+    shx = shift_bits_right_arith(w @ 0b0, shamt)[16:0]
     d[(16*i+15):(16*i)] = (shx + 1)[16:1]
 
 X[rd] = d
@@ -20273,7 +20286,7 @@ Operation::
 s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
 shamt = uimm6[5:0]
 
-shx = ((sext_96(s1) @ 0b0) >> shamt)[32:0]
+shx = shift_bits_right_arith(s1 @ 0b0, shamt)[32:0]
 X[rd] = (shx + 1)[32:1]
 ----
 
@@ -20321,7 +20334,7 @@ shamt = X[rs2][4:0]
 
 for i = 0 .. 3:
     h  = s1[(16*i+15):(16*i)]
-    shx = ((sext_32(h) @ 0b0) >> shamt)[8:0]
+    shx = shift_bits_right_arith(h @ 0b0, shamt)[8:0]
     d[(8*i+7):(8*i)] = (shx + 1)[8:1]
 
 X[rd] = d
@@ -20371,7 +20384,7 @@ shamt = X[rs2][4:0]
 
 for i = 0 .. 1:
     w   = s1[(32*i+31):(32*i)]
-    shx = ((sext_48(w) @ 0b0) >> shamt)[16:0]
+    shx = shift_bits_right_arith(w @ 0b0, shamt)[16:0]
     d[(16*i+15):(16*i)] = (shx + 1)[16:1]
 
 X[rd] = d
@@ -20418,7 +20431,7 @@ Operation::
 s1    = (rs1_p == 0) ? 0 : (X[2*rs1_p+1] @ X[2*rs1_p])
 shamt = X[rs2][5:0]
 
-shx = ((sext_96(s1) @ 0b0) >> shamt)[32:0]
+shx = shift_bits_right_arith(s1 @ 0b0, shamt)[32:0]
 X[rd] = (shx + 1)[32:1]
 ----
 
@@ -20474,7 +20487,7 @@ shamt = uimm4[3:0]
 
 for i = 0 .. 3:
     h   = s1[(16*i+15):(16*i)]                  // 16-bit lane
-    shx = (sext_32(h) >> shamt)[15:0]           // arithmetic shift, keep 16 bits
+    shx = shift_bits_right_arith(h, shamt)  // 16-bit arithmetic result
 
     if (shx <_s 0xFF80):
         vxsat = 1
@@ -20541,7 +20554,7 @@ shamt = uimm5[4:0]
 
 for i = 0 .. 1:
     s1_w = s1[(32*i+31):(32*i)]
-    shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
+    shx  = shift_bits_right_arith(s1_w, shamt)  // 32-bit arithmetic result
     if (shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
     else if (shx >_s 0x00007FFF):
@@ -20600,7 +20613,7 @@ Operation::
 s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
 shamt = uimm6[5:0]
 
-shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
+shx = shift_bits_right_arith(s1, shamt)  // 64-bit arithmetic result
 
 if (shx <_s 0xFFFFFFFF80000000):
     X[rd] = 0x80000000; vxsat = 1
@@ -20661,7 +20674,7 @@ shamt = X[rs2][4:0]
 
 for i = 0 .. 3:
     s1_h = s1[(16*i+15):(16*i)]
-    shx  = sign_extend(48, s1_h) >> shamt    // arithmetic shift, take low 16 bits
+    shx  = shift_bits_right_arith(s1_h, shamt)  // 16-bit arithmetic result
     if (shx <_s 0xFF80):
         d[(8*i+7):(8*i)] = 0x80; vxsat = 1
     else if (shx >_s 0x007F):
@@ -20723,7 +20736,7 @@ shamt = X[rs2][4:0]
 
 for i = 0 .. 1:
     s1_w = s1[(32*i+31):(32*i)]
-    shx  = sign_extend(64, s1_w) >> shamt    // arithmetic shift, take low 32 bits
+    shx  = shift_bits_right_arith(s1_w, shamt)  // 32-bit arithmetic result
     if (shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
     else if (shx >_s 0x00007FFF):
@@ -20782,7 +20795,7 @@ Operation::
 s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
 shamt = X[rs2][5:0]
 
-shx = sign_extend(128, s1) >> shamt    // arithmetic shift, take low 64 bits
+shx = shift_bits_right_arith(s1, shamt)  // 64-bit arithmetic result
 
 if (shx <_s 0xFFFFFFFF80000000):
     X[rd] = 0x80000000; vxsat = 1
@@ -20848,8 +20861,8 @@ for i = 0 .. 3:
     h = s1[(16*i+15):(16*i)]
 
     // Rounded arithmetic shift:
-    // shx = ((sext(h) << 1) >> shamt), then (shx + 1) >> 1
-    shx = ((sext_32(h) @ 0b0) >> shamt)[16:0]      // keep 17 bits
+    // Append a rounding bit, shift, then add 1 and drop the LSB
+    shx = shift_bits_right_arith(h @ 0b0, shamt)      // keep 17 bits
     r   = (shx + 1)[16:1]                          // rounded 16-bit result
 
     if (r <_s 0xFF80):
@@ -20918,7 +20931,7 @@ shamt = uimm5[4:0]
 for i = 0 .. 1:
     s1_w = s1[(32*i+31):(32*i)]
     // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-    shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
+    shx       = shift_bits_right_arith(s1_w @ 0b0, shamt)   // 33-bit result
     round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
     if (round_shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
@@ -20980,7 +20993,7 @@ s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
 shamt = uimm6[5:0]
 
 // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
+shx       = shift_bits_right_arith(s1 @ 0b0, shamt)   // 65-bit result
 round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
 
 if (round_shx <_s 0xFFFFFFFF80000000):
@@ -21045,8 +21058,8 @@ for i = 0 .. 3:
     h = s1[(16*i+15):(16*i)]
 
     // Rounded arithmetic shift:
-    // shx = ((sext(h) << 1) >> shamt), then (shx + 1) >> 1
-    shx = ((sext_48(h) @ 0b0) >> shamt)[16:0]      // keep 17 bits
+    // Append a rounding bit, shift, then add 1 and drop the LSB
+    shx = shift_bits_right_arith(h @ 0b0, shamt)      // keep 17 bits
     r   = (shx + 1)[16:1]                          // rounded 16-bit result
 
     if (r <_s 0xFF80):
@@ -21116,7 +21129,7 @@ shamt = X[rs2][4:0]
 for i = 0 .. 1:
     s1_w = s1[(32*i+31):(32*i)]
     // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-    shx       = (sign_extend(64, s1_w) @ 0b0) >> shamt   // 33-bit result
+    shx       = shift_bits_right_arith(s1_w @ 0b0, shamt)   // 33-bit result
     round_shx = (shx + 1)[32:1]                           // round to nearest, ties up
     if (round_shx <_s 0xFFFF8000):
         d[(16*i+15):(16*i)] = 0x8000; vxsat = 1
@@ -21178,7 +21191,7 @@ s1 = if (rs1_p == 0) then 0 else X[rs1_p * 2 + 1] @ X[rs1_p * 2]
 shamt = X[rs2][5:0]
 
 // Shift right with rounding: append guard bit, shift, then add 1 and drop LSB
-shx       = (sign_extend(128, s1) @ 0b0) >> shamt   // 65-bit result
+shx       = shift_bits_right_arith(s1 @ 0b0, shamt)   // 65-bit result
 round_shx = (shx + 1)[64:1]                          // round to nearest, ties up
 
 if (round_shx <_s 0xFFFFFFFF80000000):
