@@ -13864,7 +13864,7 @@ for i = 0 .. 3:
     a = signed(s1[(16*i+15):(16*i)])
     if sshamt < 0:
         // Right shift
-        do[(16*i+15):(16*i)] = shift_bits_right_arith(to_bits(16, a), -sshamt)
+        d[(16*i+15):(16*i)] = shift_bits_right_arith(to_bits(16, a), -sshamt)
     else:
         // Left shift with saturation
         result = a << sshamt
@@ -14568,7 +14568,7 @@ for i = 0 .. 3:
     a = unsigned(s1[(16*i+15):(16*i)])
     if sshamt < 0:
         // Right shift
-        do[(16*i+15):(16*i)] = (a >> (-sshamt))[15:0]
+        d[(16*i+15):(16*i)] = (a >> (-sshamt))[15:0]
     else:
         // Left shift with saturation
         result = a << sshamt
