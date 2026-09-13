@@ -14698,7 +14698,7 @@ shamt  = X[rs2][7:0]
 sshamt = signed(shamt)
 
 for i = 0 .. (XLEN/16 - 1):
-    h = s1[(16*i+15):(16*i)]    // signed 16-bit
+    h = s1[(16*i+15):(16*i)]    // unsigned 16-bit
 
     if sshamt < 0:
         // logical right shift with rounding
@@ -14709,7 +14709,7 @@ for i = 0 .. (XLEN/16 - 1):
     else:
         // shift left with unsigned saturation to 16-bit range
         shx = (sshamt >= 16) ? (h @ 0x0000)
-                             : (sign_extend(32, h) << shamt[3:0])
+                             : (zero_extend(32, h) << shamt[3:0])
 
         if shx >_u 0x0000FFFF:
             vxsat = 1
