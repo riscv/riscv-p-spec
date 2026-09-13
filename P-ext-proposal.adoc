@@ -14703,8 +14703,7 @@ for i = 0 .. (XLEN/16 - 1):
     if sshamt < 0:
         // logical right shift with rounding
         x  = zero_extend(32, h) @ 0b0          // 33-bit
-        y  = (sshamt <= -16) ? x[32:16]
-                             : (x >> (0 - shamt)[3:0])[16:0]
+        y  = (x >> (-sshamt))[16:0]
         r  = (y + 1)[16:1]
     else:
         // shift left with unsigned saturation to 16-bit range
@@ -14770,8 +14769,7 @@ for i = 0 .. (XLEN/32 - 1):
     if sshamt < 0:
         // logical right shift with rounding
         x  = zero_extend(64, w) @ 0b0          // 65-bit
-        y  = (sshamt <= -32) ? x[64:32]
-                             : (x >> (0 - shamt)[4:0])[32:0]
+        y  = (x >> (-sshamt))[32:0]
         r  = (y + 1)[32:1]
     else:
         // shift left with unsigned saturation to 32-bit range
@@ -15294,10 +15292,9 @@ shamt  = X[rs2][7:0]
 sshamt = signed(shamt)
 
 if sshamt < 0:
-    // arithmetic right shift with rounding
+    // logical right shift with rounding
     x  = zero_extend(64, s1) @ 0b0            // 65-bit
-    y  = (sshamt <= -32) ? x[64:32]
-                         : (x >> (0 - shamt)[4:0])[32:0]
+    y  = (x >> (-sshamt))[32:0]
     X[rd] = (y + 1)[32:1]
 else:
     // shift left with unsigned saturation to 32-bit range
@@ -15413,10 +15410,7 @@ sshamt = signed(shamt)
 
 if (sshamt < 0):
     xs1 = zero_extend(128, s1) @ 0b0          // 129-bit
-    if (sshamt <= -64):
-        shx = xs1[128:64]
-    else:
-        shx = (xs1 >> (0 - shamt)[5:0])[64:0]
+    shx = (xs1 >> (-sshamt))[64:0]
     X[rd] = (shx + 1)[64:1]
 else:
     if (sshamt >= 64):
