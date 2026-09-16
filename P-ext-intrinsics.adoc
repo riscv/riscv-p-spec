@@ -5523,9 +5523,40 @@ Intrinsics to join multiple 32-bit subvectors into a 64-bit vector.
 <<<
 === Packed Slide
 
-Slide amount is masked to the number of elements.
+For a packed type with `N` elements of `E` bits each, the effective slide amount
+is `n = rs2 & (N - 1)` elements, or `k = n * E` bits. A zero effective amount
+returns `rd` unchanged. Signed and unsigned forms perform the same bit movement.
+
+Slide up moves elements of `rd` toward the most-significant end, filling the
+vacated low elements from the most-significant `n` elements of `rs1`. Slide down
+moves elements toward the least-significant end, filling the vacated high
+elements from the least-significant `n` elements of `rs1`.
 
 ==== 32-bit
+
+On RV64, the bit shift amount must be masked to 5 bits: the hardware shifts
+otherwise use 6 bits. The following example sequences use `dst` for the original
+`rd` and the result, `src` for `rs1`, and `count` for `rs2`. `LOG2_E` is 3 for
+byte elements and 4 for halfword elements. Temporaries do not overlap the inputs
+or destination; only the low 32 bits of the result belong to the packed value.
+
+.RV64 slide up of a 32-bit packed value
+[source,asm]
+----
+slli t0, count, LOG2_E
+andi t0, t0, 31
+slli t1, src, 32
+slx dst, t1, t0
+----
+
+.RV64 slide down of a 32-bit packed value
+[source,asm]
+----
+slli t0, count, LOG2_E
+andi t0, t0, 31
+pack dst, dst, src
+srl dst, dst, t0
+----
 
 [cols="70%,30%"]
 |===
@@ -5537,60 +5568,64 @@ int8x4_t
 __riscv_pslideupx_i8x4(int8x4_t rd, int8x4_t rs1,
                        unsigned int rs2);
 | `slli`\+`slx`(RV32), +
-  `slli`+`slli`\+`add`+`slx`(RV64)
+  `slli` + `andi` + `slli` + `slx`(RV64)
 
 l|
 uint8x4_t
 __riscv_pslideupx_u8x4(uint8x4_t rd, uint8x4_t rs1,
                        unsigned int rs2);
 | `slli`\+`slx`(RV32), +
-  `slli`+`slli`\+`add`+`slx`(RV64)
+  `slli` + `andi` + `slli` + `slx`(RV64)
 
 l|
 int16x2_t
 __riscv_pslideupx_i16x2(int16x2_t rd, int16x2_t rs1,
                         unsigned int rs2);
 | `slli`\+`slx`(RV32), +
-  `slli`+`slli`\+`add`+`slx`(RV64)
+  `slli` + `andi` + `slli` + `slx`(RV64)
 
 l|
 uint16x2_t
 __riscv_pslideupx_u16x2(uint16x2_t rd, uint16x2_t rs1,
                         unsigned int rs2);
 | `slli`\+`slx`(RV32), +
-  `slli`+`slli`\+`add`+`slx`(RV64)
+  `slli` + `andi` + `slli` + `slx`(RV64)
 
 l|
 int8x4_t
 __riscv_pslidedownx_i8x4(int8x4_t rd, int8x4_t rs1,
                          unsigned int rs2);
 | `slli`\+`srx`(RV32), +
-  `slli`+`pack`+`srl`(RV64)
+  `slli` + `andi` + `pack` + `srl`(RV64)
 
 l|
 uint8x4_t
 __riscv_pslidedownx_u8x4(uint8x4_t rd, uint8x4_t rs1,
                          unsigned int rs2);
 | `slli`\+`srx`(RV32), +
-  `slli`+`pack`+`srl`(RV64)
+  `slli` + `andi` + `pack` + `srl`(RV64)
 
 l|
 int16x2_t
 __riscv_pslidedownx_i16x2(int16x2_t rd, int16x2_t rs1,
                           unsigned int rs2);
 | `slli`\+`srx`(RV32), +
-  `slli`+`pack`+`srl`(RV64)
+  `slli` + `andi` + `pack` + `srl`(RV64)
 
 l|
 uint16x2_t
 __riscv_pslidedownx_u16x2(uint16x2_t rd, uint16x2_t rs1,
                           unsigned int rs2);
 | `slli`\+`srx`(RV32), +
-  `slli`+`pack`+`srl`(RV64)
+  `slli` + `andi` + `pack` + `srl`(RV64)
 |===
 
 
 ==== 64-bit
+
+On RV32, the mappings require the
+<<packed-slide-rv32-lowering,word selection described below>> in addition to
+the listed shifts.
 
 [cols="70%,30%"]
 |===
@@ -5602,85 +5637,135 @@ int8x8_t
 __riscv_pslideupx_i8x8(int8x8_t rd, int8x8_t rs1,
                        unsigned int rs2);
 | `slli`\+`slx`(RV64), +
-  `slli`+`slx`+`slx`(RV32)
+  `slli` + word selection + `slx` + `slx`(RV32)
 
 l|
 uint8x8_t
 __riscv_pslideupx_u8x8(uint8x8_t rd, uint8x8_t rs1,
                        unsigned int rs2);
 | `slli`\+`slx`(RV64), +
-  `slli`+`slx`+`slx`(RV32)
+  `slli` + word selection + `slx` + `slx`(RV32)
 
 l|
 int16x4_t
 __riscv_pslideupx_i16x4(int16x4_t rd, int16x4_t rs1,
                         unsigned int rs2);
 | `slli`\+`slx`(RV64), +
-  `slli`+`slx`+`slx`(RV32)
+  `slli` + word selection + `slx` + `slx`(RV32)
 
 l|
 uint16x4_t
 __riscv_pslideupx_u16x4(uint16x4_t rd, uint16x4_t rs1,
                         unsigned int rs2);
 | `slli`\+`slx`(RV64), +
-  `slli`+`slx`+`slx`(RV32)
+  `slli` + word selection + `slx` + `slx`(RV32)
 
 l|
 int32x2_t
 __riscv_pslideupx_i32x2(int32x2_t rd, int32x2_t rs1,
                         unsigned int rs2);
 | `slli`\+`slx`(RV64), +
-  `slli`+`slx`+`slx`(RV32)
+  `slli` + word selection + `slx` + `slx`(RV32)
 
 l|
 uint32x2_t
 __riscv_pslideupx_u32x2(uint32x2_t rd, uint32x2_t rs1,
                         unsigned int rs2);
 | `slli`\+`slx`(RV64), +
-  `slli`+`slx`+`slx`(RV32)
+  `slli` + word selection + `slx` + `slx`(RV32)
 
 l|
 int8x8_t
 __riscv_pslidedownx_i8x8(int8x8_t rd, int8x8_t rs1,
                          unsigned int rs2);
 | `slli`\+`srx`(RV64), +
-  `slli`+`srx`+`srx`(RV32)
+  `slli` + word selection + `srx` + `srx`(RV32)
 
 l|
 uint8x8_t
 __riscv_pslidedownx_u8x8(uint8x8_t rd, uint8x8_t rs1,
                          unsigned int rs2);
 | `slli`\+`srx`(RV64), +
-  `slli`+`srx`+`srx`(RV32)
+  `slli` + word selection + `srx` + `srx`(RV32)
 
 l|
 int16x4_t
 __riscv_pslidedownx_i16x4(int16x4_t rd, int16x4_t rs1,
                           unsigned int rs2);
 | `slli`\+`srx`(RV64), +
-  `slli`+`srx`+`srx`(RV32)
+  `slli` + word selection + `srx` + `srx`(RV32)
 
 l|
 uint16x4_t
 __riscv_pslidedownx_u16x4(uint16x4_t rd, uint16x4_t rs1,
                           unsigned int rs2);
 | `slli`\+`srx`(RV64), +
-  `slli`+`srx`+`srx`(RV32)
+  `slli` + word selection + `srx` + `srx`(RV32)
 
 l|
 int32x2_t
 __riscv_pslidedownx_i32x2(int32x2_t rd, int32x2_t rs1,
                           unsigned int rs2);
 | `slli`\+`srx`(RV64), +
-  `slli`+`srx`+`srx`(RV32)
+  `slli` + word selection + `srx` + `srx`(RV32)
 
 l|
 uint32x2_t
 __riscv_pslidedownx_u32x2(uint32x2_t rd, uint32x2_t rs1,
                           unsigned int rs2);
 | `slli`\+`srx`(RV64), +
-  `slli`+`srx`+`srx`(RV32)
+  `slli` + word selection + `srx` + `srx`(RV32)
 |===
+
+[[packed-slide-rv32-lowering]]
+===== RV32 word selection
+
+The RV32 entries above summarize the core operations, not a complete instruction
+sequence. Scaling the element count gives a bit count whose low 6 bits are `k`.
+RV32 `slx` and `srx` use only the low 5 bits, `r = k & 31`. Bit 5 must also be
+tested to select the source words for slides crossing the 32-bit boundary.
+
+Let `Dhi`, `Dlo` and `Shi`, `Slo` be the original high and low 32-bit words of
+`rd` and `rs1`, respectively. In the table below, `SLX32(a, b, r)` means the result
+of an RV32 `slx` with its destination initialized to `a`, its first source set
+to `b`, and shift count `r`; `SRX32` is defined analogously for `srx`.
+
+[%header]
+[cols="1,1,3,3"]
+|===
+| Direction
+| Bit count
+| Result high word
+| Result low word
+
+| Up
+| `k < 32`
+| `SLX32(Dhi, Dlo, r)`
+| `SLX32(Dlo, Shi, r)`
+
+| Up
+| `k >= 32`
+| `SLX32(Dlo, Shi, r)`
+| `SLX32(Shi, Slo, r)`
+
+| Down
+| `k < 32`
+| `SRX32(Dhi, Slo, r)`
+| `SRX32(Dlo, Dhi, r)`
+
+| Down
+| `k >= 32`
+| `SRX32(Slo, Shi, r)`
+| `SRX32(Dhi, Slo, r)`
+|===
+
+Word selection requires a branch or equivalent conditional selection, plus any
+moves needed to initialize the destinations. Original source words must be
+preserved until both result words have been computed. For `k = 32`, `r = 0`:
+slide up returns `Dlo` as the high word and `Shi` as the low word; slide down
+returns `Slo` as the high word and `Dhi` as the low word. For 32-bit elements,
+`k` is either 0 or 32, so only word selection is needed and the two shifts can
+be omitted. Constant slide amounts can also simplify these sequences.
 
 
 
