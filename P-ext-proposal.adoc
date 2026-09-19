@@ -16506,7 +16506,8 @@ of `rs1`, while the odd (upper) byte comes from the odd (upper) byte of `rs2`.
 
 Operation::
 
-[source,pseudocode] ----
+[source,pseudocode]
+----
 s1 = X[rs1]
 s2 = X[rs2]
 
