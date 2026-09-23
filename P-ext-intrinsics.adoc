@@ -350,7 +350,7 @@ and do not include the `u` in their type suffix.
 
 
 <<<
-=== Saturating and Rounding Shifts
+=== Saturating and Rounding Shift
 
 ==== 32-bit
 
@@ -1988,7 +1988,7 @@ Saturate every element to the specified width.
 
 
 <<<
-=== Packed Shifts
+=== Packed Shift
 
 Shift each element in a packed type by the same amount. Compiler will choose an
 immediate form when possible.
@@ -2104,7 +2104,7 @@ int32x2_t __riscv_psra_s_i32x2(int32x2_t rs1, unsigned shamt);
 
 
 <<<
-=== Packed Saturating and Rounding Shifts
+=== Packed Saturating and Rounding Shift
 
 Shift each element in a packed type by the same amount. Result may be saturated
 and/or rounded. Compiler will choose an immediate form when possible.
@@ -5770,7 +5770,7 @@ be omitted. Constant slide amounts can also simplify these sequences.
 
 
 <<<
-== Reinterpret casts
+== Reinterpret Cast
 
 These intrinsics generate no instructions.
 
