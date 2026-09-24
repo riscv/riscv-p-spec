@@ -50,6 +50,8 @@ non-overloaded interfaces.
 The names of these intrinsics match the naming scheme used by `riscv_bitmanip.h`
 and do not include the `u` in their type suffix.
 
+The shift amounts for slx and srx are taken modulo the input size.
+
 ==== 32-bit
 
 [cols="3,1"]
@@ -352,6 +354,11 @@ and do not include the `u` in their type suffix.
 <<<
 === Saturating and Rounding Shifts
 
+Compiler will choose an immediate form when possible.
+
+Shift amounts are a signed value taken from the lower 8 bits. Negative shift
+amounts shift right. Non-negative shift amounts shift left.
+
 ==== 32-bit
 
 [cols="3,2"]
@@ -359,19 +366,19 @@ and do not include the `u` in their type suffix.
 | Prototype
 | Instruction
 
-| `int32_t __riscv_ssha_i32(int32_t rs1, int rs2);`
+| `int32_t __riscv_ssha_i32(int32_t rs1, int shamt);`
 | `ssha`, `sslai`, `srai`(RV32), +
   `pssha.ws`, `psslai.w`, `psrai.w`(RV64)
 
-| `int32_t __riscv_sshar_i32(int32_t rs1, int rs2);`
+| `int32_t __riscv_sshar_i32(int32_t rs1, int shamt);`
 | `sshar`, `sslai`, `srari`(RV32), +
   `psshar.ws`, `psslai.w`, `psrari.w`(RV64)
 
-| `uint32_t __riscv_sshl_u32(uint32_t rs1, int rs2);`
+| `uint32_t __riscv_sshl_u32(uint32_t rs1, int shamt);`
 | `sshl`(RV32), +
   `psshl.ws`(RV64)
 
-| `uint32_t __riscv_sshlr_u32(uint32_t rs1, int rs2);`
+| `uint32_t __riscv_sshlr_u32(uint32_t rs1, int shamt);`
 | `sshlr`(RV32), +
   `psshlr.ws`(RV64)
 |===
@@ -383,22 +390,24 @@ and do not include the `u` in their type suffix.
 | Prototype
 | Instruction
 
-| `int64_t __riscv_sha_i64(int64_t rs1, int rs2);`
+| `int64_t __riscv_sha_i64(int64_t rs1, int shamt);`
 | `sha`, `slli`, `srai`
 
-| `int64_t __riscv_shar_i64(int64_t rs1, int rs2);`
+| `int64_t __riscv_shar_i64(int64_t rs1, int shamt);`
 | `shar`, `slli`, `srari`
 
-| `uint64_t __riscv_shl_u64(uint64_t rs1, int rs2);`
+| `uint64_t __riscv_shl_u64(uint64_t rs1, int shamt);`
 | `shl`
 
-| `uint64_t __riscv_shlr_u64(uint64_t rs1, int rs2);`
+| `uint64_t __riscv_shlr_u64(uint64_t rs1, int shamt);`
 | `shlr`
 |===
 
 
 <<<
 === Narrowing Clip
+
+Shift amounts are taken modulo the input size.
 
 [cols="65%,35%"]
 |===
@@ -1993,6 +2002,9 @@ Saturate every element to the specified width.
 Shift each element in a packed type by the same amount. Compiler will choose an
 immediate form when possible.
 
+All shift amounts are taken modulo 32. If the shift amount exceeds the element
+size, the result is all zeros or all sign bits.
+
 ==== 32-bit
 
 [cols="72%,28%"]
@@ -2108,6 +2120,9 @@ int32x2_t __riscv_psra_s_i32x2(int32x2_t rs1, unsigned shamt);
 
 Shift each element in a packed type by the same amount. Result may be saturated
 and/or rounded. Compiler will choose an immediate form when possible.
+
+Shift amounts are a signed value taken from the lower 8 bits. Negative shift
+amounts shift right. Non-negative shift amounts shift left.
 
 ==== 32-bit
 
@@ -2795,6 +2810,9 @@ __riscv_pwsubau_u32x2(uint32x2_t rd,
 <<<
 === Packed Widening Shift
 
+All shift amounts are taken modulo 32. If the shift amount exceeds the result
+element size, the result is all zeros or all sign bits.
+
 [cols="63%,37%"]
 |===
 | Prototype
@@ -2834,6 +2852,9 @@ __riscv_pwsla_s_i32x2(int16x2_t rs1, unsigned shamt);
 
 <<<
 === Packed Narrowing Shift
+
+All shift amounts are taken modulo 32. If the shift amount exceeds the input
+element size, the result is all zeros or all sign bits.
 
 [cols="63%,37%"]
 |===
@@ -2886,6 +2907,9 @@ __riscv_pnsrar_s_i16x2(int32x2_t rs1, unsigned shamt);
 
 <<<
 === Packed Narrowing Clip
+
+All shift amounts are taken modulo 32. If the shift amount exceeds the input
+element size, the result is all zeros or all sign bits.
 
 [cols="60%,40%"]
 |===
