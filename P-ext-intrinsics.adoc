@@ -2245,11 +2245,11 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | `ppairo.b`
 
 | `uint16x2_t __riscv_ppaire_u16x2(uint16x2_t rs1, uint16x2_t rs2);`
-| `pack`(RV32), +
+| `pack`, `pncvt.h`(RV32), +
   `ppaire.h`(RV64)
 
 | `int16x2_t __riscv_ppaire_i16x2(int16x2_t rs1, int16x2_t rs2);`
-| `pack`(RV32), +
+| `pack`, `pncvt.h`(RV32), +
   `ppaire.h`(RV64)
 
 | `uint16x2_t __riscv_ppaireo_u16x2(uint16x2_t rs1, uint16x2_t rs2);`
@@ -2265,10 +2265,12 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | `ppairoe.h`
 
 | `uint16x2_t __riscv_ppairo_u16x2(uint16x2_t rs1, uint16x2_t rs2);`
-| `ppairo.h`
+| `ppairo.h`, `pncvth.h`(RV32) +
+  `ppairo.h`(RV64)
 
 | `int16x2_t __riscv_ppairo_i16x2(int16x2_t rs1, int16x2_t rs2);`
-| `ppairo.h`
+| `ppairo.h`, `pncvth.h`(RV32) +
+  `ppairo.h`(RV64)
 |===
 
 
@@ -2420,11 +2422,11 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
   `pncvt.wb`(RV64)
 
 | `int16x2_t __riscv_pncvt_i16x2(int32x2_t rs1);`
-| `pncvt.h`(RV32), +
+| `pncvt.h`, `pack`(RV32), +
   `pncvt.wh`(RV64)
 
 | `uint16x2_t __riscv_pncvt_u16x2(uint32x2_t rs1);`
-| `pncvt.h`(RV32), +
+| `pncvt.h`, `pack`(RV32), +
   `pncvt.wh`(RV64)
 
 | `int8x4_t __riscv_pncvth_i8x4(int16x4_t rs1);`
@@ -2436,11 +2438,11 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
   `pncvth.wb`(RV64)
 
 | `int16x2_t __riscv_pncvth_i16x2(int32x2_t rs1);`
-| `pncvth.h`(RV32), +
+| `pncvth.h`, `ppairo.h`(RV32), +
   `pncvth.wh`(RV64)
 
 | `uint16x2_t __riscv_pncvth_u16x2(uint32x2_t rs1);`
-| `pncvth.h`(RV32), +
+| `pncvth.h`, `ppairo.h`(RV32), +
   `pncvth.wh`(RV64)
 |===
 
