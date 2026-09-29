@@ -1,13 +1,16 @@
-= Preliminary in-progress RISC-V Packed SIMD "P" Extension
+= RISC-V Packed SIMD "P" Extension
 :doctype: book
 :toc:
 :toclevels: 3
 :imagesdir: docs-resources/images
 :title-logo-image: image:risc-v_logo.png["RISC-V International Logo",pdfwidth=3.25in,align=center]
-:revnumber: 0.21-draft
+:revnumber: 0.6
 :xrefstyle: short
 
-This document is in the Development state. Assume anything can change.
+This document is in the Developed state. The Development Milestone was approved by the
+Packed SIMD Task Group on 2026-09-28. The specification now enters Stabilization, during
+which changes are still expected, so an implementation of this version will likely not
+conform to the ratified standard.
 
 == Revision History
 
@@ -20,6 +23,7 @@ This document is in the Development state. Assume anything can change.
 |0.19 |03/16/2026 |  | Sync with John Hauser's working draft
 |0.20 |03/17/2026 | Craig Topper | Update PSATI* and SATI assembly syntax
 |0.21 |03/22/2026 | Craig Topper | Add instructions from John Hauser's 020 working draft.
+|0.6 |09/29/2026 |Rafael Sene |Development Milestone approved by the Task Group on 2026-09-28. Version and document state set to the Developed state per the RISC-V ratification policy.
 |===
 
 == Introduction
