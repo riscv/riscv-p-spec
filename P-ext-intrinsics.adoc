@@ -2597,22 +2597,22 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | `psrai.h`(imm=8)
 
 | `uint16x2_t __riscv_pwunzipue_u16x2(uint8x4_t rs1);`
-| `ppaire.b`(rs2=0)
+| `pzext.h.b`
 
 | `uint16x2_t __riscv_pwunzipuo_u16x2(uint8x4_t rs1);`
-| `ppairo.b`(rs2=0)
+| `ppairo.b`(rs2=0), `psrli.h`(imm=8)
 
 | `int16x2_t __riscv_pwunziphe_i16x2(int8x4_t rs1);`
 | `pslli.h`(imm=8)
 
 | `int16x2_t __riscv_pwunzipho_i16x2(int8x4_t rs1);`
-| `ppairo.b`(rs1=0)
+| `ppairo.b`(rs1=0), `ppaireo.b`(rs1=0)
 
 | `uint16x2_t __riscv_pwunziphe_u16x2(uint8x4_t rs1);`
 | `pslli.h`(imm=8)
 
 | `uint16x2_t __riscv_pwunzipho_u16x2(uint8x4_t rs1);`
-| `ppairo.b`(rs1=0)
+| `ppairo.b`(rs1=0), `ppaireo.b`(rs1=0)
 |===
 
 
@@ -2630,10 +2630,10 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | `psrai.h`(imm=8)(RV64), `psrai.dh`(imm=8)(RV32)
 
 | `uint16x4_t __riscv_pwunzipue_u16x4(uint8x8_t rs1);`
-| `ppaire.b`(rs2=0)(RV64), `ppaire.db`(rs2_p=0)(RV32)
+| `pzext.h.b`(RV64), `pzext.dh.b`(RV32)
 
 | `uint16x4_t __riscv_pwunzipuo_u16x4(uint8x8_t rs1);`
-| `ppairo.b`(rs2=0)(RV64), `ppairo.db`(rs2_p=0)(RV32)
+| `ppairo.b`(rs2=0), `psrli.h`(imm=8)(RV64), `ppairo.db`(rs2_p=0), `psrli.dh`(imm=8)(RV32)
 
 | `int32x2_t __riscv_pwunzipe_i32x2(int16x4_t rs1);`
 | `psext.w.h`(RV64), `psext.dw.h`(RV32)
@@ -2642,34 +2642,34 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | `psrai.w`(imm=16)(RV64), `psrai.dw`(imm=16)(RV32)
 
 | `uint32x2_t __riscv_pwunzipue_u32x2(uint16x4_t rs1);`
-| `ppaire.h`(rs2=0)(RV64), `ppaire.dh`(rs2_p=0)(RV32)
+| `pzext.w.h`(RV64), `pzext.dw.h`(RV32)
 
 | `uint32x2_t __riscv_pwunzipuo_u32x2(uint16x4_t rs1);`
-| `ppairo.h`(rs2=0)(RV64), `ppairo.dh`(rs2_p=0)(RV32)
+| `ppairo.h`(rs2=0), `psrliw`(imm=16)(RV64), `ppairo.dh`(rs2_p=0), `psrli.dw`(imm=16)(RV32)
 
 | `int16x4_t __riscv_pwunziphe_i16x4(int8x8_t rs1);`
 | `pslli.h`(imm=8)(RV64), `pslli.dh`(imm=8)(RV32)
 
 | `int16x4_t __riscv_pwunzipho_i16x4(int8x8_t rs1);`
-| `ppairo.b`(rs1=0)(RV64), `ppairo.db`(rs1_p=0)(RV32)
+| `ppairo.b`(rs1=0), `ppaireo.b`(rs1=0)(RV64), `ppairo.db`(rs1_p=0), `ppaireo.db`(rs1_p=0)(RV32)
 
 | `uint16x4_t __riscv_pwunziphe_u16x4(uint8x8_t rs1);`
 | `pslli.h`(imm=8)(RV64), `pslli.dh`(imm=8)(RV32)
 
 | `uint16x4_t __riscv_pwunzipho_u16x4(uint8x8_t rs1);`
-| `ppairo.b`(rs1=0)(RV64), `ppairo.db`(rs1_p=0)(RV32)
+| `ppairo.b`(rs1=0), `ppaireo.b`(rs1=0)(RV64), `ppairo.db`(rs1_p=0), `ppaireo.db`(rs1_p=0)(RV32)
 
 | `int32x2_t __riscv_pwunziphe_i32x2(int16x4_t rs1);`
 | `pslli.w`(imm=16)(RV64), `pslli.dw`(imm=16)(RV32)
 
 | `int32x2_t __riscv_pwunzipho_i32x2(int16x4_t rs1);`
-| `ppairo.h`(rs1=0)(RV64), `ppairo.dh`(rs1_p=0)(RV32)
+| `ppairo.h`(rs1=0), `ppaireo.h`(rs1=0)(RV64), `ppairo.dh`(rs1_p=0), `ppaireo.dh`(rs1_p=0)(RV32)
 
 | `uint32x2_t __riscv_pwunziphe_u32x2(uint16x4_t rs1);`
 | `pslli.w`(imm=16)(RV64), `pslli.dw`(imm=16)(RV32)
 
 | `uint32x2_t __riscv_pwunzipho_u32x2(uint16x4_t rs1);`
-| `ppairo.h`(rs1=0)(RV64), `ppairo.dh`(rs1_p=0)(RV32)
+| `ppairo.h`(rs1=0), `ppaireo.h`(rs1=0)(RV64), `ppairo.dh`(rs1_p=0), `ppaireo.dh`(rs1_p=0)(RV32)
 |===
 
 
