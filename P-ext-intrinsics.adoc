@@ -2867,43 +2867,43 @@ l|
 uint8x4_t
 __riscv_pnsrl_s_u8x4(uint16x4_t rs1, unsigned shamt);
 | `pnsrli.b`, `pnsrl.bs`(RV32), +
-  `psrli.h`\+`unzip8p`, +
-  `psrl.hs`+`unzip8p`(RV64)
+  `psrli.h`\+`pncvt.wb`, +
+  `psrl.hs`+`pncvt.wb`(RV64)
 
 l|
 uint16x2_t
 __riscv_pnsrl_s_u16x2(uint32x2_t rs1, unsigned shamt);
 | `pnsrli.h`, `pnsrl.hs`(RV32), +
-  `psrli.w`\+`unzip16p`, +
-  `psrl.ws`+`unzip16p`(RV64)
+  `psrli.w`\+`pncvt.wh`, +
+  `psrl.ws`+`pncvt.wh`(RV64)
 
 l|
 int8x4_t
 __riscv_pnsra_s_i8x4(int16x4_t rs1, unsigned shamt);
 | `pnsrai.b`, `pnsra.bs`(RV32), +
-  `psrai.h`\+`unzip8p`, +
-  `psra.hs`+`unzip8p`(RV64)
+  `psrai.h`\+`pncvt.wb`, +
+  `psra.hs`+`pncvt.wb`(RV64)
 
 l|
 int16x2_t
 __riscv_pnsra_s_i16x2(int32x2_t rs1, unsigned shamt);
 | `pnsrai.h`, `pnsra.hs`(RV32), +
-  `psrai.w`\+`unzip16p`, +
-  `psra.ws`+`unzip16p`(RV64)
+  `psrai.w`\+`pncvt.wh`, +
+  `psra.ws`+`pncvt.wh`(RV64)
 
 l|
 int8x4_t
 __riscv_pnsrar_s_i8x4(int16x4_t rs1, unsigned shamt);
 | `pnsrari.b`, `pnsrar.bs`(RV32), +
-  `psrari.h`\+`unzip8p`, +
-  `andi`+`neg`\+`psshar.hs`+`unzip8p`(RV64)
+  `psrari.h`\+`pncvt.wb`, +
+  `andi`+`neg`\+`psshar.hs`+`pncvt.wb`(RV64)
 
 l|
 int16x2_t
 __riscv_pnsrar_s_i16x2(int32x2_t rs1, unsigned shamt);
 | `pnsrari.h`, `pnsrar.hs`(RV32), +
-  `psrari.w`\+`unzip16p`, +
-  `andi`+`neg`\+`psshar.ws`+`unzip16p`(RV64)
+  `psrari.w`\+`pncvt.wh`, +
+  `andi`+`neg`\+`psshar.ws`+`pncvt.wh`(RV64)
 |===
 
 
