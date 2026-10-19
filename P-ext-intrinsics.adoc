@@ -1204,14 +1204,14 @@ l|
 uint32_t
 __riscv_pabdsumu_u8x4_u32(uint8x4_t rs1, uint8x4_t rs2);
 | `pabdsumu.b`(RV32), +
-  `zext.w`+`pabdsumu.b`(RV64)
+  `zext.w`/`pack`+`pabdsumu.b`(RV64)
 
 l|
 uint32_t
 __riscv_pabdsumau_u8x4_u32(uint32_t rd, uint8x4_t rs1,
                            uint8x4_t rs2);
 | `pabdsumau.b`(RV32), +
-  `zext.w`+`pabdsumau.b`(RV64)
+  `zext.w`/`pack`+`pabdsumau.b`(RV64)
 |===
 
 
@@ -1292,7 +1292,7 @@ Sum every element together to produce and add result to scalar accumulator.
 
 ==== 32-bit
 
-[cols="70%,30%"]
+[cols="67%,33%"]
 |===
 | Prototype
 | Instruction
@@ -1301,25 +1301,25 @@ l|
 int32_t
 __riscv_predsum_i8x4_i32(int8x4_t rs1, int32_t rs2);
 | `predsum.bs`(RV32), +
-  `zext.w`+`predsum.bs`(RV64)
+  `zext.w`/`pack`+`predsum.bs`(RV64)
 
 l|
 uint32_t
 __riscv_predsumu_u8x4_u32(uint8x4_t rs1, uint32_t rs2);
 | `predsumu.bs`(RV32), +
-  `zext.w`+`predsumu.bs`(RV64)
+  `zext.w`/`pack`+`predsumu.bs`(RV64)
 
 l|
 int32_t
 __riscv_predsum_i16x2_i32(int16x2_t rs1, int32_t rs2);
 | `predsum.hs`(RV32), +
-  `zext.w`+`predsum.hs`(RV64)
+  `zext.w`/`pack`+`predsum.hs`(RV64)
 
 l|
 uint32_t
 __riscv_predsumu_u16x2_u32(uint16x2_t rs1, uint32_t rs2);
 | `predsumu.hs`(RV32), +
-  `zext.w`+`predsumu.hs`(RV64)
+  `zext.w`/`pack`+`predsumu.hs`(RV64)
 |===
 
 
@@ -1327,7 +1327,7 @@ __riscv_predsumu_u16x2_u32(uint16x2_t rs1, uint32_t rs2);
 
 Intrinsics are provided with 32-bit and 64-bit accumulator for maximum software compatibility between RV32 and RV64.
 
-[cols="70%,30%"]
+[cols="67%,33%"]
 |===
 | Prototype
 | Instruction
@@ -4735,19 +4735,19 @@ l|
 int64_t
 __riscv_pm2wadd_i64(int16x2_t rs1, int16x2_t rs2);
 | `pm2wadd.h`(RV32), +
-  `zext.w`+`pm4add.h`(RV64)
+  `zext.w`/`pack`+`pm4add.h`(RV64)
 
 l|
 int64_t
 __riscv_pm2wadd_x_i64(int16x2_t rs1, int16x2_t rs2);
 | `pm2wadd.hx`(RV32), +
-  `zext.w`\+`ppairoe.h`+`pm4add.h`(RV64)
+  `zext.w`/`pack`\+`ppairoe.h`+`pm4add.h`(RV64)
 
 l|
 uint64_t
 __riscv_pm2waddu_u64(uint16x2_t rs1, uint16x2_t rs2);
 | `pm2waddu.h`(RV32), +
-  `zext.w`+`pm4addu.h`(RV64)
+  `zext.w`/`pack`+`pm4addu.h`(RV64)
 
 l|
 int64_t
@@ -4765,7 +4765,7 @@ l|
 int64_t
 __riscv_pm2waddsu_i64(int16x2_t rs1, uint16x2_t rs2);
 | `pm2waddsu.h`(RV32), +
-  `zext.w`+`pm4addsu.h`(RV64)
+  `zext.w`/`pack`+`pm4addsu.h`(RV64)
 |===
 
 
@@ -4784,42 +4784,42 @@ int64_t
 __riscv_pm2wadda_i64(int64_t rd, int16x2_t rs1,
                      int16x2_t rs2);
 | `pm2wadda.h`(RV32), +
-  `zext.w`+`pm4adda.h`(RV64)
+  `zext.w`/`pack`+`pm4adda.h`(RV64)
 
 l|
 int64_t
 __riscv_pm2wadda_x_i64(int64_t rd, int16x2_t rs1,
                        int16x2_t rs2);
 | `pm2wadda.hx`(RV32), +
-  `zext.w`\+`ppairoe.h`+`pm4adda.h`(RV64)
+  `zext.w`/`pack`\+`ppairoe.h`+`pm4adda.h`(RV64)
 
 l|
 uint64_t
 __riscv_pm2waddau_u64(uint64_t rd, uint16x2_t rs1,
                       uint16x2_t rs2);
 | `pm2waddau.h`(RV32), +
-  `zext.w`+`pm4addau.h`(RV64)
+  `zext.w`/`pack`+`pm4addau.h`(RV64)
 
 l|
 int64_t
 __riscv_pm2wsuba_i64(int64_t rd, int16x2_t rs1,
                      int16x2_t rs2);
 | `pm2wsuba.h`(RV32), +
-  `zext.w`\+`pm2sub.h`+`predsum.ws`(RV64)
+  `zext.w`/`pack`\+`pm2sub.h`+`predsum.ws`(RV64)
 
 l|
 int64_t
 __riscv_pm2wsuba_x_i64(int64_t rd, int16x2_t rs1,
                        int16x2_t rs2);
 | `pm2wsuba.hx`(RV32), +
-  `zext.w`\+`pm2sub.hx`+`predsum.ws`(RV64)
+  `zext.w`/`pack`\+`pm2sub.hx`+`predsum.ws`(RV64)
 
 l|
 int64_t
 __riscv_pm2waddasu_i64(int64_t rd, int16x2_t rs1,
                        uint16x2_t rs2);
 | `pm2waddasu.h`(RV32), +
-  `zext.w`+`pm4addasu.h`(RV64)
+  `zext.w`/`pack`+`pm4addasu.h`(RV64)
 |===
 
 
