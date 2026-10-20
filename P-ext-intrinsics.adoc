@@ -324,12 +324,12 @@ The shift amounts for slx and srx are taken modulo the input size.
 
 | `int32_t __riscv_sati_i32(int32_t rs1, const unsigned width);`
 | `sati`(RV32), +
-  `psati.w`(RV64)
+  `psati.w`, `sext.w`+`sati`(RV64)
 | 1 ≤ width ≤ 32
 
 | `uint32_t __riscv_usati_u32(int32_t rs1, const unsigned width);`
 | `usati`(RV32), +
-  `pusati.w`(RV64)
+  `pusati.w`, `sext.w`+`usati`(RV64)
 | 0 ≤ width ≤ 31
 |===
 
