@@ -43,7 +43,7 @@ v0.21 gcc:https://github.com/ruyisdk/riscv-gcc/tree/p-dev
 
 v0.21 binutils: https://github.com/ruyisdk/riscv-binutils/tree/p-rebase
 
-v0.21 qemu: https://github.com/mollybuild/qemu/tree/rvp-upstream-split
+v0.21 qemu: https://github.com/ruyisdk/qemu/tree/p-dev
 
 ## Historical implementations
 
