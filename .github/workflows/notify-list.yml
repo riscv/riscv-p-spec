@@ -1,0 +1,20 @@
+---
+# Emails the group's mailing list when a new issue is opened.
+# Set up by riscv-admin/adm-list-notify; the list address is the repo secret LIST_NOTIFY_EMAIL.
+name: Notify list
+
+on:
+  issues:
+    types: [opened]
+
+permissions: {}
+
+jobs:
+  notify:
+    permissions:
+      id-token: write
+      contents: read
+    uses: riscv-admin/adm-list-notify/.github/workflows/notify.yml@v1
+    secrets:
+      list_email: ${{ secrets.LIST_NOTIFY_EMAIL }}
+      aws_role: ${{ secrets.LIST_NOTIFY_AWS_ROLE }}
