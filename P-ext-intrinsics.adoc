@@ -1195,6 +1195,11 @@ Adds a scalar to every element of a packed value.
 
 ==== 32-bit
 
+On RV64, `ppaireo.w tmp, rs1, rs2` combines the low word of `rs1` with the
+high word of `rs2`. The reduction uses `tmp` and `rs2` as its sources, so the
+upper four byte differences are zero. Zero-extending both inputs before the
+reduction gives the same result.
+
 [cols="62%,38%"]
 |===
 | Prototype
@@ -1204,14 +1209,14 @@ l|
 uint32_t
 __riscv_pabdsumu_u8x4_u32(uint8x4_t rs1, uint8x4_t rs2);
 | `pabdsumu.b`(RV32), +
-  `zext.w`/`pack`+`pabdsumu.b`(RV64)
+  `ppaireo.w`+`pabdsumu.b`(RV64)
 
 l|
 uint32_t
 __riscv_pabdsumau_u8x4_u32(uint32_t rd, uint8x4_t rs1,
                            uint8x4_t rs2);
 | `pabdsumau.b`(RV32), +
-  `zext.w`/`pack`+`pabdsumau.b`(RV64)
+  `ppaireo.w`+`pabdsumau.b`(RV64)
 |===
 
 
@@ -2645,7 +2650,7 @@ __riscv_psshlr_s_u32x2(uint32x2_t rs1, int shamt);
 | `pzext.w.h`(RV64), `pzext.dw.h`(RV32)
 
 | `uint32x2_t __riscv_pwunzipuo_u32x2(uint16x4_t rs1);`
-| `ppairo.h`(rs2=0), `psrliw`(imm=16)(RV64), `ppairo.dh`(rs2_p=0), `psrli.dw`(imm=16)(RV32)
+| `ppairo.h`(rs2=0), `psrli.w`(imm=16)(RV64), `ppairo.dh`(rs2_p=0), `psrli.dw`(imm=16)(RV32)
 
 | `int16x4_t __riscv_pwunziphe_i16x4(int8x8_t rs1);`
 | `pslli.h`(imm=8)(RV64), `pslli.dh`(imm=8)(RV32)
