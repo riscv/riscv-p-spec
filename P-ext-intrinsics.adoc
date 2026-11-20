@@ -1143,16 +1143,16 @@ Adds a scalar to every element of a packed value.
 | Prototype
 | Instruction
 
-| `uint8x4_t __riscv_pabs_i8x4(int8x4_t rs1);`
+| `uint8x4_t __riscv_pabs_u8x4(int8x4_t rs1);`
 | `pabs.b`
 
-| `uint16x2_t __riscv_pabs_i16x2(int16x2_t rs1);`
+| `uint16x2_t __riscv_pabs_u16x2(int16x2_t rs1);`
 | `pabs.h`
 
-| `uint8x4_t __riscv_pabd_i8x4(int8x4_t rs1, int8x4_t rs2);`
+| `uint8x4_t __riscv_pabd_u8x4(int8x4_t rs1, int8x4_t rs2);`
 | `pabd.b`
 
-| `uint16x2_t __riscv_pabd_i16x2(int16x2_t rs1, int16x2_t rs2);`
+| `uint16x2_t __riscv_pabd_u16x2(int16x2_t rs1, int16x2_t rs2);`
 | `pabd.h`
 
 | `uint8x4_t __riscv_pabdu_u8x4(uint8x4_t rs1, uint8x4_t rs2);`
@@ -1170,16 +1170,16 @@ Adds a scalar to every element of a packed value.
 | Prototype
 | Instruction
 
-| `uint8x8_t __riscv_pabs_i8x8(int8x8_t rs1);`
+| `uint8x8_t __riscv_pabs_u8x8(int8x8_t rs1);`
 | `pabs.b`(RV64), `pabs.db`(RV32)
 
-| `uint16x4_t __riscv_pabs_i16x4(int16x4_t rs1);`
+| `uint16x4_t __riscv_pabs_u16x4(int16x4_t rs1);`
 | `pabs.h`(RV64), `pabs.dh`(RV32)
 
-| `uint8x8_t __riscv_pabd_i8x8(int8x8_t rs1, int8x8_t rs2);`
+| `uint8x8_t __riscv_pabd_u8x8(int8x8_t rs1, int8x8_t rs2);`
 | `pabd.b`(RV64), `pabd.db`(RV32)
 
-| `uint16x4_t __riscv_pabd_i16x4(int16x4_t rs1, int16x4_t rs2);`
+| `uint16x4_t __riscv_pabd_u16x4(int16x4_t rs1, int16x4_t rs2);`
 | `pabd.h`(RV64), `pabd.dh`(RV32)
 
 | `uint8x8_t __riscv_pabdu_u8x8(uint8x8_t rs1, uint8x8_t rs2);`
@@ -2004,11 +2004,11 @@ Saturate every element to the specified width.
 <<<
 === Packed Shift
 
-Shift each element in a packed type by the same amount. Compiler will choose an
-immediate form when possible.
-
-All shift amounts are taken modulo 32. If the shift amount exceeds the element
-size, the result is all zeros or all sign bits.
+Each element is shifted by the same effective amount, `n = shamt & 31`.
+When `n` is at least the element width, left shifts and logical right shifts
+produce zero, and arithmetic right shifts fill the element with its sign bit.
+For example, a byte shifted left by 8 becomes zero, while a shift amount of
+32 leaves the byte unchanged. The compiler may use an equivalent immediate form.
 
 ==== 32-bit
 
@@ -2817,8 +2817,9 @@ __riscv_pwsubau_u32x2(uint32x2_t rd,
 <<<
 === Packed Widening Shift
 
-All shift amounts are taken modulo 32. If the shift amount exceeds the result
-element size, the result is all zeros or all sign bits.
+Each input element is extended to the result width and shifted left by
+`n = shamt & 31`. When `n` is at least the result element width, both signed
+and unsigned forms produce zero.
 
 [cols="63%,37%"]
 |===
@@ -2860,8 +2861,11 @@ __riscv_pwsla_s_i32x2(int16x2_t rs1, unsigned shamt);
 <<<
 === Packed Narrowing Shift
 
-All shift amounts are taken modulo 32. If the shift amount exceeds the input
-element size, the result is all zeros or all sign bits.
+Each input element is shifted right by `n = shamt & 31` before narrowing.
+When `n` is at least the input element width, the logical shift produces zero.
+The arithmetic shift without rounding produces -1 for a negative input and
+zero otherwise. The rounded arithmetic shift produces zero for every input
+in this range.
 
 [cols="63%,37%"]
 |===
@@ -2915,8 +2919,16 @@ __riscv_pnsrar_s_i16x2(int32x2_t rs1, unsigned shamt);
 <<<
 === Packed Narrowing Clip
 
-All shift amounts are taken modulo 32. If the shift amount exceeds the input
-element size, the result is all zeros or all sign bits.
+Each input element is shifted right by `n = shamt & 31`, with rounding where
+specified, then clipped to the result range. When `n` is at least the input
+element width, the unrounded unsigned form produces zero. The unrounded signed
+form produces -1 for a negative input and zero otherwise. The rounded signed
+form produces zero.
+
+For the rounded unsigned form, shifting by exactly the input element width
+produces the value of the input's most significant bit (0 or 1). A larger
+effective shift produces zero. For example, a 16-bit input of `0x8000`
+produces 1 for `n = 16` and zero for `n = 17`.
 
 [cols="60%,40%"]
 |===
