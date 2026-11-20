@@ -5567,13 +5567,16 @@ for i = 0 .. (XLEN/16 - 1):
     b = s2[(16*i+15) : (16*i)]    // signed 16-bit
 
     // Saturating shift-left-by-1 of a (signed 16-bit)
-    t = a << 1
-    if t overflows signed16:
+    t = 2 * signed(a)
+    if t < -32768:
         vxsat = 1
-        t = (a <_s 0) ? 0x8000 : 0x7FFF
+        t = -32768
+    else if t > 32767:
+        vxsat = 1
+        t = 32767
 
     // Saturating add of t and b (signed 16-bit)
-    s = signed(t) + signed(b)     // compute in wider precision
+    s = t + signed(b)
     if s < -32768:
         vxsat = 1
         r = 0x8000
@@ -5637,13 +5640,16 @@ for i = 0 .. 1:
     b = s2[(32*i+31):(32*i)]
 
     // Saturating shift-left-by-1
-    t = a << 1
-    if t overflows signed32:
+    t = 2 * signed(a)
+    if t < -2^31:
         vxsat = 1
-        t = (a <_s 0) ? 0x80000000 : 0x7FFFFFFF
+        t = -2^31
+    else if t > 2^31-1:
+        vxsat = 1
+        t = 2^31-1
 
     // Saturating add
-    s = signed(t) + signed(b)
+    s = t + signed(b)
     if s < -2^31:
         vxsat = 1
         r = 0x80000000
@@ -5701,13 +5707,16 @@ s1 = X[rs1]
 s2 = X[rs2]
 
 // Saturating shift-left-by-1
-t = s1 << 1
-if t overflows signed32:
+t = 2 * signed(s1)
+if t < -2^31:
     vxsat = 1
-    t = (s1 <_s 0) ? 0x80000000 : 0x7FFFFFFF
+    t = -2^31
+else if t > 2^31-1:
+    vxsat = 1
+    t = 2^31-1
 
 // Saturating add
-s = signed(t) + signed(s2)
+s = t + signed(s2)
 if s < -2^31:
     vxsat = 1
     X[rd] = 0x80000000
@@ -14755,7 +14764,7 @@ Encoding::
 
 Description::
 
-The PSSHLR.WS instruction performs a unsigned variable shift on each packed
+The PSSHLR.WS instruction performs an unsigned variable shift on each packed
 32-bit element of `rs1` using the signed shift amount in `rs2[7:0]`. Right
 shifts are rounded, and left shifts saturate to the unsigned 32-bit range.
 
@@ -14768,7 +14777,7 @@ shamt  = X[rs2][7:0]
 sshamt = signed(shamt)
 
 for i = 0 .. (XLEN/32 - 1):
-    w = s1[(32*i+31):(32*i)]    // signed 32-bit
+    w = s1[(32*i+31):(32*i)]    // unsigned 32-bit
 
     if sshamt < 0:
         // logical right shift with rounding
@@ -15285,7 +15294,7 @@ Description::
 
 The SSHLR instruction performs an unsigned variable shift of `rs1` using the signed
 shift amount in `rs2[7:0]`. Right shifts are rounded, and left shifts saturate
-to the signed 32-bit range.
+to the unsigned 32-bit range.
 
 Operation::
 
@@ -16036,7 +16045,7 @@ PPAIREO.H is encoded in the OP-32 major opcode with packed halfword elements.
 Description::
 
 PPAIREO.H (Pack Pair Even-Odd Halfwords) interleaves packed 16-bit halfword
-element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+element pairs. Within each 32-bit word, the even (lower) halfword comes from the
 even (lower) halfword of `rs1`, while the odd (upper) halfword comes from the
 odd (upper) halfword of `rs2`.
 
@@ -16085,7 +16094,7 @@ PPAIREO.W is encoded in the OP-32 major opcode with packed word elements.
 Description::
 
 PPAIREO.W (Pack Pair Even-Odd Words) interleaves a packed 32-bit word element
-pair. Within the 32-bit pair, the even (lower) word comes from the even (lower)
+pair. Within the 64-bit result, the even (lower) word comes from the even (lower)
 word of `rs1`, while the odd (upper) word comes from the odd (upper) word of
 `rs2`.
 
@@ -16295,7 +16304,7 @@ PPAIROE.H is encoded in the OP-32 major opcode with packed halfword elements.
 Description::
 
 PPAIROE.H (Pack Pair Odd-Even Halfwords) interleaves packed 16-bit halfword
-element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+element pairs. Within each 32-bit word, the even (lower) halfword comes from the
 odd (upper) halfword of `rs1`, while the odd (upper) halfword comes from the
 even (lower) halfword of `rs2`.
 
@@ -16344,7 +16353,7 @@ PPAIROE.W is encoded in the OP-32 major opcode with packed word elements.
 Description::
 
 PPAIROE.W (Pack Pair Odd-Even Words) interleaves a packed 32-bit word element
-pair. Within the 32-bit pair, the even (lower) word comes from the odd (upper)
+pair. Within the 64-bit result, the even (lower) word comes from the odd (upper)
 word of `rs1`, while the odd (upper) word comes from the even (lower) word of
 `rs2`.
 
@@ -16553,8 +16562,8 @@ PPAIRO.H is encoded in the OP-32 major opcode with packed halfword elements.
 
 Description::
 
-PPAIRO.H (Pack Pair Odd-Even Halfwords) interleaves packed 16-bit halfword
-element pairs. Within each 16-bit pair, the even (lower) halfword comes from the
+PPAIRO.H (Pack Pair Odd Halfwords) interleaves packed 16-bit halfword
+element pairs. Within each 32-bit word, the even (lower) halfword comes from the
 odd (upper) halfword of `rs1`, while the odd (upper) halfword comes from the
 odd (upper) halfword of `rs2`.
 
@@ -16603,7 +16612,7 @@ PPAIRO.W is encoded in the OP-32 major opcode with packed word elements.
 Description::
 
 PPAIRO.W (Pack Pair Odd Words) interleaves a packed 32-bit word element pair.
-Within the 32-bit pair, the even (lower) word comes from the odd (upper)
+Within the 64-bit result, the even (lower) word comes from the odd (upper)
 word of `rs1`, while the odd (upper) word comes from the odd (upper) word of
 `rs2`.
 
@@ -17277,7 +17286,7 @@ Operation::
 [source,pseudocode]
 ----
 w = X[rs1][31:0]
-X[rd] = sign_extend(64, (signed(w) <_s 0) ? (0 - w) : w)
+X[rd] = sign_extend(64, (signed(w) < 0) ? (0 - w) : w)
 ----
 
 
@@ -25296,8 +25305,8 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d_w0 = signed(s1[15:0])  * signed(s2[15:0])
-d_w1 = signed(s1[47:32]) * signed(s2[47:32])
+d_w0 = to_bits(32, signed(s1[15:0])  * signed(s2[15:0]))
+d_w1 = to_bits(32, signed(s1[47:32]) * signed(s2[47:32]))
 X[rd] = d_w1 @ d_w0
 ----
 
@@ -25340,8 +25349,8 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d_w0 = signed(s1[15:0])  * signed(s2[31:16])
-d_w1 = signed(s1[47:32]) * signed(s2[63:48])
+d_w0 = to_bits(32, signed(s1[15:0])  * signed(s2[31:16]))
+d_w1 = to_bits(32, signed(s1[47:32]) * signed(s2[63:48]))
 X[rd] = d_w1 @ d_w0
 ----
 
@@ -25384,8 +25393,8 @@ Operation::
 ----
 s1 = X[rs1]
 s2 = X[rs2]
-d_w0 = signed(s1[31:16]) * signed(s2[31:16])
-d_w1 = signed(s1[63:48]) * signed(s2[63:48])
+d_w0 = to_bits(32, signed(s1[31:16]) * signed(s2[31:16]))
+d_w1 = to_bits(32, signed(s1[63:48]) * signed(s2[63:48]))
 X[rd] = d_w1 @ d_w0
 ----
 
