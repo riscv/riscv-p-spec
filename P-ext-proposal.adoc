@@ -33309,7 +33309,7 @@ only part of Zkt for one of the XLen value.
 |RV64
 |Mnemonic
 
-| &#10003; |          | addd _rd_p_, _rs1__, _rs2_p_
+| &#10003; |          | addd _rd_p_, _rs1_p_, _rs2_p_
 | &#10003; |          | macc.h00 _rd_, _rs1_, _rs2_
 | &#10003; |          | macc.h01 _rd_, _rs1_, _rs2_
 | &#10003; |          | macc.h11 _rd_, _rs1_, _rs2_
@@ -33488,9 +33488,9 @@ only part of Zkt for one of the XLen value.
 |          | &#10003; | psext.w.b _rd_, _rs1_
 |          | &#10003; | psext.w.h _rd_, _rs1_
 | &#10003; | &#10003; | psll.bs _rd_, _rs1_, _rs2_
-| &#10003; |          | psll.dbs _rd_p_, _rs1_p_, _rs2_p_
-| &#10003; |          | psll.dhs _rd_p_, _rs1_p_, _rs2_p_
-| &#10003; |          | psll.dws _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psll.dbs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | psll.dhs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | psll.dws _rd_p_, _rs1_p_, _rs2_
 | &#10003; | &#10003; | psll.hs _rd_, _rs1_, _rs2_
 |          | &#10003; | psll.ws _rd_, _rs1_, _rs2_
 | &#10003; | &#10003; | pslli.b _rd_, _rs1_, _imm_
@@ -33500,9 +33500,9 @@ only part of Zkt for one of the XLen value.
 | &#10003; | &#10003; | pslli.h _rd_, _rs1_, _imm_
 |          | &#10003; | pslli.w _rd_, _rs1_, _imm_
 | &#10003; | &#10003; | psra.bs _rd_, _rs1_, _rs2_
-| &#10003; |          | psra.dbs _rd_p_, _rs1_p_, _rs2_p_
-| &#10003; |          | psra.dhs _rd_p_, _rs1_p_, _rs2_p_
-| &#10003; |          | psra.dws _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psra.dbs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | psra.dhs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | psra.dws _rd_p_, _rs1_p_, _rs2_
 | &#10003; | &#10003; | psra.hs _rd_, _rs1_, _rs2_
 |          | &#10003; | psra.ws _rd_, _rs1_, _rs2_
 | &#10003; | &#10003; | psrai.b _rd_, _rs1_, _imm_
@@ -33512,9 +33512,9 @@ only part of Zkt for one of the XLen value.
 | &#10003; | &#10003; | psrai.h _rd_, _rs1_, _imm_
 |          | &#10003; | psrai.w _rd_, _rs1_, _imm_
 | &#10003; | &#10003; | psrl.bs _rd_, _rs1_, _rs2_
-| &#10003; |          | psrl.dbs _rd_p_, _rs1_p_, _rs2_p_
-| &#10003; |          | psrl.dhs _rd_p_, _rs1_p_, _rs2_p_
-| &#10003; |          | psrl.dws _rd_p_, _rs1_p_, _rs2_p_
+| &#10003; |          | psrl.dbs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | psrl.dhs _rd_p_, _rs1_p_, _rs2_
+| &#10003; |          | psrl.dws _rd_p_, _rs1_p_, _rs2_
 | &#10003; | &#10003; | psrl.hs _rd_, _rs1_, _rs2_
 |          | &#10003; | psrl.ws _rd_, _rs1_, _rs2_
 | &#10003; | &#10003; | psrli.b _rd_, _rs1_, _imm_
@@ -33566,7 +33566,7 @@ only part of Zkt for one of the XLen value.
 |          | &#10003; | rev16 _rd_, _rs1_
 | &#10003; | &#10003; | slx _rd_, _rs1_, _rs2_
 | &#10003; | &#10003; | srx _rd_, _rs1_, _rs2_
-| &#10003; |          | subd _rd_p_, _rs1__, _rs2_p_
+| &#10003; |          | subd _rd_p_, _rs1_p_, _rs2_p_
 | &#10003; |          | wadd _rd_p_, _rs1_, _rs2_
 | &#10003; |          | wadda _rd_p_, _rs1_, _rs2_
 | &#10003; |          | waddau _rd_p_, _rs1_, _rs2_
@@ -33590,9 +33590,9 @@ only part of Zkt for one of the XLen value.
 |          | &#10003; | unzip8p _rd_, _rs1_, _rs2_
 |          | &#10003; | unzip8hp _rd_, _rs1_, _rs2_
 |          | &#10003; | unzip16p _rd_, _rs1_, _rs2_
-|          | &#10003; | unziphp _rd_, _rs1_, _rs2_
+|          | &#10003; | unzip16hp _rd_, _rs1_, _rs2_
 |          | &#10003; | zip8p _rd_, _rs1_, _rs2_
 |          | &#10003; | zip8hp _rd_, _rs1_, _rs2_
 |          | &#10003; | zip16p _rd_, _rs1_, _rs2_
-|          | &#10003; | ziphp _rd_, _rs1_, _rs2_
+|          | &#10003; | zip16hp _rd_, _rs1_, _rs2_
 |===
