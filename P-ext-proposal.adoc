@@ -13512,7 +13512,7 @@ sha _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHA is encoded in the OP-32 major opcode.
+SHA is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -13566,7 +13566,7 @@ shl _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHL is encoded in the OP-32 major opcode.
+SHL is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -15334,7 +15334,7 @@ shar _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHAR is encoded in the OP-32 major opcode.
+SHAR is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -15390,7 +15390,7 @@ shlr _rd_, _rs1_, _rs2_
 
 Encoding::
 
-SHLR is encoded in the OP-32 major opcode.
+SHLR is encoded in the OP-IMM-32 major opcode.
 
 [wavedrom, ,svg]
 ....
@@ -32892,10 +32892,11 @@ even-odd register pair. In the Sail reference, these instructions are defined
 by equivalence to two single-wide instructions operating on the even register
 and the corresponding odd register.
 
-In the notation below, operands `rd`, `rs1`, and `rs2` are required to be even
-register numbers (with `x0` permitted). The notation `rd+`, `rs1+`, or `rs2+`
-denotes the next higher-numbered (odd) register. If the register is `x0`, the
-corresponding `rd+`, `rs1+`, or `rs2+` also denotes `x0`.
+In the notation below, a register-pair operand must name an even-numbered
+register. The notation `rd+`, `rs1+`, or `rs2+` denotes the next higher-numbered
+(odd) register, except that when the pair is specified by `x0`, both halves
+denote `x0`. In the scalar-second-source forms, `rs2` may name any integer
+register.
 
 ==== Double-wide immediate forms
 
